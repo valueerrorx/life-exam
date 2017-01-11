@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Xapient</author>
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>694</width>
+    <height>308</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Exam Server</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>671</width>
+     <height>291</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>671</width>
+     <height>291</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>671</width>
+     <height>291</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="tabShape">
+    <enum>QTabWidget::Rounded</enum>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Exam Server</string>
+    </attribute>
+    <widget class="QLabel" name="infolabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>311</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connection Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="indent">
+      <number>12</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="doit_3">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>100</y>
+       <width>151</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>send lines</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="exit">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>220</y>
+       <width>151</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Quit</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>59</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>drive.png</pixmap>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="doit_2">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>70</y>
+       <width>151</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>receive file</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="logwidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>471</width>
+       <height>146</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="doit_1">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>40</y>
+       <width>151</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>send file</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="doit_4">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>130</y>
+       <width>151</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>print client info</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="doit_5">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>160</y>
+       <width>151</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>do something</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>exit</tabstop>
+  <tabstop>doit_1</tabstop>
+  <tabstop>doit_2</tabstop>
+  <tabstop>doit_3</tabstop>
+  <tabstop>logwidget</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
