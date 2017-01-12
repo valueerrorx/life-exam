@@ -72,12 +72,19 @@ class MyServerProtocol(basic.LineReceiver):
                 self.transport.write('ENDMSG\n')
                 
                 self.factory._log('File %s has been successfully transfered' % (filename))
+                if self.file_data[2] == "SCREENSHOT":
+                    myPixmap = QPixmap('./FILESSERVER/%s' %(self.file_data[0])  )
+                    print self.file_data[1]
+                    print myPixmap
+                    self.factory.ui.label.setPixmap(myPixmap)
             else:
                 os.unlink(file_path)
                 self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
                 self.transport.write('ENDMSG\n')
             
                 self.factory._log('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
+            
+        
         else:
             self.file_handler.write(data)
 
@@ -99,11 +106,23 @@ class MyServerProtocol(basic.LineReceiver):
 
             filename = data[1]
             file_hash = data[2]
+            file_type = 'any'
             
-            self.file_data = (filename, file_hash)
+            self.file_data = (filename, file_hash, file_type)
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
 
+        elif line.startswith('SHOTHASH'):
+            # Received a file name and hash, server is sending us a file
+            data = clean_and_split_input(line)
+
+            filename = data[1]
+            file_hash = data[2]
+            file_type = "SCREENSHOT"
+            
+            self.file_data = (filename, file_hash, file_type)
+            self.factory._log('Preparing File Transfer from Client...' )
+            self.setRawMode()   #this is a file - set to raw mode
             
 
 
@@ -192,7 +211,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             return
         
     def _onDoit_5(self):
-        self._log("hä?")
+        self._log("getting screenshot")
+        for i in self.clients:
+            i.sendLine("SCREENSHOT %s" %(i.transport.client[1]) )
         return
 
 

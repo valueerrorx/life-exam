@@ -79,7 +79,18 @@ class MyClientProtocol(basic.LineReceiver):
             self.setRawMode()   #this is a file - set to raw mode
         
         elif line.startswith('GETFILE'):  # the server wants a file.. send it !
-            self._sendFile(line)
+            self._sendFile(line,'clientfile.txt', 'NORMAL')
+        
+        elif line.startswith('SCREENSHOT'):  # the server wants a file.. send it !
+            data = clean_and_split_input(line)
+            command = "./scripts/screenshot.sh %s" %(data[1])
+            os.system(command)
+            filename= data[1]+".jpg"
+            print filename
+            self._sendFile(line, filename, 'SHOT')
+           
+            
+           
             
             
         else:
@@ -87,17 +98,18 @@ class MyClientProtocol(basic.LineReceiver):
            
 
 
-    def _sendFile(self, line):
+    def _sendFile(self, line, filename, filetype):
         """send a file to the server"""
-        try:
-            filename = "clientfile.txt"
-        except IndexError:
+        
+        if not filename:
             self.transport.write('Missing filename\n')
             self.transport.write('ENDMSG\n')
             return
         
-        if not self.factory.files:
-            self.factory.files = self._get_file_list()  #should probably be generated every time .. in case something changes in the directory
+
+        
+       # if not self.factory.files:
+        self.factory.files = self._get_file_list()  #should probably be generated every time .. in case something changes in the directory
             
         if not filename in self.factory.files:
             print ('filename not found in directory')
@@ -106,7 +118,11 @@ class MyClientProtocol(basic.LineReceiver):
             return
         
         print ('Sending file: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
-        self.transport.write('HASH %s %s\n' % (filename, self.factory.files[filename][2]))
+        
+        if filetype == 'NORMAL':
+            self.transport.write('HASH %s %s\n' % (filename, self.factory.files[filename][2]))
+        elif filetype == 'SHOT':
+            self.transport.write('SHOTHASH %s %s\n' % (filename, self.factory.files[filename][2]))
         self.setRawMode()
         
         for bytes in read_bytes_from_file(os.path.join(self.factory.files_path, filename)):

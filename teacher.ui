@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>694</width>
-    <height>308</height>
+    <height>378</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,16 +35,10 @@
      <x>10</x>
      <y>10</y>
      <width>671</width>
-     <height>291</height>
+     <height>361</height>
     </rect>
    </property>
    <property name="minimumSize">
-    <size>
-     <width>671</width>
-     <height>291</height>
-    </size>
-   </property>
-   <property name="maximumSize">
     <size>
      <width>671</width>
      <height>291</height>
@@ -202,7 +196,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>do something</string>
+      <string>get screenshot</string>
      </property>
     </widget>
    </widget>
