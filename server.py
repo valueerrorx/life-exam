@@ -34,7 +34,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = ()
         self.factory._log('Client connected..')
         
-        self.transport.write('Welcome\n')
+        self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
         
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
@@ -130,7 +130,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.doit_3.clicked.connect(lambda: self._onDoit_3()) 
         self.ui.doit_4.clicked.connect(lambda: self._onDoit_4()) 
         self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
-        
         self.ui.show()
     
     #twisted

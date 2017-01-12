@@ -66,8 +66,8 @@ class MyClientProtocol(basic.LineReceiver):
     #twisted
     def lineReceived(self, line):
         if line == 'ENDMSG':
-            
-            print '%s' % ' '.join(map(str, self.buffer))
+            message = '%s' % ' '.join(map(str, self.buffer))
+            self._showDesktopMessage(message)
             self.buffer = []
         
         elif line.startswith('HASH'):
@@ -134,6 +134,11 @@ class MyClientProtocol(basic.LineReceiver):
             file_list[filename] = (file_path, file_size, md5_hash)
 
         return file_list
+    
+    def _showDesktopMessage(self,msg):
+        message = "Exam Server: %s " %(msg)
+        command = "kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
+        os.system(command)
 
 
 
