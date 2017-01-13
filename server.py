@@ -33,10 +33,8 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Client connected..')
-        
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
-        
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
     
     #twisted
@@ -44,13 +42,12 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.clients.remove(self)
         self.file_handler = None
         self.file_data = ()
-        
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
 
 
     #twisted
     def rawDataReceived(self, data):
-        filename = self.file_data[0]
+        filename = self.file_data[2]
         file_path = os.path.join(self.factory.files_path, filename)
         
         self.factory._log('Receiving file chunk (%d KB)' % (len(data)))
@@ -62,28 +59,24 @@ class MyServerProtocol(basic.LineReceiver):
             # Last chunk
             data = data[:-2]
             self.file_handler.write(data)
-            self.setLineMode()
-            
             self.file_handler.close()
             self.file_handler = None
             
-            if validate_file_md5_hash(file_path, self.file_data[1]):
+            self.setLineMode()
+            
+            if validate_file_md5_hash(file_path, self.file_data[3]):
                 self.transport.write('File was successfully transfered and saved\n')
                 self.transport.write('ENDMSG\n')
-                
                 self.factory._log('File %s has been successfully transfered' % (filename))
-                if self.file_data[2] == "SCREENSHOT":
-                    myPixmap = QPixmap('./FILESSERVER/%s' %(self.file_data[0])  )
-                    print self.file_data[1]
-                    print myPixmap
+                
+                if self.file_data[1] == "SCREENSHOT":
+                    myPixmap = QPixmap(file_path)
                     self.factory.ui.label.setPixmap(myPixmap)
             else:
                 os.unlink(file_path)
                 self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
                 self.transport.write('ENDMSG\n')
-            
                 self.factory._log('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
-            
         
         else:
             self.file_handler.write(data)
@@ -93,37 +86,20 @@ class MyServerProtocol(basic.LineReceiver):
     def lineReceived(self, line):
         """whenever the client sends something """
         self.factory._log('Received the following line from the client [%s]: %s' % (self.transport.getPeer().host, line))
-        data = clean_and_split_input(line)
-        if len(data) == 0 or data == '':
+        self.file_data = clean_and_split_input(line)
+        if len(self.file_data) == 0 or self.file_data == '':
             return 
-        command = data[0].lower()
         
-        #check command - this way the client could trigger an action on the server
         
-        if line.startswith('HASH'):
-            # Received a file name and hash, server is sending us a file
-            data = clean_and_split_input(line)
-
-            filename = data[1]
-            file_hash = data[2]
-            file_type = 'any'
+        if line.startswith('FILETRANSFER'):
+            # Received a file name and hash, client is sending us a file
+            trigger = self.file_data[0]
+            filetype = self.file_data[1]
+            filename = self.file_data[2]
+            file_hash = self.file_data[3]
             
-            self.file_data = (filename, file_hash, file_type)
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
-
-        elif line.startswith('SHOTHASH'):
-            # Received a file name and hash, server is sending us a file
-            data = clean_and_split_input(line)
-
-            filename = data[1]
-            file_hash = data[2]
-            file_type = "SCREENSHOT"
-            
-            self.file_data = (filename, file_hash, file_type)
-            self.factory._log('Preparing File Transfer from Client...' )
-            self.setRawMode()   #this is a file - set to raw mode
-            
 
 
 
@@ -176,7 +152,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             
             self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
             
-            i.transport.write('HASH %s %s\n' % (filename, self.files[filename][2]))
+            i.transport.write('FILETRANSFER GET FILE %s %s\n' % (filename, self.files[filename][2]))  #trigger clienttask type filename filehash
             i.setRawMode()
             
             for bytes in read_bytes_from_file(os.path.join(self.files_path, filename)):
@@ -184,14 +160,17 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             
             i.transport.write('\r\n')
             i.setLineMode()  # When the transfer is finished, we go back to the line mode 
-        
+
+
 
     def _onDoit_2(self): #triggered on button click
         """get the same file from all clients"""
+        self._log("getting a file")
         for i in self.clients:
-            i.sendLine("GETFILE ./FILESCLIENT/clientfile.txt test")
-      
-      
+            i.sendLine("FILETRANSFER SEND FILE clientfile.txt none")    #trigger clienttask type filename filehash
+
+
+
     def _onDoit_3(self): #triggered on button click
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
@@ -199,7 +178,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.sendLine("to")
             i.sendLine("this session!")
             i.sendLine('ENDMSG')   #leert den line buffer des clients
-    
+
+
+
     def _onDoit_4(self):
         if self.clients:
             print "------------------------"
@@ -209,12 +190,15 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             pp.pprint(self.clients[0].transport.__dict__)
         else:
             return
-        
+
+
+    
     def _onDoit_5(self):
         self._log("getting screenshot")
         for i in self.clients:
-            i.sendLine("SCREENSHOT %s" %(i.transport.client[1]) )
+            i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
         return
+
 
 
     def _onAbbrechen(self):    # Exit button
@@ -222,9 +206,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         os._exit(0)  #otherwise only the gui is closed and connections are kept alive
     
     
+    
     def _log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + ' ' + str(msg))
+
 
 
     def _get_file_list(self):

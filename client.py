@@ -37,7 +37,7 @@ class MyClientProtocol(basic.LineReceiver):
 
     #twisted
     def rawDataReceived(self, data):
-        filename = self.file_data[0]
+        filename = self.file_data[3]
         file_path = os.path.join(self.factory.files_path, filename)
         
         print 'Receiving file chunk (%d KB)' % (len(data))
@@ -54,7 +54,7 @@ class MyClientProtocol(basic.LineReceiver):
             self.file_handler.close()
             self.file_handler = None
             
-            if validate_file_md5_hash(file_path, self.file_data[1]):
+            if validate_file_md5_hash(file_path, self.file_data[4]):
                 print 'File %s has been successfully transfered and saved' % (filename)
             else:
                 os.unlink(file_path)
@@ -70,47 +70,37 @@ class MyClientProtocol(basic.LineReceiver):
             self._showDesktopMessage(message)
             self.buffer = []
         
-        elif line.startswith('HASH'):
-            # Received a file name and hash, server is sending us a file
-            data = clean_and_split_input(line)
-            filename = data[1]
-            file_hash = data[2]
-            self.file_data = (filename, file_hash)
-            self.setRawMode()   #this is a file - set to raw mode
-        
-        elif line.startswith('GETFILE'):  # the server wants a file.. send it !
-            self._sendFile(line,'clientfile.txt', 'NORMAL')
-        
-        elif line.startswith('SCREENSHOT'):  # the server wants a file.. send it !
-            data = clean_and_split_input(line)
-            command = "./scripts/screenshot.sh %s" %(data[1])
-            os.system(command)
-            filename= data[1]+".jpg"
-            print filename
-            self._sendFile(line, filename, 'SHOT')
-           
+        elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
+            self.setRawMode()   #this is going to be a file transfer - set to raw mode
+            self.file_data = clean_and_split_input(line)
+            trigger = self.file_data[0]
+            task = self.file_data[1]
+            filetype = self.file_data[2]
+            filename = self.file_data[3]
+            file_hash = self.file_data[4]
             
-           
-            
-            
+            if task == 'SEND':
+                self._sendFile(filename, filetype)
+
+            elif task == 'GET':
+                return
+
         else:
             self.buffer.append(line)
            
 
 
-    def _sendFile(self, line, filename, filetype):
+
+
+    def _sendFile(self, filename, filetype):
         """send a file to the server"""
         
-        if not filename:
-            self.transport.write('Missing filename\n')
-            self.transport.write('ENDMSG\n')
-            return
-        
-
-        
-       # if not self.factory.files:
-        self.factory.files = self._get_file_list()  #should probably be generated every time .. in case something changes in the directory
+        if filetype == 'SHOT':
+            command = "./scripts/screenshot.sh %s" %(filename)
+            os.system(command)
             
+        self.factory.files = self._get_file_list()  #should probably be generated every time .. in case something changes in the directory
+        
         if not filename in self.factory.files:
             print ('filename not found in directory')
             self.setLineMode() 
@@ -119,37 +109,37 @@ class MyClientProtocol(basic.LineReceiver):
         
         print ('Sending file: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
         
-        if filetype == 'NORMAL':
-            self.transport.write('HASH %s %s\n' % (filename, self.factory.files[filename][2]))
+        if filetype == 'FILE':
+            self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
-            self.transport.write('SHOTHASH %s %s\n' % (filename, self.factory.files[filename][2]))
+            self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
+        
         self.setRawMode()
         
-        for bytes in read_bytes_from_file(os.path.join(self.factory.files_path, filename)):
+        for bytes in read_bytes_from_file(self.factory.files[filename][0]):  #complete filepath as arg
             self.transport.write(bytes)
         
-        self.transport.write('\r\n')
+        self.transport.write('\r\n')  #send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
+    
+    
     
     def _get_file_list(self):
         """ Returns a list of the files in the specified directory as a dictionary:
             dict['file name'] = (file path, file size, file md5 hash)
         """
-        
         file_list = {}
-        for filename in os.listdir(self.factory.files_path):
-            file_path = os.path.join(self.factory.files_path, filename)
-            
-            if os.path.isdir(file_path):
-                continue
-            
-            file_size = os.path.getsize(file_path)
-            md5_hash = get_file_md5_hash(file_path)
-
-            file_list[filename] = (file_path, file_size, md5_hash)
-
+        for root, subdirs, files in os.walk(self.factory.files_path):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                file_size = os.path.getsize(file_path)
+                md5_hash = get_file_md5_hash(file_path)
+                file_list[filename] = (file_path, file_size, md5_hash)
         return file_list
+    
+    
+    
     
     def _showDesktopMessage(self,msg):
         message = "Exam Server: %s " %(msg)
