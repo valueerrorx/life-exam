@@ -212,25 +212,19 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.logwidget.append(timestamp + ' ' + str(msg))
 
 
-
+    
     def _get_file_list(self):
         """ Returns a list of the files in the specified directory as a dictionary:
             dict['file name'] = (file path, file size, file md5 hash)
         """
         file_list = {}
-        for filename in os.listdir(self.files_path):
-            file_path = os.path.join(self.files_path, filename)
-            
-            if os.path.isdir(file_path):
-                continue
-            
-            file_size = os.path.getsize(file_path)
-            md5_hash = get_file_md5_hash(file_path)
-
-            file_list[filename] = (file_path, file_size, md5_hash)
-
+        for root, subdirs, files in os.walk(self.files_path):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                file_size = os.path.getsize(file_path)
+                md5_hash = get_file_md5_hash(file_path)
+                file_list[filename] = (file_path, file_size, md5_hash)
         return file_list
-        
         
     
 
