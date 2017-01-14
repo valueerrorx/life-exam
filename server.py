@@ -18,7 +18,7 @@ from PyQt5.QtGui import *
 
 SERVER_PORT = 5000
 FILES_DIRECTORY = "./FILESSERVER/"
-
+SCREENSHOT_DIRECTORY = "./FILESSERVER/screenshots"
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -70,7 +70,9 @@ class MyServerProtocol(basic.LineReceiver):
                 self.factory._log('File %s has been successfully transfered' % (filename))
                 
                 if self.file_data[1] == "SCREENSHOT":
-                    myPixmap = QPixmap(file_path)
+                    screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
+                    os.rename(file_path, screenshot_file_path)
+                    myPixmap = QPixmap(screenshot_file_path)
                     self.factory.ui.label.setPixmap(myPixmap)
             else:
                 os.unlink(file_path)
@@ -115,6 +117,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files_path = files_path
         self.clients = []  #store all client connections in this array
         self.files = None
+        self._deleteFolderContent(SCREENSHOT_DIRECTORY)
         
         QtWidgets.QDialog.__init__(self)
         self.ui = uic.loadUi("teacher.ui")        # load UI
@@ -226,6 +229,17 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 file_list[filename] = (file_path, file_size, md5_hash)
         return file_list
         
+    
+    
+    def _deleteFolderContent(self,folder):
+        for the_file in os.listdir(folder):
+            file_path = os.path.join(folder, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path): shutil.rmtree(file_path)
+            except Exception as e:
+                print(e)
     
 
 

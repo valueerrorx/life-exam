@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # STUDENT - CLIENT #
 import os
+import shutil
 from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
 from common import *
@@ -11,7 +12,7 @@ from common import *
 SERVER_IP = "localhost"
 SERVER_PORT = 5000
 FILES_DIRECTORY = "./FILESCLIENT/"
-
+SCREENSHOT_DIRECTORY = "./FILESCLIENT/screenshots"
 
 
 
@@ -20,6 +21,7 @@ class MyClientProtocol(basic.LineReceiver):
     def __init__(self,factory):
         self.factory = factory
         self.delimiter = '\n'
+        self._deleteFolderContent(SCREENSHOT_DIRECTORY)
 
     #twisted
     def connectionMade(self):
@@ -33,6 +35,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.file_data = ()
         print 'Connection to the server has been lost'
+        self._showDesktopMessage('Connection to the server has been lost')
         #reactor.stop()  #this would terminate the connection - even if ReconnectingClientFactory would normally try to re-establish the connection
 
     #twisted
@@ -95,8 +98,11 @@ class MyClientProtocol(basic.LineReceiver):
     def _sendFile(self, filename, filetype):
         """send a file to the server"""
         
+
         if filetype == 'SHOT':
+           
             command = "./scripts/screenshot.sh %s" %(filename)
+            print  command
             os.system(command)
             
         self.factory.files = self._get_file_list()  #should probably be generated every time .. in case something changes in the directory
@@ -140,12 +146,22 @@ class MyClientProtocol(basic.LineReceiver):
     
     
     
-    
     def _showDesktopMessage(self,msg):
         message = "Exam Server: %s " %(msg)
         command = "kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
         os.system(command)
 
+
+
+    def _deleteFolderContent(self,folder):
+        for the_file in os.listdir(folder):
+            file_path = os.path.join(folder, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path): shutil.rmtree(file_path)
+            except Exception as e:
+                print(e)
 
 
 
