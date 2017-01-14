@@ -117,7 +117,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files_path = files_path
         self.clients = []  #store all client connections in this array
         self.files = None
-        self._deleteFolderContent(SCREENSHOT_DIRECTORY)
+        deleteFolderContent(SCREENSHOT_DIRECTORY)
         
         QtWidgets.QDialog.__init__(self)
         self.ui = uic.loadUi("teacher.ui")        # load UI
@@ -146,8 +146,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 i.transport.write('ENDMSG\n')
                 return
             
-            if not self.files:
-                self.files = self._get_file_list()
+            self.files = get_file_list(self.files_path)
                 
             if not filename in self.files:
                 self.log('filename not found in directory')
@@ -214,32 +213,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + ' ' + str(msg))
 
-
     
-    def _get_file_list(self):
-        """ Returns a list of the files in the specified directory as a dictionary:
-            dict['file name'] = (file path, file size, file md5 hash)
-        """
-        file_list = {}
-        for root, subdirs, files in os.walk(self.files_path):
-            for filename in files:
-                file_path = os.path.join(root, filename)
-                file_size = os.path.getsize(file_path)
-                md5_hash = get_file_md5_hash(file_path)
-                file_list[filename] = (file_path, file_size, md5_hash)
-        return file_list
-        
-    
-    
-    def _deleteFolderContent(self,folder):
-        for the_file in os.listdir(folder):
-            file_path = os.path.join(folder, the_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path): shutil.rmtree(file_path)
-            except Exception as e:
-                print(e)
     
 
 

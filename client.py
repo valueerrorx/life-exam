@@ -21,7 +21,7 @@ class MyClientProtocol(basic.LineReceiver):
     def __init__(self,factory):
         self.factory = factory
         self.delimiter = '\n'
-        self._deleteFolderContent(SCREENSHOT_DIRECTORY)
+        deleteFolderContent(SCREENSHOT_DIRECTORY)
 
     #twisted
     def connectionMade(self):
@@ -105,7 +105,7 @@ class MyClientProtocol(basic.LineReceiver):
             print  command
             os.system(command)
             
-        self.factory.files = self._get_file_list()  #should probably be generated every time .. in case something changes in the directory
+        self.factory.files = get_file_list(self.factory.files_path)  #should probably be generated every time .. in case something changes in the directory
         
         if not filename in self.factory.files:
             print ('filename not found in directory')
@@ -130,22 +130,6 @@ class MyClientProtocol(basic.LineReceiver):
 
     
     
-    
-    def _get_file_list(self):
-        """ Returns a list of the files in the specified directory as a dictionary:
-            dict['file name'] = (file path, file size, file md5 hash)
-        """
-        file_list = {}
-        for root, subdirs, files in os.walk(self.factory.files_path):
-            for filename in files:
-                file_path = os.path.join(root, filename)
-                file_size = os.path.getsize(file_path)
-                md5_hash = get_file_md5_hash(file_path)
-                file_list[filename] = (file_path, file_size, md5_hash)
-        return file_list
-    
-    
-    
     def _showDesktopMessage(self,msg):
         message = "Exam Server: %s " %(msg)
         command = "kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
@@ -153,15 +137,7 @@ class MyClientProtocol(basic.LineReceiver):
 
 
 
-    def _deleteFolderContent(self,folder):
-        for the_file in os.listdir(folder):
-            file_path = os.path.join(folder, the_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path): shutil.rmtree(file_path)
-            except Exception as e:
-                print(e)
+
 
 
 
