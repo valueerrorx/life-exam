@@ -306,10 +306,13 @@
          <property name="minimumSize">
           <size>
            <width>330</width>
-           <height>310</height>
+           <height>0</height>
           </size>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
           <item>
            <widget class="QLabel" name="infolabel_2">
             <property name="font">
@@ -349,6 +352,9 @@
             <property name="verticalScrollBarPolicy">
              <enum>Qt::ScrollBarAsNeeded</enum>
             </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+            </property>
             <property name="widgetResizable">
              <bool>true</bool>
             </property>
@@ -361,7 +367,7 @@
                <x>0</x>
                <y>0</y>
                <width>408</width>
-               <height>251</height>
+               <height>249</height>
               </rect>
              </property>
              <property name="sizePolicy">

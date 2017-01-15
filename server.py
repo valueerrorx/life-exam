@@ -79,7 +79,6 @@ class MyServerProtocol(basic.LineReceiver):
                     myPixmap = QPixmap(screenshot_file_path)
                     label.setPixmap(myPixmap)
                     self.factory.ui.shotsgrid.addWidget(label)
-                
                     
                     
             else:
@@ -139,8 +138,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
         
         self.ui.shotsgrid = FlowLayout();
-        self.ui.scrollArea.setLayout( self.ui.shotsgrid )
         
+        self.ui.shots.setLayout( self.ui.shotsgrid )
 
         
         self.ui.show()
@@ -189,10 +188,14 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onDoit_3(self): #triggered on button click
-        label = QtWidgets.QLabel()
-        myPixmap = QPixmap('./drive.png')
-        label.setPixmap(myPixmap)
-        self.ui.shotsgrid.addWidget(label)
+        
+        for _ in range(5):
+            label = QtWidgets.QLabel()
+            myPixmap = QPixmap('./drive.png')
+            label.setPixmap(myPixmap)
+            self.ui.shotsgrid.addWidget(label)
+        
+
         
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
