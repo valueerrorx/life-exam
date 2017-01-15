@@ -74,17 +74,11 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":
                     screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)
-              
-                   #layout = QtWidgets.QVBoxLayout()
-    
+
                     label = QtWidgets.QLabel()
                     myPixmap = QPixmap(screenshot_file_path)
                     label.setPixmap(myPixmap)
-                    self.factory.ui.shotsLayout.addWidget(label)
-                    
-                    #self.factory.ui.shots.setLayout(layout)
-                    
-                    #self.factory.ui.scrollArea.setWidget(label)
+                    self.factory.ui.shotsgrid.addWidget(label)
                 
                     
                     
@@ -198,23 +192,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         label = QtWidgets.QLabel()
         myPixmap = QPixmap('./drive.png')
         label.setPixmap(myPixmap)
-  
-        
-   
         self.ui.shotsgrid.addWidget(label)
-        
- 
-        
-       
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
