@@ -7,7 +7,7 @@ import sys
 import ipaddress
 import datetime
 import pprint
-
+import sip
 
 from twisted.internet import protocol
 from twisted.protocols import basic
@@ -38,14 +38,26 @@ class MyServerProtocol(basic.LineReceiver):
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
+        self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
     
     #twisted
     def connectionLost(self, reason):
+       
+       
         self.factory.clients.remove(self)
+        self.factory._deleteClientScreenshot(self)
+   
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
 
+
+    def _checkID(self, screenshotwidgetID):
+        for client in self.factory.clients:
+            if client.transport.client[1] == screenshotwidgetID:
+                return True
+        return False
+            
 
     #twisted
     def rawDataReceived(self, data):
@@ -71,14 +83,26 @@ class MyServerProtocol(basic.LineReceiver):
                 self.transport.write('ENDMSG\n')
                 self.factory._log('File %s has been successfully transfered' % (filename))
                 
-                if self.file_data[1] == "SCREENSHOT":
+                if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)
 
-                    label = QtWidgets.QLabel()
+                    label1 = QtWidgets.QLabel()
+                    label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
                     myPixmap = QPixmap(screenshot_file_path)
-                    label.setPixmap(myPixmap)
-                    self.factory.ui.shotsgrid.addWidget(label)
+                    label1.setPixmap(myPixmap)
+                    
+                    self.widget = QtWidgets.QWidget()
+                    grid = QtWidgets.QGridLayout()
+                    grid.setSpacing(4)
+                    grid.addWidget(label1, 1, 0)
+                    grid.addWidget(label2, 2, 0)
+                    self.widget.setLayout(grid)
+                    self.widget.id = self.transport.client[1]   #store ID for later use
+                    
+                    
+                    self.factory.ui.shotsgrid.addWidget(self.widget)
+              
                     
                     
             else:
@@ -136,12 +160,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.doit_4.clicked.connect(lambda: self._onDoit_4()) 
         self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
         
-        
         self.ui.shotsgrid = FlowLayout();
-        
         self.ui.shots.setLayout( self.ui.shotsgrid )
-
-        
         self.ui.show()
     
     #twisted
@@ -234,11 +254,21 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     
     def _log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
-        self.ui.logwidget.append(timestamp + ' ' + str(msg))
+        self.ui.logwidget.append(timestamp + '\n' + str(msg))
 
+
+    def _checkID(self, screenshotwidgetID):   #checks if id is still in clients list
+        for client in self.clients:
+            if client.transport.client[1] == screenshotwidgetID:
+                return True
+        return False
     
     
-
+    def _deleteClientScreenshot(self,client):
+        for listItem in  self.ui.shotsgrid.itemList:
+            screenshotWidget = listItem.widget()
+            if not self._checkID(screenshotWidget.id):
+                sip.delete(screenshotWidget)
 
 
 if __name__ == '__main__':
