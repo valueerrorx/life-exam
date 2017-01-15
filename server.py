@@ -8,9 +8,11 @@ import ipaddress
 import datetime
 import pprint
 
+
 from twisted.internet import protocol
 from twisted.protocols import basic
 from common import *
+from flowlayout import FlowLayout
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtGui import *
 
@@ -72,8 +74,20 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":
                     screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)
+              
+                   #layout = QtWidgets.QVBoxLayout()
+    
+                    label = QtWidgets.QLabel()
                     myPixmap = QPixmap(screenshot_file_path)
-                    self.factory.ui.label.setPixmap(myPixmap)
+                    label.setPixmap(myPixmap)
+                    self.factory.ui.shotsLayout.addWidget(label)
+                    
+                    #self.factory.ui.shots.setLayout(layout)
+                    
+                    #self.factory.ui.scrollArea.setWidget(label)
+                
+                    
+                    
             else:
                 os.unlink(file_path)
                 self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
@@ -128,6 +142,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.doit_3.clicked.connect(lambda: self._onDoit_3()) 
         self.ui.doit_4.clicked.connect(lambda: self._onDoit_4()) 
         self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
+        
+        
+        self.ui.shotsgrid = FlowLayout();
+        self.ui.scrollArea.setLayout( self.ui.shotsgrid )
+        
+
+        
         self.ui.show()
     
     #twisted
@@ -174,6 +195,27 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onDoit_3(self): #triggered on button click
+        label = QtWidgets.QLabel()
+        myPixmap = QPixmap('./drive.png')
+        label.setPixmap(myPixmap)
+  
+        
+   
+        self.ui.shotsgrid.addWidget(label)
+        
+ 
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
             i.sendLine("Welcome")
