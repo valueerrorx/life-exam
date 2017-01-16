@@ -42,12 +42,13 @@ class MyServerProtocol(basic.LineReceiver):
     
     #twisted
     def connectionLost(self, reason):
+        clientID = self.transport.client[1]
         self.factory.clients.remove(self)
-        self.factory._deleteClientScreenshot(self)
+        self.factory._deleteClientScreenshot(clientID)
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
-
+        # destroy this instance ?
 
     #twisted
     def rawDataReceived(self, data):
@@ -89,10 +90,10 @@ class MyServerProtocol(basic.LineReceiver):
                     self.grid.addWidget(self.label1, 1, 0)
                     self.grid.addWidget(self.label2, 2, 0)
                     self.widget.setLayout(self.grid)
-                    self.widget.id = self.transport.client[1]   #store ID for later use
                     #generate a listitem
                     self.item = QtWidgets.QListWidgetItem()
                     self.item.setSizeHint( QtCore.QSize( 140, 100) );
+                    self.item.id = self.transport.client[1]   #store clientID as itemID for later use (delete event)
                     # add the listitem to the factorys listwidget and set the widget as it's widget
                     self.factory.ui.listWidget.addItem(self.item)
                     self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
@@ -273,18 +274,15 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.logwidget.append(timestamp + '\n' + str(msg))
 
 
-    def _checkID(self, screenshotwidgetID):   #checks if id is still in clients list
-        for client in self.clients:
-            if client.transport.client[1] == screenshotwidgetID:
-                return True
-        return False
     
-    
-    def _deleteClientScreenshot(self,client):
-        for listItem in  self.ui.shotsgrid.itemList:
-            screenshotWidget = listItem.widget()
-            if not self._checkID(screenshotWidget.id):
-                sip.delete(screenshotWidget)
+    def _deleteClientScreenshot(self,clientID):
+        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
+        for index in xrange(self.ui.listWidget.count()):
+            items.append(self.ui.listWidget.item(index))
+        
+        for item in items:
+            if clientID == item.id:
+                sip.delete(item)   #delete all ocurrances of this screenshotitem 
 
 
 if __name__ == '__main__':
