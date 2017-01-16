@@ -83,8 +83,19 @@ class MyClientProtocol(basic.LineReceiver):
             file_hash = self.file_data[4]
             
             if task == 'SEND':
-                self._sendFile(filename, filetype)
-
+                if filetype == 'FILE' or filetype == 'SHOT':
+                    self._sendFile(filename, filetype)
+                elif filetype == 'FOLDER':
+                    self.factory.files = get_file_list(self.factory.files_path)
+                    if filename in self.factory.files:
+                        folder_files = get_file_list(self.factory.files[filename][0])
+                        self.setLineMode() 
+                        self.sendLine('client is sending folder') 
+                        for singlefile in folder_files:
+                            self._sendFile(singlefile, filetype)
+                        return
+                    else:
+                        return
             elif task == 'GET':
                 return
 
@@ -99,8 +110,7 @@ class MyClientProtocol(basic.LineReceiver):
         """send a file to the server"""
         
 
-        if filetype == 'SHOT':
-           
+        if filetype == 'SHOT': 
             command = "./scripts/screenshot.sh %s" %(filename)
             print  command
             os.system(command)

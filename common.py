@@ -52,13 +52,17 @@ def get_file_list(folder):
         """ Returns a list of the files in the specified directory as a dictionary:
             dict['file name'] = (file path, file size, file md5 hash)
         """
+        # what if filename or foldername exists twice in tree ??  FIXME
         file_list = {}
         for root, subdirs, files in os.walk(folder):
-            for filename in files:
+            for filename in files:  # add all files to the list
                 file_path = os.path.join(root, filename)
                 file_size = os.path.getsize(file_path)
                 md5_hash = get_file_md5_hash(file_path)
-                file_list[filename] = (file_path, file_size, md5_hash)
+                file_list[filename] = (file_path, file_size, md5_hash)  #probably better to use path as index and filename as first value
+            for subdir in subdirs:  # add folders to the list
+                dir_path = os.path.join(root,subdir)
+                file_list[subdir] = (dir_path, 0, 0)
         return file_list
     
     

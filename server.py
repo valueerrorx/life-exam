@@ -115,11 +115,11 @@ class MyServerProtocol(basic.LineReceiver):
         for index in xrange(self.factory.ui.listWidget.count()):
             items.append(self.factory.ui.listWidget.item(index))
         
-        
+        existingItem = False
         for item in items:
             if item.id == self.transport.client[1]:
-                existingItem = item
-        
+                existingItem = item   #there should be only one matching item
+    
         
         self.label1 = QtWidgets.QLabel()
         self.label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
@@ -232,10 +232,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
-            i.sendLine("Welcome")
-            i.sendLine("to")
-            i.sendLine("this session!")
+            i.sendLine("Send")
+            i.sendLine("all")
+            i.sendLine("files from folder!")
             i.sendLine('ENDMSG')   #leert den line buffer des clients
+            i.sendLine("FILETRANSFER SEND FOLDER screenshots none")
        
 
     def _onDoit_4(self):

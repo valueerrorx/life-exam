@@ -240,7 +240,7 @@
              <string notr="true">padding:4px;</string>
             </property>
             <property name="text">
-             <string>send lines</string>
+             <string>get all files from folder</string>
             </property>
            </widget>
           </item>
@@ -256,7 +256,7 @@
              <string notr="true">padding:4px;</string>
             </property>
             <property name="text">
-             <string>print client info</string>
+             <string>print info</string>
             </property>
            </widget>
           </item>
@@ -272,7 +272,7 @@
              <string notr="true">padding:4px;</string>
             </property>
             <property name="text">
-             <string>get screenshot</string>
+             <string>update screenshot</string>
             </property>
            </widget>
           </item>
