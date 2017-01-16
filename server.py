@@ -111,7 +111,16 @@ class MyServerProtocol(basic.LineReceiver):
     
     def _createListItem(self,screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
-       
+        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
+        for index in xrange(self.factory.ui.listWidget.count()):
+            items.append(self.factory.ui.listWidget.item(index))
+        
+        
+        for item in items:
+            if item.id == self.transport.client[1]:
+                existingItem = item
+        
+        
         self.label1 = QtWidgets.QLabel()
         self.label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
         self.label1.Pixmap = QPixmap(screenshot_file_path)
@@ -123,10 +132,17 @@ class MyServerProtocol(basic.LineReceiver):
         self.grid.addWidget(self.label1, 1, 0)
         self.grid.addWidget(self.label2, 2, 0)
         self.widget.setLayout(self.grid)
+        
+        
         #generate a listitem
-        self.item = QtWidgets.QListWidgetItem()
-        self.item.setSizeHint( QtCore.QSize( 140, 100) );
-        self.item.id = self.transport.client[1]   #store clientID as itemID for later use (delete event)
+        if existingItem:
+            self.item = existingItem
+        else:
+            self.item = QtWidgets.QListWidgetItem()
+            self.item.setSizeHint( QtCore.QSize( 140, 100) );
+            self.item.id = self.transport.client[1]   #store clientID as itemID for later use (delete event)
+            
+        
         # add the listitem to the factorys listwidget and set the widget as it's widget
         self.factory.ui.listWidget.addItem(self.item)
         self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
@@ -227,7 +243,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
         
-       
         print "------------------------"
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(self.clients[0].__dict__)
