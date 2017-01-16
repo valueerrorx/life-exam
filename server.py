@@ -12,8 +12,8 @@ import sip
 from twisted.internet import protocol
 from twisted.protocols import basic
 from common import *
-from flowlayout import FlowLayout
-from PyQt5 import uic, QtWidgets
+
+from PyQt5 import uic, QtWidgets,QtCore
 from PyQt5.QtGui import *
 
 
@@ -42,22 +42,12 @@ class MyServerProtocol(basic.LineReceiver):
     
     #twisted
     def connectionLost(self, reason):
-       
-       
         self.factory.clients.remove(self)
         self.factory._deleteClientScreenshot(self)
-   
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
 
-
-    def _checkID(self, screenshotwidgetID):
-        for client in self.factory.clients:
-            if client.transport.client[1] == screenshotwidgetID:
-                return True
-        return False
-            
 
     #twisted
     def rawDataReceived(self, data):
@@ -86,23 +76,27 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)
-
-                    label1 = QtWidgets.QLabel()
-                    label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
-                    myPixmap = QPixmap(screenshot_file_path)
-                    label1.setPixmap(myPixmap)
                     
+                    # generate 2 labels (pixmap and id)
+                    self.label1 = QtWidgets.QLabel()
+                    self.label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
+                    self.label1.Pixmap = QPixmap(screenshot_file_path)
+                    self.label1.setPixmap(self.label1.Pixmap)
+                    # generate a widget that combines the labels
                     self.widget = QtWidgets.QWidget()
-                    grid = QtWidgets.QGridLayout()
-                    grid.setSpacing(4)
-                    grid.addWidget(label1, 1, 0)
-                    grid.addWidget(label2, 2, 0)
-                    self.widget.setLayout(grid)
+                    self.grid = QtWidgets.QGridLayout()
+                    self.grid.setSpacing(4)
+                    self.grid.addWidget(self.label1, 1, 0)
+                    self.grid.addWidget(self.label2, 2, 0)
+                    self.widget.setLayout(self.grid)
                     self.widget.id = self.transport.client[1]   #store ID for later use
-                    
-                    
-                    self.factory.ui.shotsgrid.addWidget(self.widget)
-              
+                    #generate a listitem
+                    self.item = QtWidgets.QListWidgetItem()
+                    self.item.setSizeHint( QtCore.QSize( 140, 100) );
+                    # add the listitem to the factorys listwidget and set the widget as it's widget
+                    self.factory.ui.listWidget.addItem(self.item)
+                    self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
+                    # add the list item to the client in self.factory.clients ??
                     
                     
             else:
@@ -160,8 +154,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.doit_4.clicked.connect(lambda: self._onDoit_4()) 
         self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
         
-        self.ui.shotsgrid = FlowLayout();
-        self.ui.shots.setLayout( self.ui.shotsgrid )
         self.ui.show()
     
     #twisted
@@ -210,10 +202,34 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def _onDoit_3(self): #triggered on button click
         
         for _ in range(5):
-            label = QtWidgets.QLabel()
+                        
+            self.label1 = QtWidgets.QLabel()
+            self.label2 = QtWidgets.QLabel('client ID: test')
             myPixmap = QPixmap('./drive.png')
-            label.setPixmap(myPixmap)
-            self.ui.shotsgrid.addWidget(label)
+            self.label1.setPixmap(myPixmap)
+            
+            self.widget = QtWidgets.QWidget()
+            self.grid = QtWidgets.QGridLayout()
+            self.grid.setSpacing(4)
+            self.grid.addWidget(self.label1, 1, 0)
+            self.grid.addWidget(self.label2, 2, 0)
+            self.widget.setLayout(self.grid)
+         
+            self.item = QtWidgets.QListWidgetItem()
+            self.item.setSizeHint( QtCore.QSize( 140, 100) );
+            
+            self.ui.listWidget.addItem(self.item)
+            self.ui.listWidget.setItemWidget(self.item,self.widget)
+        
+        items = []
+        for index in xrange(self.ui.listWidget.count()):
+            items.append(self.ui.listWidget.item(index))
+        
+        
+        for item in items:
+            print item
+
+        
         
 
         
