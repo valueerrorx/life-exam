@@ -69,38 +69,17 @@ class MyServerProtocol(basic.LineReceiver):
             
             self.setLineMode()
             
-            if validate_file_md5_hash(file_path, self.file_data[3]):
+            if validate_file_md5_hash(file_path, self.file_data[3]):   #everything ok..  file received
                 self.transport.write('File was successfully transfered and saved\n')
                 self.transport.write('ENDMSG\n')
                 self.factory._log('File %s has been successfully transfered' % (filename))
                 
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
-                    os.rename(file_path, screenshot_file_path)
-                    
-                    # generate 2 labels (pixmap and id)
-                    self.label1 = QtWidgets.QLabel()
-                    self.label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
-                    self.label1.Pixmap = QPixmap(screenshot_file_path)
-                    self.label1.setPixmap(self.label1.Pixmap)
-                    # generate a widget that combines the labels
-                    self.widget = QtWidgets.QWidget()
-                    self.grid = QtWidgets.QGridLayout()
-                    self.grid.setSpacing(4)
-                    self.grid.addWidget(self.label1, 1, 0)
-                    self.grid.addWidget(self.label2, 2, 0)
-                    self.widget.setLayout(self.grid)
-                    #generate a listitem
-                    self.item = QtWidgets.QListWidgetItem()
-                    self.item.setSizeHint( QtCore.QSize( 140, 100) );
-                    self.item.id = self.transport.client[1]   #store clientID as itemID for later use (delete event)
-                    # add the listitem to the factorys listwidget and set the widget as it's widget
-                    self.factory.ui.listWidget.addItem(self.item)
-                    self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
-                    # add the list item to the client in self.factory.clients ??
-                    
-                    
-            else:
+                    os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
+                    self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+
+            else:   # wrong file hash
                 os.unlink(file_path)
                 self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
                 self.transport.write('ENDMSG\n')
@@ -117,8 +96,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return 
-        
-        
+
         if line.startswith('FILETRANSFER'):
             # Received a file name and hash, client is sending us a file
             trigger = self.file_data[0]
@@ -128,8 +106,30 @@ class MyServerProtocol(basic.LineReceiver):
             
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
-
-
+    
+    
+    
+    def _createListItem(self,screenshot_file_path):
+        """generates new listitem that displays the clientscreenshot"""
+       
+        self.label1 = QtWidgets.QLabel()
+        self.label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
+        self.label1.Pixmap = QPixmap(screenshot_file_path)
+        self.label1.setPixmap(self.label1.Pixmap)
+        # generate a widget that combines the labels
+        self.widget = QtWidgets.QWidget()
+        self.grid = QtWidgets.QGridLayout()
+        self.grid.setSpacing(4)
+        self.grid.addWidget(self.label1, 1, 0)
+        self.grid.addWidget(self.label2, 2, 0)
+        self.widget.setLayout(self.grid)
+        #generate a listitem
+        self.item = QtWidgets.QListWidgetItem()
+        self.item.setSizeHint( QtCore.QSize( 140, 100) );
+        self.item.id = self.transport.client[1]   #store clientID as itemID for later use (delete event)
+        # add the listitem to the factorys listwidget and set the widget as it's widget
+        self.factory.ui.listWidget.addItem(self.item)
+        self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
 
 
 
@@ -201,39 +201,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onDoit_3(self): #triggered on button click
-        
-        for _ in range(5):
-                        
-            self.label1 = QtWidgets.QLabel()
-            self.label2 = QtWidgets.QLabel('client ID: test')
-            myPixmap = QPixmap('./drive.png')
-            self.label1.setPixmap(myPixmap)
-            
-            self.widget = QtWidgets.QWidget()
-            self.grid = QtWidgets.QGridLayout()
-            self.grid.setSpacing(4)
-            self.grid.addWidget(self.label1, 1, 0)
-            self.grid.addWidget(self.label2, 2, 0)
-            self.widget.setLayout(self.grid)
-         
-            self.item = QtWidgets.QListWidgetItem()
-            self.item.setSizeHint( QtCore.QSize( 140, 100) );
-            
-            self.ui.listWidget.addItem(self.item)
-            self.ui.listWidget.setItemWidget(self.item,self.widget)
-        
-        items = []
-        for index in xrange(self.ui.listWidget.count()):
-            items.append(self.ui.listWidget.item(index))
-        
-        
-        for item in items:
-            print item
-
-        
-        
-
-        
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
             i.sendLine("Welcome")
