@@ -165,6 +165,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
     def _onDoit_1(self):
         """send a file to all clients"""
+        if not self.clients:
+            self._log("no clients connected")
+            return
+        
         for i in self.clients:
             try:
                 filename = "serverfile.txt"
@@ -194,40 +198,53 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
     def _onDoit_2(self): #triggered on button click
         """get the same file from all clients"""
+        if not self.clients:
+            self._log("no clients connected")
+            return
+        
         self._log("getting a file")
         for i in self.clients:
             i.sendLine("FILETRANSFER SEND FILE clientfile.txt none")    #trigger clienttask type filename filehash
+        
 
 
 
     def _onDoit_3(self): #triggered on button click
+        if not self.clients:
+            self._log("no clients connected")
+            return
+        
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
             i.sendLine("Welcome")
             i.sendLine("to")
             i.sendLine("this session!")
             i.sendLine('ENDMSG')   #leert den line buffer des clients
-
-
+       
 
     def _onDoit_4(self):
-        if self.clients:
-            print "------------------------"
-            pp = pprint.PrettyPrinter(indent=4)
-            pp.pprint(self.clients[0].__dict__)
-            print "------------------------"
-            pp.pprint(self.clients[0].transport.__dict__)
-        else:
+        if not self.clients:
+            self._log("no clients connected")
             return
-
+        
+       
+        print "------------------------"
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(self.clients[0].__dict__)
+        print "------------------------"
+        pp.pprint(self.clients[0].transport.__dict__)
+       
 
     
     def _onDoit_5(self):
+        if not self.clients:
+            self._log("no clients connected")
+            return
+       
         self._log("getting screenshot")
         for i in self.clients:
             i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
-        return
-
+       
 
 
     def _onAbbrechen(self):    # Exit button
