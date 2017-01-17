@@ -87,13 +87,13 @@ class MyClientProtocol(basic.LineReceiver):
                     self._sendFile(filename, filetype)
                 elif filetype == 'FOLDER':
                     self.factory.files = get_file_list(self.factory.files_path)
-                    if filename in self.factory.files:
+                    if filename in self.factory.files:  # if folder exists
                         folder_files = get_file_list(self.factory.files[filename][0])
                         self.setLineMode() 
                         self.sendLine('client is sending folder') 
-                        for singlefile in folder_files:
-                            self._sendFile(singlefile, filetype)
-                        return
+                        # this is not working.. probably ZIP the folder and send as one file
+                        # then unzip on the serverside
+                        # FIXME
                     else:
                         return
             elif task == 'GET':

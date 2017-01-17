@@ -232,10 +232,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
         self._log('I schick an text.. mit ENDMSG')
         for i in self.clients:
-            i.sendLine("Send")
-            i.sendLine("all")
-            i.sendLine("files from folder!")
-            i.sendLine('ENDMSG')   #leert den line buffer des clients
             i.sendLine("FILETRANSFER SEND FOLDER screenshots none")
        
 
