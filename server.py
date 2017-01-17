@@ -8,6 +8,8 @@ import ipaddress
 import datetime
 import pprint
 import sip
+import shutil
+import zipfile
 
 from twisted.internet import protocol
 from twisted.protocols import basic
@@ -21,6 +23,9 @@ from PyQt5.QtGui import *
 SERVER_PORT = 5000
 FILES_DIRECTORY = "./FILESSERVER/"
 SCREENSHOT_DIRECTORY = "./FILESSERVER/screenshots"
+UNZIP_DIRECTORY = "./FILESSERVER/unzip"
+ZIP_DIRECTORY = "./FILESSERVER/zip"
+
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -34,6 +39,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.clients.append(self)  # only the factory (MyServerFactory) is the persistent thing.. therefore we save the clients ( MyServerProtocol object) on factory.clients
         self.file_handler = None
         self.file_data = ()
+        self.clientID = str(self.transport.client[1])
         self.factory._log('Client connected..')
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
@@ -42,9 +48,8 @@ class MyServerProtocol(basic.LineReceiver):
     
     #twisted
     def connectionLost(self, reason):
-        clientID = self.transport.client[1]
         self.factory.clients.remove(self)
-        self.factory._deleteClientScreenshot(clientID)
+        self.factory._deleteClientScreenshot(self.clientID)
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
@@ -54,7 +59,6 @@ class MyServerProtocol(basic.LineReceiver):
     def rawDataReceived(self, data):
         filename = self.file_data[2]
         file_path = os.path.join(self.factory.files_path, filename)
-        
         self.factory._log('Receiving file chunk (%d KB)' % (len(data)))
         
         if not self.file_handler:
@@ -66,7 +70,6 @@ class MyServerProtocol(basic.LineReceiver):
             self.file_handler.write(data)
             self.file_handler.close()
             self.file_handler = None
-            
             self.setLineMode()
             
             if validate_file_md5_hash(file_path, self.file_data[3]):   #everything ok..  file received
@@ -78,6 +81,15 @@ class MyServerProtocol(basic.LineReceiver):
                     screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+                
+                elif self.file_data[1] == "FOLDER":
+                    extract_dir = os.path.join(UNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters
+                    #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    with zipfile.ZipFile(file_path,"r") as zip_ref:
+                        zip_ref.extractall(extract_dir)
+                   
+                  
+                    
 
             else:   # wrong file hash
                 os.unlink(file_path)
@@ -117,12 +129,12 @@ class MyServerProtocol(basic.LineReceiver):
         
         existingItem = False
         for item in items:
-            if item.id == self.transport.client[1]:
+            if item.id == self.clientID:
                 existingItem = item   #there should be only one matching item
     
         
         self.label1 = QtWidgets.QLabel()
-        self.label2 = QtWidgets.QLabel('client ID: %s' %(str(self.transport.client[1])) )
+        self.label2 = QtWidgets.QLabel('client ID: %s' %(self.clientID) )
         self.label1.Pixmap = QPixmap(screenshot_file_path)
         self.label1.setPixmap(self.label1.Pixmap)
         # generate a widget that combines the labels
@@ -140,7 +152,7 @@ class MyServerProtocol(basic.LineReceiver):
         else:
             self.item = QtWidgets.QListWidgetItem()
             self.item.setSizeHint( QtCore.QSize( 140, 100) );
-            self.item.id = self.transport.client[1]   #store clientID as itemID for later use (delete event)
+            self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
             
         
         # add the listitem to the factorys listwidget and set the widget as it's widget
@@ -230,9 +242,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
         
-        self._log('I schick an text.. mit ENDMSG')
+        self._log('Client Folder zB. ABGABE holen')
         for i in self.clients:
-            i.sendLine("FILETRANSFER SEND FOLDER screenshots none")
+            folder = "screenshots"
+            i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
        
 
     def _onDoit_4(self):
@@ -240,10 +253,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
         
-        print "------------------------"
+        print("------------------------")
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(self.clients[0].__dict__)
-        print "------------------------"
+        print("------------------------")
         pp.pprint(self.clients[0].transport.__dict__)
        
 

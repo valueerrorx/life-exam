@@ -13,6 +13,8 @@ SERVER_IP = "localhost"
 SERVER_PORT = 5000
 FILES_DIRECTORY = "./FILESCLIENT/"
 SCREENSHOT_DIRECTORY = "./FILESCLIENT/screenshots"
+UNZIP_DIRECTORY = "./FILESCLIENT/unzip"
+ZIP_DIRECTORY = "./FILESCLIENT/zip"
 
 
 
@@ -28,13 +30,13 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
-        print 'Connected to the server'
+        print('Connected to the server')
 
     #twisted
     def connectionLost(self, reason):
         self.file_handler = None
         self.file_data = ()
-        print 'Connection to the server has been lost'
+        print('Connection to the server has been lost')
         self._showDesktopMessage('Connection to the server has been lost')
         #reactor.stop()  #this would terminate the connection - even if ReconnectingClientFactory would normally try to re-establish the connection
 
@@ -43,7 +45,7 @@ class MyClientProtocol(basic.LineReceiver):
         filename = self.file_data[3]
         file_path = os.path.join(self.factory.files_path, filename)
         
-        print 'Receiving file chunk (%d KB)' % (len(data))
+        print('Receiving file chunk (%d KB)' % (len(data)) )
         
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
@@ -58,10 +60,10 @@ class MyClientProtocol(basic.LineReceiver):
             self.file_handler = None
             
             if validate_file_md5_hash(file_path, self.file_data[4]):
-                print 'File %s has been successfully transfered and saved' % (filename)
+                print('File %s has been successfully transfered and saved' % (filename) )
             else:
                 os.unlink(file_path)
-                print 'File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename)
+                print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename) )
         else:
             self.file_handler.write(data)
 
@@ -86,14 +88,24 @@ class MyClientProtocol(basic.LineReceiver):
                 if filetype == 'FILE' or filetype == 'SHOT':
                     self._sendFile(filename, filetype)
                 elif filetype == 'FOLDER':
+                    
+                   
                     self.factory.files = get_file_list(self.factory.files_path)
+                   
                     if filename in self.factory.files:  # if folder exists
-                        folder_files = get_file_list(self.factory.files[filename][0])
+                        target_folder = self.factory.files[filename][0] #get full path
+                        output_filename = os.path.join(ZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
+                       
+                        shutil.make_archive(output_filename, 'zip', target_folder)
+                        
                         self.setLineMode() 
                         self.sendLine('client is sending folder') 
-                        # this is not working.. probably ZIP the folder and send as one file
-                        # then unzip on the serverside
-                        # FIXME
+                        
+                        output_filename = "%s.zip" %(filename)
+                       
+                        
+                        self._sendFile(output_filename, filetype)
+                     
                     else:
                         return
             elif task == 'GET':
@@ -112,7 +124,6 @@ class MyClientProtocol(basic.LineReceiver):
 
         if filetype == 'SHOT': 
             command = "./scripts/screenshot.sh %s" %(filename)
-            print  command
             os.system(command)
             
         self.factory.files = get_file_list(self.factory.files_path)  #should probably be generated every time .. in case something changes in the directory
@@ -129,6 +140,11 @@ class MyClientProtocol(basic.LineReceiver):
             self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
             self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
+        elif filetype == 'FOLDER':
+            self.transport.write('FILETRANSFER FOLDER %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
+        else:
+            return
+        
         
         self.setRawMode()
         
@@ -168,7 +184,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         return MyClientProtocol(self) 
 
 if __name__ == '__main__':
-    print 'Client started, incoming files will be saved to %s' % (FILES_DIRECTORY)
+    print('Client started, incoming files will be saved to %s' % (FILES_DIRECTORY) )
     reactor.connectTCP(SERVER_IP, SERVER_PORT, MyClientFactory(FILES_DIRECTORY))
     reactor.run()    
 
