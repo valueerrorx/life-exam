@@ -14,17 +14,14 @@ import zipfile
 from twisted.internet import protocol
 from twisted.protocols import basic
 from common import *
+from config import *
 
 from PyQt5 import uic, QtWidgets,QtCore
 from PyQt5.QtGui import *
 
 
 
-SERVER_PORT = 5000
-FILES_DIRECTORY = "./FILESSERVER/"
-SCREENSHOT_DIRECTORY = "./FILESSERVER/screenshots"
-UNZIP_DIRECTORY = "./FILESSERVER/unzip"
-ZIP_DIRECTORY = "./FILESSERVER/zip"
+
 
 
 class MyServerProtocol(basic.LineReceiver):
@@ -64,8 +61,7 @@ class MyServerProtocol(basic.LineReceiver):
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
         
-        if data.endswith('\r\n'):
-            # Last chunk
+        if data.endswith('\r\n'): # Last chunk
             data = data[:-2]
             self.file_handler.write(data)
             self.file_handler.close()
@@ -73,23 +69,18 @@ class MyServerProtocol(basic.LineReceiver):
             self.setLineMode()
             
             if validate_file_md5_hash(file_path, self.file_data[3]):   #everything ok..  file received
-                self.transport.write('File was successfully transfered and saved\n')
-                self.transport.write('ENDMSG\n')
                 self.factory._log('File %s has been successfully transfered' % (filename))
                 
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
-                    screenshot_file_path = os.path.join(SCREENSHOT_DIRECTORY, filename)
+                    screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                 
                 elif self.file_data[1] == "FOLDER":
-                    extract_dir = os.path.join(UNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters
-                    #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    extract_dir = os.path.join(SERVERUNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
                         zip_ref.extractall(extract_dir)
-                   
-                  
-                    
+                    os.unlink(file_path)   #delete zip file
 
             else:   # wrong file hash
                 os.unlink(file_path)
@@ -131,7 +122,6 @@ class MyServerProtocol(basic.LineReceiver):
         for item in items:
             if item.id == self.clientID:
                 existingItem = item   #there should be only one matching item
-    
         
         self.label1 = QtWidgets.QLabel()
         self.label2 = QtWidgets.QLabel('client ID: %s' %(self.clientID) )
@@ -145,7 +135,6 @@ class MyServerProtocol(basic.LineReceiver):
         self.grid.addWidget(self.label2, 2, 0)
         self.widget.setLayout(self.grid)
         
-        
         #generate a listitem
         if existingItem:
             self.item = existingItem
@@ -154,7 +143,6 @@ class MyServerProtocol(basic.LineReceiver):
             self.item.setSizeHint( QtCore.QSize( 140, 100) );
             self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
             
-        
         # add the listitem to the factorys listwidget and set the widget as it's widget
         self.factory.ui.listWidget.addItem(self.item)
         self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
@@ -171,7 +159,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files_path = files_path
         self.clients = []  #store all client connections in this array
         self.files = None
-        deleteFolderContent(SCREENSHOT_DIRECTORY)
+        deleteFolderContent(SERVERSCREENSHOT_DIRECTORY)
         
         QtWidgets.QDialog.__init__(self)
         self.ui = uic.loadUi("teacher.ui")        # load UI
@@ -244,9 +232,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
         self._log('Client Folder zB. ABGABE holen')
         for i in self.clients:
-            folder = "screenshots"
-            i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
-       
+            # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
+            filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+            i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
 
     def _onDoit_4(self):
         if not self.clients:
@@ -299,8 +287,8 @@ if __name__ == '__main__':
     qt5reactor.install()   # imported from file and needed for Qt to function properly in combination with twisted reactor
     
     from twisted.internet import reactor
-    print ('Listening on port %d, serving files from directory: %s' % (SERVER_PORT, FILES_DIRECTORY))
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(FILES_DIRECTORY))  # start the server on SERVER_PORT
+    print ('Listening on port %d, serving files from directory: %s' % (SERVER_PORT, SERVERFILES_DIRECTORY))
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
     reactor.run()
 
 
