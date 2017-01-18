@@ -153,7 +153,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         return MyClientProtocol(self) 
 
 if __name__ == '__main__':
-    print('Client started, incoming files will be saved to %s' % (CLIENTFILES_DIRECTORY) )
+    print('Connecting to %s on port %s' % (SERVER_IP, SERVER_PORT) )
     reactor.connectTCP(SERVER_IP, SERVER_PORT, MyClientFactory(CLIENTFILES_DIRECTORY))
     reactor.run()    
 

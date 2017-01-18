@@ -56,7 +56,7 @@ class MyServerProtocol(basic.LineReceiver):
     def rawDataReceived(self, data):
         filename = self.file_data[2]
         file_path = os.path.join(self.factory.files_path, filename)
-        self.factory._log('Receiving file chunk (%d KB)' % (len(data)))
+        self.factory._log('Receiving file chunk (%d KB)' % (len(data)/1024))
         
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
@@ -279,7 +279,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
         for item in items:
             if clientID == item.id:
-                sip.delete(item)   #delete all ocurrances of this screenshotitem 
+                sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
 
 
 if __name__ == '__main__':
@@ -287,7 +287,7 @@ if __name__ == '__main__':
     qt5reactor.install()   # imported from file and needed for Qt to function properly in combination with twisted reactor
     
     from twisted.internet import reactor
-    print ('Listening on port %d, serving files from directory: %s' % (SERVER_PORT, SERVERFILES_DIRECTORY))
+    print ('Listening on port %d' % (SERVER_PORT))
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
     reactor.run()
 
