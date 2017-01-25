@@ -225,16 +225,59 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
+    #def _onDoit_3(self): #triggered on button click
+        #if not self.clients:
+            #self._log("no clients connected")
+            #return
+        
+        #self._log('Client Folder zB. ABGABE holen')
+        #for i in self.clients:
+            ## i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
+            #filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+            #i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
+
+
+
     def _onDoit_3(self): #triggered on button click
         if not self.clients:
             self._log("no clients connected")
             return
         
-        self._log('Client Folder zB. ABGABE holen')
+        self._log('Server Folder examonfig senden')
+        target_folder = EXAMCONFIG_DIRECTORY
+        filename = "examconfig"
+        output_filename = os.path.join(SERVERZIP_DIRECTORY,filename )
+        shutil.make_archive(output_filename, 'zip', target_folder)
+        filename = "%s.zip" %(filename)
+        
+        
         for i in self.clients:
-            # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
-            filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
-            i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
+  
+            self.files = get_file_list(self.files_path)
+                
+            if not filename in self.files:
+                self.log('filename not found in directory')
+                return
+            
+            self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
+            
+            i.transport.write('FILETRANSFER GET FOLDER %s %s\n' % (filename, self.files[filename][2]))  #trigger clienttask type filename filehash
+            i.setRawMode()
+            print self.files[filename][0]
+            for bytes in read_bytes_from_file(self.files[filename][0]):
+                i.transport.write(bytes)
+            
+            i.transport.write('\r\n')
+            i.setLineMode() 
+
+
+
+
+
+
+
+
+
 
     def _onDoit_4(self):
         if not self.clients:

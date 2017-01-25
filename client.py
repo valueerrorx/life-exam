@@ -4,6 +4,8 @@
 
 import os
 import shutil
+import zipfile
+
 from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
 from common import *
@@ -53,6 +55,15 @@ class MyClientProtocol(basic.LineReceiver):
             
             if validate_file_md5_hash(file_path, self.file_data[4]):
                 print('File %s has been successfully transfered and saved' % (filename) )
+                
+                
+                if self.file_data[2] == "FOLDER":
+                    extract_dir = os.path.join(CLIENTUNZIP_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    with zipfile.ZipFile(file_path,"r") as zip_ref:
+                        zip_ref.extractall(extract_dir)
+                    os.unlink(file_path)   #delete zip file
+                
+                
             else:
                 os.unlink(file_path)
                 print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename) )
