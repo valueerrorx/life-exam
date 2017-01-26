@@ -67,7 +67,7 @@ immutability=1
 plugin=org.kde.plasma.icon
 
 [Containments][8][Applets][84][Configuration][General]
-url=/home/student/.local/share/applications/Lock Desktop-3.desktop
+url=/home/student/.life/EXAM/scripts/stopexam.desktop
 
 [Containments][8][Applets][87]
 immutability=1

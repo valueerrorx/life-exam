@@ -1,6 +1,10 @@
 #!/bin/bash
-# last updated: 28.11.2016
+# last updated: 26.01.2017
  
+ 
+# SERVER FILE #
+
+
 
 IP=$(ip route get 1 | awk '{print $NF;exit}')
 

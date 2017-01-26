@@ -1,14 +1,13 @@
 #!/bin/bash
+# last updated: 26.01.2017
 
+# SERVER FILE #
 
+CONFIGDIR="./FILESSERVER/EXAMCONFIG"
+BACKUPDIR="./FILESSERVER/EXAMCONFIG/unlockedbackup"
+LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
 
-CONFIGDIR="../FILESSERVER/EXAMCONFIG"
-BACKUPDIR="../FILESSERVER/EXAMCONFIG/unlockedbackup"
-LOCKDOWNDIR="../FILESSERVER/EXAMCONFIG/lockdown"
-IPSFILE="EXAM-A-IPS.DB"
   
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"   ##get script directory
 
 
 if [ "$(id -u)" != "0" ]; then

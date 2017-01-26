@@ -1,13 +1,15 @@
 #!/bin/bash
-# last updated: 28.11.2016
+# last updated: 26.01.2017
 # loads exam desktop configuration
-# loads NORMAL Mode - only desktop configuration is adjustable - no firewall exceptions - no root password necessary
+
+# CLIENT FILE #
 
 
+IPSFILE="./FILESCLIENT/EXAMCONFIG/EXAM-A-IPS.DB"
+CONFIGDIR="./FILESCLIENT/EXAMCONFIG"
+BACKUPDIR="./FILESCLIENT/EXAMCONFIG/unlockedbackup"
+LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
 
-BACKUPDIR="./unlockedbackup"
-LOCKDOWNDIR="./lockdown"
-IPSFILE="EXAM-A-IPS.DB"
   
 
 
@@ -22,7 +24,7 @@ if [ -f "/etc/kde5rc" ];then
     exit 1
 fi
 
-if [ -f "/home/student/.kde/life-resources/scripts/exam/exam" ];then
+if [ -f "${CONFIGDIR}/exam" ];then
     kdialog  --msgbox 'Already running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     sleep 2
     exit 1
@@ -166,7 +168,7 @@ setIPtables
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
-cp auto-screenshot.sh /home/student/.config/autostart-scripts
+cp ${CONFIGDIR}/auto-screenshot.sh /home/student/.config/autostart-scripts
 
 
 

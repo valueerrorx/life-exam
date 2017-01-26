@@ -1,9 +1,10 @@
 #!/bin/bash
-# last updated: 15.12.2016
+# last updated: 26.01.2017
 
-EXAMFILE="/home/student/.kde/life-resources/scripts/exam/EXAM-A-IPS.DB"
-  
+# SERVER FILE #
 
+
+IPSFILE="./FILESSERVER/EXAMCONFIG/EXAM-A-IPS.DB"
 
  
  
@@ -14,9 +15,9 @@ setIPtables(){
     sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
   
   
-    if [ -f $EXAMFILE ]; then
+    if [ -f $IPSFILE ]; then
         #allow input and output for ALLOWEDIP
-        for IP in `cat $EXAMFILE`; do
+        for IP in `cat $IPSFILE`; do
             echo "exception noticed $IP"
             sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
             sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT

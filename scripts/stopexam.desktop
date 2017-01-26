@@ -2,13 +2,13 @@
 [Desktop Entry]
 Comment[de_DE]=
 Comment=
-Exec=lifesudo /home/student/.life/EXAM/scripts/stopexam-configuration-root.sh
+Exec=lifesudo /home/student/.life/EXAM/scripts/stopexam.sh
 GenericName[de_DE]=
 GenericName=
 Icon=org.kde.plasma.frame
 MimeType=
-Name[de_DE]=Prüfungsumgebung speichern
-Name=Prüfungsumgebung speichern
+Name[de_DE]=Stoppe Prüfungsumgebung
+Name=Stoppe Prüfungsumgebung
 Path=
 StartupNotify=true
 Terminal=false

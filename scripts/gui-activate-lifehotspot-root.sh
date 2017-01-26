@@ -1,7 +1,8 @@
 #!/bin/bash
-# last updated: 13.12.2016
+# last updated: 26.01.2017
 
-BACKUPDIRADVANCED="/home/student/.kde/life-resources/backup-exam"
+# SERVER FILE #
+
 CONFDIR="/etc/NetworkManager/system-connections/"
 CONFFILE="/etc/NetworkManager/system-connections/lifespot"
 PUBLIC="/home/student/ABGABE"
@@ -145,5 +146,5 @@ kdialog  --msgbox "Deine wlan IP Adresse lautet:\n\n$IP" --title 'LIFE' --captio
 #-----------------------------------------------------#
 
 
-lifesudo $DIR/gui-activate-life-share-root.sh &
+# lifesudo $DIR/gui-activate-life-share-root.sh &
 

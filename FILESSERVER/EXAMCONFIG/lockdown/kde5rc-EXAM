@@ -33,7 +33,7 @@ shell_access=false
 
 
 [KDE URL Restrictions][$i]
-rule_count=12
+rule_count=14
 rule_1=open,,,,file,,,false
 rule_2=list,,,,file,,,false
 
@@ -51,3 +51,6 @@ rule_10=list,,,,file,,$TMP,true
 
 rule_11=open,,,,file,,$HOME/.kde/life-resources/,true
 rule_12=list,,,,file,,$HOME/.kde/life-resources/,true
+
+rule_13=open,,,,file,,$HOME/.life/,true
+rule_14=list,,,,file,,$HOME/.life/,true

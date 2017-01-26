@@ -1,14 +1,13 @@
 #!/bin/bash
-# last updated: 28.11.2016
+# last updated: 26.01.2017
 # restores default desktop configuration after saving (or not saving) exam konfiguration
 
+# SERVER FILE #
 
-CONFIGDIR="../FILESSERVER/EXAMCONFIG"
-BACKUPDIR="../FILESSERVER/EXAMCONFIG/unlockedbackup"
-LOCKDOWNDIR="../FILESSERVER/EXAMCONFIG/lockdown"
-IPSFILE="EXAM-A-IPS.DB"
-  
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"   ##get script directory
+
+CONFIGDIR="./FILESSERVER/EXAMCONFIG"
+BACKUPDIR="./FILESSERVER/EXAMCONFIG/unlockedbackup"
+LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
 
 
 

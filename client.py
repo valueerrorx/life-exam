@@ -5,6 +5,7 @@
 import os
 import shutil
 import zipfile
+import time
 
 from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
@@ -64,8 +65,15 @@ class MyClientProtocol(basic.LineReceiver):
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
                         zip_ref.extractall(extract_dir)
                     os.unlink(file_path)   #delete zip file
+                    time.sleep(2)
                     
-                    ## FIXME run the "startexam.sh" file from the zip with the configuration from the zip now !
+                    startcommand = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)
+                    os.system(startcommand)
+                    
+                    if SERVER_IP != "localhost":   #testClient running on the same machine
+                        startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)
+                        print startcommand
+                        os.system(startcommand)
                 
             else:
                 os.unlink(file_path)

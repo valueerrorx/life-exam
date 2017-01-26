@@ -1,12 +1,13 @@
 #!/bin/bash
-# last updated: 24.13.2017
+# last updated: 26.01.2017
 # prüfungsumgebung beenden normale konfiguration wiederherstellen
 
+# CLIENT FILE #
 
-BACKUPDIR="./unlockedbackup"
-LOCKDOWNDIR="./lockdown"
-IPSFILE="EXAM-A-IPS.DB"
-  
+
+BACKUPDIR="./FILESCLIENT/EXAMCONFIG/unlockedbackup"
+LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
+
 
 
 if [ "$(id -u)" != "0" ]; then
