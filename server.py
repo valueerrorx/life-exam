@@ -166,11 +166,16 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.setWindowIcon(QIcon("drive.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.doit_1.clicked.connect(lambda: self._onDoit_1())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
-        self.ui.doit_2.clicked.connect(lambda: self._onDoit_2())    #button y
-        self.ui.doit_3.clicked.connect(lambda: self._onDoit_3()) 
-        self.ui.doit_4.clicked.connect(lambda: self._onDoit_4()) 
+        self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
+        self.ui.abgabe.clicked.connect(lambda: self._onAbgabe()) 
         self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
         
+        self.ui.startexam.clicked.connect(self._onStartExam) 
+        self.ui.starthotspot.clicked.connect(self._onStartHotspot) 
+        self.ui.startconfig.clicked.connect(self._onStartConfig)
+        self.ui.testfirewall.clicked.connect(self._onTestFirewall)
+        
+        checkFirewall()  #deactivates all iptable rules if any
         self.ui.show()
     
     #twisted
@@ -212,84 +217,31 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
-    def _onDoit_2(self): #triggered on button click
-        """get the same file from all clients"""
+    def _onShowIP(self): 
+        startcommand = "exec ./scripts/gui-getmyip.sh &"
+        os.system(startcommand) 
+        
+        
+        
+
+
+    # GET FOLDER #
+    def _onAbgabe(self): #triggered on button click
         if not self.clients:
             self._log("no clients connected")
             return
         
-        self._log("getting a file")
+        self._log('Client Folder zB. ABGABE holen')
         for i in self.clients:
-            i.sendLine("FILETRANSFER SEND FILE clientfile.txt none")    #trigger clienttask type filename filehash
-        
+            # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
+            filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+            i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
 
 
 
-    #def _onDoit_3(self): #triggered on button click
-        #if not self.clients:
-            #self._log("no clients connected")
-            #return
-        
-        #self._log('Client Folder zB. ABGABE holen')
-        #for i in self.clients:
-            ## i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
-            #filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
-            #i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
-
-
-
-    def _onDoit_3(self): #triggered on button click
-        if not self.clients:
-            self._log("no clients connected")
-            return
-        
-        self._log('Server Folder examonfig senden')
-        target_folder = EXAMCONFIG_DIRECTORY
-        filename = "examconfig"
-        output_filename = os.path.join(SERVERZIP_DIRECTORY,filename )
-        shutil.make_archive(output_filename, 'zip', target_folder)
-        filename = "%s.zip" %(filename)
-        
-        
-        for i in self.clients:
-  
-            self.files = get_file_list(self.files_path)
-                
-            if not filename in self.files:
-                self.log('filename not found in directory')
-                return
-            
-            self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
-            
-            i.transport.write('FILETRANSFER GET FOLDER %s %s\n' % (filename, self.files[filename][2]))  #trigger clienttask type filename filehash
-            i.setRawMode()
-            print self.files[filename][0]
-            for bytes in read_bytes_from_file(self.files[filename][0]):
-                i.transport.write(bytes)
-            
-            i.transport.write('\r\n')
-            i.setLineMode() 
-
-
-
-
-
-
-
-
-
-
-    def _onDoit_4(self):
-        if not self.clients:
-            self._log("no clients connected")
-            return
-        
-        print("------------------------")
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(self.clients[0].__dict__)
-        print("------------------------")
-        pp.pprint(self.clients[0].transport.__dict__)
-       
+    def _onStartHotspot(self):
+        startcommand = "exec ./scripts/gui-activate-lifehotspot-root.sh &"
+        os.system(startcommand) 
 
     
     def _onDoit_5(self):
@@ -301,6 +253,86 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         for i in self.clients:
             i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
        
+
+
+    #SEND EXAM CONFIG#
+    def _onStartExam(self): 
+        """ 
+        ZIP examconfig folder
+        send configuration-zip to clients - unzip there
+        invoke startexam.sh file on clients 
+        
+        """
+        
+        if not self.clients:
+            self._log("no clients connected")
+            return
+        
+        self._log('Server Folder examonfig senden')
+        target_folder = SERVER_EXAMCONFIG_DIRECTORY     
+        filename = "EXAMCONFIG"
+        output_filename = os.path.join(SERVERZIP_DIRECTORY,filename )
+        shutil.make_archive(output_filename, 'zip', target_folder)
+        filename = "%s.zip" %(filename)
+        
+        for i in self.clients:
+            self.files = get_file_list(self.files_path)
+            if not filename in self.files:
+                self.log('filename not found in directory')
+                return
+            
+            self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
+            
+            i.transport.write('FILETRANSFER GET EXAM %s %s\n' % (filename, self.files[filename][2]))  #trigger clienttask type filename filehash
+            i.setRawMode()
+            print self.files[filename][0]
+            for bytes in read_bytes_from_file(self.files[filename][0]):
+                i.transport.write(bytes)
+            
+            i.transport.write('\r\n')
+            i.setLineMode() 
+
+
+
+    def _onTestFirewall(self):
+        ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+        openedexamfile = open(ipstore, 'w+')  #erstelle die datei neu
+    
+        if self.ui.testfirewall.text() == "&Stoppe Firewall":
+            os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
+            os.system("./scripts/exam-firewall.sh stop &") 
+            self.ui.testfirewall.setText("Firewall testen")
+
+            ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
+            for i in ipfields:
+                palettedefault = i.palette()
+                palettedefault.setColor(QPalette.Active, QPalette.Base, QColor(255, 255, 255))
+                i.setPalette(palettedefault)
+            
+            
+        elif self.ui.testfirewall.text() == "&Firewall testen":
+            ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
+            for i in ipfields:
+                ip = i.text()
+                if checkIP(ip):
+                    thisexamfile = open(ipstore, 'a+')   #anhängen
+                    thisexamfile.write("%s\n" % ip)
+                else:
+                    if ip !="":
+                        palettewarn = i.palette()
+                        palettewarn.setColor(i.backgroundRole(), QColor(200, 80, 80))
+                        #palettewarn.setColor(QPalette.Active, QPalette.Base, QColor(200, 80, 80))
+                        i.setPalette(palettewarn)
+            
+            os.system("kdialog --passivepopup 'Die Firewall wird aktiviert!' 3 2> /dev/null & ")
+            os.system("./scripts/exam-firewall.sh start &") 
+            self.ui.testfirewall.setText("Stoppe Firewall")
+
+
+    def _onStartConfig(self):
+        startcommand = "exec ./scripts/exam-initialize-config.sh &"
+        os.system(startcommand) 
+        self.ui.close()
 
 
     def _onAbbrechen(self):    # Exit button

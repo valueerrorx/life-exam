@@ -21,7 +21,9 @@ class MyClientProtocol(basic.LineReceiver):
         self.delimiter = '\n'
         deleteFolderContent(CLIENTSCREENSHOT_DIRECTORY)
         deleteFolderContent(CLIENTZIP_DIRECTORY)
-
+        deleteFolderContent(CLIENTUNZIP_DIRECTORY)
+        deleteFolderContent(CLIENT_EXAMCONFIG_DIRECTORY)
+        
     #twisted
     def connectionMade(self):
         self.buffer = []
@@ -56,13 +58,14 @@ class MyClientProtocol(basic.LineReceiver):
             if validate_file_md5_hash(file_path, self.file_data[4]):
                 print('File %s has been successfully transfered and saved' % (filename) )
                 
-                
-                if self.file_data[2] == "FOLDER":
-                    extract_dir = os.path.join(CLIENTUNZIP_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                # initialize exam mode.. unzip and start exam 
+                if self.file_data[2] == "EXAM":   
+                    extract_dir = os.path.join(CLIENTFILES_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
                         zip_ref.extractall(extract_dir)
                     os.unlink(file_path)   #delete zip file
-                
+                    
+                    ## FIXME run the "startexam.sh" file from the zip with the configuration from the zip now !
                 
             else:
                 os.unlink(file_path)

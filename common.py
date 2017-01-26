@@ -1,6 +1,26 @@
 import hashlib
 import os
+import ipaddress
 
+
+
+
+def checkFirewall():
+    result = os.system("sudo iptables -L |grep DROP|wc -l")
+    if result != 0:
+        print "stopping ip tables"
+        os.system("./scripts/exam-firewall.sh stop &") 
+
+
+
+def checkIP(iptest):
+    try:
+        ip = ipaddress.ip_address(iptest)
+        return True
+    except ValueError:
+        return False
+    except:
+        return False
 
 
 def validate_file_md5_hash(file, original_hash):
