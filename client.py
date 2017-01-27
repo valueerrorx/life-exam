@@ -25,6 +25,13 @@ class MyClientProtocol(basic.LineReceiver):
         deleteFolderContent(CLIENTUNZIP_DIRECTORY)
         deleteFolderContent(CLIENT_EXAMCONFIG_DIRECTORY)
         
+        
+        if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
+            os.makedirs(SOURCE_DIRECTORY)
+            scriptsdirectory = os.path.join(SOURCE_DIRECTORY,"scripts/")
+            os.makedirs(scriptsdirectory)
+        shutil.copy2("./scripts/stopexam.sh", "/home/student/.life/EXAM/scripts/stopexam.sh")    #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
+        
     #twisted
     def connectionMade(self):
         self.buffer = []
@@ -67,13 +74,13 @@ class MyClientProtocol(basic.LineReceiver):
                     os.unlink(file_path)   #delete zip file
                     time.sleep(2)
                     
-                    startcommand = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)
-                    os.system(startcommand)
+                    command = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)   #make examscritp executable
+                    os.system(command)
+                    startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)      
+                    print startcommand
                     
-                    if SERVER_IP != "localhost":   #testClient running on the same machine
-                        startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)
-                        print startcommand
-                        os.system(startcommand)
+                    if SERVER_IP != "localhost":    #testClient running on the same machine
+                        os.system(startcommand)     #start script
                 
             else:
                 os.unlink(file_path)

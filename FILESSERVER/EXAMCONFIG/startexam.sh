@@ -11,8 +11,9 @@ BACKUPDIR="./FILESCLIENT/EXAMCONFIG/unlockedbackup"
 LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
 
   
-
-
+#--------------------------------#
+# Check if root and running exam #
+#--------------------------------#
 if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
@@ -41,20 +42,22 @@ sleep 0.5
 
 
 
-
-
-#create exam lockfile
+#---------------------------------#
+# CREATE EXAM LOCK FILE           #
+#---------------------------------#
 qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.5
 
-touch exam
-date > exam
+touch ${CONFIGDIR}/exam
+date > ${CONFIGDIR}/exam
 
 
 
 
-# backup current desktop config
+#---------------------------------#
+# BACKUP CURRENT DESKTOP CONFIG   #
+#---------------------------------#
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.5
@@ -73,9 +76,9 @@ cp -a /home/student/.local/share/user-places.xbel ${BACKUPDIR}
 
 
 
-
-
-#some preconfigured config files needed for a complete lockdown
+#----------------------------------------------------------------------------------#
+# LOAD COMPLETE EXAM CONFIG -  ALSO LOAD SYSTEMLOCKFILES (kde5rc, xorg.conf, etc.) #
+#----------------------------------------------------------------------------------#
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Sperre Desktop...."
 sleep 0.5
@@ -93,7 +96,9 @@ cp -a ${LOCKDOWNDIR}/kwinrc-EXAM /home/student/.config/kwinrc
 
 
 
-#mount ABGABE to /home/student/Abgabe
+#---------------------------------#
+# MOUNT ABGABE                    #
+#---------------------------------#
 qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 sleep 0.5
@@ -106,23 +111,18 @@ sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE /home/studen
 
 
 
-
-
-# fire up firewall
+#---------------------------------#
+# INITIALIZE FIREWALL             #
+#---------------------------------#
 qdbus $progress Set "" value 5
 qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
 sleep 0.5
-
-
-
 
 setIPtables(){
     #allow loopback 
     sudo iptables -I INPUT 1 -i lo -j ACCEPT
     #allow DNS
     sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-  
-  
     if [ -f $IPSFILE ]; then
         #allow input and output for ALLOWEDIP
         for IP in `cat $IPSFILE`; do
@@ -131,16 +131,13 @@ setIPtables(){
             sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
         done
     fi
-    
     #allow ESTABLISHED and RELATED (important for active server communication)
     sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
     sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
-
     #drop the rest
     sudo iptables -P INPUT DROP
     sudo iptables -P OUTPUT DROP
 }
-
 stopIPtables(){
     sudo iptables -P INPUT ACCEPT
     sudo iptables -P FORWARD ACCEPT
@@ -154,7 +151,6 @@ stopIPtables(){
     sudo iptables -t raw -F 
     sudo iptables -t raw -X
 }
-
 stopIPtables
 sleep 1
 setIPtables
@@ -162,9 +158,9 @@ setIPtables
 
 
 
-
-
-#copy autoscreenshot to autostart folder#
+#---------------------------------#
+# COPY AUTOSTART SCRIPTS          #
+#---------------------------------#
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
@@ -172,14 +168,15 @@ cp ${CONFIGDIR}/auto-screenshot.sh /home/student/.config/autostart-scripts
 
 
 
-
-
-# change mount, ip, ifup, ifconfig rights to no execute
+#--------------------------------------------------------#
+# BLOCK ADDITIONAL FEATURES (menuedit, usbmount, etc.)   #
+#--------------------------------------------------------#
 qdbus $progress Set "" value 7
 qdbus $progress setLabelText "Sperre Systemdateien...."
 sleep 0.5
 
 sudo chmod -x /usr/bin/kmenuedit   # leider ist da immernoch ein bug im kiosk system - daher muss das mit diesem workaround geschehen
+sudo chmod -x /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
 sudo chmod 700 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin
 
    
@@ -190,17 +187,12 @@ sudo chmod 700 /media/ -R   # this makes it impossible to mount anything in kubu
 
 
 
-
-
-#play sound
+#---------------------------------#
+# FINISH - RESTART X              #
+#---------------------------------#
 amixer -D pulse sset Master 90% > /dev/null 2>&1
 pactl set-sink-volume 0 90%
 paplay /usr/share/sounds/KDE-Sys-Question.ogg
-#paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
-
-
-
-
 
 qdbus $progress Set "" value 8
 qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...  
