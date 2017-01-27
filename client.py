@@ -3,6 +3,7 @@
 # STUDENT - CLIENT #
 
 import os
+import sys
 import shutil
 import zipfile
 import time
@@ -12,6 +13,11 @@ from twisted.protocols import basic
 from common import *
 from config import *
 
+
+try:
+    SERVER_IP = sys.argv[1] 
+except:
+    print "No IP Address given! Using localhost"
 
 
 
@@ -30,7 +36,9 @@ class MyClientProtocol(basic.LineReceiver):
             os.makedirs(SOURCE_DIRECTORY)
             scriptsdirectory = os.path.join(SOURCE_DIRECTORY,"scripts/")
             os.makedirs(scriptsdirectory)
-        shutil.copy2("./scripts/stopexam.sh", "/home/student/.life/EXAM/scripts/stopexam.sh")    #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
+        #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
+        shutil.copy2("./scripts/stopexam.sh", "/home/student/.life/EXAM/scripts/stopexam.sh")   
+        shutil.copy2("./scripts/stopexam.desktop", "/home/student/.life/EXAM/scripts/stopexam.desktop")
         
     #twisted
     def connectionMade(self):
@@ -76,10 +84,12 @@ class MyClientProtocol(basic.LineReceiver):
                     
                     command = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)   #make examscritp executable
                     os.system(command)
+                    time.sleep(2)
                     startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)      
-                    print startcommand
                     
-                    if SERVER_IP != "localhost":    #testClient running on the same machine
+                    if SERVER_IP == "localhost":    #testClient running on the same machine
+                        print startcommand
+                    else:
                         os.system(startcommand)     #start script
                 
             else:
@@ -156,7 +166,7 @@ class MyClientProtocol(basic.LineReceiver):
     
     def _showDesktopMessage(self,msg):
         message = "Exam Server: %s " %(msg)
-        command = "kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
+        command = "sudo -u student kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
         os.system(command)
 
 
