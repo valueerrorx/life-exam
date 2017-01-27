@@ -34,15 +34,15 @@ class MyClientProtocol(basic.LineReceiver):
         
         if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
             os.makedirs(SOURCE_DIRECTORY)
-            
         if not os.path.exists(SCRIPTS_DIRECTORY):  
             os.makedirs(SCRIPTS_DIRECTORY)
             
         #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
-        
         copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
         os.system(copycommand)
-        
+        #fix permissions
+        chowncommand = "sudo chown -R student:student %s" %(SOURCE_DIRECTORY)
+        os.system(chowncommand)
         
     #twisted
     def connectionMade(self):

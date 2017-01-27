@@ -199,7 +199,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         #make sure this script file (used to save the configuration and needed by a desktop file placed in folder ABGABE in exam-edit mode) is available 
         copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
         os.system(copycommand)
-      
+        #fix permissions
+        chowncommand = "sudo chown -R student:student %s" %(SOURCE_DIRECTORY)
+        os.system(chowncommand)
 
         self.ui.show()
     
