@@ -39,8 +39,10 @@ class MyClientProtocol(basic.LineReceiver):
             os.makedirs(SCRIPTS_DIRECTORY)
             
         #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
-        shutil.copy2("./scripts/stopexam.sh", "/home/student/.life/EXAM/scripts/stopexam.sh")   
-        shutil.copy2("./scripts/stopexam.desktop", "/home/student/.life/EXAM/scripts/stopexam.desktop")
+        
+        copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
+        os.system(copycommand)
+        
         
     #twisted
     def connectionMade(self):

@@ -197,8 +197,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             os.makedirs(SCRIPTS_DIRECTORY)
 
         #make sure this script file (used to save the configuration and needed by a desktop file placed in folder ABGABE in exam-edit mode) is available 
-        shutil.copy2("./scripts/stopexam-configuration-root.sh", "/home/student/.life/EXAM/scripts/stopexam-configuration-root.sh") 
-        
+        copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
+        os.system(copycommand)
       
 
         self.ui.show()
