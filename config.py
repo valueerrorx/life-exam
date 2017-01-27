@@ -1,8 +1,8 @@
 SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
-SOURCE_DIRECTORY="/home/waldelf/.life/EXAM" 
-SCRIPTS_DIRECTORY="/home/waldelf/.life/EXAM/scripts"
+SOURCE_DIRECTORY="/home/student/.life/EXAM" 
+SCRIPTS_DIRECTORY="/home/student/.life/EXAM/scripts"
 
 
 CLIENTFILES_DIRECTORY = "./FILESCLIENT"
