@@ -10,6 +10,9 @@ CONFIGDIR="./FILESCLIENT/EXAMCONFIG"
 BACKUPDIR="./FILESCLIENT/EXAMCONFIG/unlockedbackup"
 LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
 
+
+EXAMLOCKFILE="/home/student/.life/EXAM/exam"
+
   
 #--------------------------------#
 # Check if root and running exam #
@@ -25,7 +28,7 @@ if [ -f "/etc/kde5rc" ];then
     exit 1
 fi
 
-if [ -f "${CONFIGDIR}/exam" ];then
+if [ -f "$EXAMLOCKFILE" ];then
     kdialog  --msgbox 'Already running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     sleep 2
     exit 1
@@ -49,8 +52,8 @@ qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.5
 
-touch ${CONFIGDIR}/exam
-date > ${CONFIGDIR}/exam
+touch $EXAMLOCKFILE
+date > $EXAMLOCKFILE
 
 
 

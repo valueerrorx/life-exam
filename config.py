@@ -2,6 +2,8 @@ SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
 SOURCE_DIRECTORY="/home/student/.life/EXAM" 
+SCRIPTS_DIRECTORY="/home/student/.life/EXAM/scripts"
+
 
 CLIENTFILES_DIRECTORY = "./FILESCLIENT"
 CLIENTSCREENSHOT_DIRECTORY = "./FILESCLIENT/screenshots"

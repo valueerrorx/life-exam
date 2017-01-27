@@ -34,8 +34,10 @@ class MyClientProtocol(basic.LineReceiver):
         
         if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
             os.makedirs(SOURCE_DIRECTORY)
-            scriptsdirectory = os.path.join(SOURCE_DIRECTORY,"scripts/")
-            os.makedirs(scriptsdirectory)
+            
+        if not os.path.exists(SCRIPTS_DIRECTORY):  
+            os.makedirs(SCRIPTS_DIRECTORY)
+            
         #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
         shutil.copy2("./scripts/stopexam.sh", "/home/student/.life/EXAM/scripts/stopexam.sh")   
         shutil.copy2("./scripts/stopexam.desktop", "/home/student/.life/EXAM/scripts/stopexam.desktop")

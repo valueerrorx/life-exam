@@ -9,6 +9,7 @@ CONFIGDIR="./FILESSERVER/EXAMCONFIG"
 BACKUPDIR="./FILESSERVER/EXAMCONFIG/unlockedbackup"
 LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
 
+EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
 
 
@@ -21,7 +22,7 @@ if [ -f "/etc/kde5rc" ];then
     sleep 2
     exit 1
 fi
-if ! [ -f "${CONFIGDIR}/exam" ];then
+if ! [ -f "$EXAMLOCKFILE" ];then
     kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     sleep 2
     exit 0
@@ -88,7 +89,7 @@ fi;
 
 #remove some files
 sudo rm "/home/student/ABGABE/Speichere Prüfungsumgebung.desktop"
-sudo rm ${CONFIGDIR}/exam   #remove this file otherwise LIFE will think exam (config) is still running
+sudo rm $EXAMLOCKFILE   #remove this file otherwise LIFE will think exam (config) is still running
 
 #copy backup over original
 qdbus $progress Set "" value 2

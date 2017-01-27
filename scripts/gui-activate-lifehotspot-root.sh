@@ -5,11 +5,6 @@
 
 CONFDIR="/etc/NetworkManager/system-connections/"
 CONFFILE="/etc/NetworkManager/system-connections/lifespot"
-PUBLIC="/home/student/ABGABE"
-PUBLICIN="/home/student/ABGABE/IN"
-PUBLICOUT="/home/student/ABGABE/OUT"
-EXPORTS="/etc/exports"
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"   ##get script directory
 
 
 

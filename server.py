@@ -154,6 +154,20 @@ class MyServerProtocol(basic.LineReceiver):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def __init__(self, files_path):
         self.files_path = files_path
@@ -176,6 +190,17 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         
         checkFirewall()  #deactivates all iptable rules if any
+        
+        if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
+            os.makedirs(SOURCE_DIRECTORY)
+        if not os.path.exists(SCRIPTS_DIRECTORY):  
+            os.makedirs(SCRIPTS_DIRECTORY)
+
+        #make sure this script file (used to save the configuration and needed by a desktop file placed in folder ABGABE in exam-edit mode) is available 
+        shutil.copy2("./scripts/stopexam-configuration-root.sh", "/home/student/.life/EXAM/scripts/stopexam-configuration-root.sh") 
+        
+      
+
         self.ui.show()
     
     #twisted

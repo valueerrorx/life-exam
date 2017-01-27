@@ -7,7 +7,7 @@ CONFIGDIR="./FILESSERVER/EXAMCONFIG"
 BACKUPDIR="./FILESSERVER/EXAMCONFIG/unlockedbackup"
 LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
 
-  
+EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
 
 if [ "$(id -u)" != "0" ]; then
@@ -18,7 +18,7 @@ if [ -f "/etc/kde5rc" ];then
     kdialog  --msgbox 'Desktop is locked - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
     exit 1
 fi
-if [ -f "${CONFIGDIR}/exam" ];then
+if [ -f "$EXAMLOCKFILE" ];then
     kdialog  --msgbox 'Already running exam - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
     exit 1
 fi
@@ -98,7 +98,7 @@ sleep 1
     #---------------------------------#
     # CREATE EXAM LOCK FILE           #
     #---------------------------------#
-    touch ${CONFIGDIR}/exam
+    touch $EXAMLOCKFILE
 
 
 

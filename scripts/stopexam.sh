@@ -10,6 +10,8 @@ LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
 CONFIGDIR="./FILESCLIENT/EXAMCONFIG"
 
 
+EXAMLOCKFILE="/home/student/.life/EXAM/exam"
+
 
 #--------------------------------#
 # Check if root and running exam #
@@ -18,7 +20,7 @@ if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
 fi
-if ! [ -f "${CONFIGDIR}/exam" ];then
+if ! [ -f "$EXAMLOCKFILE" ];then
     kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     sleep 2
     exit 0
@@ -83,8 +85,8 @@ cp -a ${BACKUPDIR}/registrymodifications.xcu /home/student/.config/libreoffice/4
 cp -a ${BACKUPDIR}/user-places.xbel /home/student/.local/share/
 
 # sichere exam start und end infos
-date >> ${CONFIGDIR}/exam
-sudo cp ${CONFIGDIR}/exam /home/student/ABGABE/
+date >> $EXAMLOCKFILE
+sudo cp $EXAMLOCKFILE /home/student/ABGABE/
 sleep 0.5
 
 
