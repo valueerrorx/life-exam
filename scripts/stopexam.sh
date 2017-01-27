@@ -4,12 +4,8 @@
 
 # CLIENT FILE #
 
-# relative pfade (relativ zum python script welches dieses script aufruft)
-BACKUPDIR="./FILESCLIENT/EXAMCONFIG/unlockedbackup"  
-LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
-CONFIGDIR="./FILESCLIENT/EXAMCONFIG"
 
-
+BACKUPDIR="/home/student/.life/EXAM/unlocked-backup"  
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
 

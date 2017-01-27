@@ -5,8 +5,9 @@
 # SERVER FILE #
 
 
-CONFIGDIR="./FILESSERVER/EXAMCONFIG"
-BACKUPDIR="./FILESSERVER/EXAMCONFIG/unlockedbackup"
+
+
+BACKUPDIR="/home/student/.life/EXAM/unlocked-backup" 
 LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
 
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"

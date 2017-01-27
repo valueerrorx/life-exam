@@ -3,8 +3,8 @@
 
 # SERVER FILE #
 
-CONFIGDIR="./FILESSERVER/EXAMCONFIG"
-BACKUPDIR="./FILESSERVER/EXAMCONFIG/unlockedbackup"
+
+BACKUPDIR="/home/student/.life/EXAM/unlocked-backup" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
 
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"
@@ -33,7 +33,6 @@ fi
 progress=$(kdialog --title "EXAM Config" --caption "EXAM Config" --progressbar "Lade Prüfungsumgebung                                                               "); 
 qdbus $progress Set "" maximum 6
 sleep 0.5
-
 
     #---------------------------------#
     # BACKUP CURRENT DESKTOP CONFIG   #
@@ -74,7 +73,6 @@ qdbus $progress setLabelText "Lade Desktop Konfiguration für Prüfungsumgebung.
 qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 
-
     #---------------------------------#
     # MOUNT ABGABE                    #
     #---------------------------------#
@@ -87,7 +85,6 @@ qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGAB
 qdbus $progress Set "" value 5
 qdbus $progress setLabelText "Prüfungsumgebung vorbereitet..."
 sleep 1
-
 
     #---------------------------------#
     # CREATE SAVE CONFIG LINK         #
@@ -112,7 +109,6 @@ Starte Prüfungsdesktop in 4 Sekunden!"
 sleep 2
 sleep 2
 qdbus $progress close
-
 
     #---------------------------------#
     # RESTART DESKTOP TO EXAM DESKTOP #
