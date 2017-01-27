@@ -3,10 +3,9 @@
 
 # SERVER FILE #
 
-
-BACKUPDIR="/home/student/.life/EXAM/unlocked-backup" #absolute path in order to be accessible from all script locations
-LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
-
+# dont forget the trailing slash - otherwise shell will think its a file
+BACKUPDIR="/home/student/.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
+LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
 
@@ -39,12 +38,12 @@ sleep 0.5
     #---------------------------------#
     qdbus $progress Set "" value 1
     qdbus $progress setLabelText "Sichere aktuelle Desktop Konfiguration.... "
-    cp -Ra  /home/student/.kde/share/config/* ${BACKUPDIR}/kde.config/
-    cp -Ra  /home/student/.config/* ${BACKUPDIR}/home.config/
+    cp -Ra  /home/student/.kde/share/config/* ${BACKUPDIR}kde.config/
+    cp -Ra  /home/student/.config/* ${BACKUPDIR}home.config/
     # backup current desktop config
     qdbus $progress Set "" value 2
     qdbus $progress setLabelText "Sichere programmspezifische Konfigurationsdateien.... "
-    cp -Ra  /home/student/.local/* ${BACKUPDIR}/home.local/
+    cp -Ra  /home/student/.local/* ${BACKUPDIR}home.local/
   
 
 
@@ -60,11 +59,11 @@ qdbus $progress setLabelText "Lade Desktop Konfiguration für Prüfungsumgebung.
     #----------------------------------------------------------------------------------#
     # LOAD DEFAULT EXAM CONFIG - WITHOUT SYSTEM LOCK FILES (shortcuts, xorg, kde5rc)   #
     #----------------------------------------------------------------------------------#
-    cp -a ${LOCKDOWNDIR}/plasma-EXAM    /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc
-    cp -a ${LOCKDOWNDIR}/kwinrc-EXAM /home/student/.config/kwinrc
-    cp -a ${LOCKDOWNDIR}/Office.conf-EXAM /home/student/.config/Kingsoft/Office.conf
-    cp -a ${LOCKDOWNDIR}/registrymodifications.xcu-EXAM /home/student/.config/libreoffice/4/user/registrymodifications.xcu
-    cp -a ${LOCKDOWNDIR}/user-places.xbel-EXAM /home/student/.local/share/user-places.xbel
+    cp -a ${LOCKDOWNDIR}plasma-EXAM    /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc
+    cp -a ${LOCKDOWNDIR}kwinrc-EXAM /home/student/.config/kwinrc
+    cp -a ${LOCKDOWNDIR}Office.conf-EXAM /home/student/.config/Kingsoft/Office.conf
+    cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM /home/student/.config/libreoffice/4/user/registrymodifications.xcu
+    cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM /home/student/.local/share/user-places.xbel
 
 
 

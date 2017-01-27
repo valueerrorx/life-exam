@@ -4,13 +4,11 @@
 
 # CLIENT FILE #
 
-
+# dont forget the trailing slash - otherwise shell will think its a file
 IPSFILE="./FILESCLIENT/EXAMCONFIG/EXAM-A-IPS.DB"
-CONFIGDIR="./FILESCLIENT/EXAMCONFIG"
-BACKUPDIR="./FILESCLIENT/EXAMCONFIG/unlockedbackup"
-LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown"
-
-
+CONFIGDIR="./FILESCLIENT/EXAMCONFIG/"
+BACKUPDIR="/home/student/.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
+LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
   
@@ -86,16 +84,16 @@ qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Sperre Desktop...."
 sleep 0.5
 
-sudo cp ${LOCKDOWNDIR}/kde5rc-EXAM /etc/kde5rc
-sudo cp ${LOCKDOWNDIR}/xorg.conf /etc/X11
-sudo cp ${LOCKDOWNDIR}/IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
-sudo cp ${LOCKDOWNDIR}/main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
-cp -a ${LOCKDOWNDIR}/kglobalshortcutsrc-EXAM /home/student/.config/kglobalshortcutsrc
-cp -a ${LOCKDOWNDIR}/Office.conf-EXAM /home/student/.config/Kingsoft/Office.conf
-cp -a ${LOCKDOWNDIR}/registrymodifications.xcu-EXAM /home/student/.config/libreoffice/4/user/registrymodifications.xcu
-cp -a ${LOCKDOWNDIR}/plasma-EXAM    /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,#load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,   
-cp -a ${LOCKDOWNDIR}/user-places.xbel-EXAM /home/student/.local/share/user-places.xbel
-cp -a ${LOCKDOWNDIR}/kwinrc-EXAM /home/student/.config/kwinrc
+sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc
+sudo cp ${LOCKDOWNDIR}xorg.conf /etc/X11
+sudo cp ${LOCKDOWNDIR}IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
+sudo cp ${LOCKDOWNDIR}main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
+cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM /home/student/.config/kglobalshortcutsrc
+cp -a ${LOCKDOWNDIR}Office.conf-EXAM /home/student/.config/Kingsoft/Office.conf
+cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM /home/student/.config/libreoffice/4/user/registrymodifications.xcu
+cp -a ${LOCKDOWNDIR}plasma-EXAM    /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,#load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,   
+cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM /home/student/.local/share/user-places.xbel
+cp -a ${LOCKDOWNDIR}kwinrc-EXAM /home/student/.config/kwinrc
 
 
 
@@ -167,7 +165,7 @@ setIPtables
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
-cp ${CONFIGDIR}/auto-screenshot.sh /home/student/.config/autostart-scripts
+cp ${CONFIGDIR}auto-screenshot.sh /home/student/.config/autostart-scripts
 
 
 

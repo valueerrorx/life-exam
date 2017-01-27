@@ -6,10 +6,10 @@
 
 
 
+# dont forget the trailing slash - otherwise shell will think its a file
 
-BACKUPDIR="/home/student/.life/EXAM/unlocked-backup" 
-LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown"
-
+BACKUPDIR="/home/student/.life/EXAM/unlocked-backup/" 
+LOCKDOWNDIR="./FILESSERVER/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
 
@@ -64,12 +64,12 @@ if [ "$answer" = 0 ]; then
     #------------------------------------------------#
     # SAVE CURRENT EXAM CONFIG FILES TO LOCKDOWNDIR  #
     #------------------------------------------------#
-    cp -a /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}/plasma-EXAM  
-    cp -a /home/student/.local/share/user-places.xbel ${LOCKDOWNDIR}/user-places.xbel-EXAM
+    cp -a /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
+    cp -a /home/student/.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
    # cp -a /home/student/.config/kglobalshortcutsrc ${LOCKDOWNDIR}/kglobalshortcutsrc-EXAM   #always use the "noshortcuts" file - don't allow configuring for now
-    cp -a /home/student/.config/Kingsoft/Office.conf ${LOCKDOWNDIR}/Office.conf-EXAM
-    cp -a /home/student/.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}/registrymodifications.xcu-EXAM
-    cp -a /home/student/.config/kwinrc ${LOCKDOWNDIR}/kwinrc-EXAM
+    cp -a /home/student/.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM
+    cp -a /home/student/.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM
+    cp -a /home/student/.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
 
     
     #------------------------------------------------#
@@ -95,13 +95,13 @@ sudo rm $EXAMLOCKFILE   #remove this file otherwise LIFE will think exam (config
 #copy backup over original
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Stelle Standard Desktop Konfiguration wieder her.... "
-cp -Ra ${BACKUPDIR}/kde.config/* /home/student/.kde/share/config/
-cp -Ra ${BACKUPDIR}/home.config/* /home/student/.config/
+cp -Ra ${BACKUPDIR}kde.config/* /home/student/.kde/share/config/
+cp -Ra ${BACKUPDIR}home.config/* /home/student/.config/
 
 #copy backup over original
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Stelle Standard Programm Konfiguration wieder her.... "
-cp -Ra ${BACKUPDIR}/home.local/* /home/student/.local/
+cp -Ra ${BACKUPDIR}home.local/* /home/student/.local/
 
 
 #remove icon cache - otherwise some changes will not be visible

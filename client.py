@@ -30,7 +30,7 @@ class MyClientProtocol(basic.LineReceiver):
         deleteFolderContent(CLIENTZIP_DIRECTORY)
         deleteFolderContent(CLIENTUNZIP_DIRECTORY)
         deleteFolderContent(CLIENT_EXAMCONFIG_DIRECTORY)
-        
+       
         
         if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
             os.makedirs(SOURCE_DIRECTORY)
