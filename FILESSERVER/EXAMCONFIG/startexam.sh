@@ -12,6 +12,9 @@ LOCKDOWNDIR="./FILESCLIENT/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="/home/student/.life/EXAM/exam"
 
   
+  
+
+
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
@@ -32,7 +35,9 @@ if [ -f "$EXAMLOCKFILE" ];then
     exit 1
 fi
 
-
+if [ ! -d "$BACKUPDIR" ];then
+    mkdir $BACKUPDIR
+fi
 
 
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)

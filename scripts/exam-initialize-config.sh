@@ -22,7 +22,9 @@ if [ -f "$EXAMLOCKFILE" ];then
     exit 1
 fi
 
-
+if [ ! -d "$BACKUPDIR" ];then
+    mkdir $BACKUPDIR
+fi
 
 
 
