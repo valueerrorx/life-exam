@@ -13,8 +13,9 @@ import zipfile
 
 from twisted.internet import protocol
 from twisted.protocols import basic
-from common import *
 from config import *
+from common import *
+
 
 from PyQt5 import uic, QtWidgets,QtCore
 from PyQt5.QtGui import *
@@ -173,8 +174,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files_path = files_path
         self.clients = []  #store all client connections in this array
         self.files = None
-        deleteFolderContent(SERVERSCREENSHOT_DIRECTORY)
-        
+       
         QtWidgets.QDialog.__init__(self)
         self.ui = uic.loadUi("teacher.ui")        # load UI
         self.ui.setWindowIcon(QIcon("drive.png"))  # definiere icon für taskleiste
@@ -183,25 +183,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe()) 
         self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
-        
         self.ui.startexam.clicked.connect(self._onStartExam) 
         self.ui.starthotspot.clicked.connect(self._onStartHotspot) 
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         
         checkFirewall()  #deactivates all iptable rules if any
-        
-        if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
-            os.makedirs(SOURCE_DIRECTORY)
-        if not os.path.exists(SCRIPTS_DIRECTORY):  
-            os.makedirs(SCRIPTS_DIRECTORY)
-
-        #make sure this script file (used to save the configuration and needed by a desktop file placed in folder ABGABE in exam-edit mode) is available 
-        copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
-        os.system(copycommand)
-        #fix permissions
-        chowncommand = "sudo chown -R student:student %s" %(SOURCE_DIRECTORY)
-        os.system(chowncommand)
+        prepareDirectories()  #cleans everything and copies some scripts
 
         self.ui.show()
     
@@ -390,9 +378,12 @@ if __name__ == '__main__':
     
     from twisted.internet import reactor
     print ('Listening on port %d' % (SERVER_PORT))
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
-    reactor.run()
-
+    try: 
+        reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
+        reactor.run()
+    except:
+        os.system("kdialog --title 'EXAM' --passivepopup 'Die Adresse/Port wird bereits verwendet. Beende alle python Prozesse' 5")
+        os.system("pkill python")
 
 
 

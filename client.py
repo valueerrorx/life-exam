@@ -18,31 +18,16 @@ try:
     SERVER_IP = sys.argv[1] 
 except:
     print "No IP Address given! Using localhost"
+    SERVER_IP = "127.0.0.1"
 
 
 
 class MyClientProtocol(basic.LineReceiver):
-      
     def __init__(self,factory):
         self.factory = factory
         self.delimiter = '\n'
-        deleteFolderContent(CLIENTSCREENSHOT_DIRECTORY)
-        deleteFolderContent(CLIENTZIP_DIRECTORY)
-        deleteFolderContent(CLIENTUNZIP_DIRECTORY)
-        deleteFolderContent(CLIENT_EXAMCONFIG_DIRECTORY)
-       
-        
-        if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
-            os.makedirs(SOURCE_DIRECTORY)
-        if not os.path.exists(SCRIPTS_DIRECTORY):  
-            os.makedirs(SCRIPTS_DIRECTORY)
-            
-        #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
-        copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
-        os.system(copycommand)
-        #fix permissions
-        chowncommand = "sudo chown -R student:student %s" %(SOURCE_DIRECTORY)
-        os.system(chowncommand)
+
+        prepareDirectories()  # cleans everything and copies script files 
         
     #twisted
     def connectionMade(self):
@@ -79,22 +64,8 @@ class MyClientProtocol(basic.LineReceiver):
                 print('File %s has been successfully transfered and saved' % (filename) )
                 
                 # initialize exam mode.. unzip and start exam 
-                if self.file_data[2] == "EXAM":   
-                    extract_dir = os.path.join(CLIENTFILES_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
-                    with zipfile.ZipFile(file_path,"r") as zip_ref:
-                        zip_ref.extractall(extract_dir)
-                    os.unlink(file_path)   #delete zip file
-                    time.sleep(2)
-                    
-                    command = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)   #make examscritp executable
-                    os.system(command)
-                    time.sleep(2)
-                    startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)      
-                    
-                    if SERVER_IP == "localhost":    #testClient running on the same machine
-                        print startcommand
-                    else:
-                        os.system(startcommand)     #start script
+                if self.file_data[2] == "EXAM": 
+                    self._startExam(filename,file_path)
                 
             else:
                 os.unlink(file_path)
@@ -166,9 +137,36 @@ class MyClientProtocol(basic.LineReceiver):
         self.transport.write('\r\n')  #send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
-    
+
+
+    def _startExam(self,filename,file_path):
+        """extracts the config folder and starts the startexam.sh script"""
+        extract_dir = os.path.join(CLIENTFILES_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+        with zipfile.ZipFile(file_path,"r") as zip_ref:
+            zip_ref.extractall(extract_dir)
+        os.unlink(file_path)   #delete zip file
+        time.sleep(2)
+        
+        #add current server IP address to firewall exceptions
+        ipstore = os.path.join(CLIENT_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+        thisexamfile = open(ipstore, 'a+')   #anhängen
+        thisexamfile.write("%s\n" % SERVER_IP)
+        
+        command = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)   #make examscritp executable
+        os.system(command)
+        time.sleep(2)
+        startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)      
+        
+        if SERVER_IP == "localhost":    #testClient running on the same machine
+            print startcommand
+        else:
+            os.system(startcommand)     #start script
+        
+        
+        
     
     def _showDesktopMessage(self,msg):
+        """uses a passivepopup to display messages from the daemon"""
         message = "Exam Server: %s " %(msg)
         command = "sudo -u student kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
         os.system(command)
