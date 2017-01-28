@@ -83,6 +83,7 @@ cp -a ${BACKUPDIR}/user-places.xbel /home/student/.local/share/
 # sichere exam start und end infos
 date >> $EXAMLOCKFILE
 sudo cp $EXAMLOCKFILE /home/student/ABGABE/
+sudo rm $EXAMLOCKFILE
 sleep 0.5
 
 
