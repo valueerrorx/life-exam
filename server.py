@@ -188,7 +188,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         
-        checkFirewall()  #deactivates all iptable rules if any
+        checkFirewall(self)  #deactivates all iptable rules if any
         prepareDirectories()  #cleans everything and copies some scripts
 
         self.ui.show()
@@ -309,9 +309,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
-    def _onTestFirewall(self):
-        ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
-        openedexamfile = open(ipstore, 'w+')  #erstelle die datei neu
+    def _onTestFirewall(self):      
     
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
             os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
@@ -326,6 +324,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             
             
         elif self.ui.testfirewall.text() == "&Firewall testen":
+            ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+            openedexamfile = open(ipstore, 'w+')  #erstelle die datei neu
             ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
             for i in ipfields:
                 ip = i.text()
@@ -378,12 +378,13 @@ if __name__ == '__main__':
     
     from twisted.internet import reactor
     print ('Listening on port %d' % (SERVER_PORT))
-    try: 
-        reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
-        reactor.run()
-    except:
-        os.system("kdialog --title 'EXAM' --passivepopup 'Die Adresse/Port wird bereits verwendet. Beende alle python Prozesse' 5")
-        os.system("pkill python")
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
+    reactor.run()
+    
+    #os.system("kdialog --title 'EXAM' --passivepopup 'Die Adresse/Port wird bereits verwendet. Beende alle python Prozesse' 5")
+    #os.system("pkill python")
+        
+   
 
 
 

@@ -6,13 +6,23 @@ import shutil
 from config import *
 
 
-def checkFirewall():
+def checkFirewall(self):
     result = os.system("sudo iptables -L |grep DROP|wc -l")
     if result != 0:
         print "stopping ip tables"
         os.system("./scripts/exam-firewall.sh stop &") 
-
-
+    
+    ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+    lines = [line.rstrip('\n') for line in open(ipstore)]
+    
+    ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
+    count = 0
+    for i in ipfields:
+        try:
+            ip = i.setText(lines[count])
+        except IndexError:
+            continue
+        count += 1
 
 def checkIP(iptest):
     try:
