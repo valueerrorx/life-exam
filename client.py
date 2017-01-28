@@ -95,7 +95,9 @@ class MyClientProtocol(basic.LineReceiver):
             
             if task == 'SEND':
                 if filetype == 'SHOT':  # files need to be created first
-                    command = "./scripts/screenshot.sh %s" %(filename)
+                    scriptfile = os.path.join(SCRIPTS_DIRECTORY,'screenshot.sh')
+                    screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY,filename)
+                    command = "%s %s" %(scriptfile,screenshotfile)
                     os.system(command)
                 elif filetype == 'FOLDER':
                     if filename in self.factory.files:  # if folder exists create a zip out of it
@@ -144,26 +146,26 @@ class MyClientProtocol(basic.LineReceiver):
 
     def _startExam(self,filename,file_path):
         """extracts the config folder and starts the startexam.sh script"""
-        extract_dir = os.path.join(CLIENTFILES_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
-        with zipfile.ZipFile(file_path,"r") as zip_ref:
-            zip_ref.extractall(extract_dir)
-        os.unlink(file_path)   #delete zip file
-        time.sleep(2)
-        
-        #add current server IP address to firewall exceptions
-        ipstore = os.path.join(CLIENT_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
-        thisexamfile = open(ipstore, 'a+')   #anhängen
-        thisexamfile.write("%s\n" % SERVER_IP)
-        
-        command = "sudo chmod +x %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)   #make examscritp executable
-        os.system(command)
-        time.sleep(2)
-        startcommand = "sudo %s/startexam.sh &" %(CLIENT_EXAMCONFIG_DIRECTORY)      
-        
-        if SERVER_IP == "localhost":    #testClient running on the same machine
-            print startcommand
-        else:
+    
+        if SERVER_IP != "127.0.0.1":    #testClient running on the same machine
+            extract_dir = os.path.join(CLIENTFILES_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+            with zipfile.ZipFile(file_path,"r") as zip_ref:
+                zip_ref.extractall(extract_dir)
+            os.unlink(file_path)   #delete zip file
+            time.sleep(2)
+            
+            #add current server IP address to firewall exceptions
+            ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+            thisexamfile = open(ipstore, 'a+')   #anhängen
+            thisexamfile.write("%s\n" % SERVER_IP)
+            
+            command = "sudo chmod +x %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)   #make examscritp executable
+            os.system(command)
+            time.sleep(2)
+            startcommand = "sudo %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)      
             os.system(startcommand)     #start script
+        else:
+            return   # running on the same machine.. do not start exam mode / do not copy zip content over original
         
         
         

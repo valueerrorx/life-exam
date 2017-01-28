@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import hashlib
 import os
 import ipaddress
@@ -12,7 +14,7 @@ def checkFirewall(self):
         print "stopping ip tables"
         os.system("./scripts/exam-firewall.sh stop &") 
     
-    ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+    ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
     lines = [line.rstrip('\n') for line in open(ipstore)]
     
     ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
@@ -111,24 +113,28 @@ def deleteFolderContent(folder):
 
 
 def prepareDirectories():
-    deleteFolderContent(CLIENTSCREENSHOT_DIRECTORY)
-    deleteFolderContent(CLIENTZIP_DIRECTORY)
-    deleteFolderContent(CLIENTUNZIP_DIRECTORY)
-    deleteFolderContent(CLIENT_EXAMCONFIG_DIRECTORY)
-
-    deleteFolderContent(SERVERSCREENSHOT_DIRECTORY)
-    deleteFolderContent(SERVERZIP_DIRECTORY) 
-    
-    if not os.path.exists(SOURCE_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
-        os.makedirs(SOURCE_DIRECTORY)
-    if not os.path.exists(SCRIPTS_DIRECTORY):  
-        os.makedirs(SCRIPTS_DIRECTORY)
+   
+    if not os.path.exists(WORK_DIRECTORY):   #some scripts just need to be on a specific location otherwise plasma configfiles will not work
+        os.makedirs(WORK_DIRECTORY)
+        os.makedirs(CLIENTFILES_DIRECTORY)
+        os.makedirs(SERVERFILES_DIRECTORY)
+    else:   #cleanup
+        deleteFolderContent(CLIENTFILES_DIRECTORY)
+        deleteFolderContent(SERVERFILES_DIRECTORY)
         
-    #.life/EXAM/ is going to be the root directory of the application (all life stuff will eventually go to .life (for now make sure this file is there)
-    copycommand = "sudo cp ./scripts/* %s" %(SCRIPTS_DIRECTORY)
+    os.makedirs(CLIENTSCREENSHOT_DIRECTORY)
+    os.makedirs(CLIENTUNZIP_DIRECTORY)
+    os.makedirs(CLIENTZIP_DIRECTORY)
+    
+    os.makedirs(SERVERSCREENSHOT_DIRECTORY)
+    os.makedirs(SERVERUNZIP_DIRECTORY)
+    os.makedirs(SERVERZIP_DIRECTORY)
+    
+    copycommand = "sudo cp -r ./DATA/* %s" %(WORK_DIRECTORY)
     os.system(copycommand)
-    #fix permissions
-    chowncommand = "sudo chown -R student:student %s" %(SOURCE_DIRECTORY)
+   
+   #fix permissions
+    chowncommand = "sudo chown -R student:student %s" %(WORK_DIRECTORY)
     os.system(chowncommand)
 
 

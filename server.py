@@ -188,9 +188,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         
-        checkFirewall(self)  #deactivates all iptable rules if any
         prepareDirectories()  #cleans everything and copies some scripts
-
+        checkFirewall(self)  #deactivates all iptable rules if any
+        
         self.ui.show()
     
     #twisted
@@ -283,8 +283,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
         
-        self._log('Server Folder examonfig senden')
-        target_folder = SERVER_EXAMCONFIG_DIRECTORY     
+        self._log('Folder examconfig senden')
+        target_folder = EXAMCONFIG_DIRECTORY     
         filename = "EXAMCONFIG"
         output_filename = os.path.join(SERVERZIP_DIRECTORY,filename )
         shutil.make_archive(output_filename, 'zip', target_folder)
@@ -377,14 +377,15 @@ if __name__ == '__main__':
     qt5reactor.install()   # imported from file and needed for Qt to function properly in combination with twisted reactor
     
     from twisted.internet import reactor
+   
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
     print ('Listening on port %d' % (SERVER_PORT))
-    try:   
-        reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
-        reactor.run()
-    except Exception as e:  #
-        print(e)
-        os.system("sudo pkill -f 'python server.py'")  # if port is already taken an exception will we thrown - kill other server processes
-
+    reactor.run()
+    
+    #if you get here, reactor has an error - probably the port is already in use because of another server process
+    os.system("sudo pkill -f 'python server.py'")  # if port is already taken an exception will we thrown - kill other server processes
+    
+    
         
    
 
