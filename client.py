@@ -44,6 +44,7 @@ class MyClientProtocol(basic.LineReceiver):
         self._showDesktopMessage('Connection to the server has been lost')
         #reactor.stop()  #this would terminate the connection - even if ReconnectingClientFactory would normally try to re-establish the connection
 
+        
     #twisted
     def rawDataReceived(self, data):
         filename = self.file_data[3]
@@ -189,6 +190,21 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         self.files_path = files_path
         self.deferred = defer.Deferred()
         self.files = None
+        self.failcount = 0
+        
+    def clientConnectionFailed(self,connector, reason):  # in case of connection problems try 4 times then reshow student gui
+        self.failcount += 1
+        if self.failcount > 3:
+            command = "kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"
+            os.system(command)
+            command = "python student.py &" 
+            os.system(command)
+            os._exit(1)
+        print('Connection failed. Reason:', reason)
+        command = "kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen.\nÜberprüfen sie die Netzwerkeinstellungen \nsowie die Server IP Adresse!' 8 &"
+        os.system(command)
+        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
+
         
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self) 

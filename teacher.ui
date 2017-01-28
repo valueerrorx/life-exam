@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>985</width>
-    <height>482</height>
+    <width>974</width>
+    <height>509</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,7 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
@@ -97,11 +97,14 @@
               <bold>false</bold>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding:0px;</string>
+            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connection Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -143,28 +146,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="exit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>88</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">margin-bottom:4px;padding:8px;</string>
-            </property>
-            <property name="text">
-             <string>Programm Beenden</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -194,7 +175,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>39</height>
+              <height>31</height>
              </size>
             </property>
            </spacer>
@@ -370,17 +351,20 @@
               <bold>false</bold>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">padding:0px;</string>
+            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clients&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
             </property>
             <property name="indent">
-             <number>-8</number>
+             <number>-1</number>
             </property>
            </widget>
           </item>
@@ -435,209 +419,197 @@
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QWidget" name="widget" native="true">
+        <widget class="QWidget" name="widget_5" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>166</width>
+           <height>318</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>340</width>
+           <width>166</width>
            <height>16777215</height>
           </size>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QWidget" name="widget_5" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>166</width>
-              <height>318</height>
-             </size>
+           <widget class="QLabel" name="firewalllabel">
+            <property name="styleSheet">
+             <string notr="true">margin:0px;</string>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>166</width>
-              <height>16777215</height>
-             </size>
+            <property name="text">
+             <string>Firewall Ausnahmen</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <item>
-              <widget class="QLabel" name="firewalllabel">
-               <property name="styleSheet">
-                <string notr="true">margin:0px;</string>
-               </property>
-               <property name="text">
-                <string>Firewall Ausnahmen</string>
-               </property>
-               <property name="textFormat">
-                <enum>Qt::AutoText</enum>
-               </property>
-               <property name="indent">
-                <number>-1</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="firewall1">
-               <property name="placeholderText">
-                <string>0.0.0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="firewall2">
-               <property name="placeholderText">
-                <string>0.0.0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="firewall3">
-               <property name="placeholderText">
-                <string>0.0.0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="firewall4">
-               <property name="placeholderText">
-                <string>0.0.0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="icon2">
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap>pixmaps/security.png</pixmap>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <property name="textFormat">
+             <enum>Qt::AutoText</enum>
+            </property>
+            <property name="indent">
+             <number>-1</number>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_4" native="true">
-            <property name="minimumSize">
+           <widget class="QLineEdit" name="firewall1">
+            <property name="placeholderText">
+             <string>0.0.0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="firewall2">
+            <property name="placeholderText">
+             <string>0.0.0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="firewall3">
+            <property name="placeholderText">
+             <string>0.0.0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="firewall4">
+            <property name="placeholderText">
+             <string>0.0.0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
              <size>
-              <width>156</width>
-              <height>318</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>156</width>
-              <height>16777215</height>
-             </size>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="icon2">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
-             <item>
-              <widget class="QLabel" name="transparentlabel">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="testfirewall">
-               <property name="styleSheet">
-                <string notr="true">padding:8px</string>
-               </property>
-               <property name="text">
-                <string>Firewall testen</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>pixmaps/security.png</pixmap>
+            </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widget_3" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <widget class="QWidget" name="widget_4" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>156</width>
+           <height>318</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>156</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <widget class="QWidget" name="widget_2" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QLabel" name="infotextlabel">
-               <property name="text">
-                <string>Information</string>
-               </property>
-               <property name="indent">
-                <number>-8</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="infotext">
-               <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;Nachdem sie Ausnahmen für die Firewall definiert haben&lt;br/&gt;(z.B für Drucker, Schulserver, etc.) &lt;br/&gt;können sie den Prüfungsdesktop anpassen.&lt;/p&gt;&lt;p&gt;So können sie festlegen welche Programme &lt;br/&gt;während der Prüfung schnell erreichbar sein sollen.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Speichern Sie die Änderungen an der Prüfungsumgebung mit Hilfe des Programmes&lt;br/&gt;&amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können auch ohne Anwendungsmenü jedes beliebige Programm ausführen in dem Sie&lt;br/&gt;das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface &lt;br/&gt;sichtbar zu machen.&lt;/p&gt;&lt;p&gt;Dieses erlaubt es u.a. das System zu durchsuchen, terminal Befehle abzusetzen&lt;br/&gt;und Programme zu starten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="startconfig">
-               <property name="maximumSize">
-                <size>
-                 <width>454</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">padding: 8px;</string>
-               </property>
-               <property name="text">
-                <string>Anpassung des Desktops starten</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+           <widget class="QLabel" name="transparentlabel">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="testfirewall">
+            <property name="styleSheet">
+             <string notr="true">padding:8px</string>
+            </property>
+            <property name="text">
+             <string>Firewall testen</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_2" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QLabel" name="infotextlabel">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Information</string>
+            </property>
+            <property name="indent">
+             <number>-8</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="infotext">
+            <property name="styleSheet">
+             <string notr="true">padding-top:0px;</string>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nachdem sie Ausnahmen für die Firewall definiert haben&lt;br/&gt;(z.B für Drucker, Schulserver, etc.) &lt;br/&gt;können sie den Prüfungsdesktop anpassen.&lt;/p&gt;&lt;p&gt;So können sie festlegen welche Programme &lt;br/&gt;während der Prüfung schnell erreichbar sein sollen.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Speichern Sie die Änderungen an der Prüfungsumgebung mit Hilfe des Programmes&lt;br/&gt;&amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können auch ohne Anwendungsmenü jedes beliebige Programm ausführen in dem Sie&lt;br/&gt;das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface &lt;br/&gt;sichtbar zu machen.&lt;/p&gt;&lt;p&gt;Dieses erlaubt es u.a. das System zu durchsuchen, Terminal-Befehle abzusetzen&lt;br/&gt;und Programme zu starten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="startconfig">
+            <property name="maximumSize">
+             <size>
+              <width>454</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 8px;</string>
+            </property>
+            <property name="text">
+             <string>Anpassung des Desktops starten</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -645,6 +617,28 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="exit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>88</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">margin-bottom:4px;padding:8px;</string>
+     </property>
+     <property name="text">
+      <string>Programm Beenden</string>
+     </property>
     </widget>
    </item>
   </layout>

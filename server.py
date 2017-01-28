@@ -177,7 +177,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
        
         QtWidgets.QDialog.__init__(self)
         self.ui = uic.loadUi("teacher.ui")        # load UI
-        self.ui.setWindowIcon(QIcon("drive.png"))  # definiere icon für taskleiste
+        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.doit_1.clicked.connect(lambda: self._onDoit_1())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
@@ -378,11 +378,15 @@ if __name__ == '__main__':
     
     from twisted.internet import reactor
     print ('Listening on port %d' % (SERVER_PORT))
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
-    reactor.run()
-    
+    try:
+        reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
+        reactor.run()
+    except Exception as e:
+        print(e)
+        os.system("sudo pkill -f 'python server.py'")
+        
     #os.system("kdialog --title 'EXAM' --passivepopup 'Die Adresse/Port wird bereits verwendet. Beende alle python Prozesse' 5")
-    #os.system("pkill python")
+    #os.system("sudo pkill -f server.py")
         
    
 
