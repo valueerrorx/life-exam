@@ -1,0 +1,20 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment[de_DE]=
+Comment=
+Exec=lifesudo ~/.life/EXAM/scripts/stopexam-configuration-root.sh
+GenericName[de_DE]=
+GenericName=
+Icon=org.kde.plasma.frame
+MimeType=
+Name[de_DE]=Prüfungsumgebung speichern
+Name=Prüfungsumgebung speichern
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
