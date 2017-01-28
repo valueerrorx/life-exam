@@ -345,7 +345,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onStartConfig(self):
-        startcommand = "exec ./scripts/startexam-configuration.sh &"
+        startcommand = "exec ./scripts/startexam-configuration-root.sh &"
         os.system(startcommand) 
         self.ui.close()
 
