@@ -16,9 +16,11 @@ from config import *
 
 try:
     SERVER_IP = sys.argv[1] 
+    STUDENT_ID = sys.argv[2] 
 except:
     print "No IP Address given! Using localhost"
     SERVER_IP = "127.0.0.1"
+    STUDENT_ID = "Unknown User"
 
 
 

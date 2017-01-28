@@ -345,7 +345,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onStartConfig(self):
-        startcommand = "exec ./scripts/exam-initialize-config.sh &"
+        startcommand = "exec ./scripts/startexam-configuration.sh &"
         os.system(startcommand) 
         self.ui.close()
 
@@ -378,15 +378,13 @@ if __name__ == '__main__':
     
     from twisted.internet import reactor
     print ('Listening on port %d' % (SERVER_PORT))
-    try:
+    try:   
         reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
         reactor.run()
-    except Exception as e:
+    except Exception as e:  #
         print(e)
-        os.system("sudo pkill -f 'python server.py'")
-        
-    #os.system("kdialog --title 'EXAM' --passivepopup 'Die Adresse/Port wird bereits verwendet. Beende alle python Prozesse' 5")
-    #os.system("sudo pkill -f server.py")
+        os.system("sudo pkill -f 'python server.py'")  # if port is already taken an exception will we thrown - kill other server processes
+
         
    
 

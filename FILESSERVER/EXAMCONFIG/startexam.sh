@@ -67,7 +67,7 @@ date > $EXAMLOCKFILE
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.5
-
+# we could backup everything from .config .local .kde but i think this is enough
 cp -a /home/student/.config/plasmarc ${BACKUPDIR}
 cp -a /home/student/.config/plasmashellrc ${BACKUPDIR}
 cp -a /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUPDIR}
