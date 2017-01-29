@@ -360,7 +360,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     
     def _log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
-        self.ui.logwidget.append(timestamp + '\n' + str(msg))
+        self.ui.logwidget.append(timestamp + " " + str(msg))
 
 
     def _deleteClientScreenshot(self,clientID):
