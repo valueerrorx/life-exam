@@ -2,9 +2,9 @@
 # last updated: 26.01.2017
 
 # SERVER FILE #
+HOME="/home/student/"
 
-
-IPSFILE="$HOME/.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
+IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
  
  
 setIPtables(){

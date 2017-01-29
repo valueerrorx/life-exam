@@ -8,9 +8,11 @@
 
 # dont forget the trailing slash - otherwise shell will think its a file
 
-BACKUPDIR="$HOME/.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
-LOCKDOWNDIR="$HOME/.life/EXAM/EXAMCONFIG/lockdown/"
-EXAMLOCKFILE="$HOME/.life/EXAM/exam.lock"
+HOME="/home/student/"
+
+BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
+LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
+EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 
   
 

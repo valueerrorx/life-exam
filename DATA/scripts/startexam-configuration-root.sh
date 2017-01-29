@@ -5,10 +5,11 @@
 
 # dont forget the trailing slash - otherwise shell will think its a file
 
+HOME="/home/student/"
 
-EXAMLOCKFILE="$HOME/.life/EXAM/exam.lock"
-LOCKDOWNDIR="$HOME/.life/EXAM/EXAMCONFIG/lockdown/"
-BACKUPDIR="$HOME/.life/EXAM/unlocked-backup/"
+EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
+LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
+BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/"
 
 
 

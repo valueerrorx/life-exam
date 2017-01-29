@@ -5,11 +5,14 @@
 # CLIENT FILE #
 
 # dont forget the trailing slash - otherwise shell will think its a file
-IPSFILE="$HOME/.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
-CONFIGDIR="$HOME/.life/EXAM/EXAMCONFIG/"
-BACKUPDIR="$HOME/.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
-LOCKDOWNDIR="$HOME/.life/EXAM/EXAMCONFIG/lockdown/"
-EXAMLOCKFILE="$HOME/.life/EXAM/exam.lock"
+
+HOME="/home/student/"
+
+IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
+CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
+BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
+LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
+EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 
   
 
@@ -43,7 +46,7 @@ fi
 
 
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
-progress=$(kdialog --progressbar "Starte Prüfungsumgebung                                                               ");
+progress=$(kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
 qdbus $progress Set "" maximum 8
 sleep 0.5
 

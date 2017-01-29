@@ -4,10 +4,10 @@
 
 # CLIENT FILE #
 
+HOME="/home/student/"
 
-
-EXAMLOCKFILE="$HOME/.life/EXAM/exam.lock"
-BACKUPDIR="$HOME/.life/EXAM/unlocked-backup/" 
+EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
+BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" 
 
 
 #--------------------------------#
