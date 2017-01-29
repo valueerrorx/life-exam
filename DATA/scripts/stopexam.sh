@@ -6,8 +6,8 @@
 
 
 
-EXAMLOCKFILE="~/.life/EXAM/exam.lock"
-BACKUPDIR="~/.life/EXAM/unlocked-backup/" 
+EXAMLOCKFILE="$HOME/.life/EXAM/exam.lock"
+BACKUPDIR="$HOME/.life/EXAM/unlocked-backup/" 
 
 
 #--------------------------------#

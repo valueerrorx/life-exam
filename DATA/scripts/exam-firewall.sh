@@ -4,7 +4,7 @@
 # SERVER FILE #
 
 
-IPSFILE="~/.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
+IPSFILE="$HOME/.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
  
  
 setIPtables(){
@@ -15,6 +15,7 @@ setIPtables(){
   
   
     if [ -f $IPSFILE ]; then
+        echo "ipsfile found"
         #allow input and output for ALLOWEDIP
         for IP in `cat $IPSFILE`; do
             echo "exception noticed $IP"
@@ -23,7 +24,8 @@ setIPtables(){
         done
     fi
     
-    #allow ESTABLISHED and RELATED (important for active server communication)
+    #allow ESTABLISHED and RELATED (important for active server communication)  
+    # (the server is now added from the client automatically - this could be used as loophole to use the internet in exam mode)
     sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
     sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
 

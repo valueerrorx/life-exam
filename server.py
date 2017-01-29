@@ -294,7 +294,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def _onTestFirewall(self):      
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
             os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
-            os.system("./scripts/exam-firewall.sh stop &") 
+            os.system("./DATA/scripts/exam-firewall.sh stop &") 
             self.ui.testfirewall.setText("Firewall testen")
 
             ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
@@ -304,7 +304,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 i.setPalette(palettedefault)
             
         elif self.ui.testfirewall.text() == "&Firewall testen":
-            ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
+            ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             openedexamfile = open(ipstore, 'w+')  #erstelle die datei neu
             ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
             for i in ipfields:
@@ -320,7 +320,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                         i.setPalette(palettewarn)
             
             os.system("kdialog --passivepopup 'Die Firewall wird aktiviert!' 3 2> /dev/null & ")
-            os.system("./scripts/exam-firewall.sh start &") 
+            os.system("./DATA/scripts/exam-firewall.sh start &") 
             self.ui.testfirewall.setText("Stoppe Firewall")
 
 

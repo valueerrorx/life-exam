@@ -5,11 +5,11 @@
 # CLIENT FILE #
 
 # dont forget the trailing slash - otherwise shell will think its a file
-IPSFILE="~/.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
-CONFIGDIR="~/.life/EXAM/EXAMCONFIG/"
-BACKUPDIR="~/.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
-LOCKDOWNDIR="~/.life/EXAM/EXAMCONFIG/lockdown/"
-EXAMLOCKFILE="~/.life/EXAM/exam.lock"
+IPSFILE="$HOME/.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
+CONFIGDIR="$HOME/.life/EXAM/EXAMCONFIG/"
+BACKUPDIR="$HOME/.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
+LOCKDOWNDIR="$HOME/.life/EXAM/EXAMCONFIG/lockdown/"
+EXAMLOCKFILE="$HOME/.life/EXAM/exam.lock"
 
   
 
