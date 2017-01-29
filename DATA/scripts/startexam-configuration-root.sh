@@ -10,7 +10,7 @@ HOME="/home/student/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/"
-
+SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 
 
@@ -102,7 +102,7 @@ sleep 1
     #---------------------------------#
     # CREATE SAVE CONFIG LINK         #
     #---------------------------------#
-    sudo cp "./scripts/Speichere Prüfungsumgebung.desktop" /home/student/ABGABE
+    sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" /home/student/ABGABE
 
 
     #---------------------------------#
