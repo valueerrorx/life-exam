@@ -133,8 +133,14 @@ def prepareDirectories():
     
     #FIXME  bei jedem start wird EXAMCONFIG ins workdirectory kopiert - neu gestalteter exam desktop wird überschrieben
     # die änderungen werden nicht ins data verzeichnis zurückgeführt
-    copycommand = "sudo cp -r ./DATA/* %s" %(WORK_DIRECTORY)
+  
+    copycommand = "sudo cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
     os.system(copycommand)
+    
+    if not os.path.exists(EXAMCONFIG_DIRECTORY):
+        print "copying examconfig to workdirectory"
+        copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
+        os.system(copycommand)
    
    #fix permissions
     chowncommand = "sudo chown -R student:student %s" %(WORK_DIRECTORY)
