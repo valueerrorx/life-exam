@@ -204,9 +204,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             return
         
         self.files = get_file_list(self.files_path)
-        filename = "serverfile.txt"
+        filename = "   "  # FIXME load the kde filepicker to select a file here !!
         if not filename in self.files:
-            self.log('filename not found in directory')
+            self._log('filename not found in directory')
             return
         
         for i in self.clients:
@@ -220,8 +220,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
 
-    def _onShowIP(self): 
-        startcommand = "exec ./scripts/gui-getmyip.sh &"
+    def _onShowIP(self):
+        startcommand = "exec ./DATA/scripts/gui-getmyip.sh &"
         os.system(startcommand) 
         
    
@@ -239,7 +239,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onStartHotspot(self):
-        startcommand = "exec ./scripts/gui-activate-lifehotspot-root.sh &"
+        startcommand = "exec ./DATA/scripts/gui-activate-lifehotspot-root.sh &"
         os.system(startcommand) 
 
     

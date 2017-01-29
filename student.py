@@ -28,7 +28,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.ui.serverip.setPalette(palettedefault)
             if ID != "":
                 self.ui.close()
-                command = "lifesudo python client.py %s %s &" %(SERVER_IP, ID)
+                command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
                 os.system(command)
             palettewarn = self.ui.studentid.palette()
             palettewarn.setColor(self.ui.studentid.backgroundRole(), QColor(200, 80, 80))
