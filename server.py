@@ -221,7 +221,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onShowIP(self):
-        startcommand = "exec ./DATA/scripts/gui-getmyip.sh &"
+        scriptfile = os.path.join(SCRIPTS_DIRECTORY,"gui-getmyip.sh" )
+        startcommand = "exec %s &" %(scriptfile)
         os.system(startcommand) 
         
    
@@ -239,7 +240,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onStartHotspot(self):
-        startcommand = "exec ./DATA/scripts/gui-activate-lifehotspot-root.sh &"
+        scriptfile = os.path.join(SCRIPTS_DIRECTORY,"gui-activate-lifehotspot-root.sh" )
+        startcommand = "exec %s &" %(scriptfile)
         os.system(startcommand) 
 
     
@@ -294,7 +296,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def _onTestFirewall(self):      
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
             os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
-            os.system("./DATA/scripts/exam-firewall.sh stop &") 
+            
+            scriptfile = os.path.join(SCRIPTS_DIRECTORY,"exam-firewall.sh" )
+            startcommand = "exec %s stop &" %(scriptfile)
+  
             self.ui.testfirewall.setText("Firewall testen")
 
             ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
@@ -320,12 +325,16 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                         i.setPalette(palettewarn)
             
             os.system("kdialog --passivepopup 'Die Firewall wird aktiviert!' 3 2> /dev/null & ")
-            os.system("./DATA/scripts/exam-firewall.sh start &") 
+            
+            scriptfile = os.path.join(SCRIPTS_DIRECTORY,"exam-firewall.sh" )
+            startcommand = "exec %s start &" %(scriptfile)
+
             self.ui.testfirewall.setText("Stoppe Firewall")
 
 
     def _onStartConfig(self):
-        startcommand = "exec ./scripts/startexam-configuration-root.sh &"
+        scriptfile = os.path.join(SCRIPTS_DIRECTORY,"startexam-configuration-root.sh" )
+        startcommand = "exec %s &" %(scriptfile)
         os.system(startcommand) 
         self.ui.close()
 
