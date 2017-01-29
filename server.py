@@ -187,6 +187,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.starthotspot.clicked.connect(self._onStartHotspot) 
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
+        self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
 
         prepareDirectories()  #cleans everything and copies some scripts
         checkFirewall(self)  #deactivates all iptable rules if any
@@ -196,6 +197,19 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
         
+
+
+
+
+
+    def _onLoadDefaults(self):
+        self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
+        copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
+        os.system(copycommand)
+
+
+
+
 
     def _onSendfile(self):
         """send a file to all clients"""
