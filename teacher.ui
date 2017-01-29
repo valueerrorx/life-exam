@@ -181,7 +181,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="doit_1">
+           <widget class="QPushButton" name="starthotspot">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -198,7 +198,7 @@
              <string notr="true">padding:4px;</string>
             </property>
             <property name="text">
-             <string>send file</string>
+             <string>Starte Hotspot</string>
             </property>
            </widget>
           </item>
@@ -225,6 +225,25 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="startexam">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>160</width>
+              <height>39</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Starte Exam</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="abgabe">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -247,7 +266,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="doit_5">
+           <widget class="QPushButton" name="screenshots">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -269,7 +288,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="starthotspot">
+           <widget class="QPushButton" name="sendfile">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -286,26 +305,7 @@
              <string notr="true">padding:4px;</string>
             </property>
             <property name="text">
-             <string>Starte Hotspot</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="startexam">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>160</width>
-              <height>39</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Starte Exam</string>
+             <string>Datei senden</string>
             </property>
            </widget>
           </item>
@@ -510,7 +510,7 @@
         <widget class="QWidget" name="widget_4" native="true">
          <property name="minimumSize">
           <size>
-           <width>156</width>
+           <width>185</width>
            <height>318</height>
           </size>
          </property>
@@ -535,6 +535,35 @@
             </property>
             <property name="text">
              <string>Firewall testen</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="startconfig">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">padding: 8px;</string>
+            </property>
+            <property name="text">
+             <string>Desktop anpassen</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="loaddefaults">
+            <property name="styleSheet">
+             <string notr="true">padding: 8px;</string>
+            </property>
+            <property name="text">
+             <string>Desktop zurücksetzen</string>
             </property>
            </widget>
           </item>
@@ -576,7 +605,7 @@
              <string notr="true">padding-top:0px;</string>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nachdem sie Ausnahmen für die Firewall definiert haben&lt;br/&gt;(z.B für Drucker, Schulserver, etc.) &lt;br/&gt;können sie den Prüfungsdesktop anpassen.&lt;/p&gt;&lt;p&gt;So können sie festlegen welche Programme &lt;br/&gt;während der Prüfung schnell erreichbar sein sollen.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Speichern Sie die Änderungen an der Prüfungsumgebung mit Hilfe des Programmes&lt;br/&gt;&amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können auch ohne Anwendungsmenü jedes beliebige Programm ausführen in dem Sie&lt;br/&gt;das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface &lt;br/&gt;sichtbar zu machen.&lt;/p&gt;&lt;p&gt;Dieses erlaubt es u.a. das System zu durchsuchen, Terminal-Befehle abzusetzen&lt;br/&gt;und Programme zu starten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nachdem sie Ausnahmen für die Firewall definiert haben&lt;br/&gt;(z.B für Drucker, Schulserver, etc.) drücken sie auf &amp;quot;Firewall testen&amp;quot; &lt;br/&gt;um die Einstellungen zu überprüfen und zu speichern.&lt;br/&gt;Danach können sie den Prüfungsdesktop anpassen.&lt;/p&gt;&lt;p&gt;So können sie festlegen welche Programme &lt;br/&gt;während der Prüfung schnell erreichbar sein sollen.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Speichern Sie die Änderungen an der Prüfungsumgebung mit Hilfe des Programmes&lt;br/&gt;&amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können auch ohne Anwendungsmenü jedes beliebige Programm ausführen in dem Sie&lt;br/&gt;das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface &lt;br/&gt;sichtbar zu machen.&lt;/p&gt;&lt;p&gt;Dieses erlaubt es u.a. das System zu durchsuchen, Terminal-Befehle abzusetzen&lt;br/&gt;und Programme zu starten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -592,25 +621,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="startconfig">
-            <property name="maximumSize">
-             <size>
-              <width>454</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">padding: 8px;</string>
-            </property>
-            <property name="text">
-             <string>Anpassung des Desktops starten</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>

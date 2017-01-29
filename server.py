@@ -179,51 +179,40 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui = uic.loadUi("teacher.ui")        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
-        self.ui.doit_1.clicked.connect(lambda: self._onDoit_1())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
+        self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe()) 
-        self.ui.doit_5.clicked.connect(lambda: self._onDoit_5()) 
+        self.ui.screenshots.clicked.connect(lambda: self._onScreenshots()) 
         self.ui.startexam.clicked.connect(self._onStartExam) 
         self.ui.starthotspot.clicked.connect(self._onStartHotspot) 
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
-        
+
         prepareDirectories()  #cleans everything and copies some scripts
         checkFirewall(self)  #deactivates all iptable rules if any
-        
         self.ui.show()
     
     #twisted
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
         
-        
 
-    def _onDoit_1(self):
+    def _onSendfile(self):
         """send a file to all clients"""
         if not self.clients:
             self._log("no clients connected")
             return
         
+        self.files = get_file_list(self.files_path)
+        filename = "serverfile.txt"
+        if not filename in self.files:
+            self.log('filename not found in directory')
+            return
+        
         for i in self.clients:
-            try:
-                filename = "serverfile.txt"
-            except IndexError:
-                i.transport.write('Missing filename\n')
-                i.transport.write('ENDMSG\n')
-                return
-            
-            self.files = get_file_list(self.files_path)
-                
-            if not filename in self.files:
-                self.log('filename not found in directory')
-                return
-            
             self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
-            
             i.transport.write('FILETRANSFER GET FILE %s %s\n' % (filename, self.files[filename][2]))  #trigger clienttask type filename filehash
             i.setRawMode()
-            
             for bytes in read_bytes_from_file(os.path.join(self.files_path, filename)):
                 i.transport.write(bytes)
             
@@ -231,17 +220,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
 
-
     def _onShowIP(self): 
         startcommand = "exec ./scripts/gui-getmyip.sh &"
         os.system(startcommand) 
         
-        
-        
-
-
-    # GET FOLDER #
-    def _onAbgabe(self): #triggered on button click
+   
+    def _onAbgabe(self):  
+        """get ABGABE folder"""
         if not self.clients:
             self._log("no clients connected")
             return
@@ -253,13 +238,12 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
 
 
-
     def _onStartHotspot(self):
         startcommand = "exec ./scripts/gui-activate-lifehotspot-root.sh &"
         os.system(startcommand) 
 
     
-    def _onDoit_5(self):
+    def _onScreenshots(self):
         if not self.clients:
             self._log("no clients connected")
             return
@@ -269,7 +253,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
        
 
-
     #SEND EXAM CONFIG#
     def _onStartExam(self): 
         """ 
@@ -278,7 +261,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         invoke startexam.sh file on clients 
         
         """
-        
         if not self.clients:
             self._log("no clients connected")
             return
@@ -310,7 +292,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onTestFirewall(self):      
-    
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
             os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
             os.system("./scripts/exam-firewall.sh stop &") 
@@ -321,7 +302,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 palettedefault = i.palette()
                 palettedefault.setColor(QPalette.Active, QPalette.Base, QColor(255, 255, 255))
                 i.setPalette(palettedefault)
-            
             
         elif self.ui.testfirewall.text() == "&Firewall testen":
             ipstore = os.path.join(SERVER_EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
@@ -355,13 +335,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         os._exit(0)  #otherwise only the gui is closed and connections are kept alive
     
     
-    
     def _log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + '\n' + str(msg))
 
 
-    
     def _deleteClientScreenshot(self,clientID):
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
@@ -370,6 +348,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         for item in items:
             if clientID == item.id:
                 sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
+
+
 
 
 if __name__ == '__main__':

@@ -130,6 +130,9 @@ def prepareDirectories():
     os.makedirs(SERVERUNZIP_DIRECTORY)
     os.makedirs(SERVERZIP_DIRECTORY)
     
+    
+    #FIXME  bei jedem start wird EXAMCONFIG ins workdirectory kopiert - neu gestalteter exam desktop wird überschrieben
+    # die änderungen werden nicht ins data verzeichnis zurückgeführt
     copycommand = "sudo cp -r ./DATA/* %s" %(WORK_DIRECTORY)
     os.system(copycommand)
    
