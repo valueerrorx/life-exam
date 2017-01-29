@@ -5,7 +5,7 @@ import os
 SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
-USER_HOME_DIR = "/home/waldelf"
+USER_HOME_DIR = "/home/student"
 
 # work directory for client and server  - absolute paths 
 WORK_DIRECTORY=os.path.join(USER_HOME_DIR,".life/EXAM") 
