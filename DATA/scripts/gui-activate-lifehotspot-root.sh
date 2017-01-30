@@ -26,6 +26,11 @@ else
     echo " "
 fi
 
+#just restart networkmanager (kills accesspoint) and exit
+if [ $1 = "stop" ];then
+    sudo systemctl restart network-manager.service   
+    exit 1
+fi
 
 
 #---------------------------------------------------------------------#
