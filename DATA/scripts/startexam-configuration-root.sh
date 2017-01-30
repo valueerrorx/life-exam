@@ -5,13 +5,15 @@
 
 # dont forget the trailing slash - otherwise shell will think its a file
 
-HOME="/home/student/"
+
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+HOME="/home/${USER}/"
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
-
+ABGABE="${HOME}ABGABE/"
 
 
 #--------------------------------#
@@ -52,12 +54,12 @@ sleep 0.5
     #---------------------------------#
     qdbus $progress Set "" value 1
     qdbus $progress setLabelText "Sichere aktuelle Desktop Konfiguration.... "
-    cp -Ra  /home/student/.kde/share/config/* ${BACKUPDIR}kde.config/
-    cp -Ra  /home/student/.config/* ${BACKUPDIR}home.config/
+    cp -Ra  ${HOME}.kde/share/config/* ${BACKUPDIR}kde.config/
+    cp -Ra  ${HOME}.config/* ${BACKUPDIR}home.config/
     # backup current desktop config
     qdbus $progress Set "" value 2
     qdbus $progress setLabelText "Sichere programmspezifische Konfigurationsdateien.... "
-    cp -Ra  /home/student/.local/* ${BACKUPDIR}home.local/
+    cp -Ra  ${HOME}.local/* ${BACKUPDIR}home.local/
   
 
 
@@ -73,24 +75,24 @@ qdbus $progress setLabelText "Lade Desktop Konfiguration für Prüfungsumgebung.
     #----------------------------------------------------------------------------------#
     # LOAD DEFAULT EXAM CONFIG - WITHOUT SYSTEM LOCK FILES (shortcuts, xorg, kde5rc)   #
     #----------------------------------------------------------------------------------#
-    cp -a ${LOCKDOWNDIR}plasma-EXAM    /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc
-    cp -a ${LOCKDOWNDIR}kwinrc-EXAM /home/student/.config/kwinrc
-    cp -a ${LOCKDOWNDIR}Office.conf-EXAM /home/student/.config/Kingsoft/Office.conf
-    cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM /home/student/.config/libreoffice/4/user/registrymodifications.xcu
-    cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM /home/student/.local/share/user-places.xbel
+    cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc
+    cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc
+    cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf
+    cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
+    cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
 
 
 
 
-#mount ABGABE to /home/student/Abgabe
+#mount ABGABE to ${HOME}Abgabe
 qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 
     #---------------------------------#
     # MOUNT ABGABE                    #
     #---------------------------------#
-    mkdir /home/student/ABGABE
-    sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE /home/student/ABGABE
+    mkdir $ABGABE
+    sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
 
 
 
@@ -102,7 +104,7 @@ sleep 1
     #---------------------------------#
     # CREATE SAVE CONFIG LINK         #
     #---------------------------------#
-    sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" /home/student/ABGABE
+    sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" $ABGABE
 
 
     #---------------------------------#

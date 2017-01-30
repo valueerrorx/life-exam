@@ -6,7 +6,9 @@
 
 # dont forget the trailing slash - otherwise shell will think its a file
 
-HOME="/home/student/"
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+HOME="/home/${USER}/"
+
 
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"

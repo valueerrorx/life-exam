@@ -2,7 +2,11 @@
 # last updated: 26.01.2017
 
 # SERVER FILE #
-HOME="/home/student/"
+
+
+
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+HOME="/home/${USER}/"
 
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
  

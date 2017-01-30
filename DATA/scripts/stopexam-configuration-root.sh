@@ -8,12 +8,14 @@
 
 # dont forget the trailing slash - otherwise shell will think its a file
 
-HOME="/home/student/"
+
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+HOME="/home/${USER}/"
 
 BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-
+ABGABE="${HOME}ABGABE/"
   
 
 
@@ -68,12 +70,12 @@ if [ "$answer" = 0 ]; then
     #------------------------------------------------#
     # SAVE CURRENT EXAM CONFIG FILES TO LOCKDOWNDIR  #
     #------------------------------------------------#
-    cp -a /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
-    cp -a /home/student/.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
-   # cp -a /home/student/.config/kglobalshortcutsrc ${LOCKDOWNDIR}/kglobalshortcutsrc-EXAM   #always use the "noshortcuts" file - don't allow configuring for now
-    cp -a /home/student/.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM
-    cp -a /home/student/.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM
-    cp -a /home/student/.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
+    cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
+    cp -a ${HOME}.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
+   # cp -a ${HOME}.config/kglobalshortcutsrc ${LOCKDOWNDIR}/kglobalshortcutsrc-EXAM   #always use the "noshortcuts" file - don't allow configuring for now
+    cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM
+    cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM
+    cp -a ${HOME}.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
 
     
     #------------------------------------------------#
@@ -93,19 +95,19 @@ fi;
 
 
 #remove some files
-sudo rm "/home/student/ABGABE/Speichere Prüfungsumgebung.desktop"
+sudo rm "${ABGABE}Speichere Prüfungsumgebung.desktop"
 sudo rm $EXAMLOCKFILE   #remove this file otherwise LIFE will think exam (config) is still running
 
 #copy backup over original
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Stelle Standard Desktop Konfiguration wieder her.... "
-cp -Ra ${BACKUPDIR}kde.config/* /home/student/.kde/share/config/
-cp -Ra ${BACKUPDIR}home.config/* /home/student/.config/
+cp -Ra ${BACKUPDIR}kde.config/* ${HOME}.kde/share/config/
+cp -Ra ${BACKUPDIR}home.config/* ${HOME}.config/
 
 #copy backup over original
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Stelle Standard Programm Konfiguration wieder her.... "
-cp -Ra ${BACKUPDIR}home.local/* /home/student/.local/
+cp -Ra ${BACKUPDIR}home.local/* ${HOME}.local/
 
 
 #remove icon cache - otherwise some changes will not be visible
@@ -113,16 +115,16 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Entferne Icon Cache.... "
 sleep 0.5
 sudo rm /usr/share/icons/hicolor/icon-theme.cache > /dev/null 2>&1  #hide errors
-sudo rm /var/tmp/kdecache-student/plasma_theme_default.kcache > /dev/null 2>&1  #hide errors
-sudo rm /var/tmp/kdecache-student/icon-cache.kcache > /dev/null 2>&1  #hide errors
-sudo rm -r /home/student/.cache > /dev/null 2>&1  #hide errors
+sudo rm /var/tmp/kdecache-${USER}/plasma_theme_default.kcache > /dev/null 2>&1  #hide errors
+sudo rm /var/tmp/kdecache-${USER}/icon-cache.kcache > /dev/null 2>&1  #hide errors
+sudo rm -r ${HOME}.cache > /dev/null 2>&1  #hide errors
 
 #unmount ABGABE
 qdbus $progress Set "" value 5
 qdbus $progress setLabelText "Gebe Ordner ABGABE wieder frei.... "
-sudo umount -l /home/student/ABGABE
+sudo umount -l $ABGABE
 sleep 2
-rmdir /home/student/ABGABE
+rmdir $ABGABE
 
 
 

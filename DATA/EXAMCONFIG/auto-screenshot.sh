@@ -5,10 +5,13 @@
 #it also removes the script but in case something went wrong the script is per default only taking 48 images 
 
 SCREENSHOTINTERVALL=300;   #seconds    (every 5th minute)
-LOOPS=48;           #repeat
+LOOPS=48;           #repeat - but not indefinitely..  4h
 
 
-MOUNTPOINT="/home/student/ABGABE/.screenshots"
+
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+HOME="/home/${USER}/"
+MOUNTPOINT="${HOME}ABGABE/.screenshots/"
     
 
 
@@ -17,7 +20,7 @@ shoot(){
     then
         for (( c=1; c<=$LOOPS; c++ ))
         do
-            scrot -b -d 0 "%Y-%m-%d-%H-%M-%S.jpg" -e 'mv $f /home/student/ABGABE/.screenshots' & sleep $SCREENSHOTINTERVALL;
+            scrot -b -d 0 "${MOUNTPOINT}%Y-%m-%d-%H-%M-%S.jpg" & sleep $SCREENSHOTINTERVALL;
         done
     else
         mkdir -p $MOUNTPOINT

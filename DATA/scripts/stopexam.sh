@@ -4,11 +4,14 @@
 
 # CLIENT FILE #
 
-HOME="/home/student/"
+
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+HOME="/home/${USER}/"
+
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" 
-
+ABGABE="${HOME}ABGABE/"
 
 #--------------------------------#
 # Check if root and running exam #
@@ -69,21 +72,21 @@ qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
 sleep 0.5
 
-cp -a ${BACKUPDIR}/plasmarc /home/student/.config/
-cp -a ${BACKUPDIR}/plasmashellrc /home/student/.config/ 
-cp -a ${BACKUPDIR}/plasma-org.kde.plasma.desktop-appletsrc /home/student/.config/
-cp -a ${BACKUPDIR}/kdeglobals /home/student/.kde/share/config/
-cp -a ${BACKUPDIR}/kwinrc /home/student/.config/
-cp -a ${BACKUPDIR}/kglobalshortcutsrc /home/student/.config/
+cp -a ${BACKUPDIR}/plasmarc ${HOME}.config/
+cp -a ${BACKUPDIR}/plasmashellrc ${HOME}.config/ 
+cp -a ${BACKUPDIR}/plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
+cp -a ${BACKUPDIR}/kdeglobals ${HOME}.kde/share/config/
+cp -a ${BACKUPDIR}/kwinrc ${HOME}.config/
+cp -a ${BACKUPDIR}/kglobalshortcutsrc ${HOME}.config/
 sudo cp -a ${BACKUPDIR}/IconItem.qml /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/
 sudo cp -a ${BACKUPDIR}/main.qml /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/
-cp -a ${BACKUPDIR}/Office.conf /home/student/.config/Kingsoft/
-cp -a ${BACKUPDIR}/registrymodifications.xcu /home/student/.config/libreoffice/4/user/
-cp -a ${BACKUPDIR}/user-places.xbel /home/student/.local/share/
+cp -a ${BACKUPDIR}/Office.conf ${HOME}.config/Kingsoft/
+cp -a ${BACKUPDIR}/registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
+cp -a ${BACKUPDIR}/user-places.xbel ${HOME}.local/share/
 
 # sichere exam start und end infos
 date >> $EXAMLOCKFILE
-sudo cp $EXAMLOCKFILE /home/student/ABGABE/
+sudo cp $EXAMLOCKFILE $ABGABE
 sudo rm $EXAMLOCKFILE
 sleep 0.5
 
@@ -95,7 +98,7 @@ sleep 0.5
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Verzeichnis ABGABE wird freigegeben...."
 sleep 0.5
-sudo umount -l /home/student/ABGABE
+sudo umount -l $ABGABE
 
 
 
@@ -119,9 +122,9 @@ sudo rm exam   #remove this file otherwise LIFE will think exam is still running
 #---------------------------------#
 qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
-rm  /home/student/.config/autostart-scripts/auto-screenshot.sh
+rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
 sudo killall auto-screenshot.sh
-rmdir /home/student/ABGABE
+#rmdir $ABGABE
 
 
 #---------------------------------#

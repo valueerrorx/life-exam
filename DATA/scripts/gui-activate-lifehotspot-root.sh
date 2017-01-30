@@ -3,6 +3,8 @@
 
 # SERVER FILE #
 
+USER=$(logname) 
+
 CONFDIR="/etc/NetworkManager/system-connections/"
 CONFFILE="/etc/NetworkManager/system-connections/lifespot"
 
@@ -38,7 +40,7 @@ getSSID(){
         if [ "$?" = 0 ]; then
             SIZE=${#PASSWD}
             if [ "$SIZE" -gt 7 ]; then
-                sudo -u student kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Password ok!" 3
+                sudo -u ${USER} kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Password ok!" 3
             else
                 kdialog  --caption "LIFE" --title "LIFE" --error "Das Passwort ist zu kurz!"
                 getSSID 
@@ -74,7 +76,7 @@ id=lifespot
 uuid=6fae1135-c011-4908-a7d5-6505a88d7a53
 type=wifi
 autoconnect=false
-permissions=user:student:;
+permissions=user:${USER}:;
 secondaries=
 
 [wifi]
@@ -104,7 +106,7 @@ method=auto
 # neue config initialisieren und starten
 sudo systemctl restart network-manager.service 
 
-sudo -u student kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Accespoint wird aktiviert!" 3
+sudo -u ${USER} kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Accespoint wird aktiviert!" 3
 sleep 3
 # verbindung aktivieren
 exec nmcli c up lifespot &
