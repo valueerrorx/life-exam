@@ -23,7 +23,7 @@ then
     kdialog  --msgbox 'Ihre wlan Karte unterstützt die Accesspoint-Funktion nicht!\nStoppe Programm' --title 'LIFE' --caption "LIFE" > /dev/null
     exit 0
 else
-    echo "fu"
+    echo " "
 fi
 
 

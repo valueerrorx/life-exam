@@ -2,14 +2,20 @@
 # -*- coding: utf-8 -*-
 import os
 
+import subprocess
 SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
-USER_HOME_DIR = "/home/student"
+
+
+
+USER = subprocess.check_output("logname", shell=True).rstrip()
+USER_HOME_DIR = os.path.join("/home",str(USER))
+
+
 
 # work directory for client and server  - absolute paths 
 WORK_DIRECTORY=os.path.join(USER_HOME_DIR,".life/EXAM") 
-
 
 SCRIPTS_DIRECTORY=os.path.join(WORK_DIRECTORY,"scripts")
 EXAMCONFIG_DIRECTORY = os.path.join(WORK_DIRECTORY,"EXAMCONFIG")

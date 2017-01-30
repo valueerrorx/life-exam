@@ -58,12 +58,14 @@ stopIPtables(){
 
 
 
+
 if [ "$1" = "start" ]; then
+    echo "starting firewall"
     stopIPtables
     sleep 1
     setIPtables
 elif [ "$1" = "stop" ]; then
+    echo "stopping firewall"
     stopIPtables
 fi
-
 

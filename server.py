@@ -313,7 +313,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             
             scriptfile = os.path.join(SCRIPTS_DIRECTORY,"exam-firewall.sh" )
             startcommand = "exec %s stop &" %(scriptfile)
-  
+            os.system(startcommand) 
             self.ui.testfirewall.setText("Firewall testen")
 
             ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
@@ -342,7 +342,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             
             scriptfile = os.path.join(SCRIPTS_DIRECTORY,"exam-firewall.sh" )
             startcommand = "exec %s start &" %(scriptfile)
-
+            os.system(startcommand) 
             self.ui.testfirewall.setText("Stoppe Firewall")
 
 

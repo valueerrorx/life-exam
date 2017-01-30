@@ -173,7 +173,7 @@ class MyClientProtocol(basic.LineReceiver):
     def _showDesktopMessage(self,msg):
         """uses a passivepopup to display messages from the daemon"""
         message = "Exam Server: %s " %(msg)
-        command = "sudo -u student kdialog --title 'EXAM' --passivepopup '%s' 5" %(message)
+        command = "sudo -u %s kdialog --title 'EXAM' --passivepopup '%s' 5" %(USER,message)
         os.system(command)
 
 

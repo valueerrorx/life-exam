@@ -9,10 +9,13 @@ from config import *
 
 
 def checkFirewall(self):
-    result = os.system("sudo iptables -L |grep DROP|wc -l")
-    if result != 0:
+    result=subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
+    print result
+    if result != "0":
         print "stopping ip tables"
-        os.system("./scripts/exam-firewall.sh stop &") 
+        scriptfile = os.path.join(SCRIPTS_DIRECTORY,"exam-firewall.sh" )
+        startcommand = "exec %s stop &" %(scriptfile)
+        os.system(startcommand) 
     
     ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
     lines = [line.rstrip('\n') for line in open(ipstore)]
@@ -143,7 +146,7 @@ def prepareDirectories():
         os.system(copycommand)
    
    #fix permissions
-    chowncommand = "sudo chown -R student:student %s" %(WORK_DIRECTORY)
+    chowncommand = "sudo chown -R %s:%s %s" %(USER,USER,WORK_DIRECTORY)
     os.system(chowncommand)
 
 
