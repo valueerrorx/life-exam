@@ -70,6 +70,7 @@ class MyClientProtocol(basic.LineReceiver):
                 if self.file_data[2] == "EXAM": 
                     self._startExam(filename,file_path)
                 elif self.file_data[2] == "FILE":
+                    #FIXME try if destination already exists - save with timecode
                     shutil.move(file_path, ABGABE_DIRECTORY)
                 
             else:
