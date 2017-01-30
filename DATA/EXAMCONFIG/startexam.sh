@@ -15,7 +15,7 @@ CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
 BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-
+ABGABE="${HOME}ABGABE/"
   
 
 
@@ -75,17 +75,17 @@ qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.5
 # we could backup everything from .config .local .kde but i think this is enough
-cp -a /home/student/.config/plasmarc ${BACKUPDIR}
-cp -a /home/student/.config/plasmashellrc ${BACKUPDIR}
-cp -a /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUPDIR}
-cp -a /home/student/.kde/share/config/kdeglobals ${BACKUPDIR}
-cp -a /home/student/.config/kwinrc ${BACKUPDIR}
-cp -a /home/student/.config/kglobalshortcutsrc ${BACKUPDIR}
+cp -a ${HOME}.config/plasmarc ${BACKUPDIR}
+cp -a ${HOME}.config/plasmashellrc ${BACKUPDIR}
+cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUPDIR}
+cp -a ${HOME}.kde/share/config/kdeglobals ${BACKUPDIR}
+cp -a ${HOME}.config/kwinrc ${BACKUPDIR}
+cp -a ${HOME}.config/kglobalshortcutsrc ${BACKUPDIR}
 cp -a /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml ${BACKUPDIR}
 cp -a /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml ${BACKUPDIR}
-cp -a /home/student/.config/Kingsoft/Office.conf ${BACKUPDIR}
-cp -a /home/student/.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
-cp -a /home/student/.local/share/user-places.xbel ${BACKUPDIR}
+cp -a ${HOME}.config/Kingsoft/Office.conf ${BACKUPDIR}
+cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
+cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}
 
 
 
@@ -100,12 +100,12 @@ sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc
 sudo cp ${LOCKDOWNDIR}xorg.conf /etc/X11
 sudo cp ${LOCKDOWNDIR}IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
 sudo cp ${LOCKDOWNDIR}main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
-cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM /home/student/.config/kglobalshortcutsrc
-cp -a ${LOCKDOWNDIR}Office.conf-EXAM /home/student/.config/Kingsoft/Office.conf
-cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM /home/student/.config/libreoffice/4/user/registrymodifications.xcu
-cp -a ${LOCKDOWNDIR}plasma-EXAM    /home/student/.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,#load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,   
-cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM /home/student/.local/share/user-places.xbel
-cp -a ${LOCKDOWNDIR}kwinrc-EXAM /home/student/.config/kwinrc
+cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc
+cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf
+cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
+cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,#load minimal plasma config with stop exam icon, libreoffice, dolphin, geogebra, kcalc,   
+cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
+cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc
 
 
 
@@ -116,8 +116,8 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 sleep 0.5
 
-mkdir /home/student/ABGABE
-sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE /home/student/ABGABE
+mkdir $ABGABE
+sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
 
 
 
@@ -177,7 +177,7 @@ setIPtables
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
-cp ${CONFIGDIR}auto-screenshot.sh /home/student/.config/autostart-scripts
+cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
 
 
 
