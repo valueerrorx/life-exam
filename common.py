@@ -123,7 +123,7 @@ def prepareDirectories():
         os.makedirs(SERVERFILES_DIRECTORY)
     else:   #cleanup
         deleteFolderContent(CLIENTFILES_DIRECTORY)
-        deleteFolderContent(SERVERFILES_DIRECTORY)
+        deleteFolderContent(SERVERFILES_DIRECTORY)   #FIXME  die gesamte abgabe wird beim start des programmes gelöscht...  das geht ned !! ABGABE sollte sowieso irgendwo in einem sichtbaren verzeichnis in /home/user/EXAM-ABGABE zb. landen
         
     os.makedirs(CLIENTSCREENSHOT_DIRECTORY)
     os.makedirs(CLIENTUNZIP_DIRECTORY)
@@ -132,10 +132,6 @@ def prepareDirectories():
     os.makedirs(SERVERSCREENSHOT_DIRECTORY)
     os.makedirs(SERVERUNZIP_DIRECTORY)
     os.makedirs(SERVERZIP_DIRECTORY)
-    
-    
-    #FIXME  bei jedem start wird EXAMCONFIG ins workdirectory kopiert - neu gestalteter exam desktop wird überschrieben
-    # die änderungen werden nicht ins data verzeichnis zurückgeführt
   
     copycommand = "sudo cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
     os.system(copycommand)

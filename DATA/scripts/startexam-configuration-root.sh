@@ -91,7 +91,7 @@ qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGAB
     #---------------------------------#
     # MOUNT ABGABE                    #
     #---------------------------------#
-    mkdir $ABGABE
+    mkdir $ABGABE 2> /dev/null
     sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
 
 

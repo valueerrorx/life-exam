@@ -69,6 +69,8 @@ class MyClientProtocol(basic.LineReceiver):
                 # initialize exam mode.. unzip and start exam 
                 if self.file_data[2] == "EXAM": 
                     self._startExam(filename,file_path)
+                elif self.file_data[2] == "FILE":
+                    shutil.move(file_path, ABGABE_DIRECTORY)
                 
             else:
                 os.unlink(file_path)
