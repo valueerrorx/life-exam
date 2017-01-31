@@ -220,22 +220,25 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         # show filepicker
         filedialog = QtWidgets.QFileDialog()
         filedialog.setDirectory(SERVERFILES_DIRECTORY)  #set default directory
+
         file_path = filedialog.getOpenFileName()   # get filename
-        file_path = file_path[0]
-        filename = ntpath.basename(file_path)   #get filename without path
-       
-        file_size = os.path.getsize(file_path)
-        md5_hash = get_file_md5_hash(file_path)
-    
-        for i in self.clients:
-            self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
-            i.transport.write('FILETRANSFER GET FILE %s %s\n' % (str(filename), md5_hash))  #trigger clienttask type filename filehash
-            i.setRawMode()
-            for bytes in read_bytes_from_file(file_path):
-                i.transport.write(bytes)
+        file_path = file_path[0] 
+   
             
-            i.transport.write('\r\n')
-            i.setLineMode()  # When the transfer is finished, we go back to the line mode 
+        if file_path:
+            filename = ntpath.basename(file_path)   #get filename without path
+            file_size = os.path.getsize(file_path)
+            md5_hash = get_file_md5_hash(file_path)
+        
+            for i in self.clients:
+                self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
+                i.transport.write('FILETRANSFER GET FILE %s %s\n' % (str(filename), md5_hash))  #trigger clienttask type filename filehash
+                i.setRawMode()
+                for bytes in read_bytes_from_file(file_path):
+                    i.transport.write(bytes)
+                
+                i.transport.write('\r\n')
+                i.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
 
 
