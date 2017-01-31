@@ -66,7 +66,6 @@ class MyClientProtocol(basic.LineReceiver):
             if validate_file_md5_hash(file_path, self.file_data[4]):
                 print('File %s has been successfully transfered and saved' % (filename) )
                 
-               
                 if self.file_data[2] == "EXAM":     # initialize exam mode.. unzip and start exam 
                     self._startExam(filename,file_path)
                 elif self.file_data[2] == "FILE":

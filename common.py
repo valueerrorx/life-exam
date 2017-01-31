@@ -141,19 +141,22 @@ def prepareDirectories():
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
         os.system(copycommand)
    
-   
     fixFilePermissions(WORK_DIRECTORY)
 
 
 
 def fixFilePermissions(folder):
+    """ FIXME ?? both scripts are running as root 
+    in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root"""
     if folder:
-        print "fixing file permissions"
-        chowncommand = "sudo chown -R %s:%s %s" %(USER,USER,folder)
-        os.system(chowncommand)
-    
-
-
+        if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
+            print "fixing file permissions"
+            chowncommand = "sudo chown -R %s:%s %s" %(USER,USER,folder)
+            os.system(chowncommand)
+        else:
+            print "exam folder location outside of /home/ is not allowed"
+    else:
+        print "no folder given"
 
 
 

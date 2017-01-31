@@ -77,12 +77,14 @@ class MyServerProtocol(basic.LineReceiver):
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+                    fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
                 
                 elif self.file_data[1] == "FOLDER":
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
                         zip_ref.extractall(extract_dir)
                     os.unlink(file_path)   #delete zip file
+                    fixFilePermissions(SERVERUNZIP_DIRECTORY) # fix filepermission of transfered file 
 
             else:   # wrong file hash
                 os.unlink(file_path)
