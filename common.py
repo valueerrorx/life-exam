@@ -141,8 +141,28 @@ def prepareDirectories():
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
         os.system(copycommand)
    
-   #fix permissions
-    chowncommand = "sudo chown -R %s:%s %s" %(USER,USER,WORK_DIRECTORY)
-    os.system(chowncommand)
+   
+    fixFilePermissions(WORK_DIRECTORY)
+
+
+
+def fixFilePermissions(folder):
+    if folder:
+        print "fixing file permissions"
+        chowncommand = "sudo chown -R %s:%s %s" %(USER,USER,folder)
+        os.system(chowncommand)
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
 

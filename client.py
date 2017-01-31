@@ -66,13 +66,13 @@ class MyClientProtocol(basic.LineReceiver):
             if validate_file_md5_hash(file_path, self.file_data[4]):
                 print('File %s has been successfully transfered and saved' % (filename) )
                 
-                # initialize exam mode.. unzip and start exam 
-                if self.file_data[2] == "EXAM": 
+               
+                if self.file_data[2] == "EXAM":     # initialize exam mode.. unzip and start exam 
                     self._startExam(filename,file_path)
                 elif self.file_data[2] == "FILE":
                     #FIXME try if destination already exists - save with timecode
                     shutil.move(file_path, ABGABE_DIRECTORY)
-                
+                    fixFilePermissions(ABGABE_DIRECTORY)
             else:
                 os.unlink(file_path)
                 print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename) )
