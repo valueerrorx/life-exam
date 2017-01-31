@@ -220,11 +220,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         # show filepicker
         filedialog = QtWidgets.QFileDialog()
         filedialog.setDirectory(SERVERFILES_DIRECTORY)  #set default directory
-
         file_path = filedialog.getOpenFileName()   # get filename
         file_path = file_path[0] 
    
-            
         if file_path:
             filename = ntpath.basename(file_path)   #get filename without path
             file_size = os.path.getsize(file_path)
