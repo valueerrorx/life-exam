@@ -200,13 +200,13 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
     def clientConnectionFailed(self,connector, reason):  # in case of connection problems try 4 times then reshow student gui
         self.failcount += 1
         if self.failcount > 3:
-            command = "kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"
+            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
             os.system(command)
             command = "python student.py &" 
             os.system(command)
             os._exit(1)
         print('Connection failed. Reason:', reason)
-        command = "kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen.\nÜberprüfen sie die Netzwerkeinstellungen \nsowie die Server IP Adresse!' 8 &"
+        command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen.\nÜberprüfen sie die Netzwerkeinstellungen \nsowie die Server IP Adresse!' 8 &" %(USER)
         os.system(command)
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
