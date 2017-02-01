@@ -38,6 +38,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.clients.append(self)  # only the factory (MyServerFactory) is the persistent thing.. therefore we save the clients ( MyServerProtocol object) on factory.clients
         self.file_handler = None
         self.file_data = ()
+    
         self.clientID = str(self.transport.client[1])
         self.factory._log('Client connected..')
         self.transport.write('Connection established!\n')
@@ -77,6 +78,7 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
+                    self.student_id = self.file_data[4]    # the custom student id is transferred with the initial (and every following) screenshot 
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
                 
@@ -110,7 +112,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return 
-
+        #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( student_id=self.file_data[4] ))
         if line.startswith('FILETRANSFER'):           
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
@@ -129,7 +131,7 @@ class MyServerProtocol(basic.LineReceiver):
                 existingItem = item   #there should be only one matching item
         
         self.label1 = QtWidgets.QLabel()
-        self.label2 = QtWidgets.QLabel('client ID: %s' %(self.clientID) )
+        self.label2 = QtWidgets.QLabel('%s: %s' %(self.clientID, self.student_id) )
         self.label1.Pixmap = QPixmap(screenshot_file_path)
         self.label1.setPixmap(self.label1.Pixmap)
         # generate a widget that combines the labels
@@ -197,21 +199,17 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         checkFirewall(self)  #deactivates all iptable rules if any
         self.ui.show()
     
-    #twisted
+
+
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
         
-
-
-
-
+        
 
     def _onLoadDefaults(self):
         self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
         os.system(copycommand)
-
-
 
 
 
@@ -249,6 +247,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         os.system(startcommand) 
         
    
+   
     def _onAbgabe(self):  
         """get ABGABE folder"""
         if not self.clients:
@@ -262,10 +261,12 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
 
 
+
     def _onStartHotspot(self):
         scriptfile = os.path.join(SCRIPTS_DIRECTORY,"gui-activate-lifehotspot-root.sh" )
         startcommand = "exec %s &" %(scriptfile)
         os.system(startcommand) 
+
 
     
     def _onScreenshots(self):
@@ -273,13 +274,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
        
-        self._log("getting screenshot")
+        self._log("Updating screenshots")
         for i in self.clients:
             i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
        
 
-    #SEND EXAM CONFIG#
-    def _onStartExam(self): 
+  
+    def _onStartExam(self):
         """ 
         ZIP examconfig folder
         send configuration-zip to clients - unzip there
@@ -355,6 +356,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self.ui.testfirewall.setText("Stoppe Firewall")
 
 
+
     def _onStartConfig(self):
         scriptfile = os.path.join(SCRIPTS_DIRECTORY,"startexam-configuration-root.sh" )
         startcommand = "exec %s &" %(scriptfile)
@@ -362,14 +364,17 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.close()
 
 
+
     def _onAbbrechen(self):    # Exit button
         self.ui.close()
         os._exit(0)  #otherwise only the gui is closed and connections are kept alive
     
     
+    
     def _log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
+
 
 
     def _deleteClientScreenshot(self,clientID):

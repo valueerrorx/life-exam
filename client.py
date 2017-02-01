@@ -28,7 +28,6 @@ class MyClientProtocol(basic.LineReceiver):
     def __init__(self,factory):
         self.factory = factory
         self.delimiter = '\n'
-
         prepareDirectories()  # cleans everything and copies script files 
         
     #twisted
@@ -132,7 +131,7 @@ class MyClientProtocol(basic.LineReceiver):
         if filetype == 'FILE':
             self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
-            self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
+            self.transport.write('FILETRANSFER SCREENSHOT %s %s %s\n' % (filename, self.factory.files[filename][2],STUDENT_ID ))     #trigger type filename filehash ID
         elif filetype == 'FOLDER' or filetype == 'ABGABE' :
             self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:
@@ -214,6 +213,8 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self) 
+
+
 
 if __name__ == '__main__':
     print('Connecting to %s on port %s' % (SERVER_IP, SERVER_PORT) )
