@@ -56,6 +56,7 @@ class MyServerProtocol(basic.LineReceiver):
 
     #twisted
     def rawDataReceived(self, data):
+        """ handle incoming byte data """
         filename = self.file_data[2]
         file_path = os.path.join(self.factory.files_path, filename)
         self.factory._log('Receiving file chunk (%d KB)' % (len(data)/1024))
@@ -82,9 +83,16 @@ class MyServerProtocol(basic.LineReceiver):
                 elif self.file_data[1] == "FOLDER":
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
-                        zip_ref.extractall(extract_dir)
+                        zip_ref.extractall(extract_dir)     #derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)   #delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY) # fix filepermission of transfered file 
+                
+                elif self.file_data[1] == "ABGABE":
+                    extract_dir = os.path.join(ABGABE_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    with zipfile.ZipFile(file_path,"r") as zip_ref:
+                        zip_ref.extractall(extract_dir)     #derzeitiges verzeichnis ist .life/SERVER/unzip
+                    os.unlink(file_path)   #delete zip file
+                    fixFilePermissions(ABGABE_DIRECTORY) # fix filepermission of transfered file 
 
             else:   # wrong file hash
                 os.unlink(file_path)
@@ -99,18 +107,11 @@ class MyServerProtocol(basic.LineReceiver):
     #twisted
     def lineReceived(self, line):
         """whenever the client sends something """
-        self.factory._log('Received the following line from the client [%s]: %s' % (self.transport.getPeer().host, line))
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return 
 
-        if line.startswith('FILETRANSFER'):
-            # Received a file name and hash, client is sending us a file
-            trigger = self.file_data[0]
-            filetype = self.file_data[1]
-            filename = self.file_data[2]
-            file_hash = self.file_data[3]
-            
+        if line.startswith('FILETRANSFER'):           
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
     

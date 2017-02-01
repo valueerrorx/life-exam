@@ -134,7 +134,7 @@ class MyClientProtocol(basic.LineReceiver):
         elif filetype == 'SHOT':
             self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'FOLDER' or filetype == 'ABGABE' :
-            self.transport.write('FILETRANSFER FOLDER %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
+            self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:
             return
         

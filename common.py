@@ -62,7 +62,6 @@ def get_file_md5_hash(file):
 
 def read_bytes_from_file(file, chunk_size = 8100):
     """ Read bytes from a file in chunks. """
-    
     with open(file, 'rb') as file:
         while True:
             chunk = file.read(chunk_size)
@@ -76,7 +75,6 @@ def read_bytes_from_file(file, chunk_size = 8100):
 
 def clean_and_split_input(input):
     """ Removes carriage return and line feed characters and splits input on a single whitespace. """
-    
     input = input.strip()
     input = input.split(' ')
         
@@ -95,7 +93,7 @@ def get_file_list(folder):
                 file_path = os.path.join(root, filename)
                 file_size = os.path.getsize(file_path)
                 md5_hash = get_file_md5_hash(file_path)
-                file_list[filename] = (file_path, file_size, md5_hash)  #probably better to use path as index and filename as first value
+                file_list[filename] = (file_path, file_size, md5_hash)  #probably better to use path as index and filename as first value to make sure its unique ?
             for subdir in subdirs:  # add folders to the list
                 dir_path = os.path.join(root,subdir)
                 file_list[subdir] = (dir_path, 0, 0)
@@ -123,7 +121,7 @@ def prepareDirectories():
         os.makedirs(SERVERFILES_DIRECTORY)
     else:   #cleanup
         deleteFolderContent(CLIENTFILES_DIRECTORY)
-        deleteFolderContent(SERVERFILES_DIRECTORY)   #FIXME  die gesamte abgabe wird beim start des programmes gelöscht...  das geht ned !! ABGABE sollte sowieso irgendwo in einem sichtbaren verzeichnis in /home/user/EXAM-ABGABE zb. landen
+        deleteFolderContent(SERVERFILES_DIRECTORY) # this deletes all transferred files from a previous session in the server dir .life/Server
         
     os.makedirs(CLIENTSCREENSHOT_DIRECTORY)
     os.makedirs(CLIENTUNZIP_DIRECTORY)
