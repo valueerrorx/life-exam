@@ -17,9 +17,9 @@ IPW=$(ip -4 address show dev ${IFACE} |grep inet | awk '{print $2}'|cut -d '/' -
 if [[( "$IP" = "") && ( "$IPW" = "" ) ]]; then
     kdialog  --msgbox "Es konnte keine aktive Netzwerkverbindung gefunden werden!" --title 'LIFE' --caption "LIFE" > /dev/null
 elif [[( "$IP" != "") && ( "$IPW" = "" ) ]]; then
-    kdialog  --msgbox "Deine derzeitige IP Adresse lautet:\n$IP\n" --title 'LIFE' --caption "LIFE" > /dev/null
+    kdialog  --msgbox "Deine derzeitige IP Adresse lautet: \n\n$IP\n" --title 'LIFE' --caption "LIFE" > /dev/null
 elif [[( "$IP" = "") && ( "$IPW" != "" ) ]]; then
-    kdialog  --msgbox "Deine derzeitige WLAN IP Adresse lautet: \n$IPW\n" --title 'LIFE' --caption "LIFE" > /dev/null
+    kdialog  --msgbox "Deine derzeitige WLAN IP Adresse lautet: \n\n$IPW\n" --title 'LIFE' --caption "LIFE" > /dev/null
 else
-    kdialog  --msgbox "Deine derzeitige IP Adresse lautet:\n$IP\n\nDeine WLAN IP Adresse lautet: \n$IPW\n" --title 'LIFE' --caption "LIFE" > /dev/null
+    kdialog  --msgbox "Deine derzeitige IP Adresse lautet:\n$IP\n\nDeine WLAN IP Adresse lautet: \n\n$IPW\n" --title 'LIFE' --caption "LIFE" > /dev/null
 fi

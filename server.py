@@ -14,6 +14,7 @@ import ntpath
 
 from twisted.internet import protocol
 from twisted.protocols import basic
+from twisted.internet.task import LoopingCall
 from config import *
 from common import *
 
@@ -195,16 +196,22 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
 
+
         prepareDirectories()  #cleans everything and copies some scripts
         checkFirewall(self)  #deactivates all iptable rules if any
         self.ui.show()
-    
+        
+        lc = LoopingCall(self._abgabeLoop)
+        lc.start(1)
 
 
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
         
-        
+       
+    def _abgabeLoop(self):
+        print "abgabe"
+    
 
     def _onLoadDefaults(self):
         self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
