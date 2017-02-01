@@ -79,7 +79,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/chronometer.png</normaloff>pixmaps/chronometer.png</iconset>
+             <normaloff>pixmaps/document-edit.png</normaloff>pixmaps/document-edit.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -198,6 +198,26 @@
            <property name="icon">
             <iconset>
              <normaloff>pixmaps/quickopen-file.png</normaloff>pixmaps/quickopen-file.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="autoabgabe">
+           <property name="toolTip">
+            <string>Automatische Abgabe starten/stoppen</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>pixmaps/chronometer-off.png</normaloff>pixmaps/chronometer-off.png</iconset>
            </property>
            <property name="iconSize">
             <size>

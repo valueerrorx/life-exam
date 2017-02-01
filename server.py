@@ -195,22 +195,33 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
-
+        self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
 
         prepareDirectories()  #cleans everything and copies some scripts
         checkFirewall(self)  #deactivates all iptable rules if any
         self.ui.show()
         
-        lc = LoopingCall(self._abgabeLoop)
-        lc.start(1)
+        self.lc = LoopingCall(self._abgabeLoop)
+      
 
 
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
         
+        
+    def _onAutoabgabe(self):
+        intervall = self.ui.aintervall.value()
+        if self.lc.running:
+            self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
+            self.lc.stop()
+        if intervall is not 0:
+            self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
+            self.lc.start(intervall)
+        
        
     def _abgabeLoop(self):
         print "abgabe"
+    
     
 
     def _onLoadDefaults(self):
