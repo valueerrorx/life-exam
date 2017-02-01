@@ -20,7 +20,7 @@ shoot(){
     then
         for (( c=1; c<=$LOOPS; c++ ))
         do
-            scrot -b -d 0 "${MOUNTPOINT}%Y-%m-%d-%H-%M-%S.jpg" & sleep $SCREENSHOTINTERVALL;
+            import -window root -resize 160x100! ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
         done
     else
         mkdir -p $MOUNTPOINT
