@@ -130,5 +130,7 @@ qdbus $progress close
     #---------------------------------#
     sudo killall Xorg
 
-
+#in this case it is possible to only restart kwin an plasma and kill office an dolphin instead of xorg.. 
+# on full exam xorg.conf is needed in order to prevent ttys  - therefore a restart is better
+# if there is a way that systemd can temporarily suspend spawning ttys on ctrl+alt+F1 we could get rid of xorg restart 
 
