@@ -107,13 +107,9 @@ class MyClientProtocol(basic.LineReceiver):
                         shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
                         filename = "%s.zip" %(filename)   #this is the filename of the zip file
                 elif filetype == 'ABGABE':
-                    #optional FIXME  this would raise a warning to save documents if no predefined application (only libreoffice writer for now) is used - workaround needed (perhaps only raise twice?) or fix in scriptfile
-                    scriptfile = os.path.join(SCRIPTS_DIRECTORY,'autosave_documents.sh')   # this file will raise a reminder to save the document or autosave it if one of the defined programs is already opened
-                    command = "%s" %(scriptfile)
-                    os.system(command)
-                    
-                    
-                    
+                    self._triggerAutosave()
+                    time.sleep(2)   # give it some time to save the document
+            
                     target_folder = ABGABE_DIRECTORY
                     output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
                     shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
@@ -125,6 +121,30 @@ class MyClientProtocol(basic.LineReceiver):
                 return
         else:
             self.buffer.append(line)
+
+
+
+    def _triggerAutosave(self):
+        """this function uses xdotool to find windows and trigger ctrl+s shortcut on them
+            which will show the save dialog the first time and silently save the document the next time
+        """
+        app_id_list=[]
+        for app in SAVEAPPS:
+            command = "xdotool search --name %s &" %(app)
+            app_ids = subprocess.check_output(command, shell=True).rstrip()
+            if app_ids:
+                app_ids = app_ids.split('\n')
+                for app_id in app_ids:
+                    app_id_list.append(app_id)
+            
+        for application_id in app_id_list:
+            command = "xdotool windowactivate %s && xdotool key ctrl+s &" %(application_id)
+            os.system(command)
+            print "ctrl+s sent to %s" %(application_id)
+        
+        #try the current active window too in order to catch other applications not in config.py
+        command = "xdotool getactivewindow && xdotool key ctrl+s &"
+        os.system(command)
 
 
 

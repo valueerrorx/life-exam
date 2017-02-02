@@ -7,8 +7,11 @@ SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
 
+#these apps will try to autosave your work before "abgabe"
+SAVEAPPS = ['writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
 
 
+# find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip()
 USER_HOME_DIR = os.path.join("/home",str(USER))
 
