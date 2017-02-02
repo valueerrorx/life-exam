@@ -201,7 +201,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         checkFirewall(self)  #deactivates all iptable rules if any
         self.ui.show()
         
-        self.lc = LoopingCall(self._abgabeLoop)
+        self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
       
 
 
@@ -209,20 +209,22 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
         
         
+        
     def _onAutoabgabe(self):
         intervall = self.ui.aintervall.value()
+        minute_intervall = intervall * 60  #minuten nicht sekunden
         if self.lc.running:
+           
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
             self.lc.stop()
         if intervall is not 0:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
-            self.lc.start(intervall)
+            self._log("Auto-Abgabe im Intervall %s aktiviert"    %(str(intervall))   )
+            self.lc.start(minute_intervall)
+        else:
+            self._log("Abgabe-Intervall ist 0 - Auto-Abgabe deaktiviert")
         
-       
-    def _abgabeLoop(self):
-        print "abgabe"
-    
-    
+        
 
     def _onLoadDefaults(self):
         self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
