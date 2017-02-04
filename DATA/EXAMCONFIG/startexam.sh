@@ -223,7 +223,6 @@ sleep 4
 qdbus $progress close
 
 
-gi
 
 ##  restart desktop !!
 
@@ -237,8 +236,10 @@ pkill -f konsole
 pkill -f geogebra
 
 sudo -u ${USER} kquitapp5 plasmashell &
-sudo -u ${USER} kstart5 plasmashell &
-sudo -u ${USER} kwin --replace &
+sleep 2
+exec sudo -u ${USER} kstart5 plasmashell &
+sleep 2
+exec sudo -u ${USER} kwin --replace &
 
 
 

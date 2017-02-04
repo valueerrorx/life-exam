@@ -18,6 +18,14 @@ EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 ABGABE="${HOME}ABGABE/"
   
 
+if ! [ -f "$EXAMLOCKFILE" ];then
+    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    sudo -u ${USER} kquitapp5 plasmashell &
+    sudo -u ${USER} kstart5 plasmashell &
+    sleep 2
+    exit 0
+fi
+
 
 
 if [ "$(id -u)" != "0" ]; then
@@ -29,11 +37,7 @@ if [ -f "/etc/kde5rc" ];then
     sleep 2
     exit 1
 fi
-if ! [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
-    sleep 2
-    exit 0
-fi
+
 
 
 
@@ -152,8 +156,10 @@ pkill -f geogebra
 
 
 sudo -u ${USER} kquitapp5 plasmashell &
-sudo -u ${USER} kstart5 plasmashell &
-sudo -u ${USER} kwin --replace &
+sleep 2
+exec sudo -u ${USER} kstart5 plasmashell &
+sleep 2
+exec sudo -u ${USER} kwin --replace &
 
 
 

@@ -16,10 +16,7 @@ ABGABE="${HOME}ABGABE/"
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
-if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
-    exit 1
-fi
+
 if ! [ -f "$EXAMLOCKFILE" ];then
     kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     #just in case something with plasmarestart went wrong and the user clicks a second time on the icon (only restart plasma - because in that case all config files are already in place)
@@ -29,7 +26,10 @@ if ! [ -f "$EXAMLOCKFILE" ];then
     exit 0
 fi
 
-
+if [ "$(id -u)" != "0" ]; then
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    exit 1
+fi
 
 
 
@@ -172,8 +172,10 @@ pkill -f geogebra
 
 
 sudo -u ${USER} kquitapp5 plasmashell &
-sudo -u ${USER} kstart5 plasmashell &
-sudo -u ${USER} kwin --replace &
+sleep 2
+exec sudo -u ${USER} kstart5 plasmashell &
+sleep 2
+exec sudo -u ${USER} kwin --replace &
 
 
 

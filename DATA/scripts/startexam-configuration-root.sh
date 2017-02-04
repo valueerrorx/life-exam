@@ -141,8 +141,10 @@ qdbus $progress close
 
   
 sudo -u ${USER} kquitapp5 plasmashell &
-sudo -u ${USER} kstart5 plasmashell &
-sudo -u ${USER} kwin --replace &
+sleep 2
+exec sudo -u ${USER} kstart5 plasmashell &
+sleep 2
+exec sudo -u ${USER} kwin --replace &
 
 
 
