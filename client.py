@@ -176,7 +176,7 @@ class MyClientProtocol(basic.LineReceiver):
         """extracts the config folder and starts the startexam.sh script"""
     
         if SERVER_IP != "127.0.0.1":    #testClient running on the same machine
-            extract_dir = os.path.join(CLIENTFILES_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+            extract_dir = os.path.join(WORK_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
             with zipfile.ZipFile(file_path,"r") as zip_ref:
                 zip_ref.extractall(extract_dir)
             os.unlink(file_path)   #delete zip file

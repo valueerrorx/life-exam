@@ -134,10 +134,11 @@ def prepareDirectories():
     copycommand = "sudo cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
     os.system(copycommand)
     
-    if not os.path.exists(EXAMCONFIG_DIRECTORY):
+    if not os.path.exists(EXAMCONFIG_DIRECTORY):  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
         print "copying examconfig to workdirectory"
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
         os.system(copycommand)
+    
    
     fixFilePermissions(WORK_DIRECTORY)
 

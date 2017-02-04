@@ -228,7 +228,7 @@ qdbus $progress close
 ##  restart desktop !!
 
 # kill running programs to allow new config to load
-pkill -f dolphin
+#pkill -f dolphin
 pkill -f google
 pkill -f firefox
 pkill -f writer
