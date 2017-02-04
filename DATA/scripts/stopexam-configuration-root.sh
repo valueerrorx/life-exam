@@ -12,7 +12,7 @@
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlocked-backup/" #absolute path in order to be accessible from all script locations
+BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 ABGABE="${HOME}ABGABE/"
@@ -141,7 +141,7 @@ qdbus $progress close
 ##  restart desktop !!
 
 # kill running programs to allow new config to load
-pkill -f dolphin
+#pkill -f dolphin
 pkill -f google
 pkill -f firefox
 pkill -f writer
@@ -151,7 +151,8 @@ pkill -f geogebra
 
 
 
-sudo -u ${USER} kquitapp5 plasmashell && sudo -u ${USER} kstart5 plasmashell &
+sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} kstart5 plasmashell &
 sudo -u ${USER} kwin --replace &
 
 

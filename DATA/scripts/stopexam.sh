@@ -10,7 +10,7 @@ HOME="/home/${USER}/"
 
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlocked-backup/" 
+BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/" 
 ABGABE="${HOME}ABGABE/"
 
 #--------------------------------#
@@ -22,6 +22,9 @@ if [ "$(id -u)" != "0" ]; then
 fi
 if ! [ -f "$EXAMLOCKFILE" ];then
     kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    #just in case something with plasmarestart went wrong and the user clicks a second time on the icon (only restart plasma - because in that case all config files are already in place)
+    sudo -u ${USER} kquitapp5 plasmashell &
+    sudo -u ${USER} kstart5 plasmashell &
     sleep 2
     exit 0
 fi
@@ -159,7 +162,7 @@ qdbus $progress close
 ##  restart desktop !!
 
 # kill running programs to allow new config to load
-pkill -f dolphin
+# pkill -f dolphin
 pkill -f google
 pkill -f firefox
 pkill -f writer
@@ -168,7 +171,8 @@ pkill -f konsole
 pkill -f geogebra
 
 
-sudo -u ${USER} kquitapp5 plasmashell && sudo -u ${USER} kstart5 plasmashell &
+sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} kstart5 plasmashell &
 sudo -u ${USER} kwin --replace &
 
 

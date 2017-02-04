@@ -12,7 +12,7 @@ HOME="/home/${USER}/"
 
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlocked-backup/" #absolute path in order to be accessible from all script locations
+BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 ABGABE="${HOME}ABGABE/"
@@ -223,7 +223,7 @@ sleep 4
 qdbus $progress close
 
 
-
+gi
 
 ##  restart desktop !!
 
@@ -236,7 +236,8 @@ pkill -f kwrite
 pkill -f konsole
 pkill -f geogebra
 
-sudo -u ${USER} kquitapp5 plasmashell && sudo -u ${USER} kstart5 plasmashell &
+sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} kstart5 plasmashell &
 sudo -u ${USER} kwin --replace &
 
 

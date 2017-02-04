@@ -11,7 +11,7 @@ HOME="/home/${USER}/"
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlocked-backup/"
+BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 ABGABE="${HOME}ABGABE/"
 
@@ -131,7 +131,7 @@ qdbus $progress close
   
     
    # kill running programs to allow new config to load
-    pkill -f dolphin
+    #pkill -f dolphin
     pkill -f google
     pkill -f firefox
     pkill -f writer
@@ -140,7 +140,8 @@ qdbus $progress close
     pkill -f geogebra
 
   
-sudo -u ${USER} kquitapp5 plasmashell && sudo -u ${USER} kstart5 plasmashell &
+sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} kstart5 plasmashell &
 sudo -u ${USER} kwin --replace &
 
 
