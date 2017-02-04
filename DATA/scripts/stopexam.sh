@@ -167,11 +167,9 @@ pkill -f kwrite
 pkill -f konsole
 pkill -f geogebra
 
-kquitapp5 plasmashell && kstart5 plasmashell &
-kwin --replace &
 
-
-
+sudo -u ${USER} kquitapp5 plasmashell && sudo -u ${USER} kstart5 plasmashell &
+sudo -u ${USER} kwin --replace &
 
 
 

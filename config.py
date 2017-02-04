@@ -7,6 +7,9 @@ SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
 
+PRESERVE_WORKDIR = False
+
+
 #these apps will try to autosave your work before "abgabe"
 SAVEAPPS = ['writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
 
