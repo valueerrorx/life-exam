@@ -10,7 +10,7 @@ HOME="/home/${USER}/"
 
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" 
+BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlocked-backup/" 
 ABGABE="${HOME}ABGABE/"
 
 #--------------------------------#

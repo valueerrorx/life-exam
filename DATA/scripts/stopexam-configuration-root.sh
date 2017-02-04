@@ -12,7 +12,7 @@
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 
-BACKUPDIR="${HOME}.life/EXAM/unlocked-backup/" #absolute path in order to be accessible from all script locations
+BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlocked-backup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 ABGABE="${HOME}ABGABE/"
