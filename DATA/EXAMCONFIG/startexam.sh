@@ -90,14 +90,14 @@ cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}
 
 
 #----------------------------------------------------------------------------------#
-# LOAD COMPLETE EXAM CONFIG -  ALSO LOAD SYSTEMLOCKFILES (kde5rc, xorg.conf, etc.) #
+# LOAD COMPLETE EXAM CONFIG -  ALSO LOAD SYSTEMLOCKFILES (kde5rc, etc.) #
 #----------------------------------------------------------------------------------#
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Sperre Desktop...."
 sleep 0.5
 
 sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc
-sudo cp ${LOCKDOWNDIR}xorg.conf /etc/X11
+# sudo cp ${LOCKDOWNDIR}xorg.conf /etc/X11
 sudo cp ${LOCKDOWNDIR}IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
 sudo cp ${LOCKDOWNDIR}main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
 cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc
@@ -192,7 +192,16 @@ sudo chmod -x /usr/bin/kmenuedit   # leider ist da immernoch ein bug im kiosk sy
 sudo chmod -x /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
 sudo chmod 700 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin
 
-   
+
+
+# virtuelle terminals abschalten
+sudo systemctl stop getty@tty1.service
+sudo systemctl stop getty@tty2.service
+sudo systemctl stop getty@tty3.service
+sudo systemctl stop getty@tty4.service
+sudo systemctl stop getty@tty5.service
+sudo systemctl stop getty@tty6.service
+sudo chmod -x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  verbieten
    
    
    
@@ -213,8 +222,22 @@ Starte Desktop neu!"
 sleep 4
 qdbus $progress close
 
+
+
+
 ##  restart desktop !!
-sudo killall Xorg
+
+# kill running programs to allow new config to load
+pkill -f dolphin
+pkill -f google
+pkill -f firefox
+pkill -f writer
+pkill -f kwrite
+pkill -f konsole
+pkill -f geogebra
+
+kquitapp5 plasmashell && kstart5 plasmashell &
+kwin --replace &
 
 
 

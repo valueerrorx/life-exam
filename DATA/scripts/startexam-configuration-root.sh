@@ -54,11 +54,11 @@ sleep 0.5
     #---------------------------------#
     qdbus $progress Set "" value 1
     qdbus $progress setLabelText "Sichere aktuelle Desktop Konfiguration.... "
-    cp -Ra  ${HOME}.kde/share/config/* ${BACKUPDIR}kde.config/
-    cp -Ra  ${HOME}.config/* ${BACKUPDIR}home.config/
-    # backup current desktop config
     qdbus $progress Set "" value 2
     qdbus $progress setLabelText "Sichere programmspezifische Konfigurationsdateien.... "
+    
+    cp -Ra  ${HOME}.kde/share/config/* ${BACKUPDIR}kde.config/
+    cp -Ra  ${HOME}.config/* ${BACKUPDIR}home.config/
     cp -Ra  ${HOME}.local/* ${BACKUPDIR}home.local/
   
 
@@ -128,9 +128,19 @@ qdbus $progress close
     #---------------------------------#
     # RESTART DESKTOP TO EXAM DESKTOP #
     #---------------------------------#
-    sudo killall Xorg
+  
+    
+   # kill running programs to allow new config to load
+    pkill -f dolphin
+    pkill -f google
+    pkill -f firefox
+    pkill -f writer
+    pkill -f kwrite
+    pkill -f konsole
+    pkill -f geogebra
 
-#in this case it is possible to only restart kwin an plasma and kill office an dolphin instead of xorg.. 
-# on full exam xorg.conf is needed in order to prevent ttys  - therefore a restart is better
-# if there is a way that systemd can temporarily suspend spawning ttys on ctrl+alt+F1 we could get rid of xorg restart 
+    kquitapp5 plasmashell && kstart5 plasmashell &
+    kwin --replace &
+
+ 
 

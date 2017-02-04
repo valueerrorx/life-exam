@@ -57,7 +57,7 @@ answer="$?";
 
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
 progress=$(kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
-qdbus $progress Set "" maximum 6
+qdbus $progress Set "" maximum 5
 sleep 0.5
 
 
@@ -101,17 +101,14 @@ sudo rm $EXAMLOCKFILE   #remove this file otherwise LIFE will think exam (config
 #copy backup over original
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Stelle Standard Desktop Konfiguration wieder her.... "
+
 cp -Ra ${BACKUPDIR}kde.config/* ${HOME}.kde/share/config/
 cp -Ra ${BACKUPDIR}home.config/* ${HOME}.config/
-
-#copy backup over original
-qdbus $progress Set "" value 3
-qdbus $progress setLabelText "Stelle Standard Programm Konfiguration wieder her.... "
 cp -Ra ${BACKUPDIR}home.local/* ${HOME}.local/
 
 
 #remove icon cache - otherwise some changes will not be visible
-qdbus $progress Set "" value 4
+qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Entferne Icon Cache.... "
 sleep 0.5
 sudo rm /usr/share/icons/hicolor/icon-theme.cache > /dev/null 2>&1  #hide errors
@@ -120,7 +117,7 @@ sudo rm /var/tmp/kdecache-${USER}/icon-cache.kcache > /dev/null 2>&1  #hide erro
 sudo rm -r ${HOME}.cache > /dev/null 2>&1  #hide errors
 
 #unmount ABGABE
-qdbus $progress Set "" value 5
+qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Gebe Ordner ABGABE wieder frei.... "
 sudo umount -l $ABGABE
 sleep 2
@@ -128,7 +125,7 @@ rmdir $ABGABE
 
 
 
-qdbus $progress Set "" value 6
+qdbus $progress Set "" value 5
 if [ "$answer" = 0 ]; then
     qdbus $progress setLabelText "Prüfungsumgebung gespeichert....  
 Starte Desktop neu!"
@@ -139,9 +136,21 @@ fi
 
 sleep 4
 qdbus $progress close
+
+
 ##  restart desktop !!
-sudo killall Xorg
-    
+
+# kill running programs to allow new config to load
+pkill -f dolphin
+pkill -f google
+pkill -f firefox
+pkill -f writer
+pkill -f kwrite
+pkill -f konsole
+pkill -f geogebra
+
+kquitapp5 plasmashell && kstart5 plasmashell &
+kwin --replace &
 
 
 

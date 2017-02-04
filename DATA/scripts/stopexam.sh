@@ -111,8 +111,13 @@ sleep 0.5
 sudo chmod +x /usr/bin/kmenuedit
 sudo chmod 755 /media/ -R  # allow mounting again
 sudo chmod +x /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
+
+sudo chmod x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  erlauben
+   
+   
+
+
 sudo rm /etc/kde5rc
-sudo rm /etc/X11/xorg.conf
 sudo rm exam   #remove this file otherwise LIFE will think exam is still running
 
 
@@ -148,12 +153,22 @@ qdbus $progress setLabelText "Prüfungsumgebung angehalten...
 Starte Desktop neu!"
 sleep 4
 qdbus $progress close
+
+
+
 ##  restart desktop !!
-sudo killall Xorg
-    
 
+# kill running programs to allow new config to load
+pkill -f dolphin
+pkill -f google
+pkill -f firefox
+pkill -f writer
+pkill -f kwrite
+pkill -f konsole
+pkill -f geogebra
 
-
+kquitapp5 plasmashell && kstart5 plasmashell &
+kwin --replace &
 
 
 
