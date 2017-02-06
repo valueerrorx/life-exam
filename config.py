@@ -11,7 +11,7 @@ PRESERVE_WORKDIR = False
 
 
 #these apps will try to autosave your work before "abgabe"
-SAVEAPPS = ['writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
+SAVEAPPS = ['words','sheets','writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
 
 
 # find username and set user home directory

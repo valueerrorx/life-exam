@@ -43,6 +43,7 @@ rule_4=list,,,,file,,/usr/share/applications/,true
 rule_5=open,,,,file,,$HOME/.local/share/applications/,true
 rule_6=list,,,,file,,$HOME/.local/share/applications/,true
 
+
 rule_7=open,,,,file,,$HOME/ABGABE,true
 rule_8=list,,,,file,,$HOME/ABGABE,true
 
@@ -54,3 +55,6 @@ rule_12=list,,,,file,,$HOME/.kde/life-resources/,true
 
 rule_13=open,,,,file,,$HOME/.life/,true
 rule_14=list,,,,file,,$HOME/.life/,true
+
+rule_5=open,,,,file,,$HOME/.local/share/plasma_icons/,true
+rule_6=list,,,,file,,$HOME/.local/share/plasma_icons/,true

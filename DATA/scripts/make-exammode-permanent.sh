@@ -44,6 +44,19 @@ fi
 
 
 
+
+
+kdialog  --caption "LIFE" --title "LIFE" --yesno "Wollen sie diesen USB Stick dauerhaft in den Prüfungsmodus versetzen?
+
+Der fertige USB Stick nutzt die Konfigurationen des Programmes 'Exam Teacher'.
+Sie bekommen die Möglichkeit ein Root Passwort festzulegen.
+Den USB Stick können sie danach mit Hilfe des LIFE Programmes 'USB Stick Kopie vervielfältigen!";
+
+if [ ! "$?" = 0 ]; then
+    exit  0
+fi
+
+
 #---------------------------------#
 # OPEN PROGRESSBAR DIALOG         #
 #---------------------------------#

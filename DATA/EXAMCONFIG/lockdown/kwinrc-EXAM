@@ -1,9 +1,9 @@
 [Compositing]
 AnimationSpeed=2
-Backend=OpenGL
-Enabled=true
+Backend=XRender
+Enabled=false
 GLColorCorrection=false
-GLCore=true
+GLCore=false
 GLPlatformInterface=glx
 GLPreferBufferSwap=a
 GLTextureFilter=1
@@ -14,14 +14,12 @@ WindowsBlockCompositing=true
 XRenderSmoothScale=false
 
 [Desktops]
-Number=4
-Rows=1
+Number=1
 
 [Effect-Cube]
-BorderActivate=7
+BorderActivate=9
 BorderActivateCylinder=9
 BorderActivateSphere=9
-ZPosition=903
 
 [Effect-DesktopGrid]
 BorderActivate=9
@@ -50,21 +48,12 @@ TopRight=None
 [Plugins]
 blurEnabled=true
 contrastEnabled=false
-cubeEnabled=true
-cubeslideEnabled=false
-desktopchangeosdEnabled=false
 desktopgridEnabled=false
-kwin4_effect_fadedesktopEnabled=false
 kwin4_effect_translucencyEnabled=false
 kwin4_effect_windowapertureEnabled=false
 magiclampEnabled=true
 minimizeanimationEnabled=false
 screenedgeEnabled=false
-slideEnabled=true
-
-[Script-desktopchangeosd]
-PopupHideDelay=1000
-TextOnly=false
 
 [TabBox]
 BorderActivate=9
@@ -75,12 +64,11 @@ LayoutName=org.kde.breeze.desktop
 
 [Windows]
 ElectricBorderCooldown=350
-ElectricBorderCornerRatio=0.1
+ElectricBorderCornerRatio=0.10000000000000001
 ElectricBorderDelay=150
 ElectricBorderMaximize=true
 ElectricBorderTiling=true
 ElectricBorders=0
-RollOverDesktops=true
 
 [org.kde.kdecoration2]
 BorderSize=Normal
