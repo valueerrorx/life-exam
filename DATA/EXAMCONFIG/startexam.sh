@@ -45,8 +45,9 @@ fi
 
 
 
-
-
+#---------------------------------#
+# OPEN PROGRESSBAR DIALOG         #
+#---------------------------------#
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
 progress=$(kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
 qdbus $progress Set "" maximum 8
@@ -194,6 +195,7 @@ sudo chmod 700 /media/ -R   # this makes it impossible to mount anything in kubu
 
 
 
+
 # virtuelle terminals abschalten
 sudo systemctl stop getty@tty1.service
 sudo systemctl stop getty@tty2.service
@@ -201,8 +203,11 @@ sudo systemctl stop getty@tty3.service
 sudo systemctl stop getty@tty4.service
 sudo systemctl stop getty@tty5.service
 sudo systemctl stop getty@tty6.service
+
 sudo chmod -x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  verbieten
-   
+sudo chmod -x /usr/bin/xterm
+sudo chmod -x /usr/bin/konsole
+ 
    
    
    
@@ -210,7 +215,7 @@ sudo chmod -x /sbin/agetty  # start (respawning) von virtuellen terminals auf ct
 
 
 #---------------------------------#
-# FINISH - RESTART X              #
+# FINISH - RESTART KDE            #
 #---------------------------------#
 amixer -D pulse sset Master 90% > /dev/null 2>&1
 pactl set-sink-volume 0 90%

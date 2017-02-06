@@ -62,6 +62,10 @@ else
     exit 1 
 fi;
     
+
+#---------------------------------#
+# OPEN PROGRESSBAR DIALOG         #
+#---------------------------------#
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
 progress=$(kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
 qdbus $progress Set "" maximum 7
@@ -114,21 +118,26 @@ sleep 0.5
 sudo chmod +x /usr/bin/kmenuedit
 sudo chmod 755 /media/ -R  # allow mounting again
 sudo chmod +x /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
-sudo chmod x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  erlauben
-   
-   
+
+
+#terminals wieder erlauben
+sudo chmod +x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  erlauben
+sudo chmod +x /usr/bin/xterm 
+sudo chmod +x /usr/bin/konsole
+  
+#kde plasma sperre wieder aufheben
 sudo rm /etc/kde5rc
 
 
-#---------------------------------#
-# STOP AUTO SCREENSHOTS           #
-#---------------------------------#
+#--------------------------------------#
+# STOP AUTO SCREENSHOTS AND FIREWALL   #
+#--------------------------------------#
 qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
 rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
 sudo killall auto-screenshot.sh
 
-# entferne firewall einträge (exam mode advanced)
+# entferne firewall einträge (simple-exam mode advanced)
 echo "#!/bin/sh -e" > /etc/rc.local
 echo "exit 0" >> /etc/rc.local
 
