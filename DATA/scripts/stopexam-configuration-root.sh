@@ -125,7 +125,7 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Gebe Ordner ABGABE wieder frei.... "
 sudo umount -l $ABGABE
 sleep 2
-rmdir $ABGABE
+
 
 
 
@@ -145,7 +145,7 @@ qdbus $progress close
 ##  restart desktop !!
 
 # kill running programs to allow new config to load
-#pkill -f dolphin
+pkill -f dolphin
 pkill -f google
 pkill -f firefox
 pkill -f writer

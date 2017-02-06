@@ -1,5 +1,5 @@
 #!/bin/bash
-# last updated: 26.01.2017
+# last updated: 05.02.2017
 # loads exam desktop configuration
 
 # CLIENT FILE #

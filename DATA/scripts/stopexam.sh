@@ -1,5 +1,5 @@
 #!/bin/bash
-# last updated: 26.01.2017
+# last updated: 05.02.2017
 # prüfungsumgebung beenden normale konfiguration wiederherstellen
 
 # CLIENT FILE #
@@ -64,7 +64,7 @@ fi;
     
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
 progress=$(kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
-qdbus $progress Set "" maximum 6
+qdbus $progress Set "" maximum 7
 sleep 0.5
 
 
@@ -114,15 +114,10 @@ sleep 0.5
 sudo chmod +x /usr/bin/kmenuedit
 sudo chmod 755 /media/ -R  # allow mounting again
 sudo chmod +x /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
-
 sudo chmod x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  erlauben
    
    
-
-
 sudo rm /etc/kde5rc
-sudo rm exam   #remove this file otherwise LIFE will think exam is still running
-
 
 
 #---------------------------------#
@@ -132,7 +127,11 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
 rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
 sudo killall auto-screenshot.sh
-#rmdir $ABGABE
+
+# entferne firewall einträge (exam mode advanced)
+echo "#!/bin/sh -e" > /etc/rc.local
+echo "exit 0" >> /etc/rc.local
+
 
 
 #---------------------------------#
@@ -143,6 +142,15 @@ qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
 sleep 0.5
 stopIPtables
 
+
+#---------------------------------#
+# REMOVE ROOT PASSWORD            #
+#---------------------------------#
+qdbus $progress Set "" value 6
+qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
+# falls ein rootpasswort vom lehrer gesetzt wurde (exam mode advanced)
+sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
+
     
 #---------------------------------#
 # FINISH - RESTART X              #
@@ -151,7 +159,7 @@ amixer -D pulse sset Master 90% > /dev/null 2>&1
 pactl set-sink-volume 0 90%
 paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
-qdbus $progress Set "" value 6
+qdbus $progress Set "" value 7
 qdbus $progress setLabelText "Prüfungsumgebung angehalten...  
 Starte Desktop neu!"
 sleep 4
@@ -162,7 +170,7 @@ qdbus $progress close
 ##  restart desktop !!
 
 # kill running programs to allow new config to load
-# pkill -f dolphin
+# pkill -f dolphin    #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
 pkill -f google
 pkill -f firefox
 pkill -f writer
