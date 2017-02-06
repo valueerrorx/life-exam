@@ -1,0 +1,20 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment[de_DE]=
+Comment=
+Exec=lifesudo ~/.kde/life-resources/usb-creator/usbcreator.py
+GenericName[de_DE]=Erstellt eine idente Kopie des USB Sticks
+GenericName=Erstellt eine idente Kopie des USB Sticks
+Icon=usb-creator-kde
+MimeType=
+Name[de_DE]=USB Stick Kopie
+Name=USB Stick Kopie
+Path[$e]=$HOME/.kde/life-resources/usb-creator/
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
