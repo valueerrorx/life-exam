@@ -14,6 +14,15 @@ from common import *
 from config import *
 
 
+from twisted.application.internet import TCPClient
+#from twisted.application.service import Application
+
+from zope.interface import implements
+from twisted.python import usage
+from twisted.plugin import IPlugin
+from twisted.application.service import IServiceMaker
+
+
 try:
     SERVER_IP = sys.argv[1] 
     STUDENT_ID = sys.argv[2] 
@@ -243,10 +252,48 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
 
 
 
-if __name__ == '__main__':
-    print('Connecting to %s on port %s' % (SERVER_IP, SERVER_PORT) )
-    reactor.connectTCP(SERVER_IP, SERVER_PORT, MyClientFactory(CLIENTFILES_DIRECTORY))
-    reactor.run()    
+
+
+"""
+Um diese Datei als twisted plugin mit twistd -l client.log --pidfile client.pid examclient -p PORT -h HOST starten zu können 
+muss die ClientFactory im Service (MyServiceMaker) gestartet werden
+tapname ist der name des services 
+damit twistd dieses überallfindet sollte das stammverzeichnis im pythonpath eingetragen werden
+
+export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
+
+
+"""
+
+
+class Options(usage.Options):
+    optParameters = [["port", "p", SERVER_PORT, "The port number to connect to."],
+                    ["host", "h", SERVER_IP, "The host machine to connect to."],
+                    ["id", "i", 'unnamed', "A custom unique Client id."]
+                    ]
+    
+
+class MyServiceMaker(object):
+    implements(IServiceMaker, IPlugin)
+    tapname = "examclient"
+    description = "Exam Client"
+    options = Options
+
+    def makeService(self, options):
+        return TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY))
+
+serviceMaker = MyServiceMaker()
+
+
+
+
+
+
+
+
+
+
+
 
 
 

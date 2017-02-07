@@ -5,6 +5,7 @@ from PyQt5.QtGui import QIcon, QColor
 import sys
 import os
 from common import checkIP
+from config import *
 
 class MeinDialog(QtWidgets.QDialog):
     def __init__(self):
@@ -14,7 +15,9 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.exit.clicked.connect(self._onAbbrechen)        # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
        
-        os.system("sudo pkill -f 'python client.py'")  #make sure only one client instance is running per client
+        clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-client-process.sh")
+        
+        os.system("sudo %s" %(clientkillscript) )  #make sure only one client instance is running per client
 
     def _onAbbrechen(self):    # Exit button
         self.ui.close()
@@ -28,7 +31,12 @@ class MeinDialog(QtWidgets.QDialog):
             self.ui.serverip.setPalette(palettedefault)
             if ID != "":
                 self.ui.close()
-                command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
+                #command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
+                #command = "kdesudo 'twistd -l client.log --pidfile client.pid -y client.tac %s %s' &" %(SERVER_IP, ID)
+                
+                command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s' &" %(WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID)
+                
+                
                 os.system(command)
             palettewarn = self.ui.studentid.palette()
             palettewarn.setColor(self.ui.studentid.backgroundRole(), QColor(200, 80, 80))
