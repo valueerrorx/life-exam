@@ -11,7 +11,7 @@ HOME="/home/${USER}/"
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/"
+BACKUPDIR="${HOME}.life/unlockedbackup/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 ABGABE="${HOME}ABGABE/"
 
@@ -140,11 +140,11 @@ qdbus $progress close
     pkill -f geogebra
 
   
-sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} -H kquitapp5 plasmashell &
 sleep 2
-exec sudo -u ${USER} kstart5 plasmashell &
+exec sudo -u ${USER} -H kstart5 plasmashell &
 sleep 2
-exec sudo -u ${USER} kwin --replace &
+exec sudo -u ${USER} -H kwin --replace &
 
 
 

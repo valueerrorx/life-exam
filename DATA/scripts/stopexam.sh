@@ -10,7 +10,7 @@ HOME="/home/${USER}/"
 
 
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/" 
+BACKUPDIR="${HOME}.life/unlockedbackup/" 
 ABGABE="${HOME}ABGABE/"
 
 #--------------------------------#
@@ -188,11 +188,11 @@ pkill -f konsole
 pkill -f geogebra
 
 
-sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} -H kquitapp5 plasmashell &
 sleep 2
-exec sudo -u ${USER} kstart5 plasmashell &
+exec sudo -u ${USER} -H kstart5 plasmashell &
 sleep 2
-exec sudo -u ${USER} kwin --replace &
+exec sudo -u ${USER} -H kwin --replace &
 
 
 

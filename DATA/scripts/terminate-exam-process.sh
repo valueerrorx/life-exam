@@ -3,7 +3,15 @@
 
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
-CLIENTPIDFILE="${HOME}.life/EXAM/client.pid"
+
+if [[( "$1" = "client" )]]
+then
+    PIDFILE="${HOME}.life/EXAM/client.pid"
+else
+    PIDFILE="${HOME}.life/EXAM/server.pid"
+fi
+
+
 
 if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
@@ -11,5 +19,5 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 
-PID=$(sudo cat ${CLIENTPIDFILE})
+PID=$(sudo cat ${PIDFILE})
 sudo kill -9 $PID

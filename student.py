@@ -15,9 +15,8 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.exit.clicked.connect(self._onAbbrechen)        # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
        
-        clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-client-process.sh")
-        
-        os.system("sudo %s" %(clientkillscript) )  #make sure only one client instance is running per client
+        clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+        os.system("sudo %s %s" %(clientkillscript, 'client') )  #make sure only one client instance is running per client
 
     def _onAbbrechen(self):    # Exit button
         self.ui.close()

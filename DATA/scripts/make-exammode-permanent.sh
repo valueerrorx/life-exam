@@ -12,7 +12,7 @@ HOME="/home/${USER}/"
 
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
-BACKUPDIR="${HOME}.life/EXAM/EXAMCONFIG/unlockedbackup/" #absolute path in order to be accessible from all script locations
+BACKUPDIR="${HOME}.life/unlockedbackup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 ABGABE="${HOME}ABGABE/"
@@ -50,7 +50,8 @@ kdialog  --caption "LIFE" --title "LIFE" --yesno "Wollen sie diesen USB Stick da
 
 Der fertige USB Stick nutzt die Konfigurationen des Programmes 'Exam Teacher'.
 Sie bekommen die Möglichkeit ein Root Passwort festzulegen.
-Den USB Stick können sie danach mit Hilfe des LIFE Programmes 'USB Stick Kopie vervielfältigen!";
+Den USB Stick können sie danach mit Hilfe des LIFE Programmes
+'USB Stick Kopie' (Datenpartition übertragen) vervielfältigen!";
 
 if [ ! "$?" = 0 ]; then
     exit  0
@@ -298,11 +299,11 @@ pkill -f kwrite
 pkill -f konsole
 pkill -f geogebra
 
-sudo -u ${USER} kquitapp5 plasmashell &
+sudo -u ${USER} -H kquitapp5 plasmashell &
 sleep 2
-exec sudo -u ${USER} kstart5 plasmashell &
+exec sudo -u ${USER} -H kstart5 plasmashell &
 sleep 2
-exec sudo -u ${USER} kwin --replace &
+exec sudo -u ${USER} -H kwin --replace &
 
 
 

@@ -6,6 +6,7 @@ import os
 import sys
 import ipaddress
 import datetime
+import time
 import pprint
 import sip
 import shutil
@@ -197,7 +198,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
 
-        prepareDirectories()  #cleans everything and copies some scripts
         checkFirewall(self)  #deactivates all iptable rules if any
         self.ui.show()
         
@@ -409,7 +409,18 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
+
+
+
+
 if __name__ == '__main__':
+    
+    prepareDirectories()  #cleans everything and copies some scripts     
+    killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+    os.system("sudo %s %s" %(killscript, 'server') )  #make sure only one client instance is running per client
+    #time.sleep(1)
+    writePidFile()
+    
     app = QtWidgets.QApplication(sys.argv)
     qt5reactor.install()   # imported from file and needed for Qt to function properly in combination with twisted reactor
     
