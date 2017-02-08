@@ -197,12 +197,23 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
+        self.ui.closeEvent = self.closeEvent
 
         checkFirewall(self)  #deactivates all iptable rules if any
         self.ui.show()
         
+        
         self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
-      
+        self._want_to_close = False
+
+    def closeEvent(self, evnt):
+        if self._want_to_close:
+            super(MyDialog, self).closeEvent(evnt)
+        else:
+            self.ui.showMinimized()
+          
+            evnt.ignore()
+           
 
 
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
