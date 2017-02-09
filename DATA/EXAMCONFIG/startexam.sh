@@ -65,7 +65,15 @@ sleep 0.5
 touch $EXAMLOCKFILE
 date > $EXAMLOCKFILE
 
-sudo chown ${USER}:${USER} $EXAMLOCKFILE
+sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
+
+
+
+
+
+
+
+
 
 
 #---------------------------------#
@@ -87,7 +95,18 @@ cp -a ${HOME}.config/Kingsoft/Office.conf ${BACKUPDIR}
 cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
 cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}
 
-sudo chown ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix permissions
+sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix permissions
+
+
+
+
+
+
+
+
+
+
+
 
 #----------------------------------------------------------------------------------#
 # LOAD COMPLETE EXAM CONFIG -  ALSO LOAD SYSTEMLOCKFILES (kde5rc, etc.) #
@@ -111,8 +130,21 @@ cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-
 cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
 cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc
 
-sudo chown ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix permissions
-sudo chown ${USER}:${USER} ${HOME}.local/
+sudo chown -R ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix permissions
+sudo chown -R ${USER}:${USER} ${HOME}.local/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #---------------------------------#
 # MOUNT ABGABE                    #
@@ -122,7 +154,8 @@ qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGAB
 sleep 0.5
 
 mkdir $ABGABE 
-sudo chown ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
+
+sudo chown -R ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
 sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
 
 
@@ -184,7 +217,16 @@ qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
 cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
-sudo chown ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
+sudo chown -R ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
+
+
+
+
+
+
+
+
+
 
 
 #--------------------------------------------------------#
@@ -196,8 +238,7 @@ sleep 0.5
 
 sudo chmod 644 /usr/bin/kmenuedit   # leider ist da immernoch ein bug im kiosk system - daher muss das mit diesem workaround geschehen
 sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
-sudo chmod 700 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin
-
+sudo chmod 600 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin
 
 
 
