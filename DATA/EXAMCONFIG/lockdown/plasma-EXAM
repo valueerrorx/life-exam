@@ -93,12 +93,6 @@ favoriteApps=preferred://browser,systemsettings.desktop,org.kde.dolphin.desktop,
 [Containments][8][Applets][94][Configuration][General]
 url=/home/student/.local/share/applications/LIFE Freigabe öffnen.desktop
 
-[Containments][8][Applets][95]
-immutability=1
-plugin=org.kde.plasma.kicker
-
-[Containments][8][Applets][95][Configuration][General]
-favoriteApps=preferred://browser,systemsettings.desktop,org.kde.dolphin.desktop,org.kde.kate.desktop
 
 [Containments][8][Applets][96]
 immutability=1
