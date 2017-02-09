@@ -65,7 +65,7 @@ sleep 0.5
 touch $EXAMLOCKFILE
 date > $EXAMLOCKFILE
 
-
+sudo chown ${USER}:${USER} $EXAMLOCKFILE
 
 
 #---------------------------------#
@@ -87,7 +87,7 @@ cp -a ${HOME}.config/Kingsoft/Office.conf ${BACKUPDIR}
 cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
 cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}
 
-
+sudo chown ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix permissions
 
 #----------------------------------------------------------------------------------#
 # LOAD COMPLETE EXAM CONFIG -  ALSO LOAD SYSTEMLOCKFILES (kde5rc, etc.) #
@@ -99,10 +99,10 @@ sleep 0.5
 sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc
 sudo cp ${LOCKDOWNDIR}IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
 sudo cp ${LOCKDOWNDIR}main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
-#this is necessary if this file is run form twistd plugin as root
-sudo chmod 644 /etc/kde5rc
+sudo chmod 644 /etc/kde5rc     #this is necessary if this file is run form twistd plugin as root
 sudo chmod 644 /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
 sudo chmod 644 /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
+
 
 cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc
 cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf
@@ -111,7 +111,8 @@ cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-
 cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
 cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc
 
-
+sudo chown ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix permissions
+sudo chown ${USER}:${USER} ${HOME}.local/
 
 #---------------------------------#
 # MOUNT ABGABE                    #
@@ -120,7 +121,8 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 sleep 0.5
 
-mkdir $ABGABE
+mkdir $ABGABE 
+sudo chown ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
 sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
 
 
@@ -182,7 +184,7 @@ qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
 cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
-
+sudo chown ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
 
 
 #--------------------------------------------------------#
@@ -192,8 +194,8 @@ qdbus $progress Set "" value 7
 qdbus $progress setLabelText "Sperre Systemdateien...."
 sleep 0.5
 
-sudo chmod -x /usr/bin/kmenuedit   # leider ist da immernoch ein bug im kiosk system - daher muss das mit diesem workaround geschehen
-sudo chmod -x /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
+sudo chmod 644 /usr/bin/kmenuedit   # leider ist da immernoch ein bug im kiosk system - daher muss das mit diesem workaround geschehen
+sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
 sudo chmod 700 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin
 
 
@@ -207,9 +209,9 @@ sudo systemctl stop getty@tty4.service
 sudo systemctl stop getty@tty5.service
 sudo systemctl stop getty@tty6.service
 
-sudo chmod -x /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  verbieten
-sudo chmod -x /usr/bin/xterm
-sudo chmod -x /usr/bin/konsole
+sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F1-6  verbieten
+sudo chmod 644 /usr/bin/xterm
+sudo chmod 644 /usr/bin/konsole
  
    
    
