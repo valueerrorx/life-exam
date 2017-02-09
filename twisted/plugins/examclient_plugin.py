@@ -199,7 +199,7 @@ class MyClientProtocol(basic.LineReceiver):
             command = "sudo chmod +x %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)   #make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)      
+            startcommand = "sudo -u %s -H %s/startexam.sh &" %(USER, EXAMCONFIG_DIRECTORY)       #start as user even if the twistd daemon is run by root
             os.system(startcommand)     #start script
         else:
             return   # running on the same machine.. do not start exam mode / do not copy zip content over original

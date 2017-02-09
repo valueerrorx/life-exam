@@ -197,22 +197,18 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
-        self.ui.closeEvent = self.closeEvent
+        self.ui.closeEvent = self.closeEvent   #links the window close event to our custom ui
 
         checkFirewall(self)  #deactivates all iptable rules if any
+        self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
+        
         self.ui.show()
         
         
-        self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
-        self._want_to_close = False
-
+       
     def closeEvent(self, evnt):
-        if self._want_to_close:
-            super(MyDialog, self).closeEvent(evnt)
-        else:
-            self.ui.showMinimized()
-          
-            evnt.ignore()
+        self.ui.showMinimized()
+        evnt.ignore()
            
 
 
