@@ -33,7 +33,7 @@ shell_access=false
 
 
 [KDE URL Restrictions][$i]
-rule_count=14
+rule_count=16
 rule_1=open,,,,file,,,false
 rule_2=list,,,,file,,,false
 

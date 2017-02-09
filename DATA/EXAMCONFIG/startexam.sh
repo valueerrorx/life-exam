@@ -100,9 +100,9 @@ sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc
 sudo cp ${LOCKDOWNDIR}IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
 sudo cp ${LOCKDOWNDIR}main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
 #this is necessary if this file is run form twistd plugin as root
-sudo chmod +r /etc/kde5rc
-sudo chmod +r /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
-sudo chmod +r /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
+sudo chmod 644 /etc/kde5rc
+sudo chmod 644 /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
+sudo chmod 644 /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
 
 cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc
 cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf

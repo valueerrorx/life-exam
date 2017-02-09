@@ -75,11 +75,11 @@ class MyClientProtocol(basic.LineReceiver):
                 print('File %s has been successfully transfered and saved' % (filename) )
                 
                 if self.file_data[2] == "EXAM":     # initialize exam mode.. unzip and start exam 
-                    self._showDesktopMessage('File received!')
+                    self._showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename,file_path)
                 elif self.file_data[2] == "FILE":
                     #FIXME try if destination already exists - save with timecode
-                    self._showDesktopMessage('Initializing Exam Mode')
+                    self._showDesktopMessage('File received!')
                     shutil.move(file_path, ABGABE_DIRECTORY)
                     fixFilePermissions(ABGABE_DIRECTORY)
             else:
