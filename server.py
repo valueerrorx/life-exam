@@ -363,11 +363,15 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             openedexamfile = open(ipstore, 'w+')  #erstelle die datei neu
             ipfields = [self.ui.firewall1,self.ui.firewall2,self.ui.firewall3,self.ui.firewall4]
+            number = 0
             for i in ipfields:
                 ip = i.text()
                 if checkIP(ip):
                     thisexamfile = open(ipstore, 'a+')   #anhängen
-                    thisexamfile.write("%s\n" % ip)
+                    number = number + 1
+                    if not number is 1:  #zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
+                        thisexamfile.write("\n")
+                    thisexamfile.write("%s" % ip)
                 else:
                     if ip !="":
                         palettewarn = i.palette()
