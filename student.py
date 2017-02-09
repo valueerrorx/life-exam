@@ -4,7 +4,7 @@ from PyQt5 import  uic, QtWidgets
 from PyQt5.QtGui import QIcon, QColor
 import sys
 import os
-from common import checkIP
+from common import checkIP, prepareDirectories
 from config import *
 
 class MeinDialog(QtWidgets.QDialog):
@@ -14,6 +14,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)        # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
+        prepareDirectories()
        
         clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
         os.system("sudo %s %s" %(clientkillscript, 'client') )  #make sure only one client instance is running per client

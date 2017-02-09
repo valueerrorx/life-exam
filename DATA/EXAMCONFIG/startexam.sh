@@ -18,14 +18,13 @@ EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 ABGABE="${HOME}ABGABE/"
   
 
-
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
-if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
-    exit 1
-fi
+# if [ "$(id -u)" != "0" ]; then
+#     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+#     exit 1
+# fi
 if [ -f "/etc/kde5rc" ];then
     kdialog  --msgbox 'Desktop is locked - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
@@ -98,9 +97,13 @@ qdbus $progress setLabelText "Sperre Desktop...."
 sleep 0.5
 
 sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc
-# sudo cp ${LOCKDOWNDIR}xorg.conf /etc/X11
 sudo cp ${LOCKDOWNDIR}IconItem.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
 sudo cp ${LOCKDOWNDIR}main.qml-EXAM /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
+#this is necessary if this file is run form twistd plugin as root
+sudo chmod +r /etc/kde5rc
+sudo chmod +r /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/IconItem.qml
+sudo chmod +r /usr/share/plasma/plasmoids/org.kde.plasma.quicklaunch/contents/ui/main.qml
+
 cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc
 cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf
 cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu

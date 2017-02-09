@@ -75,9 +75,11 @@ class MyClientProtocol(basic.LineReceiver):
                 print('File %s has been successfully transfered and saved' % (filename) )
                 
                 if self.file_data[2] == "EXAM":     # initialize exam mode.. unzip and start exam 
+                    self._showDesktopMessage('File received!')
                     self._startExam(filename,file_path)
                 elif self.file_data[2] == "FILE":
                     #FIXME try if destination already exists - save with timecode
+                    self._showDesktopMessage('Initializing Exam Mode')
                     shutil.move(file_path, ABGABE_DIRECTORY)
                     fixFilePermissions(ABGABE_DIRECTORY)
             else:
@@ -199,7 +201,7 @@ class MyClientProtocol(basic.LineReceiver):
             command = "sudo chmod +x %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)   #make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo -u %s -H %s/startexam.sh &" %(USER, EXAMCONFIG_DIRECTORY)       #start as user even if the twistd daemon is run by root
+            startcommand = "sudo %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)       #start as user even if the twistd daemon is run by root
             os.system(startcommand)     #start script
         else:
             return   # running on the same machine.. do not start exam mode / do not copy zip content over original
