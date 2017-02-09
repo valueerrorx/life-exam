@@ -56,5 +56,5 @@ rule_12=list,,,,file,,$HOME/.kde/life-resources/,true
 rule_13=open,,,,file,,$HOME/.life/,true
 rule_14=list,,,,file,,$HOME/.life/,true
 
-rule_5=open,,,,file,,$HOME/.local/share/plasma_icons/,true
-rule_6=list,,,,file,,$HOME/.local/share/plasma_icons/,true
+rule_15=open,,,,file,,$HOME/.local/share/plasma_icons/,true
+rule_16=list,,,,file,,$HOME/.local/share/plasma_icons/,true
