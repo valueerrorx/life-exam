@@ -1,0 +1,82 @@
+[DockWidget sharedtooldocker]
+TabbedMode=false
+
+[Interface]
+ShowDockerTitleBars=false
+
+[MainWindow]
+Window-Maximized 768x1366=true
+ko_geometry=AdnQywACAAAAAAAAAAAAAAAABVUAAALdAAAAAAAAAAD////+/////gAAAAACAAAABVY=
+ko_windowstate=AAAA/wAAAAD9AAAAAwAAAAAAAAEGAAABDPwCAAAAAfsAAAAUAFMAdABlAG4AYwBpAGwAQgBvAHgAAAAAtwAAAQwAAACAAQAAAwAAAAEAAAVWAAABDPwCAAAABfsAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAAgwAAAGwAAABUAQAAA/sAAAAoAFMAbgBhAHAARwB1AGkAZABlACAAUAByAG8AcABlAHIAdABpAGUAcwAAAAAA/////wAAAAQBAAAD+wAAACAAUwBoAGEAcABlACAAUAByAG8AcABlAHIAdABpAGUAcwAAAAAA/////wAAAAQBAAAD+wAAACoAUwBoAGEAcABlAEMAbwBsAGwAZQBjAHQAaQBvAG4ARABvAGMAawBlAHIBAAABtQAAAEAAAAA3AAgAA/sAAAAOAE0AbwBkAGUAQgBvAHgBAAAB9gAAAMsAAACRAAgAAwAAAAIAAAVWAAABcPwBAAAAAfsAAAAwAEMAYQBsAGwAaQBnAHIAYQBTAGgAZQBlAHQAcwBDAGUAbABsAEUAZABpAHQAbwByAQAAAAAAAAVWAAABNgEAAAMAAAAAAAABDAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAABAAAAFgBtAGEAaQBuAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAAAAAAA==
+
+[Recent Dirs]
+OpenDialog[$e]=$HOME,$HOME/Documents
+
+[Stencil Box]
+viewMode=1
+
+[TemplateChooserDialog]
+AlwaysUseTemplate=/usr/share/calligrasheets/templates/General/.source/Worksheet.kst
+DetailsPaneSplitterSizes=229,344
+FullTemplateName[$e]=/usr/share/calligrasheets/templates/General/.source/Worksheet.kst
+LastReturnType=Template
+
+[calligra]
+DevicePlugins=spacenavigator
+DevicePluginsDisabled=
+DockerPlugins=calligradockers,calligra_docker_stencils
+DockerPluginsDisabled=
+ModeBoxHorizontalTabsSide=0
+ShapePlugins=artistictextshape,chartshape,formulashape,musicshape,pathshapes,pictureshape,pluginshape,spreadsheetshape,textshape,vectorshape,videoshape
+ShapePluginsDisabled=
+TextEditingPlugins=autocorrect,changecase,spellcheck
+ToolPlugins=basicflakesplugin,defaulttools
+ToolPluginsDisabled=
+
+[calligrasheets]
+State=AAAA/wAAAAD9AAAAAwAAAAAAAAEGAAABDPwCAAAAAfsAAAAUAFMAdABlAG4AYwBpAGwAQgBvAHgAAAAAtwAAAQwAAACAAQAAAwAAAAEAAAHFAAACGfwCAAAABfsAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAAgwAAAGwAAABUAQAAA/sAAAAoAFMAbgBhAHAARwB1AGkAZABlACAAUAByAG8AcABlAHIAdABpAGUAcwAAAAAA/////wAAAFABAAAD+wAAACAAUwBoAGEAcABlACAAUAByAG8AcABlAHIAdABpAGUAcwAAAAAA/////wAAAAQBAAAD+wAAACoAUwBoAGEAcABlAEMAbwBsAGwAZQBjAHQAaQBvAG4ARABvAGMAawBlAHIBAAAAgwAAAEAAAAA3AAgAA/sAAAAOAE0AbwBkAGUAQgBvAHgBAAAAxAAAAdgAAACRAAgAAwAAAAIAAAVWAAAAPvwBAAAAAfsAAAAwAEMAYQBsAGwAaQBnAHIAYQBTAGgAZQBlAHQAcwBDAGUAbABsAEUAZABpAHQAbwByAQAAAAAAAAVWAAABNgEAAAMAAAOQAAACGQAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAAGAAAAFgBtAGEAaQBuAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAAAAAAAAAABYAZQBkAGkAdABUAG8AbwBsAEIAYQByAQAAAK7/////AAAAAAAAAAAAAAAiAG4AYQB2AGkAZwBhAHQAaQBvAG4AVABvAG8AbABCAGEAcgAAAAAA/////wAAAAAAAAAAAAAAJgBmAG8AbgB0AFAAcgBvAHAAZQByAHQAeQBUAG8AbwBsAEIAYQByAAAAAAD/////AAAAAAAAAAAAAAAaAGYAbwByAG0AYQB0AFQAbwBvAGwAQgBhAHIBAAABZP////8AAAAAAAAAAAAAACoAYwBvAGwAbwByAEEAbgBkAEIAbwByAGQAZQByAFQAbwBvAGwAQgBhAHIAAAAAAP////8AAAAAAAAAAA==
+ToolBarsMovable=Disabled
+
+[calligrasheets][DockWidget CalligraSheetsCellEditor]
+Collapsed=false
+DockArea=4
+Locked=false
+
+[calligrasheets][DockWidget ModeBox]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrasheets][DockWidget Shape Properties]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrasheets][DockWidget ShapeCollectionDocker]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrasheets][DockWidget SnapGuide Properties]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrasheets][DockWidget StencilBox]
+Collapsed=false
+DockArea=1
+Locked=false
+
+[calligrasheets][DockWidget sharedtooldocker]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrasheets][Toolbar editToolBar]
+ToolButtonStyle=IconOnly
+
+[calligrasheets][Toolbar formatToolBar]
+ToolButtonStyle=IconOnly
+
+[calligrasheets][Toolbar mainToolBar]
+ToolButtonStyle=IconOnly

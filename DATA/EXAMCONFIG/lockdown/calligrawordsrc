@@ -1,0 +1,110 @@
+[DockWidget sharedtooldocker]
+TabbedMode=false
+
+[Interface]
+ResolutionX=14.1732529
+ResolutionY=14.1732529
+Rulers=false
+ShowDockerTitleBars=false
+StatusBarShowLineNumber=true
+StatusBarShowModified=true
+StatusBarShowMouse=false
+StatusBarShowPage=true
+StatusBarShowPageSize=false
+StatusBarShowPageStyle=true
+StatusBarShowWordCount=false
+StatusBarShowZoom=true
+ViewFieldShadings=true
+ViewFormattingChars=false
+ViewFrameBorders=true
+ViewSectionBounds=false
+ViewTableBorders=true
+Zoom=114
+ZoomMode=1
+
+[MainWindow]
+Window-Maximized 768x1366=true
+ko_geometry=AdnQywACAAAAAAAAAAAAAAAABVUAAALdAAAA5AAAAHoAAARxAAACYQAAAAACAAAABVY=
+ko_windowstate=AAAA/wAAAAD9AAAAAQAAAAEAAAVWAAACffwCAAAAB/sAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAARAAAAFQAAABUAQAAA/sAAAAgAFMAaABhAHAAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAARAAAAD0AAAAEAQAAA/sAAAAUAFMAdABhAHQAaQBzAHQAaQBjAHMAAAAAAP////8AAADmAQAAA/sAAAAqAFMAaABhAHAAZQBDAG8AbABsAGUAYwB0AGkAbwBuAEQAbwBjAGsAZQByAQAAAEQAAABwAAAANwAIAAP7AAAAKABTAG4AYQBwAEcAdQBpAGQAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAAAEAQAAA/sAAAAUAE4AYQB2AGkAZwBhAHQAaQBvAG4AAAAAAP////8AAABaAQAAA/sAAAAOAE0AbwBkAGUAQgBvAHgBAAAAtQAAAgwAAACRAAgAAwAAAAAAAAJ9AAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAA
+
+[Misc]
+Units=cm
+
+[Recent Dirs]
+OpenDialog[$e]=$HOME,$HOME/Documents
+
+[Spelling]
+autoSpellCheck=false
+
+[Statistics]
+CharnospacesVisible=true
+CharspacesVisible=true
+EastAsianCharactersVisible=true
+FleschVisible=true
+LinesVisible=true
+SentencesVisible=true
+SyllablesVisible=true
+WordsVisible=true
+
+[TemplateChooserDialog]
+AlwaysUseTemplate=/usr/share/calligrawords/templates/Normal/.source/A4.odt
+DetailsPaneSplitterSizes=229,344
+FullTemplateName[$e]=/usr/share/calligrawords/templates/Normal/.source/A4.odt
+LastReturnType=Template
+
+[calligra]
+DevicePlugins=spacenavigator
+DevicePluginsDisabled=
+DockerPlugins=calligradockers,calligra_docker_stencils
+DockerPluginsDisabled=
+ModeBoxHorizontalTabsSide=0
+ShapePlugins=artistictextshape,chartshape,formulashape,musicshape,pathshapes,pictureshape,pluginshape,spreadsheetshape,textshape,vectorshape,videoshape
+TextEditingPlugins=autocorrect,changecase,spellcheck
+TextInlinePlugins=textvariables
+ToolPlugins=basicflakesplugin,defaulttools
+ToolPluginsDisabled=
+
+[calligrawords]
+State=AAAA/wAAAAD9AAAAAQAAAAEAAAGdAAACVvwCAAAAB/sAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAARAAAAFQAAABUAQAAA/sAAAAgAFMAaABhAHAAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAARAAAAD0AAAAEAQAAA/sAAAAUAFMAdABhAHQAaQBzAHQAaQBjAHMAAAAAAP////8AAADmAQAAA/sAAAAqAFMAaABhAHAAZQBDAG8AbABsAGUAYwB0AGkAbwBuAEQAbwBjAGsAZQByAQAAAEQAAABwAAAANwAIAAP7AAAAKABTAG4AYQBwAEcAdQBpAGQAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAABQAQAAA/sAAAAUAE4AYQB2AGkAZwBhAHQAaQBvAG4AAAAAAP////8AAABaAQAAA/sAAAAOAE0AbwBkAGUAQgBvAHgBAAAAtQAAAeUAAACRAAgAAwAAA7gAAAJWAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAIAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAAAAAAGABlAGQAaQB0AF8AdABvAG8AbABiAGEAcgEAAACu/////wAAAAAAAAAA
+ToolBarsMovable=Disabled
+
+[calligrawords][DockWidget ModeBox]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][DockWidget Navigation]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][DockWidget Shape Properties]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][DockWidget ShapeCollectionDocker]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][DockWidget SnapGuide Properties]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][DockWidget Statistics]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][DockWidget sharedtooldocker]
+Collapsed=false
+DockArea=2
+Locked=false
+
+[calligrawords][Toolbar edit_toolbar]
+ToolButtonStyle=IconOnly
+
+[calligrawords][Toolbar mainToolBar]
+ToolButtonStyle=IconOnly
