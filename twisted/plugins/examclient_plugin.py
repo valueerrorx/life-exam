@@ -202,7 +202,8 @@ class MyClientProtocol(basic.LineReceiver):
             #add current server IP address to firewall exceptions
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')   #anhängen
-            thisexamfile.write("%s\n" % SERVER_IP)
+            thisexamfile.write("\n")
+            thisexamfile.write(self.factory.options['host'])   # for some reason SERVER_IP delivers the first attr. of twistd after the connection is made wich is  -l  
             
             command = "sudo chmod +x %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)   #make examscritp executable
             os.system(command)
@@ -235,8 +236,9 @@ class MyClientProtocol(basic.LineReceiver):
 
 
 class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClientFactory tries to reconnect automatically if connection fails
-    def __init__(self, files_path):
+    def __init__(self, files_path, options):
         self.files_path = files_path
+        self.options = options
         self.deferred = defer.Deferred()
         self.files = None
         self.failcount = 0
@@ -288,7 +290,7 @@ class MyServiceMaker(object):
     options = Options
 
     def makeService(self, options):
-        return TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY))
+        return TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))   #passing "options" too - accessible via self.factory.options[] from the protokol
 
 serviceMaker = MyServiceMaker()
 
