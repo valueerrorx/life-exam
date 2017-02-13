@@ -73,13 +73,21 @@ then
         #------------------------------------------------#
         # SAVE CURRENT EXAM CONFIG FILES TO LOCKDOWNDIR  #
         #------------------------------------------------#
+       
+       #kde
         cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
         cp -a ${HOME}.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
         cp -a ${HOME}.config/kglobalshortcutsrc ${LOCKDOWNDIR}/kglobalshortcutsrc-EXAM   #always use the "noshortcuts" file - don't allow configuring for now
-        cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM
-        cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM
+       
+        #office
+        cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM   # wps office
+        cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM   # libre office
+        cp -a ${HOME}.config/calligra* ${LOCKDOWNDIR}  # calligra office (best with kde kiosk)
+        
+        #filemanager
         cp -a ${HOME}.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
         cp -a ${HOME}.config/dolphinrc ${LOCKDOWNDIR}dolphinrc-EXAM
+        
         
         sudo rm "${ABGABE}Speichere Prüfungsumgebung.desktop"
     elif [ "$answer" = 1 ]; then
@@ -133,7 +141,7 @@ sleep 0.5
     cp -a ${BACKUPDIR}/registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
     cp -a ${BACKUPDIR}/user-places.xbel ${HOME}.local/share/
     cp -a ${BACKUPDIR}/dolphinrc ${HOME}.config/
-
+    cp -a ${BACKUPDIR}/calligra* ${HOME}.config/
 
     
     

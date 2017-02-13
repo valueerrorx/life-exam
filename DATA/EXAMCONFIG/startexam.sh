@@ -114,15 +114,20 @@ sleep 0.5
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.5
-
+    #kde
     cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUPDIR}   #main desktop applets config file
     cp -a ${HOME}.config/kwinrc ${BACKUPDIR}        # windowmanager configuration
     cp -a ${HOME}.config/kglobalshortcutsrc ${BACKUPDIR}   # keyboardshortcuts
-    cp -a ${HOME}.config/Kingsoft/Office.conf ${BACKUPDIR}   # office config
+    
+    #office
+    cp -a ${HOME}.config/Kingsoft/Office.conf ${BACKUPDIR}  
     cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
+    cp -a ${HOME}.config/calligra* ${BACKUPDIR}
+    
+    #filemanagment
     cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}   # dolphin / filepicker places panel config
     cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
-
+   
     sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership
 
 
@@ -148,7 +153,7 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
-
+    cp -a ${LOCKDOWNDIR}/calligra* ${HOME}.config/
     
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    
@@ -311,9 +316,9 @@ sleep 0.5
   
 if [[  ( $MODE = "permanent" ) ]]
 then
-    #---------------------------------#
-    # SET ROOT PASSWORD               #
-    #---------------------------------#
+    #----------------------------------------------------#
+    # SET ROOT PASSWORD   (Permanent Exam Mode only      #
+    #----------------------------------------------------#
     
     PW="empty"
     getROOT(){
@@ -340,13 +345,11 @@ then
     }
     getROOT
     
-    
     if [ "$PW" != "empty" ]; then
         #setze root passwort
         echo "setze root passwort"
         echo -e "$PW\n$PW"|sudo passwd student
     fi
-   
 fi  
    
    
