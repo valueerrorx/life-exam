@@ -153,7 +153,7 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
-    cp -a ${LOCKDOWNDIR}/calligra* ${HOME}.config/
+    cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
     
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    
@@ -179,7 +179,7 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 sleep 0.5
 
-    mkdir $ABGABE 
+    mkdir $ABGABE > /dev/null
     sudo chown -R ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
     sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
     

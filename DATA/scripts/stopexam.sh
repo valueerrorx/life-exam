@@ -134,14 +134,14 @@ qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
 sleep 0.5
 
-    cp -a ${BACKUPDIR}/plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
-    cp -a ${BACKUPDIR}/kwinrc ${HOME}.config/
-    cp -a ${BACKUPDIR}/kglobalshortcutsrc ${HOME}.config/
-    cp -a ${BACKUPDIR}/Office.conf ${HOME}.config/Kingsoft/
-    cp -a ${BACKUPDIR}/registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
-    cp -a ${BACKUPDIR}/user-places.xbel ${HOME}.local/share/
-    cp -a ${BACKUPDIR}/dolphinrc ${HOME}.config/
-    cp -a ${BACKUPDIR}/calligra* ${HOME}.config/
+    cp -a ${BACKUPDIR}plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
+    cp -a ${BACKUPDIR}kwinrc ${HOME}.config/
+    cp -a ${BACKUPDIR}kglobalshortcutsrc ${HOME}.config/
+    cp -a ${BACKUPDIR}Office.conf ${HOME}.config/Kingsoft/
+    cp -a ${BACKUPDIR}registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
+    cp -a ${BACKUPDIR}user-places.xbel ${HOME}.local/share/
+    cp -a ${BACKUPDIR}dolphinrc ${HOME}.config/
+    cp -a ${BACKUPDIR}calligra* ${HOME}.config/
 
     
     
