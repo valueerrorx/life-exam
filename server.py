@@ -389,7 +389,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onStartConfig(self):
-        scriptfile = os.path.join(SCRIPTS_DIRECTORY,"startexam.sh" )
+        scriptfile = os.path.join(EXAMCONFIG_DIRECTORY,"startexam.sh" )
         startcommand = "exec %s config &" %(scriptfile)
         os.system(startcommand) 
         self.ui.close()
