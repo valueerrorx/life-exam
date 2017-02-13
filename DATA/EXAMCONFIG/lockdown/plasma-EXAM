@@ -6,28 +6,7 @@ wheel:Vertical;NoModifier=org.kde.switchdesktop
 [ActionPlugins][1]
 RightButton;NoModifier=org.kde.contextmenu
 
-[ActionPlugins][127]
-RightButton;NoModifier=org.kde.contextmenu
-
-[ActionPlugins][129]
-MidButton;NoModifier=org.kde.paste
-RightButton;NoModifier=org.kde.contextmenu
-wheel:Vertical;NoModifier=org.kde.switchdesktop
-
-[Containments][71]
-activityId=95dec76c-3e71-47af-a064-cbd5a50957de
-formfactor=0
-immutability=2
-lastScreen=1
-location=0
-plugin=org.kde.desktopcontainment
-wallpaperplugin=org.kde.image
-
-[Containments][71][Wallpaper][org.kde.image][General]
-height=768
-width=1366
-
-[Containments][8]
+[Containments][1]
 activityId=95dec76c-3e71-47af-a064-cbd5a50957de
 formfactor=0
 immutability=1
@@ -36,7 +15,7 @@ location=0
 plugin=org.kde.desktopcontainment
 wallpaperplugin=org.kde.image
 
-[Containments][8][Applets][57]
+[Containments][1][Applets][31]
 activityId=
 formfactor=0
 immutability=1
@@ -45,7 +24,7 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=
 
-[Containments][8][Applets][57][Configuration]
+[Containments][1][Applets][31][Configuration]
 activityId=
 formfactor=0
 immutability=1
@@ -54,77 +33,42 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=
 
-[Containments][8][Applets][57][Configuration][ConfigDialog]
+[Containments][1][Applets][31][Configuration][ConfigDialog]
 DialogHeight=540
 DialogWidth=720
 
-[Containments][8][Applets][57][Configuration][General]
-iconSize=3
+[Containments][1][Applets][31][Configuration][General]
 url=file:///home/student/ABGABE
 
-[Containments][8][Applets][84][Configuration][General]
-url=/home/student/.life/EXAM/scripts/stopexam.desktop
-
-[Containments][8][Applets][87]
-immutability=1
-plugin=org.kde.plasma.analogclock
-
-[Containments][8][Applets][88][$i]
-immutability[$i]=2
-plugin[$i]=org.kde.plasma.quicklaunch
-
-[Containments][8][Applets][88][Configuration][General][$i]
-launcherUrls[$i]=file:///home/student/.local/share/applications/wps-office-wps.desktop,file:///home/student/.local/share/applications/wps-office-et.desktop,file:///usr/share/applications/libreoffice-startcenter.desktop,file:///home/student/.local/share/applications/gimp.desktop,file:///usr/share/applications/geogebra.desktop,file:///usr/share/applications/org.kde.kcalc.desktop,file:///usr/share/applications/org.kde.kate.desktop
-
-[Containments][8][Applets][91]
-immutability=1
-plugin=org.kde.plasma.lock_logout
-
-[Containments][8][Applets][91][Configuration][ConfigDialog]
-DialogHeight=540
-DialogWidth=720
-
-[Containments][8][Applets][91][Configuration][General]
-show_lockScreen=false
-
-[Containments][8][Applets][93][Configuration][General]
-favoriteApps=preferred://browser,systemsettings.desktop,org.kde.dolphin.desktop,org.kde.kate.desktop
-
-[Containments][8][Applets][94][Configuration][General]
-url=/home/student/.local/share/applications/LIFE Freigabe öffnen.desktop
-
-
-[Containments][8][Applets][96]
+[Containments][1][Applets][33]
 immutability=1
 plugin=org.kde.plasma.icon
 
-[Containments][8][Applets][96][Configuration]
-localPath=/home/student/.local/share/plasma_icons/LIFE Freigabe öffnen (1).desktop
-url=file:///home/student/.local/share/applications/LIFE Freigabe öffnen.desktop
-
-[Containments][8][Applets][97]
-immutability=1
-plugin=org.kde.plasma.icon
-
-[Containments][8][Applets][97][Configuration]
-localPath=/home/student/.local/share/plasma_icons/Lock Desktop-3.desktop
+[Containments][1][Applets][33][Configuration]
+localPath=/home/student/.local/share/plasma_icons/Lock Desktop-3 (2).desktop
 url=file:///home/student/.local/share/applications/Lock Desktop-3.desktop
 
-[Containments][8][ConfigDialog]
+[Containments][1][Applets][34]
+immutability=1
+plugin=org.kde.plasma.icon
+
+[Containments][1][Applets][34][Configuration]
+localPath=/home/student/.local/share/plasma_icons/Lock Desktop-5.desktop
+url=file:///home/student/.local/share/applications/Lock Desktop-5.desktop
+
+[Containments][1][ConfigDialog]
 DialogHeight=540
 DialogWidth=720
 
-[Containments][8][General]
-ItemsGeometries=Applet-57:32,256,608,320,0;Applet-87:640,272,208,176,0;Applet-88:32,176,608,80,0;Applet-91:688,176,112,80,0;Applet-96:32,64,112,96,0;Applet-97:672,480,144,80,0;
+[Containments][1][General]
+ItemsGeometries=Applet-31:128,160,592,320,0;Applet-33:128,64,192,80,0;Applet-34:336,64,128,80,0;
 pressToMove=false
 showToolbox=false
 
-[Containments][8][Wallpaper][org.kde.image][General]
+[Containments][1][Wallpaper][org.kde.image][General]
 Image=file:///home/student/.life/wallpapers/life-exam.png
-height=768
-width=1366
 
-[Containments][89]
+[Containments][2]
 activityId=
 formfactor=2
 immutability=1
@@ -133,23 +77,101 @@ location=4
 plugin=org.kde.panel
 wallpaperplugin=org.kde.image
 
-[Containments][89][Applets][90]
+[Containments][2][Applets][20]
 immutability=1
-plugin=org.kde.plasma.taskmanager
+plugin=org.kde.plasma.icon
 
-[Containments][89][Applets][92]
+[Containments][2][Applets][20][Configuration]
+localPath=/home/student/.local/share/plasma_icons/org.kde.kate.desktop
+url=file:///usr/share/applications/org.kde.kate.desktop
+
+[Containments][2][Applets][21]
+immutability=1
+plugin=org.kde.plasma.icon
+
+[Containments][2][Applets][21][Configuration]
+localPath=/home/student/.local/share/plasma_icons/org.kde.calligrawords.desktop
+url=file:///usr/share/applications/org.kde.calligrawords.desktop
+
+[Containments][2][Applets][22]
+immutability=1
+plugin=org.kde.plasma.icon
+
+[Containments][2][Applets][22][Configuration]
+localPath=/home/student/.local/share/plasma_icons/org.kde.calligrasheets.desktop
+url=file:///usr/share/applications/org.kde.calligrasheets.desktop
+
+[Containments][2][Applets][23]
+immutability=1
+plugin=org.kde.plasma.icon
+
+[Containments][2][Applets][23][Configuration]
+localPath=/home/student/.local/share/plasma_icons/geogebra (2).desktop
+url=file:///usr/share/applications/geogebra.desktop
+
+[Containments][2][Applets][24]
+immutability=1
+plugin=org.kde.plasma.icon
+
+[Containments][2][Applets][24][Configuration]
+localPath=/home/student/.local/share/plasma_icons/org.kde.kcalc.desktop
+url=file:///usr/share/applications/org.kde.kcalc.desktop
+
+[Containments][2][Applets][25]
+immutability=1
+plugin=org.kde.plasma.icon
+
+[Containments][2][Applets][25][Configuration]
+localPath=/home/student/.local/share/plasma_icons/gimp.desktop
+url=file:///home/student/.local/share/applications/gimp.desktop
+
+[Containments][2][Applets][28]
+immutability=1
+plugin=org.kde.plasma.lock_logout
+
+[Containments][2][Applets][28][Configuration][ConfigDialog]
+DialogHeight=540
+DialogWidth=720
+
+[Containments][2][Applets][28][Configuration][General]
+show_lockScreen=false
+
+[Containments][2][Applets][29]
+immutability=1
+plugin=org.kde.plasma.printmanager
+
+[Containments][2][Applets][3][Configuration][General]
+favorites=preferred://browser,systemsettings.desktop,org.kde.dolphin.desktop,org.kde.kate.desktop
+
+[Containments][2][Applets][30]
 immutability=1
 plugin=org.kde.plasma.networkmanagement
 
-[Containments][89][ConfigDialog]
+[Containments][2][Applets][5]
+immutability=1
+plugin=org.kde.plasma.taskmanager
+
+[Containments][2][Applets][8]
+immutability=1
+plugin=org.kde.plasma.digitalclock
+
+[Containments][2][Applets][8][Configuration][Appearance]
+showDate=true
+
+[Containments][2][Applets][8][Configuration][ConfigDialog]
+DialogHeight=540
+DialogWidth=720
+
+[Containments][2][ConfigDialog]
 DialogHeight=84
 DialogWidth=1366
 
-[Containments][89][General]
-AppletOrder=90;92
+[Containments][2][General]
+AppletOrder=20;21;22;23;24;25;5;29;30;8;28
 
-[Containments1Appletsts][83][Configuration][General]
-url=/home/student/.local/share/applications/Lock Desktop-3.desktop
+[Containments][7][General]
+extraItems=org.kde.plasma.battery,org.kde.plasma.notifications,org.kde.ktp-contactlist,org.kde.plasma.printmanager,org.kde.plasma.bluetooth,org.kde.discovernotifier,org.kde.plasma.volume,org.kde.plasma.networkmanagement,org.kde.plasma.mediacontroller,org.kde.kdeconnect,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier
+knownItems=org.kde.plasma.battery,org.kde.plasma.notifications,org.kde.ktp-contactlist,org.kde.plasma.printmanager,org.kde.plasma.bluetooth,org.kde.discovernotifier,org.kde.plasma.volume,org.kde.plasma.networkmanagement,org.kde.plasma.mediacontroller,org.kde.kdeconnect,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier
 
 [General]
 immutability=2
