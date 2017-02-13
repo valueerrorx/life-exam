@@ -309,7 +309,8 @@ sleep 0.5
    
    
   
-if [[  ( $MODE = "permanent" ) ]]  
+if [[  ( $MODE = "permanent" ) ]]
+then
     #---------------------------------#
     # SET ROOT PASSWORD               #
     #---------------------------------#
@@ -344,7 +345,7 @@ if [[  ( $MODE = "permanent" ) ]]
         #setze root passwort
         echo "setze root passwort"
         echo -e "$PW\n$PW"|sudo passwd student
-    fi;
+    fi
    
 fi  
    
