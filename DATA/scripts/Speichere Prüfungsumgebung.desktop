@@ -2,7 +2,7 @@
 [Desktop Entry]
 Comment[de_DE]=
 Comment=
-Exec=kdesudo ~/.life/EXAM/scripts/stopexam-configuration-root.sh
+Exec=kdesudo ~/.life/EXAM/scripts/stopexam.sh config
 GenericName[de_DE]=
 GenericName=
 Icon=org.kde.plasma.frame
