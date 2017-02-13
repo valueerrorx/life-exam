@@ -141,14 +141,20 @@ class MyClientProtocol(basic.LineReceiver):
         """
         app_id_list=[]
         for app in SAVEAPPS:
-            command = "xdotool search --name %s &" %(app)
-            app_ids = subprocess.check_output(command, shell=True).rstrip()
-            if app_ids:
-                app_ids = app_ids.split('\n')
-                for app_id in app_ids:
-                    app_id_list.append(app_id)
+            if app == "calligrawords" or app == "calligrasheets":    # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
+                command = "pidof %s" %(app)
+                pid = subprocess.check_output(command, shell=True).rstrip()
+                qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" %(app, pid, app )
+                os.system(qdbuscommand)
+            else:   # make a list of the other running apps
+                command = "xdotool search --name %s &" %(app)
+                app_ids = subprocess.check_output(command, shell=True).rstrip()
+                if app_ids:
+                    app_ids = app_ids.split('\n')
+                    for app_id in app_ids:
+                        app_id_list.append(app_id)
             
-        for application_id in app_id_list:
+        for application_id in app_id_list:    #try to invoke ctrl+s on the running apps
             command = "xdotool windowactivate %s && xdotool key ctrl+s &" %(application_id)
             os.system(command)
             print "ctrl+s sent to %s" %(application_id)

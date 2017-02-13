@@ -10,8 +10,8 @@ SERVER_PORT = 5000
 PRESERVE_WORKDIR = False
 
 
-#these apps will try to autosave your work before "abgabe"
-SAVEAPPS = ['words','sheets','writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
+#these apps will try to autosave your work before "abgabe" via xdotool
+SAVEAPPS = ['calligrawords','calligrasheets','words','sheets','writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
 
 
 # find username and set user home directory
