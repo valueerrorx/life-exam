@@ -45,7 +45,7 @@ if [ -f "$EXAMLOCKFILE" ];then
     exit 1
 fi
 if [ ! -d "$BACKUPDIR" ];then
-    mkdir $BACKUPDIR
+    mkdir -p $BACKUPDIR
 fi
 
 

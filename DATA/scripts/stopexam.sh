@@ -13,6 +13,7 @@ USER=$(logname)   #logname seems to always deliver the current xsession user - n
 HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 BACKUPDIR="${HOME}.life/unlockedbackup/" 
+LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 ABGABE="${HOME}ABGABE/"
 
 MODE=$1
