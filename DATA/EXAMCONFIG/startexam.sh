@@ -22,7 +22,7 @@ ABGABE="${HOME}ABGABE/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 MODE=$1
-if [[ ( $MODE != "config" ) || ( $MODE != "exam" )  || ( $MODE != "permanent" )   ]]
+if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
 then
     kdialog  --msgbox 'Parameter is missing <config> <exam> <permanent>' --title 'Starting Exam' --caption "Starting Exam"
     exit 1

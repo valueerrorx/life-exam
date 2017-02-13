@@ -16,7 +16,7 @@ BACKUPDIR="${HOME}.life/unlockedbackup/"
 ABGABE="${HOME}ABGABE/"
 
 MODE=$1
-if [[ ( $MODE != "config" ) || ( $MODE != "exam" )  ]]
+if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  ]]
 then
     kdialog  --msgbox 'Parameter is missing <config> <exam> ' --title 'Stopping Exam' --caption "Stopping Exam"
     exit 1
