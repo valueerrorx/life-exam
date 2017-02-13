@@ -87,7 +87,7 @@ then
         #filemanager
         cp -a ${HOME}.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
         cp -a ${HOME}.config/dolphinrc ${LOCKDOWNDIR}dolphinrc-EXAM
-        
+        cp -a ${HOME}.config/user-dirs.dirs ${LOCKDOWNDIR}       #default directories for documents music etc.
         
         sudo rm "${ABGABE}Speichere Prüfungsumgebung.desktop"
     elif [ "$answer" = 1 ]; then
@@ -142,7 +142,7 @@ sleep 0.5
     cp -a ${BACKUPDIR}user-places.xbel ${HOME}.local/share/
     cp -a ${BACKUPDIR}dolphinrc ${HOME}.config/
     cp -a ${BACKUPDIR}calligra* ${HOME}.config/
-
+    cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
     
     
     
