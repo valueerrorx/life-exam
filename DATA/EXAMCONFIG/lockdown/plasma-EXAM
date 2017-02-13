@@ -61,7 +61,7 @@ DialogHeight=540
 DialogWidth=720
 
 [Containments][1][General]
-ItemsGeometries=Applet-31:128,160,592,320,0;Applet-33:128,64,192,80,0;Applet-34:336,64,128,80,0;
+ItemsGeometries=Applet-31:144,208,592,320,0;Applet-33:144,112,192,80,0;Applet-34:352,112,128,80,0;
 pressToMove=false
 showToolbox=false
 
