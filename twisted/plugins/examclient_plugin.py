@@ -63,7 +63,7 @@ class MyClientProtocol(basic.LineReceiver):
         
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
-            
+
         if data.endswith('\r\n'): # Last chunk
             data = data[:-2]
             self.file_handler.write(data)
@@ -242,7 +242,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         self.deferred = defer.Deferred()
         self.files = None
         self.failcount = 0
-        
+        self.delay
     def clientConnectionFailed(self,connector, reason):  # in case of connection problems try 4 times then reshow student gui
         self.failcount += 1
         if self.failcount > 3:

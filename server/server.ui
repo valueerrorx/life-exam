@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>617</height>
+    <height>674</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,6 +19,10 @@
   </property>
   <property name="windowTitle">
    <string>Exam Server</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../pixmaps/security.png</normaloff>../../pixmaps/security.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -79,7 +83,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/document-edit.png</normaloff>pixmaps/document-edit.png</iconset>
+             <normaloff>../pixmaps/document-edit.png</normaloff>../pixmaps/document-edit.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -114,7 +118,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/network-wireless.png</normaloff>pixmaps/network-wireless.png</iconset>
+             <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -134,7 +138,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/tag.png</normaloff>pixmaps/tag.png</iconset>
+             <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -157,7 +161,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/download.png</normaloff>pixmaps/download.png</iconset>
+             <normaloff>../pixmaps/download.png</normaloff>../pixmaps/download.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -177,7 +181,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/pictures.png</normaloff>pixmaps/pictures.png</iconset>
+             <normaloff>../pixmaps/pictures.png</normaloff>../pixmaps/pictures.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -197,7 +201,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/quickopen-file.png</normaloff>pixmaps/quickopen-file.png</iconset>
+             <normaloff>../pixmaps/quickopen-file.png</normaloff>../pixmaps/quickopen-file.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -217,7 +221,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/chronometer-off.png</normaloff>pixmaps/chronometer-off.png</iconset>
+             <normaloff>../pixmaps/chronometer-off.png</normaloff>../pixmaps/chronometer-off.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -291,7 +295,7 @@
          </property>
          <attribute name="icon">
           <iconset>
-           <normaloff>pixmaps/security-high.png</normaloff>pixmaps/security-high.png</iconset>
+           <normaloff>../pixmaps/security-high.png</normaloff>../pixmaps/security-high.png</iconset>
          </attribute>
          <attribute name="title">
           <string>Übersicht</string>
@@ -382,7 +386,7 @@
          </property>
          <attribute name="icon">
           <iconset>
-           <normaloff>pixmaps/adjustlevels.png</normaloff>pixmaps/adjustlevels.png</iconset>
+           <normaloff>../pixmaps/adjustlevels.png</normaloff>../pixmaps/adjustlevels.png</iconset>
          </attribute>
          <attribute name="title">
           <string>Einstellungen</string>
@@ -730,7 +734,7 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>pixmaps/window-close.png</normaloff>pixmaps/window-close.png</iconset>
+             <normaloff>../pixmaps/window-close.png</normaloff>../pixmaps/window-close.png</iconset>
            </property>
           </widget>
          </item>

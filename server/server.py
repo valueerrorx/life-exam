@@ -176,7 +176,6 @@ class MyServerProtocol(basic.LineReceiver):
 
 
 
-
 class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def __init__(self, files_path):
         self.files_path = files_path
@@ -184,7 +183,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files = None
        
         QtWidgets.QDialog.__init__(self)
-        self.ui = uic.loadUi("teacher.ui")        # load UI
+        self.ui = uic.loadUi("server/server.ui")        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
@@ -210,13 +209,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.showMinimized()
         evnt.ignore()
            
-
-
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
+        return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
         
-        
-        
+
     def _onAutoabgabe(self):
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  #minuten nicht sekunden
@@ -440,7 +436,7 @@ if __name__ == '__main__':
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
     print ('Listening on port %d' % (SERVER_PORT))
     reactor.run()
-    
+
     #if you get here, reactor has an error - probably the port is already in use because of another server process
     os.system("sudo pkill -f 'python server.py'")  # if port is already taken an exception will we thrown - kill other server processes
     # does not work.. use nmap or something to find out if port is used and then kill the process

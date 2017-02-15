@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon, QColor
 import sys
 import os
 from common import checkIP, prepareDirectories
-from config import *
+from config.config import *
 
 class MeinDialog(QtWidgets.QDialog):
     def __init__(self):
