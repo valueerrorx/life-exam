@@ -133,7 +133,7 @@ def prepareDirectories():
     os.makedirs(SERVERUNZIP_DIRECTORY)
     os.makedirs(SERVERZIP_DIRECTORY)
   
-    copycommand = "sudo cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
+    copycommand = "cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
     os.system(copycommand)
     
     if not os.path.exists(EXAMCONFIG_DIRECTORY) or PRESERVE_WORKDIR:  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
