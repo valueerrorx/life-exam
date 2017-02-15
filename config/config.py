@@ -46,5 +46,7 @@ SERVERZIP_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, ZIP)
 
 ABGABE_DIRECTORY = os.path.join(USER_HOME_DIR, ABGABE)
 
+SERVER_PIDFILE = os.path.join(WORK_DIRECTORY,'server.pid')
+
 # relative paths
 DATA_DIRECTORY = "./DATA"

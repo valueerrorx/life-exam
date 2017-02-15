@@ -164,8 +164,7 @@ def fixFilePermissions(folder):
 def writePidFile():
     pid = str(os.getpid())
     
-    pidfile = os.path.join(WORK_DIRECTORY,'server.pid')
-    f = open(pidfile, 'w+')
+    f = open(SERVER_PIDFILE, 'w+')
     f.write(pid)
     f.close()
 
