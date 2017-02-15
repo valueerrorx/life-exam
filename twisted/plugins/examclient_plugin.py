@@ -142,10 +142,14 @@ class MyClientProtocol(basic.LineReceiver):
         app_id_list=[]
         for app in SAVEAPPS:
             if app == "calligrawords" or app == "calligrasheets":    # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
-                command = "pidof %s" %(app)
-                pid = subprocess.check_output(command, shell=True).rstrip()
-                qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" %(app, pid, app )
-                os.system(qdbuscommand)
+                try:
+                    command = "pidof %s" %(app)
+                    pid = subprocess.check_output(command, shell=True).rstrip()
+                    qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" %(app, pid, app )
+                    os.system(qdbuscommand)
+                except:
+                    print "program not running"
+                    
             else:   # make a list of the other running apps
                 command = "xdotool search --name %s &" %(app)
                 app_ids = subprocess.check_output(command, shell=True).rstrip()

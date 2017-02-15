@@ -397,6 +397,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onAbbrechen(self):    # Exit button
+        os.remove(SERVER_PIDFILE) 
         self.ui.close()
         os._exit(0)  #otherwise only the gui is closed and connections are kept alive
     
