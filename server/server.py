@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 # TEACHER - SERVER #
+from twisted.internet.protocol import DatagramProtocol
+
+import qt5reactor
 import os
 import sys
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
@@ -8,17 +11,14 @@ sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) )
 import qt5reactor
 import ipaddress
 import datetime
-import time
-import pprint
 import sip
-import shutil
 import zipfile
 import ntpath
 
 from twisted.internet import protocol
 from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
-from config import *
+from config.config import *
 from common import *
 
 
@@ -185,8 +185,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files = None
        
         QtWidgets.QDialog.__init__(self)
+<<<<<<< HEAD
         self.ui = uic.loadUi("server/server.ui")        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security-high.png"))  # definiere icon für taskleiste
+=======
+        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))        # load UI
+        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
+>>>>>>> 8ff5ccd7f0064ec67586c49af5cd95416e3b2332
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
@@ -417,10 +422,25 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
 
 
+class MultcastLifeServer(DatagramProtocol):
 
+    def startProtocol(self):
+        """
+        Called after protocol has started listening.
+        """
+        # Set the TTL>1 so multicast will cross router hops:
+        self.transport.setTTL(5)
+        # Join a specific multicast group:
+        self.transport.joinGroup("228.0.0.5")
+        # self.transport.write("SERVER: Assimilate", ("228.0.0.5", 8005))
 
-
-
+    def datagramReceived(self, datagram, address):
+        print "Datagram %s received from %s" % (repr(datagram), repr(address))
+        if "CLIENT" in datagram:
+            # Rather than replying to the group multicast address, we send the
+            # reply directly (unicast) to the originating port:
+            self.transport.write('SERVER: Assimilate', ("228.0.0.5", 8005))
+            self.transport.write("SERVER: Assimilate", address)
 
 
 if __name__ == '__main__':
@@ -437,6 +457,10 @@ if __name__ == '__main__':
     from twisted.internet import reactor
    
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
+
+    reactor.listenMulticast(8005, MultcastLifeServer(),
+                            listenMultiple=True)
+
     print ('Listening on port %d' % (SERVER_PORT))
     reactor.run()
         
