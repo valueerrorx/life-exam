@@ -4,7 +4,12 @@
 from twisted.internet.protocol import DatagramProtocol
 
 import qt5reactor
+import os
 import sys
+sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
+
+import qt5reactor
+import ipaddress
 import datetime
 import sip
 import zipfile
