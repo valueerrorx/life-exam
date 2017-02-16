@@ -26,13 +26,8 @@ from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 
 
-try:
-    SERVER_IP = sys.argv[1] 
-    STUDENT_ID = sys.argv[2] 
-except:
-    print "No IP Address given! Using localhost"
-    SERVER_IP = "127.0.0.1"
-    STUDENT_ID = "Unknown User"
+
+
 
 
 
@@ -182,7 +177,7 @@ class MyClientProtocol(basic.LineReceiver):
         if filetype == 'FILE':
             self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
-            self.transport.write('FILETRANSFER SCREENSHOT %s %s %s\n' % (filename, self.factory.files[filename][2],STUDENT_ID ))     #trigger type filename filehash ID
+            self.transport.write('FILETRANSFER SCREENSHOT %s %s %s\n' % (filename, self.factory.files[filename][2], self.factory.options['id'] ))     #trigger type filename filehash ID
         elif filetype == 'FOLDER' or filetype == 'ABGABE' :
             self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:
@@ -199,7 +194,7 @@ class MyClientProtocol(basic.LineReceiver):
     def _startExam(self,filename,file_path):
         """extracts the config folder and starts the startexam.sh script"""
     
-        if SERVER_IP != "127.0.0.1":    #testClient running on the same machine
+        if self.factory.options['host'] != "127.0.0.1":    #testClient running on the same machine
             extract_dir = os.path.join(WORK_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
             with zipfile.ZipFile(file_path,"r") as zip_ref:
                 zip_ref.extractall(extract_dir)
@@ -210,7 +205,7 @@ class MyClientProtocol(basic.LineReceiver):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')   #anhängen
             thisexamfile.write("\n")
-            thisexamfile.write(self.factory.options['host'])   # for some reason SERVER_IP delivers the first attr. of twistd after the connection is made wich is  -l  
+            thisexamfile.write(self.factory.options['host']) 
             
             command = "sudo chmod +x %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)   #make examscritp executable
             os.system(command)
@@ -284,8 +279,8 @@ export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 class Options(usage.Options):
-    optParameters = [["port", "p", SERVER_PORT, "The port number to connect to."],
-                    ["host", "h", SERVER_IP, "The host machine to connect to."],
+    optParameters = [["port", "p", 5000, "The port number to connect to."],
+                    ["host", "h", '127.0.0.1', "The host machine to connect to."],
                     ["id", "i", 'unnamed', "A custom unique Client id."]
                     ]
     

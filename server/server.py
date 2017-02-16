@@ -144,7 +144,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.grid.addWidget(self.label1, 1, 0)
         self.grid.addWidget(self.label2, 2, 0)
         self.widget.setLayout(self.grid)
-        
+        print self.student_id
         #generate a listitem
         if existingItem:
             self.item = existingItem
@@ -152,9 +152,9 @@ class MyServerProtocol(basic.LineReceiver):
             self.item = QtWidgets.QListWidgetItem()
             self.item.setSizeHint( QtCore.QSize( 140, 100) );
             self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
+            self.factory.ui.listWidget.addItem(self.item)
             
         # add the listitem to the factorys listwidget and set the widget as it's widget
-        self.factory.ui.listWidget.addItem(self.item)
         self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
 
 
