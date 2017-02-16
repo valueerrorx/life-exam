@@ -186,7 +186,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         QtWidgets.QDialog.__init__(self)
 
         self.ui = uic.loadUi("server/server.ui")        # load UI
-        self.ui.setWindowIcon(QIcon("pixmaps/security-high.png"))  # definiere icon für taskleiste
+        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
 
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
