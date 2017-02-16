@@ -439,11 +439,6 @@ if __name__ == '__main__':
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
     print ('Listening on port %d' % (SERVER_PORT))
     reactor.run()
-
-    #if you get here, reactor has an error - probably the port is already in use because of another server process
-    os.system("sudo pkill -f 'python server.py'")  # if port is already taken an exception will we thrown - kill other server processes
-    # does not work.. use nmap or something to find out if port is used and then kill the process
-    
         
    
 
