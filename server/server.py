@@ -58,7 +58,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
         
         if not self.refused:
-            self.factory._disableClientScreenshot(self.clientID)
+            self.factory._disableClientScreenshot(self.clientID)  
         
 
     #twisted
@@ -84,8 +84,8 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
+                    self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                 
                 elif self.file_data[1] == "FOLDER":
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
@@ -119,8 +119,8 @@ class MyServerProtocol(basic.LineReceiver):
             return 
         #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
         if line.startswith('AUTH'):
-            newID = self.file_data[1]   #AUTH is sent immediately after connection is made and transfers the clientID
-            self._checkClientID(newID)
+            newID = self.file_data[1]   #AUTH is sent immediately after a connection is made and transfers the clientID
+            self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
         elif line.startswith('FILETRANSFER'):           
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
@@ -128,10 +128,10 @@ class MyServerProtocol(basic.LineReceiver):
     
     
     def _checkClientID(self,newID):
+        """searches for the newID in factory.clients and rejects the connection if found"""
         ids = []
         for i in self.factory.clients:
             ids.append(i.clientID)
-            
             
         if newID in ids:
             print "this user already exists and is connected" 
@@ -139,10 +139,10 @@ class MyServerProtocol(basic.LineReceiver):
             self.sendLine('REFUSED\n')
             self.transport.loseConnection()
             return 
-        else:
+        else:  #otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientID = newID
             self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
-            print "sendshot"
+            return
 
 
     
@@ -152,42 +152,39 @@ class MyServerProtocol(basic.LineReceiver):
         for index in xrange(self.factory.ui.listWidget.count()):
             items.append(self.factory.ui.listWidget.item(index))
         
+        
         existingItem = False
         for item in items:
             if item.id == self.clientID:
+                print "exists"
                 existingItem = item   #there should be only one matching item
         
-       
-        
         if existingItem :   # just update screenshot
-            self.item = existingItem
             Pixmap = QPixmap(screenshot_file_path)
-            self.item.picture.setPixmap(Pixmap)
-            self.item.info.setText('%s: %s' %(self.clientID, self.clientProcessID) )
-            
+            existingItem.picture.setPixmap(Pixmap)
+            existingItem.info.setText('%s: %s' %(self.clientID, self.clientProcessID) )
         else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
-            self.item = QtWidgets.QListWidgetItem()
-            self.item.setSizeHint( QtCore.QSize( 140, 100) );
-            self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
-            self.item.disabled=False
+            item = QtWidgets.QListWidgetItem()
+            item.setSizeHint( QtCore.QSize( 140, 100) );
+            item.id = self.clientID   #store clientID as itemID for later use (delete event)
+            item.disabled=False
             
             Pixmap = QPixmap(screenshot_file_path)
-            self.item.picture = QtWidgets.QLabel()
-            self.item.picture.setPixmap(Pixmap)
-            self.item.info = QtWidgets.QLabel('%s: %s' %(self.clientID, self.clientProcessID) )
-            self.item.info.setAlignment(QtCore.Qt.AlignCenter)
+            item.picture = QtWidgets.QLabel()
+            item.picture.setPixmap(Pixmap)
+            item.info = QtWidgets.QLabel('%s: %s' %(self.clientID, self.clientProcessID) )
+            item.info.setAlignment(QtCore.Qt.AlignCenter)
             
+            grid = QtWidgets.QGridLayout()
+            grid.setSpacing(4)
+            grid.addWidget(item.picture, 1, 0)
+            grid.addWidget(item.info, 2, 0)
             
-            self.grid = QtWidgets.QGridLayout()
-            self.grid.setSpacing(4)
-            self.grid.addWidget(self.item.picture, 1, 0)
-            self.grid.addWidget(self.item.info, 2, 0)
-            
-            self.widget = QtWidgets.QWidget()
-            self.widget.setLayout(self.grid)
+            widget = QtWidgets.QWidget()
+            widget.setLayout(grid)
            
-            self.factory.ui.listWidget.addItem(self.item)  #add the listitem to the listwidget
-            self.factory.ui.listWidget.setItemWidget(self.item,self.widget)   # set the widget as the listitem's widget
+            self.factory.ui.listWidget.addItem(item)  #add the listitem to the listwidget
+            self.factory.ui.listWidget.setItemWidget(item,widget)   # set the widget as the listitem's widget
             
        
       
@@ -458,7 +455,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             if clientID == item.id:
                 pixmap = QPixmap("pixmaps/nouserscreenshot.png")
                 item.picture.setPixmap(pixmap)
-                item.info.setText('not available')
+                item.info.setText('%s: disconnected' %(clientID)  )
                 item.disabled=True
                 
 
