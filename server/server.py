@@ -42,7 +42,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_handler = None
         self.file_data = ()
     
-        self.clientID = str(self.transport.client[1])
+        self.clientProcessID = str(self.transport.client[1])
         self.factory._log('Client connected..')
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
@@ -52,7 +52,7 @@ class MyServerProtocol(basic.LineReceiver):
     #twisted
     def connectionLost(self, reason):
         self.factory.clients.remove(self)
-        self.factory._deleteClientScreenshot(self.clientID)
+        self.factory._disableClientScreenshot(self.clientID)
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
@@ -81,7 +81,7 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    self.student_id = self.file_data[4]    # the custom student id is transferred with the initial (and every following) screenshot 
+                    self.clientID = self.file_data[4]    # the custom student id is transferred with the initial (and every following) screenshot 
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
                 
@@ -115,7 +115,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return 
-        #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( student_id=self.file_data[4] ))
+        #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
         if line.startswith('FILETRANSFER'):           
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
@@ -133,31 +133,40 @@ class MyServerProtocol(basic.LineReceiver):
             if item.id == self.clientID:
                 existingItem = item   #there should be only one matching item
         
-        self.label1 = QtWidgets.QLabel()
-        self.label2 = QtWidgets.QLabel('%s: %s' %(self.clientID, self.student_id) )
-        self.label1.Pixmap = QPixmap(screenshot_file_path)
-        self.label1.setPixmap(self.label1.Pixmap)
-        # generate a widget that combines the labels
-        self.widget = QtWidgets.QWidget()
-        self.grid = QtWidgets.QGridLayout()
-        self.grid.setSpacing(4)
-        self.grid.addWidget(self.label1, 1, 0)
-        self.grid.addWidget(self.label2, 2, 0)
-        self.widget.setLayout(self.grid)
-        print self.student_id
-        #generate a listitem
-        if existingItem:
+       
+        
+        if existingItem and existingItem.disabled:   # just update screenshot
             self.item = existingItem
-        else:
+            Pixmap = QPixmap(screenshot_file_path)
+            self.item.picture.setPixmap(Pixmap)
+            self.item.info.setText('%s: %s' %(self.clientID, self.clientProcessID) )
+        elif existingItem and not existingItem.disabled:
+            #disconnect new user because old user with that id exists and is active
+            print "this user already exists and is connected" 
+        else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             self.item = QtWidgets.QListWidgetItem()
             self.item.setSizeHint( QtCore.QSize( 140, 100) );
             self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
-            self.factory.ui.listWidget.addItem(self.item)
             
-        # add the listitem to the factorys listwidget and set the widget as it's widget
-        self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
-
-
+            Pixmap = QPixmap(screenshot_file_path)
+            self.item.picture = QtWidgets.QLabel()
+            self.item.picture.setPixmap(Pixmap)
+            self.item.info = QtWidgets.QLabel('%s: %s' %(self.clientID, self.clientProcessID) )
+            self.item.info.setAlignment(QtCore.Qt.AlignCenter)
+            
+            self.grid = QtWidgets.QGridLayout()
+            self.grid.setSpacing(4)
+            self.grid.addWidget(self.item.picture, 1, 0)
+            self.grid.addWidget(self.item.info, 2, 0)
+            
+            self.widget = QtWidgets.QWidget()
+            self.widget.setLayout(self.grid)
+           
+            self.factory.ui.listWidget.addItem(self.item)  #add the listitem to the listwidget
+            self.factory.ui.listWidget.setItemWidget(self.item,self.widget)   # set the widget as the listitem's widget
+            
+       
+      
 
 
 
@@ -414,6 +423,20 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         for item in items:
             if clientID == item.id:
                 sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
+
+
+    def _disableClientScreenshot(self,clientID):
+        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
+        for index in xrange(self.ui.listWidget.count()):
+            items.append(self.ui.listWidget.item(index))
+        
+        for item in items:
+            if clientID == item.id:
+                pixmap = QPixmap("pixmaps/nouserscreenshot.png")
+                item.picture.setPixmap(pixmap)
+                item.info.setText('not available')
+                item.disabled=True
+                
 
 
 class MultcastLifeServer(DatagramProtocol):
