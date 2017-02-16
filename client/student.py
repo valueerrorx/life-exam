@@ -6,12 +6,13 @@ import time
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 
-import qt5reactor
+
 from PyQt5.QtGui import QIcon, QColor
 import sys
 import os
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
 
+import qt5reactor
 from common import checkIP, prepareDirectories
 from config.config import *
 
