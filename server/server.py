@@ -182,15 +182,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files_path = files_path
         self.clients = []  #store all client connections in this array
         self.files = None
-       
+        
         QtWidgets.QDialog.__init__(self)
-
-        self.ui = uic.loadUi("server/server.ui")        # load UI
-        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
-
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))        # load UI
-        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
-
+        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
