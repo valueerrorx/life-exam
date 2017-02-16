@@ -42,7 +42,9 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
+        self.sendLine('AUTH %s' % (self.factory.options['id']) )
         print('Connected to the server')
+       
 
     #twisted
     def connectionLost(self, reason):
@@ -188,7 +190,7 @@ class MyClientProtocol(basic.LineReceiver):
         if filetype == 'FILE':
             self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
-            self.transport.write('FILETRANSFER SCREENSHOT %s %s %s\n' % (filename, self.factory.files[filename][2], self.factory.options['id'] ))     #trigger type filename filehash ID
+            self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash ID
         elif filetype == 'FOLDER' or filetype == 'ABGABE' :
             self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:

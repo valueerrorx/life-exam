@@ -34,6 +34,7 @@ class MyServerProtocol(basic.LineReceiver):
     def __init__(self,factory):
         self.factory = factory
         self.delimiter = '\n'
+        self.clientID = ""
      
      
     #twisted
@@ -47,7 +48,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
-        self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
+
     
     #twisted
     def connectionLost(self, reason):
@@ -59,7 +60,6 @@ class MyServerProtocol(basic.LineReceiver):
         if not self.refused:
             self.factory._disableClientScreenshot(self.clientID)
         
-        # destroy this instance ?
 
     #twisted
     def rawDataReceived(self, data):
@@ -84,7 +84,6 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    self.clientID = self.file_data[4]    # the custom student id is transferred with the initial (and every following) screenshot 
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
                 
@@ -119,11 +118,33 @@ class MyServerProtocol(basic.LineReceiver):
         if len(self.file_data) == 0 or self.file_data == '':
             return 
         #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
-        if line.startswith('FILETRANSFER'):           
+        if line.startswith('AUTH'):
+            newID = self.file_data[1]   #AUTH is sent immediately after connection is made and transfers the clientID
+            self._checkClientID(newID)
+        elif line.startswith('FILETRANSFER'):           
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
     
     
+    
+    def _checkClientID(self,newID):
+        ids = []
+        for i in self.factory.clients:
+            ids.append(i.clientID)
+            
+            
+        if newID in ids:
+            print "this user already exists and is connected" 
+            self.refused = True
+            self.sendLine('REFUSED\n')
+            self.transport.loseConnection()
+            return 
+        else:
+            self.clientID = newID
+            self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
+            print "sendshot"
+
+
     
     def _createListItem(self,screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
@@ -138,17 +159,11 @@ class MyServerProtocol(basic.LineReceiver):
         
        
         
-        if existingItem and existingItem.disabled:   # just update screenshot
+        if existingItem :   # just update screenshot
             self.item = existingItem
             Pixmap = QPixmap(screenshot_file_path)
             self.item.picture.setPixmap(Pixmap)
             self.item.info.setText('%s: %s' %(self.clientID, self.clientProcessID) )
-        elif existingItem and not existingItem.disabled:
-            #disconnect new user because old user with that id exists and is active
-            print "this user already exists and is connected" 
-            self.refused = True
-            self.sendLine('REFUSED\n')
-            self.transport.loseConnection()
             
         else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             self.item = QtWidgets.QListWidgetItem()
