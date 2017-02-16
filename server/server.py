@@ -41,7 +41,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.clients.append(self)  # only the factory (MyServerFactory) is the persistent thing.. therefore we save the clients ( MyServerProtocol object) on factory.clients
         self.file_handler = None
         self.file_data = ()
-    
+        self.refused = False
         self.clientProcessID = str(self.transport.client[1])
         self.factory._log('Client connected..')
         self.transport.write('Connection established!\n')
@@ -52,10 +52,13 @@ class MyServerProtocol(basic.LineReceiver):
     #twisted
     def connectionLost(self, reason):
         self.factory.clients.remove(self)
-        self.factory._disableClientScreenshot(self.clientID)
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
+        
+        if not self.refused:
+            self.factory._disableClientScreenshot(self.clientID)
+        
         # destroy this instance ?
 
     #twisted
@@ -143,16 +146,22 @@ class MyServerProtocol(basic.LineReceiver):
         elif existingItem and not existingItem.disabled:
             #disconnect new user because old user with that id exists and is active
             print "this user already exists and is connected" 
+            self.refused = True
+            self.sendLine('REFUSED\n')
+            self.transport.loseConnection()
+            
         else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             self.item = QtWidgets.QListWidgetItem()
             self.item.setSizeHint( QtCore.QSize( 140, 100) );
             self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
+            self.item.disabled=False
             
             Pixmap = QPixmap(screenshot_file_path)
             self.item.picture = QtWidgets.QLabel()
             self.item.picture.setPixmap(Pixmap)
             self.item.info = QtWidgets.QLabel('%s: %s' %(self.clientID, self.clientProcessID) )
             self.item.info.setAlignment(QtCore.Qt.AlignCenter)
+            
             
             self.grid = QtWidgets.QGridLayout()
             self.grid.setSpacing(4)

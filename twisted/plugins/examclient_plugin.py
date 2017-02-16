@@ -46,11 +46,18 @@ class MyClientProtocol(basic.LineReceiver):
 
     #twisted
     def connectionLost(self, reason):
+        self.factory.failcount += 1
         self.file_handler = None
         self.file_data = ()
         print('Connection to the server has been lost')
         self._showDesktopMessage('Connection to the server has been lost')
-        #reactor.stop()  #this would terminate the connection - even if ReconnectingClientFactory would normally try to re-establish the connection
+        
+        if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
+            os.system(command)
+            command = "python client/student.py &" 
+            os.system(command)
+            os._exit(1)
 
         
     #twisted
@@ -93,7 +100,11 @@ class MyClientProtocol(basic.LineReceiver):
             message = '%s' % ' '.join(map(str, self.buffer))
             self._showDesktopMessage(message)
             self.buffer = []
-        
+        elif line.startswith('REFUSED'):
+            self._showDesktopMessage('Connection refused!\n Client ID already taken!')
+            self.factory.failcount = 100
+
+            
         elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
             self.file_data = clean_and_split_input(line)
             self.factory.files = get_file_list(self.factory.files_path)
@@ -245,19 +256,6 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         self.files = None
         self.failcount = 0
         self.delay
-    def clientConnectionFailed(self,connector, reason):  # in case of connection problems try 4 times then reshow student gui
-        self.failcount += 1
-        if self.failcount > 3:
-            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
-            os.system(command)
-            command = "python student.py &" 
-            os.system(command)
-            os._exit(1)
-        print('Connection failed. Reason:', reason)
-        command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen.\nÜberprüfen sie die Netzwerkeinstellungen \nsowie die Server IP Adresse!' 8 &" %(USER)
-        os.system(command)
-        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
-
         
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self) 
