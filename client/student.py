@@ -4,13 +4,15 @@ from PyQt5 import  uic, QtWidgets
 from PyQt5.QtGui import QIcon, QColor
 import sys
 import os
+sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
+
 from common import checkIP, prepareDirectories
 from config.config import *
 
 class MeinDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-        self.ui = uic.loadUi("student.ui")        # load UI
+        self.ui = uic.loadUi("client/student.ui")        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)        # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
