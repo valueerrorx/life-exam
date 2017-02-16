@@ -3,7 +3,6 @@
 # TEACHER - SERVER #
 from twisted.internet.protocol import DatagramProtocol
 
-import qt5reactor
 import os
 import sys
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
@@ -185,13 +184,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files = None
        
         QtWidgets.QDialog.__init__(self)
-<<<<<<< HEAD
+
         self.ui = uic.loadUi("server/server.ui")        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security-high.png"))  # definiere icon für taskleiste
-=======
+
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))        # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
->>>>>>> 8ff5ccd7f0064ec67586c49af5cd95416e3b2332
+
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y

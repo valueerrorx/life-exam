@@ -18,11 +18,11 @@ from config.config import *
 class MeinDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-<<<<<<< HEAD
+
         self.ui = uic.loadUi("client/student.ui")        # load UI
-=======
+
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))        # load UI
->>>>>>> 8ff5ccd7f0064ec67586c49af5cd95416e3b2332
+
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)        # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
