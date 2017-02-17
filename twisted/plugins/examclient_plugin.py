@@ -55,7 +55,6 @@ class MyClientProtocol(basic.LineReceiver):
         self._showDesktopMessage('Connection to the server has been lost')
         
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
             os.system(command)
             command = "python client/student.py &" 
             os.system(command)
@@ -105,7 +104,9 @@ class MyClientProtocol(basic.LineReceiver):
         elif line.startswith('REFUSED'):
             self._showDesktopMessage('Connection refused!\n Client ID already taken!')
             self.factory.failcount = 100
-
+        elif line.startswith('REMOVED'):
+            self._showDesktopMessage('Connection aborted by the Teacher!')
+            self.factory.failcount = 100
             
         elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
             self.file_data = clean_and_split_input(line)

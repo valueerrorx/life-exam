@@ -197,9 +197,9 @@ class MyServerProtocol(basic.LineReceiver):
         
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered = lambda: self.factory._onAbgabe(clientConnectionID) )
         action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered = lambda: self.factory._onScreenshots(clientConnectionID) )
+        action_3 = QtWidgets.QAction("Verbindung beenden, menu, triggered = lambda: self.factory._removeClient(clientConnectionID) )
         
-        
-        menu.addActions([action_1, action_2])
+        menu.addActions([action_1, action_2, action_3])
         handled = True
         cursor=QCursor()
         menu.exec_(cursor.pos())
@@ -460,14 +460,23 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
-    def _deleteClientScreenshot(self,clientID):
+    def _removeClient(self,clientID):
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
         
         for item in items:
-            if clientID == item.id:
+            if item.id == clientID:
                 sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
+        
+        for client in self.clients:
+                if client.clientConnectionID == clientID:
+                    client.refused = True
+                    client.sendLine('REMOVED\n')
+                    client.transport.loseConnection()
+                    client.factory._log('Client Connection has been removed.')
+        
+
 
 
     def _disableClientScreenshot(self,clientID):
