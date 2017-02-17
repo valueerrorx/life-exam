@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 import hashlib
 import os
+import subprocess
+
 import ipaddress
 import shutil
 
-from config import *
+from config.config import *
 
 
 def checkFirewall(self):
@@ -44,7 +46,7 @@ def validate_file_md5_hash(file, original_hash):
 
     if get_file_md5_hash(file) == original_hash:
         return True
-        
+
     return False
 
 
@@ -77,7 +79,7 @@ def clean_and_split_input(input):
     """ Removes carriage return and line feed characters and splits input on a single whitespace. """
     input = input.strip()
     input = input.split(' ')
-        
+
     return input
 
 
@@ -86,7 +88,7 @@ def get_file_list(folder):
         """ Returns a list of the files in the specified directory as a dictionary:
             dict['file name'] = (file path, file size, file md5 hash)
         """
-        # what if filename or foldername exists twice in tree ??  FIXME
+        # what if filename or foldername exists twice in tree ??  FIXME => http://stackoverflow.com/a/10665285
         file_list = {}
         for root, subdirs, files in os.walk(folder):
             for filename in files:  # add all files to the list
@@ -131,12 +133,12 @@ def prepareDirectories():
     os.makedirs(SERVERUNZIP_DIRECTORY)
     os.makedirs(SERVERZIP_DIRECTORY)
   
-    copycommand = "sudo cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
+    copycommand = "cp -r ./DATA/scripts %s" %(WORK_DIRECTORY)
     os.system(copycommand)
     
-    if not os.path.exists(EXAMCONFIG_DIRECTORY) or PRESERVE_WORKDIR == False:  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
+    if not os.path.exists(EXAMCONFIG_DIRECTORY) or PRESERVE_WORKDIR:  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
         print "copying default examconfig to workdirectory"
-        copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
+        copycommand = "cp -r ./DATA/EXAMCONFIG %s" %(WORK_DIRECTORY)
         os.system(copycommand)
     
    

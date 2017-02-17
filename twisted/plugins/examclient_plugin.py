@@ -4,6 +4,9 @@
 
 import os
 import sys
+sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
+
+
 import shutil
 import zipfile
 import time
@@ -23,13 +26,8 @@ from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 
 
-try:
-    SERVER_IP = sys.argv[1] 
-    STUDENT_ID = sys.argv[2] 
-except:
-    print "No IP Address given! Using localhost"
-    SERVER_IP = "127.0.0.1"
-    STUDENT_ID = "Unknown User"
+
+
 
 
 
@@ -44,15 +42,22 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
+        self.sendLine('AUTH %s' % (self.factory.options['id']) )
         print('Connected to the server')
+       
 
     #twisted
     def connectionLost(self, reason):
+        self.factory.failcount += 1
         self.file_handler = None
         self.file_data = ()
         print('Connection to the server has been lost')
         self._showDesktopMessage('Connection to the server has been lost')
-        #reactor.stop()  #this would terminate the connection - even if ReconnectingClientFactory would normally try to re-establish the connection
+        
+        if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+            command = "python client/student.py &" 
+            os.system(command)
+            os._exit(1)
 
         
     #twisted
@@ -63,7 +68,7 @@ class MyClientProtocol(basic.LineReceiver):
         
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
-            
+
         if data.endswith('\r\n'): # Last chunk
             data = data[:-2]
             self.file_handler.write(data)
@@ -95,7 +100,13 @@ class MyClientProtocol(basic.LineReceiver):
             message = '%s' % ' '.join(map(str, self.buffer))
             self._showDesktopMessage(message)
             self.buffer = []
-        
+        elif line.startswith('REFUSED'):
+            self._showDesktopMessage('Connection refused!\n Client ID already taken!')
+            self.factory.failcount = 100
+        elif line.startswith('REMOVED'):
+            self._showDesktopMessage('Connection aborted by the Teacher!')
+            self.factory.failcount = 100
+            
         elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
             self.file_data = clean_and_split_input(line)
             self.factory.files = get_file_list(self.factory.files_path)
@@ -179,7 +190,7 @@ class MyClientProtocol(basic.LineReceiver):
         if filetype == 'FILE':
             self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
-            self.transport.write('FILETRANSFER SCREENSHOT %s %s %s\n' % (filename, self.factory.files[filename][2],STUDENT_ID ))     #trigger type filename filehash ID
+            self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash ID
         elif filetype == 'FOLDER' or filetype == 'ABGABE' :
             self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:
@@ -196,7 +207,7 @@ class MyClientProtocol(basic.LineReceiver):
     def _startExam(self,filename,file_path):
         """extracts the config folder and starts the startexam.sh script"""
     
-        if SERVER_IP != "127.0.0.1":    #testClient running on the same machine
+        if self.factory.options['host'] != "127.0.0.1":    #testClient running on the same machine
             extract_dir = os.path.join(WORK_DIRECTORY ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
             with zipfile.ZipFile(file_path,"r") as zip_ref:
                 zip_ref.extractall(extract_dir)
@@ -207,7 +218,7 @@ class MyClientProtocol(basic.LineReceiver):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')   #anhängen
             thisexamfile.write("\n")
-            thisexamfile.write(self.factory.options['host'])   # for some reason SERVER_IP delivers the first attr. of twistd after the connection is made wich is  -l  
+            thisexamfile.write(self.factory.options['host']) 
             
             command = "sudo chmod +x %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY)   #make examscritp executable
             os.system(command)
@@ -246,20 +257,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         self.deferred = defer.Deferred()
         self.files = None
         self.failcount = 0
-        
-    def clientConnectionFailed(self,connector, reason):  # in case of connection problems try 4 times then reshow student gui
-        self.failcount += 1
-        if self.failcount > 3:
-            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
-            os.system(command)
-            command = "python student.py &" 
-            os.system(command)
-            os._exit(1)
-        print('Connection failed. Reason:', reason)
-        command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen.\nÜberprüfen sie die Netzwerkeinstellungen \nsowie die Server IP Adresse!' 8 &" %(USER)
-        os.system(command)
-        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
-
+        self.delay
         
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self) 
@@ -278,11 +276,13 @@ export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 """
+# from twisted.application.internet import backoffPolicy    #only with twisted >=16.03 
+# retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)    # where to put ???
 
 
 class Options(usage.Options):
-    optParameters = [["port", "p", SERVER_PORT, "The port number to connect to."],
-                    ["host", "h", SERVER_IP, "The host machine to connect to."],
+    optParameters = [["port", "p", 5000, "The port number to connect to."],
+                    ["host", "h", '127.0.0.1', "The host machine to connect to."],
                     ["id", "i", 'unnamed', "A custom unique Client id."]
                     ]
     
@@ -294,7 +294,9 @@ class MyServiceMaker(object):
     options = Options
 
     def makeService(self, options):
-        return TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))   #passing "options" too - accessible via self.factory.options[] from the protokol
+        return TCPClient(options["host"],
+                         int(options["port"]),
+                         MyClientFactory(CLIENTFILES_DIRECTORY, options))  
 
 serviceMaker = MyServiceMaker()
 

@@ -1,22 +1,23 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 # TEACHER - SERVER #
-import qt5reactor
+from twisted.internet.protocol import DatagramProtocol
+
 import os
 import sys
+sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
+
+import qt5reactor
 import ipaddress
 import datetime
-import time
-import pprint
 import sip
-import shutil
 import zipfile
 import ntpath
 
 from twisted.internet import protocol
 from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
-from config import *
+from config.config import *
 from common import *
 
 
@@ -33,6 +34,7 @@ class MyServerProtocol(basic.LineReceiver):
     def __init__(self,factory):
         self.factory = factory
         self.delimiter = '\n'
+        self.clientID = ""
      
      
     #twisted
@@ -40,29 +42,30 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.clients.append(self)  # only the factory (MyServerFactory) is the persistent thing.. therefore we save the clients ( MyServerProtocol object) on factory.clients
         self.file_handler = None
         self.file_data = ()
-    
-        self.clientID = str(self.transport.client[1])
-        self.factory._log('Client connected..')
+        self.refused = False
+        self.clientConnectionID = str(self.transport.client[1])
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
-        self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
+
     
     #twisted
     def connectionLost(self, reason):
         self.factory.clients.remove(self)
-        self.factory._deleteClientScreenshot(self.clientID)
         self.file_handler = None
         self.file_data = ()
         self.factory._log('Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
-        # destroy this instance ?
+        
+        if not self.refused:
+            self.factory._disableClientScreenshot(self.clientID)  
+        
 
     #twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
         filename = self.file_data[2]
         file_path = os.path.join(self.factory.files_path, filename)
-        self.factory._log('Receiving file chunk (%d KB)' % (len(data)/1024))
+        #self.factory._log('Receiving file chunk (%d KB)' % (len(data)/1024))
         
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
@@ -80,9 +83,8 @@ class MyServerProtocol(basic.LineReceiver):
                 if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    self.student_id = self.file_data[4]    # the custom student id is transferred with the initial (and every following) screenshot 
-                    self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
+                    self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                 
                 elif self.file_data[1] == "FOLDER":
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
@@ -114,12 +116,36 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return 
-        #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( student_id=self.file_data[4] ))
-        if line.startswith('FILETRANSFER'):           
+        #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
+        if line.startswith('AUTH'):
+            newID = self.file_data[1]   #AUTH is sent immediately after a connection is made and transfers the clientID
+            self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
+        elif line.startswith('FILETRANSFER'):           
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
     
     
+    
+    def _checkClientID(self,newID):
+        """searches for the newID in factory.clients and rejects the connection if found"""
+        ids = []
+        for i in self.factory.clients:
+            ids.append(i.clientID)
+            
+        if newID in ids:
+            print "this user already exists and is connected" 
+            self.refused = True
+            self.sendLine('REFUSED\n')
+            self.transport.loseConnection()
+            self.factory._log('Client Connection from %s has been refused. User already exists' % (newID))
+        
+            return 
+        else:  #otherwise ad this unique id to the client protocol instance and request a screenshot
+            self.clientID = newID
+            self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
+            return
+
+
     
     def _createListItem(self,screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
@@ -130,39 +156,56 @@ class MyServerProtocol(basic.LineReceiver):
         existingItem = False
         for item in items:
             if item.id == self.clientID:
+                print "exists"
                 existingItem = item   #there should be only one matching item
         
-        self.label1 = QtWidgets.QLabel()
-        self.label2 = QtWidgets.QLabel('%s: %s' %(self.clientID, self.student_id) )
-        self.label1.Pixmap = QPixmap(screenshot_file_path)
-        self.label1.setPixmap(self.label1.Pixmap)
-        # generate a widget that combines the labels
-        self.widget = QtWidgets.QWidget()
-        self.grid = QtWidgets.QGridLayout()
-        self.grid.setSpacing(4)
-        self.grid.addWidget(self.label1, 1, 0)
-        self.grid.addWidget(self.label2, 2, 0)
-        self.widget.setLayout(self.grid)
-        
-        #generate a listitem
-        if existingItem:
-            self.item = existingItem
-        else:
-            self.item = QtWidgets.QListWidgetItem()
-            self.item.setSizeHint( QtCore.QSize( 140, 100) );
-            self.item.id = self.clientID   #store clientID as itemID for later use (delete event)
+        if existingItem :   # just update screenshot
+            Pixmap = QPixmap(screenshot_file_path)
+            existingItem.picture.setPixmap(Pixmap)
+            existingItem.info.setText('%s \n%s' %(self.clientID, self.clientConnectionID) )
+            existingItem.pID = self.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
+        else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
+            item = QtWidgets.QListWidgetItem()
+            item.setSizeHint( QtCore.QSize( 140, 140) );
+            item.id = self.clientID   #store clientID as itemID for later use (delete event)
+            item.pID = self.clientConnectionID
+            item.disabled=False
             
-        # add the listitem to the factorys listwidget and set the widget as it's widget
-        self.factory.ui.listWidget.addItem(self.item)
-        self.factory.ui.listWidget.setItemWidget(self.item,self.widget)
-
-
-
-
-
-
-
-
+            Pixmap = QPixmap(screenshot_file_path)
+            item.picture = QtWidgets.QLabel()
+            item.picture.setPixmap(Pixmap)
+            item.picture.setAlignment(QtCore.Qt.AlignCenter)
+            item.info = QtWidgets.QLabel('%s \n%s' %(self.clientID, self.clientConnectionID) )
+            item.info.setAlignment(QtCore.Qt.AlignCenter)
+            
+            grid = QtWidgets.QGridLayout()
+            grid.setSpacing(4)
+            grid.addWidget(item.picture, 1, 0)
+            grid.addWidget(item.info, 2, 0)
+            
+            widget = QtWidgets.QWidget()
+            widget.setLayout(grid)
+            widget.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+            widget.customContextMenuRequested.connect(lambda: self.on_context_menu(item.pID) )
+           
+            self.factory.ui.listWidget.addItem(item)  #add the listitem to the listwidget
+            self.factory.ui.listWidget.setItemWidget(item,widget)   # set the widget as the listitem's widget
+            
+       
+    def on_context_menu(self, clientConnectionID):
+        menu = QtWidgets.QMenu()
+        
+        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered = lambda: self.factory._onAbgabe(clientConnectionID) )
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered = lambda: self.factory._onScreenshots(clientConnectionID) )
+        action_3 = QtWidgets.QAction("Verbindung beenden", menu, triggered = lambda: self.factory._removeClient(clientConnectionID) )
+        
+        menu.addActions([action_1, action_2, action_3])
+        handled = True
+        cursor=QCursor()
+        menu.exec_(cursor.pos())
+    
+        return
+       
 
 
 
@@ -182,15 +225,15 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.files_path = files_path
         self.clients = []  #store all client connections in this array
         self.files = None
-       
+        
         QtWidgets.QDialog.__init__(self)
-        self.ui = uic.loadUi("teacher.ui")        # load UI
-        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))  # definiere icon für taskleiste
+        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))        # load UI
+        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
-        self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
-        self.ui.abgabe.clicked.connect(lambda: self._onAbgabe()) 
-        self.ui.screenshots.clicked.connect(lambda: self._onScreenshots()) 
+        self.ui.showip.clicked.connect(self._onShowIP)    #button y
+        self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all")) 
+        self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all")) 
         self.ui.startexam.clicked.connect(self._onStartExam) 
         self.ui.starthotspot.clicked.connect(self._onStartHotspot) 
         self.ui.startconfig.clicked.connect(self._onStartConfig)
@@ -203,20 +246,19 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         
         self.ui.show()
-        
-        
-       
+
+
     def closeEvent(self, evnt):
         self.ui.showMinimized()
         evnt.ignore()
-           
+
 
 
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory) 
-        
-        
-        
+        return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
+
+
+
     def _onAutoabgabe(self):
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  #minuten nicht sekunden
@@ -230,8 +272,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self.lc.start(minute_intervall)
         else:
             self._log("Abgabe-Intervall ist 0 - Auto-Abgabe deaktiviert")
-        
-        
+
+
 
     def _onLoadDefaults(self):
         self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
@@ -275,18 +317,23 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
    
    
-    def _onAbgabe(self):  
+    def _onAbgabe(self, who):  
         """get ABGABE folder"""
         if not self.clients:
             self._log("no clients connected")
             return
         
         self._log('Client Folder zB. ABGABE holen')
-        for i in self.clients:
-            # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
-            filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
-            i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
-
+        if who == "all":
+            for i in self.clients:
+                # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
+                filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+                i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
+        else:
+            for i in self.clients:
+                if i.clientConnectionID == who:
+                    filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+                    i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
 
 
     def _onStartHotspot(self):
@@ -296,15 +343,19 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     
-    def _onScreenshots(self):
+    def _onScreenshots(self, who):
         if not self.clients:
             self._log("no clients connected")
             return
        
         self._log("Updating screenshots")
-        for i in self.clients:
-            i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
-       
+        if who == "all":
+            for i in self.clients:
+                i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
+        else:
+            for i in self.clients:
+                if i.clientConnectionID == who:
+                    i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )
 
   
     def _onStartExam(self):
@@ -409,20 +460,59 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
-    def _deleteClientScreenshot(self,clientID):
+    def _removeClient(self,clientID):
+        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
+        for index in xrange(self.ui.listWidget.count()):
+            items.append(self.ui.listWidget.item(index))
+        
+        for item in items:
+            if item.pID == clientID:
+                print "item deleted"
+                sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
+        
+        for client in self.clients:
+                if client.clientConnectionID == clientID:
+                    client.refused = True
+                    client.sendLine('REMOVED\n')
+                    client.transport.loseConnection()
+                    client.factory._log('Client Connection has been removed.')
+        
+
+
+
+    def _disableClientScreenshot(self,clientID):
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
         
         for item in items:
             if clientID == item.id:
-                sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
+                pixmap = QPixmap("pixmaps/nouserscreenshot.png")
+                item.picture.setPixmap(pixmap)
+                item.info.setText('%s \ndisconnected' %(clientID)  )
+                item.disabled=True
+                
 
 
+class MultcastLifeServer(DatagramProtocol):
 
+    def startProtocol(self):
+        """
+        Called after protocol has started listening.
+        """
+        # Set the TTL>1 so multicast will cross router hops:
+        self.transport.setTTL(5)
+        # Join a specific multicast group:
+        self.transport.joinGroup("228.0.0.5")
+        # self.transport.write("SERVER: Assimilate", ("228.0.0.5", 8005))
 
-
-
+    def datagramReceived(self, datagram, address):
+        print "Datagram %s received from %s" % (repr(datagram), repr(address))
+        if "CLIENT" in datagram:
+            # Rather than replying to the group multicast address, we send the
+            # reply directly (unicast) to the originating port:
+            self.transport.write('SERVER: Assimilate', ("228.0.0.5", 8005))
+            self.transport.write("SERVER: Assimilate", address)
 
 
 if __name__ == '__main__':
@@ -439,13 +529,12 @@ if __name__ == '__main__':
     from twisted.internet import reactor
    
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
+
+    reactor.listenMulticast(8005, MultcastLifeServer(),
+                            listenMultiple=True)
+
     print ('Listening on port %d' % (SERVER_PORT))
     reactor.run()
-    
-    #if you get here, reactor has an error - probably the port is already in use because of another server process
-    os.system("sudo pkill -f 'python server.py'")  # if port is already taken an exception will we thrown - kill other server processes
-    # does not work.. use nmap or something to find out if port is used and then kill the process
-    
         
    
 

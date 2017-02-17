@@ -12,12 +12,13 @@ else
 fi
 
 
-
-if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
-    exit 1
+if [ -f $PIDFILE ];
+then
+    if [ "$(id -u)" != "0" ]; then
+        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
+        exit 1
+    fi
+    echo "terminating old process"
+    PID=$(sudo cat ${PIDFILE} > /dev/null)
+    sudo kill -9 $PID
 fi
-
-
-PID=$(sudo cat ${PIDFILE})
-sudo kill -9 $PID
