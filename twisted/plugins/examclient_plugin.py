@@ -292,7 +292,6 @@ class MyServiceMaker(object):
     tapname = "examclient"
     description = "Exam Client"
     options = Options
-    retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)
 
     def makeService(self, options):
         return TCPClient(options["host"],
