@@ -152,7 +152,6 @@ class MyServerProtocol(basic.LineReceiver):
         for index in xrange(self.factory.ui.listWidget.count()):
             items.append(self.factory.ui.listWidget.item(index))
         
-        
         existingItem = False
         for item in items:
             if item.id == self.clientID:
@@ -233,38 +232,19 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         
         self.ui.show()
-        
-        
-       
+
+
+
     def closeEvent(self, evnt):
-        #self.ui.showMinimized()
-        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
-        for index in xrange(self.ui.listWidget.count()):
-            items.append(self.ui.listWidget.item(index))
-        
-        
-        self.ui.listWidget.setSortingEnabled(True)
-       
-        
-        for item in items:
-            #item.setHidden(True)
-            #item.setHidden(False)
-            widget= self.ui.listWidget.itemWidget(item)
-            widget.repaint()
-            widget.updateGeometry()
-          
-            
-            
-            print "-----------------------"
-            print item.info.text()
-            print item.picture
-            print "-----------------------"
-        
+        self.ui.showMinimized()
         evnt.ignore()
-           
+
+
+
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyServerProtocol(self)     #wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
-        
+
+
 
     def _onAutoabgabe(self):
         intervall = self.ui.aintervall.value()
@@ -279,8 +259,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self.lc.start(minute_intervall)
         else:
             self._log("Abgabe-Intervall ist 0 - Auto-Abgabe deaktiviert")
-        
-        
+
+
 
     def _onLoadDefaults(self):
         self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
