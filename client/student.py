@@ -79,10 +79,13 @@ class MulticastLifeClient(DatagramProtocol):
 
     def datagramReceived(self, datagram, address):
         if "CLIENT" not in datagram:
+            if not self.server_found:
+                self.loopObj.stop()
+
             self.server_found = True
             self.server_ip = address[0]
             dialog.ui.serverip.setText(str(address[0]))
-            self.loopObj.stop()
+
 
         print "Datagram %s received from %s" % (repr(datagram), repr(address))
         
