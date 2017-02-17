@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>674</height>
+    <width>1040</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -275,7 +275,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -396,7 +396,7 @@
            <widget class="QWidget" name="widget_5" native="true">
             <property name="maximumSize">
              <size>
-              <width>166</width>
+              <width>151</width>
               <height>16777215</height>
              </size>
             </property>
@@ -458,6 +458,101 @@
                </property>
               </spacer>
              </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_4" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>185</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>185</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLabel" name="transparentlabel">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="testfirewall">
+               <property name="styleSheet">
+                <string notr="true">padding:8px</string>
+               </property>
+               <property name="text">
+                <string>Firewall testen/sichern</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="startconfig">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Den Prüfungsdesktop im entsperrten Zustand laden&lt;br&gt; um Anpassungen vorzunehmen.</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">padding: 8px;</string>
+               </property>
+               <property name="text">
+                <string>Desktop anpassen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="loaddefaults">
+               <property name="toolTip">
+                <string>Standard Einstellungen für den Prüfungsdesktop wiederherstellen </string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">padding: 8px;</string>
+               </property>
+               <property name="text">
+                <string>Desktop zurücksetzen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_8" native="true">
+            <property name="maximumSize">
+             <size>
+              <width>128</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
              <item>
               <widget class="QLabel" name="abgabelabel">
                <property name="styleSheet">
@@ -492,84 +587,7 @@
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="widget_4" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>185</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>156</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
-             <item>
-              <widget class="QLabel" name="transparentlabel">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="testfirewall">
-               <property name="styleSheet">
-                <string notr="true">padding:8px</string>
-               </property>
-               <property name="text">
-                <string>Firewall testen</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="startconfig">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">padding: 8px;</string>
-               </property>
-               <property name="text">
-                <string>Desktop anpassen</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="loaddefaults">
-               <property name="styleSheet">
-                <string notr="true">padding: 8px;</string>
-               </property>
-               <property name="text">
-                <string>Desktop zurücksetzen</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
+                 <height>194</height>
                 </size>
                </property>
               </spacer>
@@ -594,12 +612,9 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="infotext">
-               <property name="styleSheet">
-                <string notr="true">padding-top:0px;</string>
-               </property>
+              <widget class="QLabel" name="label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nachdem sie Ausnahmen für die Firewall definiert haben&lt;br/&gt;(z.B für Drucker, Schulserver, etc.) drücken sie auf &amp;quot;Firewall testen&amp;quot; &lt;br/&gt;um die Einstellungen zu überprüfen und zu speichern.&lt;br/&gt;Danach können sie den Prüfungsdesktop anpassen.&lt;/p&gt;&lt;p&gt;So können sie festlegen welche Programme &lt;br/&gt;während der Prüfung schnell erreichbar sein sollen.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Speichern Sie die Änderungen an der Prüfungsumgebung mit Hilfe des Programmes&lt;br/&gt;&amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können auch ohne Anwendungsmenü jedes beliebige Programm ausführen in dem Sie&lt;br/&gt;das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface &lt;br/&gt;sichtbar zu machen.&lt;/p&gt;&lt;p&gt;Dieses erlaubt es u.a. das System zu durchsuchen, Terminal-Befehle abzusetzen&lt;br/&gt;und Programme zu starten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis der Schüler wird im Abgabeintervall (min)&lt;br/&gt;im Verzeichnis &amp;quot;Abgabe&amp;quot; archiviert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -615,6 +630,80 @@
                 </size>
                </property>
               </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_3">
+         <attribute name="title">
+          <string>Hilfe</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QWidget" name="widget_9" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QWidget" name="widget_11" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_12">
+                <item>
+                 <widget class="QLabel" name="infotext_2">
+                  <property name="styleSheet">
+                   <string notr="true">padding-top:4px;</string>
+                  </property>
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Prüfungsumgebung anpassen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Nachdem sie Ausnahmen für die Firewall definiert haben (z.B für Drucker, Schulserver, etc.) &lt;br/&gt;drücken sie auf &amp;quot;Firewall testen&amp;quot; um die Einstellungen zu überprüfen und zu speichern.&lt;br/&gt;Danach können sie den Prüfungsdesktop anpassen.&lt;/p&gt;&lt;p&gt;So können sie festlegen welche Programme während der Prüfung schnell erreichbar sein sollen.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Speichern Sie die Änderungen an der Prüfungsumgebung mit Hilfe des Programmes&lt;br/&gt;&amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können auch ohne Anwendungsmenü jedes beliebige Programm ausführen in dem Sie&lt;br/&gt;das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface sichtbar zu machen.&lt;/p&gt;&lt;p&gt;Dieses erlaubt es u.a. das System zu durchsuchen, Terminal-Befehle abzusetzen&lt;br/&gt;und Programme zu starten.&lt;/p&gt;&lt;p&gt;Sämtliche Einstellungen werden beim Prüfungsstart an die Schülercomputer übertragen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_10" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_13">
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>../pixmaps/windowicon.png</pixmap>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>
