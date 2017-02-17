@@ -4,6 +4,9 @@
 
 import os
 import sys
+
+from dispatch.dispatch_student import student_line_dispatcher
+
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
 
 
@@ -96,6 +99,9 @@ class MyClientProtocol(basic.LineReceiver):
 
     #twisted
     def lineReceived(self, line):
+        fun = student_line_dispatcher[line.split()[0]]
+        fun(self, line) if fun is not None else self.buffer.append(line)
+
         if line == 'ENDMSG':
             message = '%s' % ' '.join(map(str, self.buffer))
             self._showDesktopMessage(message)
@@ -106,7 +112,7 @@ class MyClientProtocol(basic.LineReceiver):
         elif line.startswith('REMOVED'):
             self._showDesktopMessage('Connection aborted by the Teacher!')
             self.factory.failcount = 100
-            
+
         elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
             self.file_data = clean_and_split_input(line)
             self.factory.files = get_file_list(self.factory.files_path)
@@ -115,7 +121,7 @@ class MyClientProtocol(basic.LineReceiver):
             filetype = self.file_data[2]
             filename = self.file_data[3]
             file_hash = self.file_data[4]
-            
+
             if task == 'SEND':
                 if filetype == 'SHOT':  # files need to be created first
                     scriptfile = os.path.join(SCRIPTS_DIRECTORY,'screenshot.sh')
@@ -131,12 +137,12 @@ class MyClientProtocol(basic.LineReceiver):
                 elif filetype == 'ABGABE':
                     self._triggerAutosave()
                     time.sleep(2)   # give it some time to save the document
-            
+
                     target_folder = ABGABE_DIRECTORY
                     output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
                     shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
                     filename = "%s.zip" %(filename)   #this is the filename of the zip file
-                
+
                 self._sendFile(filename, filetype)
             elif task == 'GET':
                 self.setRawMode()   #you are getting a file - set to raw mode (bytes instead of lines)
