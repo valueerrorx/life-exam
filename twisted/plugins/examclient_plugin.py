@@ -5,6 +5,7 @@
 import os
 import sys
 
+from config.enums import DataType, Command
 from dispatch.dispatch_student import student_line_dispatcher
 
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
@@ -47,6 +48,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_data = ()
         self.sendLine('AUTH %s' % (self.factory.options['id']) )
         print('Connected to the server')
+        self._showDesktopMessage('Connected to the server')
        
 
     #twisted
@@ -99,57 +101,58 @@ class MyClientProtocol(basic.LineReceiver):
 
     #twisted
     def lineReceived(self, line):
-        fun = student_line_dispatcher[line.split()[0]]
+        fun = student_line_dispatcher.get(line.split()[0], None)
+
         fun(self, line) if fun is not None else self.buffer.append(line)
 
-        if line == 'ENDMSG':
-            message = '%s' % ' '.join(map(str, self.buffer))
-            self._showDesktopMessage(message)
-            self.buffer = []
-        elif line.startswith('REFUSED'):
-            self._showDesktopMessage('Connection refused!\n Client ID already taken!')
-            self.factory.failcount = 100
-        elif line.startswith('REMOVED'):
-            self._showDesktopMessage('Connection aborted by the Teacher!')
-            self.factory.failcount = 100
-
-        elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
-            self.file_data = clean_and_split_input(line)
-            self.factory.files = get_file_list(self.factory.files_path)
-            trigger = self.file_data[0]
-            task = self.file_data[1]
-            filetype = self.file_data[2]
-            filename = self.file_data[3]
-            file_hash = self.file_data[4]
-
-            if task == 'SEND':
-                if filetype == 'SHOT':  # files need to be created first
-                    scriptfile = os.path.join(SCRIPTS_DIRECTORY,'screenshot.sh')
-                    screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY,filename)
-                    command = "%s %s" %(scriptfile,screenshotfile)
-                    os.system(command)
-                elif filetype == 'FOLDER':
-                    if filename in self.factory.files:  # if folder exists create a zip out of it
-                        target_folder = self.factory.files[filename][0] #get full path
-                        output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
-                        shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
-                        filename = "%s.zip" %(filename)   #this is the filename of the zip file
-                elif filetype == 'ABGABE':
-                    self._triggerAutosave()
-                    time.sleep(2)   # give it some time to save the document
-
-                    target_folder = ABGABE_DIRECTORY
-                    output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
-                    shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
-                    filename = "%s.zip" %(filename)   #this is the filename of the zip file
-
-                self._sendFile(filename, filetype)
-            elif task == 'GET':
-                self.setRawMode()   #you are getting a file - set to raw mode (bytes instead of lines)
-                return
-        else:
-            self.buffer.append(line)
-
+        # if line == 'ENDMSG':
+        #     message = '%s' % ' '.join(map(str, self.buffer))
+        #     self._showDesktopMessage(message)
+        #     self.buffer = []
+        # elif line.startswith('REFUSED'):
+        #     self._showDesktopMessage('Connection refused!\n Client ID already taken!')
+        #     self.factory.failcount = 100
+        # elif line.startswith('REMOVED'):
+        #     self._showDesktopMessage('Connection aborted by the Teacher!')
+        #     self.factory.failcount = 100
+        #
+        # elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
+        #     self.file_data = clean_and_split_input(line)
+        #     self.factory.files = get_file_list(self.factory.files_path)
+        #     trigger = self.file_data[0]
+        #     task = self.file_data[1]
+        #     filetype = self.file_data[2]
+        #     filename = self.file_data[3]
+        #     file_hash = self.file_data[4]
+        #
+        #     if task == 'SEND':
+        #         if filetype == 'SHOT':  # files need to be created first
+        #             scriptfile = os.path.join(SCRIPTS_DIRECTORY,'screenshot.sh')
+        #             screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY,filename)
+        #             command = "%s %s" %(scriptfile,screenshotfile)
+        #             os.system(command)
+        #         elif filetype == 'FOLDER':
+        #             if filename in self.factory.files:  # if folder exists create a zip out of it
+        #                 target_folder = self.factory.files[filename][0] #get full path
+        #                 output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
+        #                 shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
+        #                 filename = "%s.zip" %(filename)   #this is the filename of the zip file
+        #         elif filetype == 'ABGABE':
+        #             self._triggerAutosave()
+        #             time.sleep(2)   # give it some time to save the document
+        #
+        #             target_folder = ABGABE_DIRECTORY
+        #             output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
+        #             shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
+        #             filename = "%s.zip" %(filename)   #this is the filename of the zip file
+        #
+        #         self._sendFile(filename, filetype)
+        #     elif task == 'GET':
+        #         self.setRawMode()   #you are getting a file - set to raw mode (bytes instead of lines)
+        #         return
+        # else:
+        #     self.buffer.append(line)
+        #
 
 
     def _triggerAutosave(self):
@@ -193,12 +196,12 @@ class MyClientProtocol(basic.LineReceiver):
             self.sendLine('filename not found in client directory') 
             return
 
-        if filetype == 'FILE':
-            self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
-        elif filetype == 'SHOT':
-            self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash ID
-        elif filetype == 'FOLDER' or filetype == 'ABGABE' :
-            self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
+        if filetype == DataType.FILE:
+            self.transport.write('%s %s %s %s\n' % (Command.FILETRANSFER, DataType.FILE, filename, self.factory.files[filename][2]))     #trigger type filename filehash
+        elif filetype == DataType.SCREENSHOT:
+            self.transport.write('%s %s %s %s\n' % (Command.FILETRANSFER, DataType.SCREENSHOT ,filename, self.factory.files[filename][2]))     #trigger type filename filehash ID
+        elif filetype == DataType.FOLDER or filetype == DataType.ABGABE :
+            self.transport.write('%s %s %s %s\n' % (Command.FILETRANSFER, filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:
             return
         

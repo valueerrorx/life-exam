@@ -5,6 +5,9 @@ from twisted.internet.protocol import DatagramProtocol
 
 import os
 import sys
+
+
+
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
 
 import qt5reactor
@@ -19,6 +22,7 @@ from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
 from config.config import *
 from common import *
+from config.enums import *
 
 
 from PyQt5 import uic, QtWidgets,QtCore
@@ -45,7 +49,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.refused = False
         self.clientConnectionID = str(self.transport.client[1])
         self.transport.write('Connection established!\n')
-        self.transport.write('ENDMSG\n')
+        self.transport.write(Command.ENDMSG+'\n')
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
 
     
@@ -103,7 +107,7 @@ class MyServerProtocol(basic.LineReceiver):
             else:   # wrong file hash
                 os.unlink(file_path)
                 self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
-                self.transport.write('ENDMSG\n')
+                self.transport.write(Command.ENDMSG+'\n')
                 self.factory._log('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
         
         else:
@@ -117,10 +121,10 @@ class MyServerProtocol(basic.LineReceiver):
         if len(self.file_data) == 0 or self.file_data == '':
             return 
         #trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
-        if line.startswith('AUTH'):
+        if line.startswith(Command.AUTH):
             newID = self.file_data[1]   #AUTH is sent immediately after a connection is made and transfers the clientID
             self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
-        elif line.startswith('FILETRANSFER'):           
+        elif line.startswith(Command.FILETRANSFER):
             self.factory._log('Preparing File Transfer from Client...' )
             self.setRawMode()   #this is a file - set to raw mode
     
@@ -135,14 +139,14 @@ class MyServerProtocol(basic.LineReceiver):
         if newID in ids:
             print "this user already exists and is connected" 
             self.refused = True
-            self.sendLine('REFUSED\n')
+            self.sendLine(Command.REFUSED + '\n')
             self.transport.loseConnection()
             self.factory._log('Client Connection from %s has been refused. User already exists' % (newID))
         
             return 
         else:  #otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientID = newID
-            self.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(self.transport.client[1]) ) 
+            self.sendLine("%s %s %s %s.jpg none" %(Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]) )
             return
 
 
@@ -300,7 +304,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
             for i in self.clients:
                 self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
-                i.transport.write('FILETRANSFER GET FILE %s %s\n' % (str(filename), md5_hash))  #trigger clienttask type filename filehash
+                i.transport.write(
+                    '%s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  #trigger clienttask type filename filehash
                 i.setRawMode()
                 for bytes in read_bytes_from_file(file_path):
                     i.transport.write(bytes)
@@ -328,12 +333,12 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             for i in self.clients:
                 # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
                 filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
-                i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
+                i.sendLine("%s %s %s %s none" %(Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename)  )
         else:
             for i in self.clients:
                 if i.clientConnectionID == who:
                     filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
-                    i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
+                    i.sendLine("%s %s %s %s none" %(Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename)  )
 
 
     def _onStartHotspot(self):
@@ -351,11 +356,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self._log("Updating screenshots")
         if who == "all":
             for i in self.clients:
-                i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
+                i.sendLine("%s %s %s %s.jpg none" %(Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, i.transport.client[1]) )   #the clients id is used as filename for the screenshot
         else:
             for i in self.clients:
                 if i.clientConnectionID == who:
-                    i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )
+                    i.sendLine("%s %s %s %s.jpg none" %(Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, i.transport.client[1]) )
 
   
     def _onStartExam(self):
@@ -384,7 +389,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             
             self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
             
-            i.transport.write('FILETRANSFER GET EXAM %s %s\n' % (filename, self.files[filename][2]))  #trigger clienttask type filename filehash
+            i.transport.write('%s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.files[filename][2]))  #trigger clienttask type filename filehash
             i.setRawMode()
             print self.files[filename][0]
             for bytes in read_bytes_from_file(self.files[filename][0]):

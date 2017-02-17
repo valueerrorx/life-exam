@@ -43,7 +43,8 @@ class MeinDialog(QtWidgets.QDialog):
             palettedefault.setColor(self.ui.serverip.backgroundRole(), QColor(255, 255, 255))
             self.ui.serverip.setPalette(palettedefault)
             if ID != "":
-                self.ui.close()
+                # self.ui.close()
+                #command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
                 #command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
                 #command = "kdesudo 'twistd -l client.log --pidfile client.pid -y client.tac %s %s' &" %(SERVER_IP, ID)
                 

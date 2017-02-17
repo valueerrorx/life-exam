@@ -6,13 +6,13 @@ from common import *
 from config.enums import Command, DataType
 
 
-def end_msg(client):
+def end_msg(client, *args):
     message = '%s' % ' '.join(map(str, client.buffer))
     showDesktopMessage(message)
     client.buffer = []
 
 
-def connection_refused(client):
+def connection_refused(client, *args):
     showDesktopMessage('Connection refused!\n Client ID already taken!')
     client.factory.failcount = 100
 
@@ -26,7 +26,7 @@ def file_transfer_request(client, line):
     """
     client.file_data = clean_and_split_input(line)
     client.factory.files = get_file_list(client.factory.files_path)
-    (trigger, task, filetype, filename, file_hash) = client.file_data[0:4]
+    (trigger, task, filetype, filename, file_hash) = client.file_data[0:5]
     student_file_request_dispatcher[task](filetype, filename, file_hash, client)
 
 
@@ -38,6 +38,8 @@ def send_file_request(filetype, *args):
     :return:
     """
     student_send_file_filetype_dispatcher[filetype](*args)
+    client = args[2]
+    client._sendFile(args[0], filetype)
 
 
 def get_file_request(filetype, *args):
