@@ -162,17 +162,17 @@ class MyServerProtocol(basic.LineReceiver):
         if existingItem :   # just update screenshot
             Pixmap = QPixmap(screenshot_file_path)
             existingItem.picture.setPixmap(Pixmap)
-            existingItem.info.setText('%s: %s' %(self.clientID, self.clientProcessID) )
+            existingItem.info.setText('%s \n%s' %(self.clientID, self.clientProcessID) )
         else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             item = QtWidgets.QListWidgetItem()
-            item.setSizeHint( QtCore.QSize( 140, 100) );
+            item.setSizeHint( QtCore.QSize( 140, 140) );
             item.id = self.clientID   #store clientID as itemID for later use (delete event)
             item.disabled=False
             
             Pixmap = QPixmap(screenshot_file_path)
             item.picture = QtWidgets.QLabel()
             item.picture.setPixmap(Pixmap)
-            item.info = QtWidgets.QLabel('%s: %s' %(self.clientID, self.clientProcessID) )
+            item.info = QtWidgets.QLabel('%s \n%s' %(self.clientID, self.clientProcessID) )
             item.info.setAlignment(QtCore.Qt.AlignCenter)
             
             grid = QtWidgets.QGridLayout()
@@ -237,7 +237,29 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
        
     def closeEvent(self, evnt):
-        self.ui.showMinimized()
+        #self.ui.showMinimized()
+        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
+        for index in xrange(self.ui.listWidget.count()):
+            items.append(self.ui.listWidget.item(index))
+        
+        
+        self.ui.listWidget.setSortingEnabled(True)
+       
+        
+        for item in items:
+            #item.setHidden(True)
+            #item.setHidden(False)
+            widget= self.ui.listWidget.itemWidget(item)
+            widget.repaint()
+            widget.updateGeometry()
+          
+            
+            
+            print "-----------------------"
+            print item.info.text()
+            print item.picture
+            print "-----------------------"
+        
         evnt.ignore()
            
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
@@ -455,7 +477,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             if clientID == item.id:
                 pixmap = QPixmap("pixmaps/nouserscreenshot.png")
                 item.picture.setPixmap(pixmap)
-                item.info.setText('%s: disconnected' %(clientID)  )
+                item.info.setText('%s \ndisconnected' %(clientID)  )
                 item.disabled=True
                 
 

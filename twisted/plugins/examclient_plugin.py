@@ -276,6 +276,8 @@ export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 """
+from twisted.application.internet import backoffPolicy    #only with twisted >=16.03 
+# retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)    # where to put ???
 
 
 class Options(usage.Options):
@@ -290,9 +292,12 @@ class MyServiceMaker(object):
     tapname = "examclient"
     description = "Exam Client"
     options = Options
+    retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)
 
     def makeService(self, options):
-        return TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))   #passing "options" too - accessible via self.factory.options[] from the protokol
+        return TCPClient(options["host"],
+                         int(options["port"]),
+                         MyClientFactory(CLIENTFILES_DIRECTORY, options))  
 
 serviceMaker = MyServiceMaker()
 
