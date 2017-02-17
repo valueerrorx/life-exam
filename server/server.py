@@ -44,7 +44,6 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = ()
         self.refused = False
         self.clientProcessID = str(self.transport.client[1])
-        self.factory._log('Client connected..')
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
@@ -66,7 +65,7 @@ class MyServerProtocol(basic.LineReceiver):
         """ handle incoming byte data """
         filename = self.file_data[2]
         file_path = os.path.join(self.factory.files_path, filename)
-        self.factory._log('Receiving file chunk (%d KB)' % (len(data)/1024))
+        #self.factory._log('Receiving file chunk (%d KB)' % (len(data)/1024))
         
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
@@ -138,6 +137,8 @@ class MyServerProtocol(basic.LineReceiver):
             self.refused = True
             self.sendLine('REFUSED\n')
             self.transport.loseConnection()
+            self.factory._log('Client Connection from %s has been refused. User already exists' % (newID))
+        
             return 
         else:  #otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientID = newID
@@ -171,6 +172,7 @@ class MyServerProtocol(basic.LineReceiver):
             Pixmap = QPixmap(screenshot_file_path)
             item.picture = QtWidgets.QLabel()
             item.picture.setPixmap(Pixmap)
+            item.picture.setAlignment(QtCore.Qt.AlignCenter)
             item.info = QtWidgets.QLabel('%s \n%s' %(self.clientID, self.clientProcessID) )
             item.info.setAlignment(QtCore.Qt.AlignCenter)
             
