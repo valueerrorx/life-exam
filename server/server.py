@@ -43,7 +43,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_handler = None
         self.file_data = ()
         self.refused = False
-        self.clientProcessID = str(self.transport.client[1])
+        self.clientConnectionID = str(self.transport.client[1])
         self.transport.write('Connection established!\n')
         self.transport.write('ENDMSG\n')
         self.factory._log('Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
@@ -162,18 +162,20 @@ class MyServerProtocol(basic.LineReceiver):
         if existingItem :   # just update screenshot
             Pixmap = QPixmap(screenshot_file_path)
             existingItem.picture.setPixmap(Pixmap)
-            existingItem.info.setText('%s \n%s' %(self.clientID, self.clientProcessID) )
+            existingItem.info.setText('%s \n%s' %(self.clientID, self.clientConnectionID) )
+            existingItem.pID = self.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         else:    #create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             item = QtWidgets.QListWidgetItem()
             item.setSizeHint( QtCore.QSize( 140, 140) );
             item.id = self.clientID   #store clientID as itemID for later use (delete event)
+            item.pID = self.clientConnectionID
             item.disabled=False
             
             Pixmap = QPixmap(screenshot_file_path)
             item.picture = QtWidgets.QLabel()
             item.picture.setPixmap(Pixmap)
             item.picture.setAlignment(QtCore.Qt.AlignCenter)
-            item.info = QtWidgets.QLabel('%s \n%s' %(self.clientID, self.clientProcessID) )
+            item.info = QtWidgets.QLabel('%s \n%s' %(self.clientID, self.clientConnectionID) )
             item.info.setAlignment(QtCore.Qt.AlignCenter)
             
             grid = QtWidgets.QGridLayout()
@@ -183,17 +185,27 @@ class MyServerProtocol(basic.LineReceiver):
             
             widget = QtWidgets.QWidget()
             widget.setLayout(grid)
+            widget.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+            widget.customContextMenuRequested.connect(lambda: self.on_context_menu(item.pID) )
            
             self.factory.ui.listWidget.addItem(item)  #add the listitem to the listwidget
             self.factory.ui.listWidget.setItemWidget(item,widget)   # set the widget as the listitem's widget
             
        
-      
-
-
-
-
-
+    def on_context_menu(self, clientConnectionID):
+        menu = QtWidgets.QMenu()
+        
+        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered = lambda: self.factory._onAbgabe(clientConnectionID) )
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered = lambda: self.factory._onScreenshots(clientConnectionID) )
+        
+        
+        menu.addActions([action_1, action_2])
+        handled = True
+        cursor=QCursor()
+        menu.exec_(cursor.pos())
+    
+        return
+       
 
 
 
@@ -219,9 +231,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)      # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendfile())    #button x   (lambda is not needed - only if you wanna pass a variable to the function)
-        self.ui.showip.clicked.connect(lambda: self._onShowIP())    #button y
-        self.ui.abgabe.clicked.connect(lambda: self._onAbgabe()) 
-        self.ui.screenshots.clicked.connect(lambda: self._onScreenshots()) 
+        self.ui.showip.clicked.connect(self._onShowIP)    #button y
+        self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all")) 
+        self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all")) 
         self.ui.startexam.clicked.connect(self._onStartExam) 
         self.ui.starthotspot.clicked.connect(self._onStartHotspot) 
         self.ui.startconfig.clicked.connect(self._onStartConfig)
@@ -234,7 +246,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.lc = LoopingCall(self._onAbgabe)   # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         
         self.ui.show()
-
 
 
     def closeEvent(self, evnt):
@@ -306,18 +317,23 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         
    
    
-    def _onAbgabe(self):  
+    def _onAbgabe(self, who):  
         """get ABGABE folder"""
         if not self.clients:
             self._log("no clients connected")
             return
         
         self._log('Client Folder zB. ABGABE holen')
-        for i in self.clients:
-            # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
-            filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
-            i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
-
+        if who == "all":
+            for i in self.clients:
+                # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
+                filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+                i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
+        else:
+            for i in self.clients:
+                if i.clientConnectionID == who:
+                    filename = "Abgabe-%s" %(datetime.datetime.now().strftime("%H-%M-%S"))
+                    i.sendLine("FILETRANSFER SEND ABGABE %s none" %(filename)  )
 
 
     def _onStartHotspot(self):
@@ -327,15 +343,19 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     
-    def _onScreenshots(self):
+    def _onScreenshots(self, who):
         if not self.clients:
             self._log("no clients connected")
             return
        
         self._log("Updating screenshots")
-        for i in self.clients:
-            i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
-       
+        if who == "all":
+            for i in self.clients:
+                i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )   #the clients id is used as filename for the screenshot
+        else:
+            for i in self.clients:
+                if i.clientConnectionID == who:
+                    i.sendLine("FILETRANSFER SEND SHOT %s.jpg none" %(i.transport.client[1]) )
 
   
     def _onStartExam(self):
