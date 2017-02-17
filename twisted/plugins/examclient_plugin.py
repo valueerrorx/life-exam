@@ -276,7 +276,7 @@ export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 """
-from twisted.application.internet import backoffPolicy    #only with twisted >=16.03 
+# from twisted.application.internet import backoffPolicy    #only with twisted >=16.03 
 # retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)    # where to put ???
 
 
