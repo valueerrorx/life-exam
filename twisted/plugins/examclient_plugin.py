@@ -42,15 +42,24 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
+        self.sendLine('AUTH %s' % (self.factory.options['id']) )
         print('Connected to the server')
+       
 
     #twisted
     def connectionLost(self, reason):
+        self.factory.failcount += 1
         self.file_handler = None
         self.file_data = ()
         print('Connection to the server has been lost')
         self._showDesktopMessage('Connection to the server has been lost')
-        #reactor.stop()  #this would terminate the connection - even if ReconnectingClientFactory would normally try to re-establish the connection
+        
+        if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
+            os.system(command)
+            command = "python client/student.py &" 
+            os.system(command)
+            os._exit(1)
 
         
     #twisted
@@ -93,7 +102,11 @@ class MyClientProtocol(basic.LineReceiver):
             message = '%s' % ' '.join(map(str, self.buffer))
             self._showDesktopMessage(message)
             self.buffer = []
-        
+        elif line.startswith('REFUSED'):
+            self._showDesktopMessage('Connection refused!\n Client ID already taken!')
+            self.factory.failcount = 100
+
+            
         elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
             self.file_data = clean_and_split_input(line)
             self.factory.files = get_file_list(self.factory.files_path)
@@ -177,7 +190,7 @@ class MyClientProtocol(basic.LineReceiver):
         if filetype == 'FILE':
             self.transport.write('FILETRANSFER FILE %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash
         elif filetype == 'SHOT':
-            self.transport.write('FILETRANSFER SCREENSHOT %s %s %s\n' % (filename, self.factory.files[filename][2], self.factory.options['id'] ))     #trigger type filename filehash ID
+            self.transport.write('FILETRANSFER SCREENSHOT %s %s\n' % (filename, self.factory.files[filename][2]))     #trigger type filename filehash ID
         elif filetype == 'FOLDER' or filetype == 'ABGABE' :
             self.transport.write('FILETRANSFER %s %s %s\n' % (filetype, filename, self.factory.files[filename][2]))     #trigger type filename filehash
         else:
@@ -245,19 +258,6 @@ class MyClientFactory(protocol.ReconnectingClientFactory):  # ReconnectingClient
         self.files = None
         self.failcount = 0
         self.delay
-    def clientConnectionFailed(self,connector, reason):  # in case of connection problems try 4 times then reshow student gui
-        self.failcount += 1
-        if self.failcount > 3:
-            command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen!' 8 &"  %(USER)
-            os.system(command)
-            command = "python student.py &" 
-            os.system(command)
-            os._exit(1)
-        print('Connection failed. Reason:', reason)
-        command = "sudo -u %s kdialog --title 'EXAM' --passivepopup 'Verbindungsaufbau fehlgeschlagen.\nÜberprüfen sie die Netzwerkeinstellungen \nsowie die Server IP Adresse!' 8 &" %(USER)
-        os.system(command)
-        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
-
         
     def buildProtocol(self, addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self) 
@@ -276,6 +276,8 @@ export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 """
+# from twisted.application.internet import backoffPolicy    #only with twisted >=16.03 
+# retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)    # where to put ???
 
 
 class Options(usage.Options):
@@ -292,7 +294,9 @@ class MyServiceMaker(object):
     options = Options
 
     def makeService(self, options):
-        return TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))   #passing "options" too - accessible via self.factory.options[] from the protokol
+        return TCPClient(options["host"],
+                         int(options["port"]),
+                         MyClientFactory(CLIENTFILES_DIRECTORY, options))  
 
 serviceMaker = MyServiceMaker()
 
