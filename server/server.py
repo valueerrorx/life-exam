@@ -197,7 +197,7 @@ class MyServerProtocol(basic.LineReceiver):
         
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered = lambda: self.factory._onAbgabe(clientConnectionID) )
         action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered = lambda: self.factory._onScreenshots(clientConnectionID) )
-        action_3 = QtWidgets.QAction("Verbindung beenden, menu, triggered = lambda: self.factory._removeClient(clientConnectionID) )
+        action_3 = QtWidgets.QAction("Verbindung beenden", menu, triggered = lambda: self.factory._removeClient(clientConnectionID) )
         
         menu.addActions([action_1, action_2, action_3])
         handled = True
