@@ -55,7 +55,6 @@ class MyClientProtocol(basic.LineReceiver):
         self._showDesktopMessage('Connection to the server has been lost')
         
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            os.system(command)
             command = "python client/student.py &" 
             os.system(command)
             os._exit(1)

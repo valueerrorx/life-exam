@@ -466,7 +466,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             items.append(self.ui.listWidget.item(index))
         
         for item in items:
-            if item.id == clientID:
+            if item.pID == clientID:
+                print "item deleted"
                 sip.delete(item)   #delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
         
         for client in self.clients:
