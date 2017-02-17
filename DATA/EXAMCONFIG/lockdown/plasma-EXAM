@@ -48,17 +48,9 @@ plugin=org.kde.plasma.icon
 localPath[$i]=/home/student/.local/share/plasma_icons/Lock Desktop-3 (2).desktop
 url[$i]=file:///home/student/.local/share/applications/Lock Desktop-3.desktop
 
-[Containments][1][Applets][34]
-immutability=1
-plugin=org.kde.plasma.icon
-
 [Containments][1][Applets][34][Configuration][$i]
 localPath[$i]=/home/student/.local/share/plasma_icons/Lock Desktop-5.desktop
 url[$i]=file:///home/student/.local/share/applications/Lock Desktop-5.desktop
-
-[Containments][1][Applets][35]
-immutability=1
-plugin=org.kde.plasma.kicker
 
 [Containments][1][Applets][35][Configuration][General]
 favoriteApps=preferred://browser,systemsettings.desktop,org.kde.dolphin.desktop,org.kde.kate.desktop
