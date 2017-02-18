@@ -5,9 +5,6 @@
 import os
 import sys
 
-from config.enums import DataType, Command
-from dispatch.dispatch_student import student_line_dispatcher
-
 sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
 
 
@@ -19,6 +16,8 @@ from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
 from common import *
 from config import *
+from config.enums import DataType, Command
+from dispatch.dispatch_student import student_line_dispatcher
 
 
 from twisted.application.internet import TCPClient
@@ -102,7 +101,6 @@ class MyClientProtocol(basic.LineReceiver):
     #twisted
     def lineReceived(self, line):
         fun = student_line_dispatcher.get(line.split()[0], None)
-
         fun(self, line) if fun is not None else self.buffer.append(line)
 
         # if line == 'ENDMSG':
