@@ -27,7 +27,6 @@ def connection_refused(client, line):
     """
     showDesktopMessage('Connection refused!\n Client ID already taken!')
     client.factory.failcount = 100
-    #TODO: can probably be merged with above method
 
 def file_transfer_request(client, line):
     """

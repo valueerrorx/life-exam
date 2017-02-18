@@ -3,6 +3,8 @@
 from PyQt5 import uic, QtWidgets
 
 import time
+
+from PyQt5.QtGui import QPixmap
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 
@@ -84,6 +86,8 @@ class MulticastLifeClient(DatagramProtocol):
             self.server_found = True
             self.server_ip = address[0]
             dialog.ui.serverip.setText(str(address[0]))
+            dialog.ui.serversearch.setText("Server Found!")
+            dialog.ui.servercheck.setPixmap(QPixmap("pixmaps/checked.png"))
 
         print "Datagram %s received from %s" % (repr(datagram), repr(address))
 
