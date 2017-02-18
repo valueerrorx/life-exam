@@ -219,6 +219,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="pixmap">
+      <pixmap>../pixmaps/cloud-computing.png</pixmap>
+     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
