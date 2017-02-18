@@ -274,6 +274,9 @@ qdbus $progress setLabelText "Starte automatische Screenshots...."
     then 
         cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
         sudo chown -R ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
+        sudo chmod -R 755 ${HOME}.config/autostart-scripts
+        exec ${HOME}.config/autostart-scripts/auto-screenshot.sh
+        nohup ${HOME}.config/autostart-scripts/auto-screenshot.sh  >/dev/null 2>&1 &
     fi
 
 
