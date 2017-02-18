@@ -84,20 +84,20 @@ class MyServerProtocol(basic.LineReceiver):
             if validate_file_md5_hash(file_path, self.file_data[3]):   #everything ok..  file received
                 self.factory._log('File %s has been successfully transfered' % (filename))
                 
-                if self.file_data[1] == "SCREENSHOT":  #screenshot is received on initial connection
+                if self.file_data[1] == DataType.SCREENSHOT:  #screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
                 
-                elif self.file_data[1] == "FOLDER":
+                elif self.file_data[1] == DataType.FOLDER:
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
                         zip_ref.extractall(extract_dir)     #derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)   #delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY) # fix filepermission of transfered file 
                 
-                elif self.file_data[1] == "ABGABE":
+                elif self.file_data[1] == DataType.ABGABE:
                     extract_dir = os.path.join(ABGABE_DIRECTORY,self.clientID ,filename[:-4])  #extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path,"r") as zip_ref:
                         zip_ref.extractall(extract_dir)     #derzeitiges verzeichnis ist .life/SERVER/unzip
