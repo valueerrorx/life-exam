@@ -103,56 +103,6 @@ class MyClientProtocol(basic.LineReceiver):
         fun = student_line_dispatcher.get(line.split()[0], None)
         fun(self, line) if fun is not None else self.buffer.append(line)
 
-        # if line == 'ENDMSG':
-        #     message = '%s' % ' '.join(map(str, self.buffer))
-        #     self._showDesktopMessage(message)
-        #     self.buffer = []
-        # elif line.startswith('REFUSED'):
-        #     self._showDesktopMessage('Connection refused!\n Client ID already taken!')
-        #     self.factory.failcount = 100
-        # elif line.startswith('REMOVED'):
-        #     self._showDesktopMessage('Connection aborted by the Teacher!')
-        #     self.factory.failcount = 100
-        #
-        # elif line.startswith('FILETRANSFER'):  # the server wants to get/send file..
-        #     self.file_data = clean_and_split_input(line)
-        #     self.factory.files = get_file_list(self.factory.files_path)
-        #     trigger = self.file_data[0]
-        #     task = self.file_data[1]
-        #     filetype = self.file_data[2]
-        #     filename = self.file_data[3]
-        #     file_hash = self.file_data[4]
-        #
-        #     if task == 'SEND':
-        #         if filetype == 'SHOT':  # files need to be created first
-        #             scriptfile = os.path.join(SCRIPTS_DIRECTORY,'screenshot.sh')
-        #             screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY,filename)
-        #             command = "%s %s" %(scriptfile,screenshotfile)
-        #             os.system(command)
-        #         elif filetype == 'FOLDER':
-        #             if filename in self.factory.files:  # if folder exists create a zip out of it
-        #                 target_folder = self.factory.files[filename][0] #get full path
-        #                 output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
-        #                 shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
-        #                 filename = "%s.zip" %(filename)   #this is the filename of the zip file
-        #         elif filetype == 'ABGABE':
-        #             self._triggerAutosave()
-        #             time.sleep(2)   # give it some time to save the document
-        #
-        #             target_folder = ABGABE_DIRECTORY
-        #             output_filename = os.path.join(CLIENTZIP_DIRECTORY,filename )  #save location/filename #always save to root dir.
-        #             shutil.make_archive(output_filename, 'zip', target_folder)   #create zip of folder
-        #             filename = "%s.zip" %(filename)   #this is the filename of the zip file
-        #
-        #         self._sendFile(filename, filetype)
-        #     elif task == 'GET':
-        #         self.setRawMode()   #you are getting a file - set to raw mode (bytes instead of lines)
-        #         return
-        # else:
-        #     self.buffer.append(line)
-        #
-
-
     def _triggerAutosave(self):
         """this function uses xdotool to find windows and trigger ctrl+s shortcut on them
             which will show the save dialog the first time and silently save the document the next time
