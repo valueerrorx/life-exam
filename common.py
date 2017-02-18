@@ -32,6 +32,7 @@ def checkFirewall(self):
         count += 1
 
 
+
 def checkIP(iptest):
     try:
         ip = ipaddress.ip_address(iptest)

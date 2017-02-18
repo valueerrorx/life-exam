@@ -186,6 +186,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.files = None
         self.failcount = 0
         self.delay
+        self.factor = 1.8
 
     def buildProtocol(self, addr):
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol

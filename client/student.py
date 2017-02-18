@@ -30,7 +30,7 @@ class ClientDialog(QtWidgets.QDialog):
             "sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
 
     def _initUi(self):
-        self.ui = uic.loadUi("client/student.ui")  # load UI
+        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
