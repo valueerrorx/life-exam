@@ -28,6 +28,7 @@ def connection_refused(client, line):
     showDesktopMessage('Connection refused!\n Client ID already taken!')
     client.factory.failcount = 100
 
+
 def file_transfer_request(client, line):
     """
     Decides if a GET or a SEND operation needs to be dispatched and unboxes relevant attributes to be used in the actual
@@ -52,6 +53,9 @@ def send_file_request(client, filetype, *args):
     """
     filename = student_prepare_filetype_dispatcher[filetype](client, *args)
     client._sendFile(filename, filetype)
+
+    #TODO: maybe do the actual file sending in the level 1 dispatch (file_transfer_request) ? as in method file_transfer_request checks what is ordered, if get -> sendFile else setRawMode
+
 
 
 def get_file_request(client, *args):
@@ -104,7 +108,7 @@ def prepare_abgabe(client, filename, *args):
     :return: filename
     """
     client._triggerAutosave()
-    time.sleep(2)  # what
+    time.sleep(2)  # TODO: make autosave return that it is finished!
     target_folder = ABGABE_DIRECTORY
     output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
     shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
@@ -113,6 +117,12 @@ def prepare_abgabe(client, filename, *args):
 
 """
 Dispatcher dictionaries, used to dispatch correct methods depending on Command/DataType received
+Organisation into levels? Level 1 gets called directly from the ClientProtocol, calls level 2 depending on command,
+level 2 calls level 3 functions according to datatype to do the actual preparation work for the command that has been set
+"""
+
+"""
+Level 1 Dispatch
 """
 student_line_dispatcher = {
     Command.ENDMSG: end_msg,
@@ -121,11 +131,17 @@ student_line_dispatcher = {
 
 }
 
+"""
+Level 2 Dispatch
+"""
 student_file_request_dispatcher = {
     Command.SEND: send_file_request,
     Command.GET: get_file_request
 }
 
+"""
+Level 3 Dispatch
+"""
 student_prepare_filetype_dispatcher = {
     DataType.SCREENSHOT: prepare_screenshot,
     DataType.FOLDER: prepare_folder,

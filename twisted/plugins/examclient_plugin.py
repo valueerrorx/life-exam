@@ -94,8 +94,8 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted
     def lineReceived(self, line):
-        fun = student_line_dispatcher.get(line.split()[0], None)
-        fun(self, line) if fun is not None else self.buffer.append(line)
+        line_handler = student_line_dispatcher.get(line.split()[0], None)
+        line_handler(self, line) if line_handler is not None else self.buffer.append(line)
 
     def _triggerAutosave(self):
         """this function uses xdotool to find windows and trigger ctrl+s shortcut on them
