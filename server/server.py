@@ -47,8 +47,6 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = ()
         self.refused = False
         self.clientConnectionID = str(self.transport.client[1])
-        self.transport.write('Connection established!\n')
-        self.transport.write(Command.ENDMSG + '\n')
         self.factory._log(
             'Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
 
@@ -124,8 +122,7 @@ class MyServerProtocol(basic.LineReceiver):
         if len(self.file_data) == 0 or self.file_data == '':
             return
             # trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
-       
-       
+
         if line.startswith(Command.AUTH):
             newID = self.file_data[1]  # AUTH is sent immediately after a connection is made and transfers the clientID
             self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
