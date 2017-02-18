@@ -40,26 +40,25 @@ def file_transfer_request(client, line):
     client.file_data = clean_and_split_input(line)
     client.factory.files = get_file_list(client.factory.files_path)
     (trigger, task, filetype, filename, file_hash) = client.file_data[0:5]
-    student_file_request_dispatcher[task](filetype, filename, file_hash, client)
+    student_file_request_dispatcher[task](client, filetype, filename, file_hash)
 
 
-def send_file_request(filetype, *args):
+def send_file_request(client, filetype, *args):
     """
     Dispatches Method to prepare requested file transfer and sends file
+    :param client: clientprotocol
     :param filetype: Filetype to be sent as in (File, Folder, Screenshot)
-    :param args: (filename, file_hash, client)
+    :param args: (filename, file_hash)
     :return:
     """
-    filename = student_send_file_filetype_dispatcher[filetype](*args)
-    client = args[2]
-
+    filename = student_prepare_filetype_dispatcher[filetype](client, *args)
     client._sendFile(filename, filetype)
 
 
-def get_file_request(filetype, *args):
+def get_file_request(client, *args):
     """
     Puts client into raw mode to receive files
-    :param filetype:
+    :param client: clientprotocol
     :param args:
     :return:
     """
@@ -67,9 +66,10 @@ def get_file_request(filetype, *args):
     client.setRawMode()
 
 
-def send_screenshot(filename, *args):
+def prepare_screenshot(client, filename, *args):
     """
     Prepares a screenshot to be sent
+    :param client: clientprotocol
     :param filename: screenshot filename
     :param args: (file_hash, client)
     :return: filename
@@ -81,14 +81,14 @@ def send_screenshot(filename, *args):
     return filename
 
 
-def send_folder(filename, *args):
+def prepare_folder(client, filename, *args):
     """
     Prepares requested folder to be sent as zip file
+    :param client: clientprotocol
     :param filename: folder archive filename
     :param args: (file_hash, client)
     :return: filename
     """
-    client = args[1]
     if filename in client.factory.files:
         target_folder = client.factory.files[filename[0]]
         output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
@@ -96,14 +96,14 @@ def send_folder(filename, *args):
         return "%s.zip" % filename
 
 
-def send_abgabe(filename, *args):
+def prepare_abgabe(client, filename, *args):
     """
     Prepares Abgabe to be sent as zip archive
+    :param client: clientprotocol
     :param filename: filename of abgabe archive
     :param args: (file_hash, client)
     :return: filename
     """
-    client = args[1]
     client._triggerAutosave()
     time.sleep(2)  # what
     target_folder = ABGABE_DIRECTORY
@@ -112,7 +112,9 @@ def send_abgabe(filename, *args):
     return "%s.zip" % filename  # this is the filename of the zip file
 
 
-# dispatcher dictionaries
+"""
+Dispatcher dictionaries, used to dispatch correct methods depending on Command/DataType received
+"""
 student_line_dispatcher = {
     Command.ENDMSG: end_msg,
     Command.REFUSED: connection_refused,
@@ -125,8 +127,8 @@ student_file_request_dispatcher = {
     Command.GET: get_file_request
 }
 
-student_send_file_filetype_dispatcher = {
-    DataType.SCREENSHOT: send_screenshot,
-    DataType.FOLDER: send_folder,
-    DataType.ABGABE: send_abgabe
+student_prepare_filetype_dispatcher = {
+    DataType.SCREENSHOT: prepare_screenshot,
+    DataType.FOLDER: prepare_folder,
+    DataType.ABGABE: prepare_abgabe
 }

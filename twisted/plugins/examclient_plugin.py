@@ -17,7 +17,7 @@ from twisted.protocols import basic
 from common import *
 from config import *
 from config.enums import DataType, Command
-from dispatch.dispatch_student import student_line_dispatcher
+from dispatch.line_dispatch_student import student_line_dispatcher
 
 
 from twisted.application.internet import TCPClient
