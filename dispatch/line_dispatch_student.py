@@ -54,8 +54,7 @@ def send_file_request(client, filetype, *args):
     filename = student_prepare_filetype_dispatcher[filetype](client, *args)
     client._sendFile(filename, filetype)
 
-    #TODO: maybe do the actual file sending in the level 1 dispatch (file_transfer_request) ? as in method file_transfer_request checks what is ordered, if get -> sendFile else setRawMode
-
+    # TODO: maybe do the actual file sending in the level 1 dispatch (file_transfer_request) ? as in method file_transfer_request checks what is ordered, if get -> sendFile else setRawMode
 
 
 def get_file_request(client, *args):
@@ -65,7 +64,6 @@ def get_file_request(client, *args):
     :param args:
     :return:
     """
-    client = args[2]
     client.setRawMode()
 
 

@@ -137,9 +137,9 @@ class MyClientProtocol(basic.LineReceiver):
             self.sendLine('filename not found in client directory')
             return
 
-        if filetype in DataType:
+        if filetype in vars(DataType).values():
             self.transport.write(
-                '%s %s %s %s\n' % (Command.FILETRANSFER, filetype, filename, self.factory.files[filename[2]])) # command type filename filehash
+                '%s %s %s %s\n' % (Command.FILETRANSFER, filetype, filename, self.factory.files[filename][2])) # command type filename filehash
         else:
             return  # TODO: inform that nothing has been done
 
