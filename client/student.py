@@ -1,56 +1,59 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import  uic, QtWidgets
+from PyQt5 import uic, QtWidgets
 
 import time
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 
-
 from PyQt5.QtGui import QIcon, QColor
 import sys
 import os
-sys.path.append( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ) )  #add application root to python path for imports
+
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 import qt5reactor
 from common import checkIP, prepareDirectories
 from config.config import *
 
-class MeinDialog(QtWidgets.QDialog):
+
+class ClientDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
 
-        self.ui = uic.loadUi("client/student.ui")        # load UI
+        self.ui = uic.loadUi("client/student.ui")  # load UI
 
-        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))        # load UI
+        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))  # load UI
 
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
-        self.ui.exit.clicked.connect(self._onAbbrechen)        # setup Slots
+        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         prepareDirectories()
-       
-        clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-        os.system("sudo %s %s" %(clientkillscript, 'client') )  #make sure only one client instance is running per client
 
-    def _onAbbrechen(self):    # Exit button
+        clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+        os.system(
+            "sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
+
+    def _onAbbrechen(self):  # Exit button
         self.ui.close()
 
     def _onStartExamClient(self):
-        SERVER_IP=self.ui.serverip.text()
-        ID=self.ui.studentid.text()
+        SERVER_IP = self.ui.serverip.text()
+        ID = self.ui.studentid.text()
         if checkIP(SERVER_IP):
             palettedefault = self.ui.serverip.palette()
             palettedefault.setColor(self.ui.serverip.backgroundRole(), QColor(255, 255, 255))
             self.ui.serverip.setPalette(palettedefault)
             if ID != "":
                 self.ui.close()
-                #command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
-                #command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
-                #command = "kdesudo 'twistd -l client.log --pidfile client.pid -y client.tac %s %s' &" %(SERVER_IP, ID)
-                
-                command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s' &" %(WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID)
-                
-                
+                # command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
+                # command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
+                # command = "kdesudo 'twistd -l client.log --pidfile client.pid -y client.tac %s %s' &" %(SERVER_IP, ID)
+
+                command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s' &" % (
+                    WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID)
+
                 os.system(command)
             palettewarn = self.ui.studentid.palette()
             palettewarn.setColor(self.ui.studentid.backgroundRole(), QColor(200, 80, 80))
@@ -59,12 +62,9 @@ class MeinDialog(QtWidgets.QDialog):
             palettewarn = self.ui.serverip.palette()
             palettewarn.setColor(self.ui.serverip.backgroundRole(), QColor(200, 80, 80))
             self.ui.serverip.setPalette(palettewarn)
-    
+
 
 class MulticastLifeClient(DatagramProtocol):
-
-
-
     def __init__(self):
         self.loopObj = None
         self.server_found = False
@@ -87,14 +87,14 @@ class MulticastLifeClient(DatagramProtocol):
             self.server_ip = address[0]
             dialog.ui.serverip.setText(str(address[0]))
 
-
         print "Datagram %s received from %s" % (repr(datagram), repr(address))
-        
+
     def _sendProbe(self):
         self.transport.write('CLIENT: Looking', ("228.0.0.5", 8005))
 
+
 app = QtWidgets.QApplication(sys.argv)
-dialog = MeinDialog()
+dialog = ClientDialog()
 dialog.ui.show()
 
 qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
