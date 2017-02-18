@@ -21,19 +21,17 @@ from config.config import *
 class ClientDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-
-        self.ui = uic.loadUi("client/student.ui")  # load UI
-
-        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))  # load UI
-
-        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
-        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
-        self.ui.start.clicked.connect(self._onStartExamClient)
+        self._initUi()
         prepareDirectories()
-
         clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
         os.system(
             "sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
+
+    def _initUi(self):
+        self.ui = uic.loadUi("client/student.ui")  # load UI
+        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
+        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
+        self.ui.start.clicked.connect(self._onStartExamClient)
 
     def _onAbbrechen(self):  # Exit button
         self.ui.close()

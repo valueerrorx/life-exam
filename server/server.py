@@ -34,6 +34,10 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory = factory
         self.delimiter = '\n'
         self.clientID = ""
+        self.file_handler = None
+        self.file_data = ()
+        self.refused = False
+        self.clientConnectionID = ""
 
     # twisted
     def connectionMade(self):
