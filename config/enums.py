@@ -14,5 +14,6 @@ class Command(Enum):
     AUTH = "AU"
     FILETRANSFER = "FT"
     REFUSED = "RE"
+    REMOVED = "RM"
     GET = "G"
     SEND = "S"
