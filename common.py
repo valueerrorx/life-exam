@@ -45,8 +45,8 @@ def checkIP(iptest):
 
 def validate_file_md5_hash(file, original_hash):
     """ Returns true if file MD5 hash matches with the provided one, false otherwise. """
-
-    if get_file_md5_hash(file) == original_hash:
+    filehash = get_file_md5_hash(file)
+    if filehash == original_hash:
         return True
 
     return False

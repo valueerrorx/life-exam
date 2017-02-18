@@ -68,29 +68,32 @@ class MyClientProtocol(basic.LineReceiver):
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
 
-        while not data.endswith("\r\n"):
+
+        if data.endswith('\r\n'):
+            data = data[:-2]
+            self.file_handler.write(data)
+            self.file_handler.close()
+            self.file_handler = None
+            self.setLineMode()
+
+            if validate_file_md5_hash(file_path, self.file_data[4]):
+                print('File %s has been successfully transfered and saved' % (filename))
+
+                if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
+                    showDesktopMessage('Initializing Exam Mode')
+                    self._startExam(filename, file_path)
+                elif self.file_data[2] == DataType.FILE:
+                    # FIXME try if destination already exists - save with timecode
+                    showDesktopMessage('File received!')
+                    shutil.move(file_path, ABGABE_DIRECTORY)
+                    fixFilePermissions(ABGABE_DIRECTORY)
+            else:
+                os.unlink(file_path)
+                print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
+
+        else:
             self.file_handler.write(data)
 
-        data = data[:-2]
-        self.file_handler.write(data)
-        self.file_handler.close()
-        self.file_handler = None
-        self.setLineMode()
-
-        if validate_file_md5_hash(file_path, self.file_data[4]):
-            print('File %s has been successfully transfered and saved' % (filename))
-
-            if self.file_data[2] == "EXAM":  # initialize exam mode.. unzip and start exam
-                showDesktopMessage('Initializing Exam Mode')
-                self._startExam(filename, file_path)
-            elif self.file_data[2] == "FILE":
-                # FIXME try if destination already exists - save with timecode
-                showDesktopMessage('File received!')
-                shutil.move(file_path, ABGABE_DIRECTORY)
-                fixFilePermissions(ABGABE_DIRECTORY)
-        else:
-            os.unlink(file_path)
-            print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
 
     # twisted
     def lineReceived(self, line):
@@ -146,6 +149,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.setRawMode()
         for bytes in read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
             self.transport.write(bytes)
+
         self.transport.write('\r\n')  # send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
