@@ -29,6 +29,17 @@ def connection_refused(client, line):
     client.factory.failcount = 100
 
 
+def connection_removed(client, line):
+    """
+    Shoes Desktopmessage for connection refused
+    :param client: clientprotocol
+    :param line: line recieived
+    :return:
+    """
+    showDesktopMessage('Connection aborted by the Teacher!')
+    client.factory.failcount = 100
+    
+
 def file_transfer_request(client, line):
     """
     Decides if a GET or a SEND operation needs to be dispatched and unboxes relevant attributes to be used in the actual
@@ -125,6 +136,7 @@ Level 1 Dispatch
 student_line_dispatcher = {
     Command.ENDMSG: end_msg,
     Command.REFUSED: connection_refused,
+    Command.REMOVED: connection_removed,
     Command.FILETRANSFER: file_transfer_request,
 
 }

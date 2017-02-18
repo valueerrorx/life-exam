@@ -76,7 +76,7 @@ def read_bytes_from_file(file, chunk_size=8100):
 def clean_and_split_input(input):
     """ Removes carriage return and line feed characters and splits input on a single whitespace. """
     input = input.strip()
-    input = input.split(' ')
+    input = input.split()
 
     return input
 

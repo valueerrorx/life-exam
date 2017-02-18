@@ -124,6 +124,8 @@ class MyServerProtocol(basic.LineReceiver):
         if len(self.file_data) == 0 or self.file_data == '':
             return
             # trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
+       
+       
         if line.startswith(Command.AUTH):
             newID = self.file_data[1]  # AUTH is sent immediately after a connection is made and transfers the clientID
             self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
@@ -140,7 +142,7 @@ class MyServerProtocol(basic.LineReceiver):
         if newID in ids:
             print "this user already exists and is connected"
             self.refused = True
-            self.sendLine(Command.REFUSED + '\n')
+            self.sendLine(Command.REFUSED)
             self.transport.loseConnection()
             self.factory._log('Client Connection from %s has been refused. User already exists' % (newID))
 
@@ -434,6 +436,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
 
+
+
+
     def _removeClient(self, clientID):
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
@@ -448,9 +453,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         for client in self.clients:
             if client.clientConnectionID == clientID:
                 client.refused = True
-                client.sendLine('REMOVED\n')
+        
+                client.sendLine("%s" %(Command.REMOVED) )
                 client.transport.loseConnection()
                 client.factory._log('Client Connection has been removed.')
+
+
+
 
     def _disableClientScreenshot(self, clientID):
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
