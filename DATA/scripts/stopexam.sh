@@ -83,11 +83,13 @@ then
         cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM   # wps office
         cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM   # libre office
         cp -a ${HOME}.config/calligra* ${LOCKDOWNDIR}  # calligra office (best with kde kiosk)
-        
+
+
         #filemanager
         cp -a ${HOME}.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
         cp -a ${HOME}.config/dolphinrc ${LOCKDOWNDIR}dolphinrc-EXAM
         cp -a ${HOME}.config/user-dirs.dirs ${LOCKDOWNDIR}       #default directories for documents music etc.
+        cp -a ${HOME}.config/mimeapps.list ${LOCKDOWNDIR}mimeapps.list-EXAM
         
         sudo rm "${ABGABE}Speichere Prüfungsumgebung.desktop"
     elif [ "$answer" = 1 ]; then
@@ -143,7 +145,7 @@ sleep 0.5
     cp -a ${BACKUPDIR}dolphinrc ${HOME}.config/
     cp -a ${BACKUPDIR}calligra* ${HOME}.config/
     cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
-    
+    cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
     
     
     

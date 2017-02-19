@@ -128,6 +128,7 @@ sleep 0.5
     cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}   # dolphin / filepicker places panel config
     cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
     cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
+    cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
     
     sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership
 
@@ -156,7 +157,7 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
     cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
     cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    
+    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/
     
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    
