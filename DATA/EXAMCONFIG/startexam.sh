@@ -216,6 +216,7 @@ sleep 0.5
     setIPtables(){
         sudo iptables -I INPUT 1 -i lo -j ACCEPT        #allow loopback 
         sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT     #allow DNS
+
         if [ -f $IPSFILE ]; then
             for IP in `cat $IPSFILE`; do        #allow input and output for ALLOWEDIP
                 echo "exception noticed $IP"
@@ -225,6 +226,10 @@ sleep 0.5
         fi
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT         #allow ESTABLISHED and RELATED (important for active server communication)
         sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
+        sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+        sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+
         sudo iptables -P INPUT DROP          #drop the rest
         sudo iptables -P OUTPUT DROP
     }
