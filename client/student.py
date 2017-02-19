@@ -25,9 +25,6 @@ class ClientDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self._initUi()
         prepareDirectories()
-        clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-        os.system(
-            "sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
 
     def _initUi(self):
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))
@@ -47,9 +44,8 @@ class ClientDialog(QtWidgets.QDialog):
             self.ui.serverip.setPalette(palettedefault)
             if ID != "":
                 self.ui.close()
-                # command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
-                # command = "kdesudo python client.py %s %s &" %(SERVER_IP, ID)
-                # command = "kdesudo 'twistd -l client.log --pidfile client.pid -y client.tac %s %s' &" %(SERVER_IP, ID)
+                clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+                os.system("sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
 
                 command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s' &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID)
