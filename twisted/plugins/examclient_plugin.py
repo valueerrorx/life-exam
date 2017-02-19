@@ -116,7 +116,7 @@ class MyClientProtocol(basic.LineReceiver):
                 try:
                     command = "pidof %s" % (app)
                     pid = subprocess.check_output(command, shell=True).rstrip()
-                    qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" % (app, pid, app)
+                    qdbuscommand = "sudo -u %s -H qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" % (USER, app, pid, app)
                     os.system(qdbuscommand)
                 except:
                     print "program not running"
