@@ -127,7 +127,7 @@ class MyServerProtocol(basic.LineReceiver):
             newID = self.file_data[1]  # AUTH is sent immediately after a connection is made and transfers the clientID
             self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
         elif line.startswith(Command.FILETRANSFER):
-            self.factory._log('Incoming File Transfer from Client <b>%s</b>' %(self.clientID ))
+            self.factory._log('Incoming File Transfer from Client <b>%s </b>' %(self.clientID ))
             self.setRawMode()  # this is a file - set to raw mode
 
     def _checkClientID(self, newID):
@@ -146,7 +146,7 @@ class MyServerProtocol(basic.LineReceiver):
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientID = newID
-            self.factory._log('New Connection from <b>%s</b>' % (newID))
+            self.factory._log('New Connection from <b>%s </b>' % (newID))
             self.sendLine("%s %s %s %s.jpg none" % (
             Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
 
@@ -280,7 +280,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         if self.lc.running:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
             self.lc.stop()
-            self._log("<b>Auto-Submission deactivated</b>")
+            self._log("<b>Auto-Submission deactivated </b>")
             return
         if intervall is not 0:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
@@ -340,7 +340,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                         i.setLineMode()  # When the transfer is finished, we go back to the line mode
                         who = i.clientID # this is just to make the log more verbose
 
-            self._log('<b>Sending file:</b> %s (%d KB) to <b>%s</b>' % (filename, file_size / 1024, who))
+            self._log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
 
 
     def _onShowIP(self):
@@ -356,7 +356,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
 
-        self._log('<b>Requesting Client Folder ABGABE</b>')
+        self._log('<b>Requesting Client Folder ABGABE </b>')
         if who == "all":
             self._workingIndicatior(True, 2000)
             for i in self.clients:
@@ -382,7 +382,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
 
-        self._log("<b>Requesting Screenshot Update</b>")
+        self._log("<b>Requesting Screenshot Update </b>")
         if who == "all":
             self._workingIndicatior(True, 1000)
             for i in self.clients:
@@ -409,7 +409,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             return
 
         self._workingIndicatior(True, 4000)
-        self._log('<b>Initializing Exam Mode On All Clients</b>')
+        self._log('<b>Initializing Exam Mode On All Clients </b>')
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
         output_filename = os.path.join(SERVERZIP_DIRECTORY, filename)
