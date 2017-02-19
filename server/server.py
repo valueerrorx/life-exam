@@ -1,13 +1,14 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 # TEACHER - SERVER #
-from twisted.internet.protocol import DatagramProtocol
-
 import os
 import sys
-
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
+
+from twisted.internet.protocol import DatagramProtocol
+
+
 
 import qt5reactor
 import ipaddress
@@ -20,6 +21,7 @@ from twisted.internet import protocol
 from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
 from config.config import *
+from classes.clients import *
 from common import *
 from config.enums import *
 
@@ -29,11 +31,10 @@ from PyQt5.QtGui import *
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
-
     def __init__(self, factory):
-        self.factory = factory
+        self.factory = factory  # type: MyServerFactory
         self.delimiter = '\n'
-        self.clientID = ""
+        self.clientName = ""
         self.file_handler = None
         self.file_data = ()
         self.refused = False
@@ -41,29 +42,26 @@ class MyServerProtocol(basic.LineReceiver):
 
     # twisted
     def connectionMade(self):
-        self.factory.clients.append(
-            self)  # only the factory (MyServerFactory) is the persistent thing.. therefore we save the clients ( MyServerProtocol object) on factory.clients
+        self.factory.client_list.add_client(self)
         self.file_handler = None
         self.file_data = ()
         self.refused = False
         self.clientConnectionID = str(self.transport.client[1])
         self.factory._log(
-            'Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.clients)))
+            'Connection from: %s (%d clients total)' % (self.transport.getPeer().host, len(self.factory.client_list.clients)))
 
     # twisted
     def connectionLost(self, reason):
-        self.factory.clients.remove(self)
+        self.factory.client_list.remove_client(self)
         self.file_handler = None
         self.file_data = ()
         self.factory._log(
-            'Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.clients)))
+            'Connection from %s lost (%d clients left)' % (self.transport.getPeer().host, len(self.factory.client_list.clients)))
 
         if not self.refused:
-            self.factory._disableClientScreenshot(self.clientID)
+            self.factory._disableClientScreenshot(self.clientName)
 
-
-            # twisted
-
+    # twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
         filename = self.file_data[2]
@@ -90,16 +88,16 @@ class MyServerProtocol(basic.LineReceiver):
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
                 elif self.file_data[1] == DataType.FOLDER:
-                    extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientID, filename[
-                                                                                     :-4])  # extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
+                                                                                       :-4])  # extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)  # delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transfered file
 
                 elif self.file_data[1] == DataType.ABGABE:
-                    extract_dir = os.path.join(ABGABE_DIRECTORY, self.clientID, filename[
-                                                                                :-4])  # extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    extract_dir = os.path.join(ABGABE_DIRECTORY, self.clientName, filename[
+                                                                                  :-4])  # extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)  # delete zip file
@@ -132,11 +130,8 @@ class MyServerProtocol(basic.LineReceiver):
 
     def _checkClientID(self, newID):
         """searches for the newID in factory.clients and rejects the connection if found"""
-        ids = []
-        for i in self.factory.clients:
-            ids.append(i.clientID)
 
-        if newID in ids:
+        if newID in self.factory.client_list.clients.keys():
             print "this user already exists and is connected"
             self.refused = True
             self.sendLine(Command.REFUSED)
@@ -145,7 +140,7 @@ class MyServerProtocol(basic.LineReceiver):
 
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
-            self.clientID = newID
+            self.clientName = newID
             self.sendLine("%s %s %s %s.jpg none" % (
             Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
             return
@@ -158,19 +153,19 @@ class MyServerProtocol(basic.LineReceiver):
 
         existingItem = False
         for item in items:
-            if item.id == self.clientID:
+            if item.id == self.clientName:
                 print "exists"
                 existingItem = item  # there should be only one matching item
 
         if existingItem:  # just update screenshot
             Pixmap = QPixmap(screenshot_file_path)
             existingItem.picture.setPixmap(Pixmap)
-            existingItem.info.setText('%s \n%s' % (self.clientID, self.clientConnectionID))
+            existingItem.info.setText('%s \n%s' % (self.clientName, self.clientConnectionID))
             existingItem.pID = self.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         else:  # create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             item = QtWidgets.QListWidgetItem()
             item.setSizeHint(QtCore.QSize(140, 140));
-            item.id = self.clientID  # store clientID as itemID for later use (delete event)
+            item.id = self.clientName  # store clientID as itemID for later use (delete event)
             item.pID = self.clientConnectionID
             item.disabled = False
 
@@ -178,7 +173,7 @@ class MyServerProtocol(basic.LineReceiver):
             item.picture = QtWidgets.QLabel()
             item.picture.setPixmap(Pixmap)
             item.picture.setAlignment(QtCore.Qt.AlignCenter)
-            item.info = QtWidgets.QLabel('%s \n%s' % (self.clientID, self.clientConnectionID))
+            item.info = QtWidgets.QLabel('%s \n%s' % (self.clientName, self.clientConnectionID))
             item.info.setAlignment(QtCore.Qt.AlignCenter)
 
             grid = QtWidgets.QGridLayout()
@@ -214,7 +209,7 @@ class MyServerProtocol(basic.LineReceiver):
 class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
     def __init__(self, files_path):
         self.files_path = files_path
-        self.clients = []  # store all client connections in this array
+        self.client_list = ClientList()  # type: ClientList
         self.files = None
 
         QtWidgets.QDialog.__init__(self)
@@ -243,10 +238,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.showMinimized()
         evnt.ignore()
 
-    def buildProtocol(self,
-                      addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        return MyServerProtocol(
-            self)  # wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
+    def buildProtocol(self, addr):
+        # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
+        return MyServerProtocol(self)
+        # wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
+
 
     def _onAutoabgabe(self):
         intervall = self.ui.aintervall.value()
@@ -268,7 +264,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
     def _onSendfile(self):
         """send a file to all clients"""
-        if not self.clients:
+        if not self.client_list.clients:
             self._log("no clients connected")
             return
         # show filepicker
@@ -282,7 +278,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
 
-            for i in self.clients:
+            for i in self.client_list.clients.values():
                 self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
                 i.sendLine(
                     '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
@@ -301,21 +297,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
     def _onAbgabe(self, who):
         """get ABGABE folder"""
-        if not self.clients:
+        self._log("Trying to get Abgabe")
+        if not self.client_list.request_abgabe(who):
             self._log("no clients connected")
-            return
-
-        self._log('Client Folder zB. ABGABE holen')
-        if who == "all":
-            for i in self.clients:
-                # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
-                filename = "Abgabe-%s" % (datetime.datetime.now().strftime("%H-%M-%S"))
-                i.sendLine("%s %s %s %s none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename))
-        else:
-            for i in self.clients:
-                if i.clientConnectionID == who:
-                    filename = "Abgabe-%s" % (datetime.datetime.now().strftime("%H-%M-%S"))
-                    i.sendLine("%s %s %s %s none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename))
 
     def _onStartHotspot(self):
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")
@@ -323,21 +307,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         os.system(startcommand)
 
     def _onScreenshots(self, who):
-        if not self.clients:
+        self._log("Trying to update screenshots")
+        if not self.client_list.request_screenshots(who):
             self._log("no clients connected")
-            return
-
-        self._log("Updating screenshots")
-        if who == "all":
-            for i in self.clients:
-                i.sendLine("%s %s %s %s.jpg none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT,
-                                                     i.transport.client[
-                                                         1]))  # the clients id is used as filename for the screenshot
-        else:
-            for i in self.clients:
-                if i.clientConnectionID == who:
-                    i.sendLine("%s %s %s %s.jpg none" % (
-                    Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, i.transport.client[1]))
 
     def _onStartExam(self):
         """ 
@@ -346,7 +318,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         invoke startexam.sh file on clients 
         
         """
-        if not self.clients:
+        if not self.client_list.clients:
             self._log("no clients connected")
             return
 
@@ -357,7 +329,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         shutil.make_archive(output_filename, 'zip', target_folder)
         filename = "%s.zip" % (filename)
 
-        for i in self.clients:
+        for i in self.client_list.clients.values():
             self.files = get_file_list(self.files_path)
             if not filename in self.files:
                 self.log('filename not found in directory')
@@ -447,16 +419,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 sip.delete(
                     item)  # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
 
-        for client in self.clients:
-            if client.clientConnectionID == clientID:
-                client.refused = True
-        
-                client.sendLine("%s" %(Command.REMOVED) )
-                client.transport.loseConnection()
-                client.factory._log('Client Connection has been removed.')
-
-
-
+        client = self.client_list.get_client(clientID)
+        client.refused = True
+        client.sendLine("%s" % Command.REMOVED)
+        client.transport.loseConnection()
+        client.factory._log('Client Connection has been removed.')
 
     def _disableClientScreenshot(self, clientID):
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
