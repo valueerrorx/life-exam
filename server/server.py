@@ -409,24 +409,23 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             return
 
         self._workingIndicatior(True, 4000)
-        self._log('Folder examconfig senden')
+        self._log('<b>Initializing Exam Mode On All Clients</b>')
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
         output_filename = os.path.join(SERVERZIP_DIRECTORY, filename)
         shutil.make_archive(output_filename, 'zip', target_folder)
         filename = "%s.zip" % (filename)
 
+        self.files = get_file_list(self.files_path)
+        if not filename in self.files:
+            self.log('filename not found in directory')
+            return
+
+        self._log('Sending Configuration: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
+
         for i in self.clients:
-            self.files = get_file_list(self.files_path)
-            if not filename in self.files:
-                self.log('filename not found in directory')
-                return
-
-            self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
-
             i.transport.write('%s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename,
-                                                    self.files[filename][
-                                                        2]))  # trigger clienttask type filename filehash
+                                                    self.files[filename][2]))
             i.setRawMode()
             print self.files[filename][0]
             for bytes in read_bytes_from_file(self.files[filename][0]):

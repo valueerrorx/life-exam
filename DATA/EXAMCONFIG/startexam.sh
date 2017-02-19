@@ -36,12 +36,21 @@ if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
 fi
+if [ -f "$EXAMLOCKFILE" ];then
+    kdialog  --yesno "Already running exam! \nDo you want to reload the Exam-Desktop?"  --title 'Starting Exam' --caption "Starting Exam"
+    # this way we could restart the desktop in exam mode just in case plasma or kwin did not start properly
+    if [ ! "$?" = 0 ]; then
+        exit  0   #cancel
+    else
+    sudo -u ${USER} -H kquitapp5 plasmashell & sleep 2
+    exec sudo -u ${USER} -H kstart5 plasmashell &
+    exec sudo -u ${USER} -H kwin --replace &
+    exit 0
+    fi
+
+fi
 if [ -f "/etc/kde5rc" ];then
     kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
-    exit 1
-fi
-if [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Already running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
 fi
 if [ ! -d "$BACKUPDIR" ];then
