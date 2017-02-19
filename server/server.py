@@ -81,12 +81,12 @@ class MyServerProtocol(basic.LineReceiver):
             self.setLineMode()
 
             if validate_file_md5_hash(file_path, self.file_data[3]):  # everything ok..  file received
-                self.factory._log('File %s has been successfully transfered' % (filename))
+                self.factory._log('File %s has been successfully transferred' % (filename))
 
                 if self.file_data[1] == DataType.SCREENSHOT:  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
+                    fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
                 elif self.file_data[1] == DataType.FOLDER:
@@ -95,7 +95,7 @@ class MyServerProtocol(basic.LineReceiver):
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transfered file
+                    fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
                 elif self.file_data[1] == DataType.ABGABE:
                     extract_dir = os.path.join(ABGABE_DIRECTORY, self.clientID, filename[
@@ -103,14 +103,14 @@ class MyServerProtocol(basic.LineReceiver):
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(ABGABE_DIRECTORY)  # fix filepermission of transfered file
+                    fixFilePermissions(ABGABE_DIRECTORY)  # fix filepermission of transferred file
 
             else:  # wrong file hash
                 os.unlink(file_path)
-                self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
+                self.transport.write('File was successfully transferred but not saved, due to invalid MD5 hash\n')
                 self.transport.write(Command.ENDMSG + '\n')
                 self.factory._log(
-                    'File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
+                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
 
         else:
             self.file_handler.write(data)
@@ -121,13 +121,13 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return
-            # trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
+            # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
 
         if line.startswith(Command.AUTH):
             newID = self.file_data[1]  # AUTH is sent immediately after a connection is made and transfers the clientID
             self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
         elif line.startswith(Command.FILETRANSFER):
-            self.factory._log('Preparing File Transfer from Client...')
+            self.factory._log('Incoming File Transfer from Client <b>%s</b>' %(self.clientID ))
             self.setRawMode()  # this is a file - set to raw mode
 
     def _checkClientID(self, newID):
@@ -146,8 +146,10 @@ class MyServerProtocol(basic.LineReceiver):
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientID = newID
+            self.factory._log('New Connection from <b>%s</b>' % (newID))
             self.sendLine("%s %s %s %s.jpg none" % (
             Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+
             return
 
     def _createListItem(self, screenshot_file_path):
@@ -278,18 +280,18 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         if self.lc.running:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
             self.lc.stop()
-            self._log("Auto-Abgabe deaktiviert")
+            self._log("<b>Auto-Submission deactivated</b>")
             return
         if intervall is not 0:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
-            self._log("Auto-Abgabe im Intervall %s aktiviert" % (str(intervall)))
+            self._log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
             self.lc.start(minute_intervall)
         else:
-            self._log("Abgabe-Intervall ist 0 - Auto-Abgabe deaktiviert")
+            self._log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
 
     def _onLoadDefaults(self):
         self._workingIndicatior(True, 500)
-        self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
+        self._log('Default Configuration for EXAM Desktop restored.')
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
         os.system(copycommand)
 
@@ -310,10 +312,10 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
 
+
             if who == "all":
                 self._workingIndicatior(True, 2000)
                 for i in self.clients:
-                    self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
                     i.sendLine(
                         '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
                                               md5_hash))  # trigger clienttask type filename filehash
@@ -327,7 +329,6 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 self._workingIndicatior(True, 1000)
                 for i in self.clients:
                     if i.clientConnectionID == who:
-                        self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
                         i.sendLine(
                             '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
                                                   md5_hash))  # trigger clienttask type filename filehash
@@ -337,6 +338,9 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
                         i.transport.write('\r\n')
                         i.setLineMode()  # When the transfer is finished, we go back to the line mode
+                        who = i.clientID # this is just to make the log more verbose
+
+            self._log('<b>Sending file:</b> %s (%d KB) to <b>%s</b>' % (filename, file_size / 1024, who))
 
 
     def _onShowIP(self):
@@ -352,7 +356,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
 
-        self._log('Client Folder zB. ABGABE holen')
+        self._log('<b>Requesting Client Folder ABGABE</b>')
         if who == "all":
             self._workingIndicatior(True, 2000)
             for i in self.clients:
@@ -378,7 +382,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("no clients connected")
             return
 
-        self._log("Updating screenshots")
+        self._log("<b>Requesting Screenshot Update</b>")
         if who == "all":
             self._workingIndicatior(True, 1000)
             for i in self.clients:

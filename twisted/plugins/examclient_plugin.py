@@ -199,7 +199,17 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.files = None
         self.failcount = 0
         self.delay
-        self.factor = 1.8
+        #self.factor = 1.8
+
+    def clientConnectionFailed(self, connector, reason):
+        self.failcount += 1
+
+        if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+            command = "python client/student.py &"
+            os.system(command)
+            os._exit(1)
+
+        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     def buildProtocol(self, addr):
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
