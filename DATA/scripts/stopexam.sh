@@ -147,7 +147,7 @@ sleep 0.5
     cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
-    
+    sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
     
     
 #---------------------------------#

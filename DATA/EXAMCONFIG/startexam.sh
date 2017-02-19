@@ -159,7 +159,8 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
-    
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
+
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    
     sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
