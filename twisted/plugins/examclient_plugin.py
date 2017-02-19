@@ -176,7 +176,10 @@ class MyClientProtocol(basic.LineReceiver):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')  # anhängen
             thisexamfile.write("\n")
-            thisexamfile.write(self.factory.options['host'])
+            thisexamfile.write(self.factory.options['host'])   # server IP
+            thisexamfile.write("\n")
+            thisexamfile.write("228.0.0.5")  # Multicast Address for Address Allocation for Private Internets
+
 
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
