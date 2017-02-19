@@ -135,8 +135,8 @@ class MyClientProtocol(basic.LineReceiver):
             print "ctrl+s sent to %s" % (application_id)
 
         # try the current active window too in order to catch other applications not in config.py
-        command = "xdotool getactivewindow && xdotool key ctrl+s &"
-        os.system(command)
+        #command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to whatch with konsole
+        #os.system(command)
 
     def _sendFile(self, filename, filetype):
         """send a file to the server"""

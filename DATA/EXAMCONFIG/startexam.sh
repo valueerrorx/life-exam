@@ -185,10 +185,11 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 sleep 0.5
 
-    mkdir $ABGABE > /dev/null
+    mkdir $ABGABE > /dev/null 2>&1
     sudo chown -R ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
     sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
-    
+    sudo touch $ABGABE   # update timestamp on live usb devices
+
     if [[  ( $MODE = "permanent" ) ]]
     then 
         echo "#!/bin/sh -e" > /etc/rc.local
@@ -223,8 +224,11 @@ sleep 0.5
         if [ -f $IPSFILE ]; then
             for IP in `cat $IPSFILE`; do        #allow input and output for ALLOWEDIP
                 echo "exception noticed $IP"
-                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
+                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443,5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443,5000 -j ACCEPT
+
+                sudo iptables -A INPUT  -p tcp -s $IP -m multiport --dports 80,443,5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s $IP -m multiport --dports 80,443,5000 -j ACCEPT
             done
         fi
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT         #allow ESTABLISHED and RELATED (important for active server communication)
