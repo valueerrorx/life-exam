@@ -285,7 +285,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             for i in self.clients:
                 self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
                 i.sendLine(
-                    '%s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
+                    '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
                                           md5_hash))  # trigger clienttask type filename filehash
                 i.setRawMode()
                 for bytes in read_bytes_from_file(file_path):
