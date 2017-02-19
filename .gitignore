@@ -1,4 +1,6 @@
 *.pyc
 *.kate-swp
 *.cache
+*.pid
+*.log
 .idea
