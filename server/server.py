@@ -167,6 +167,7 @@ class MyServerProtocol(basic.LineReceiver):
             existingItem.picture.setPixmap(Pixmap)
             existingItem.info.setText('%s \n%s' % (self.clientID, self.clientConnectionID))
             existingItem.pID = self.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
+            existingItem.disabled = False
         else:  # create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             item = QtWidgets.QListWidgetItem()
             item.setSizeHint(QtCore.QSize(140, 140));
@@ -189,22 +190,26 @@ class MyServerProtocol(basic.LineReceiver):
             widget = QtWidgets.QWidget()
             widget.setLayout(grid)
             widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-            widget.customContextMenuRequested.connect(lambda: self.on_context_menu(item.pID))
+            widget.customContextMenuRequested.connect(lambda: self.on_context_menu(item.pID, item.disabled))
 
             self.factory.ui.listWidget.addItem(item)  # add the listitem to the listwidget
             self.factory.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
-    def on_context_menu(self, clientConnectionID):
+    def on_context_menu(self, clientConnectionID, isDisabled):
         menu = QtWidgets.QMenu()
 
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self.factory._onAbgabe(clientConnectionID))
-        action_2 = QtWidgets.QAction("Screenshot updaten", menu,
-                                     triggered=lambda: self.factory._onScreenshots(clientConnectionID))
-        action_3 = QtWidgets.QAction("Verbindung beenden", menu,
-                                     triggered=lambda: self.factory._removeClient(clientConnectionID))
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self.factory._onScreenshots(clientConnectionID))
+        action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self.factory._onSendFile(clientConnectionID))
+        action_4 = QtWidgets.QAction("Verbindung beenden", menu, triggered=lambda: self.factory._removeClient(clientConnectionID))
 
-        menu.addActions([action_1, action_2, action_3])
-        handled = True
+        menu.addActions([action_1, action_2, action_3, action_4])
+
+        if isDisabled:
+            action_1.setEnabled(False)
+            action_2.setEnabled(False)
+            action_3.setEnabled(False)
+
         cursor = QCursor()
         menu.exec_(cursor.pos())
 
@@ -222,7 +227,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(
-            lambda: self._onSendfile())  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
+            lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
@@ -235,7 +240,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
 
         checkFirewall(self)  # deactivates all iptable rules if any
-        self.lc = LoopingCall(self._onAbgabe)  # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
+        self.lc = LoopingCall(lambda: self._onAbgabe("all"))  # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
 
         self.ui.show()
 
@@ -254,6 +259,8 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         if self.lc.running:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
             self.lc.stop()
+            self._log("Auto-Abgabe deaktiviert")
+            return
         if intervall is not 0:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
             self._log("Auto-Abgabe im Intervall %s aktiviert" % (str(intervall)))
@@ -266,7 +273,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
         os.system(copycommand)
 
-    def _onSendfile(self):
+    def _onSendFile(self, who):
         """send a file to all clients"""
         if not self.clients:
             self._log("no clients connected")
@@ -282,17 +289,32 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
 
-            for i in self.clients:
-                self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
-                i.sendLine(
-                    '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
-                                          md5_hash))  # trigger clienttask type filename filehash
-                i.setRawMode()
-                for bytes in read_bytes_from_file(file_path):
-                    i.transport.write(bytes)
+            if who == "all":
+                for i in self.clients:
+                    self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
+                    i.sendLine(
+                        '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
+                                              md5_hash))  # trigger clienttask type filename filehash
+                    i.setRawMode()
+                    for bytes in read_bytes_from_file(file_path):
+                        i.transport.write(bytes)
 
-                i.transport.write('\r\n')
-                i.setLineMode()  # When the transfer is finished, we go back to the line mode 
+                    i.transport.write('\r\n')
+                    i.setLineMode()  # When the transfer is finished, we go back to the line mode
+            else:
+                for i in self.clients:
+                    if i.clientConnectionID == who:
+                        self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
+                        i.sendLine(
+                            '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
+                                                  md5_hash))  # trigger clienttask type filename filehash
+                        i.setRawMode()
+                        for bytes in read_bytes_from_file(file_path):
+                            i.transport.write(bytes)
+
+                        i.transport.write('\r\n')
+                        i.setLineMode()  # When the transfer is finished, we go back to the line mode
+
 
     def _onShowIP(self):
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-getmyip.sh")
