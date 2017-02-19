@@ -11,6 +11,7 @@ sys.path.append(
 import shutil
 import zipfile
 import time
+import datetime
 
 from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
@@ -77,15 +78,20 @@ class MyClientProtocol(basic.LineReceiver):
             self.setLineMode()
 
             if validate_file_md5_hash(file_path, self.file_data[4]):
-                print('File %s has been successfully transfered and saved' % (filename))
 
                 if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename, file_path)
                 elif self.file_data[2] == DataType.FILE:
-                    # FIXME try if destination already exists - save with timecode
-                    showDesktopMessage('File received!')
-                    shutil.move(file_path, ABGABE_DIRECTORY)
+
+                    if os.path.isfile(os.path.join(ABGABE_DIRECTORY, filename)):
+                        filename = "%s-%s" %(filename, datetime.datetime.now().strftime("%H-%M-%S")) #save with timecode
+                        targetpath = os.path.join(ABGABE_DIRECTORY, filename)
+                        shutil.move(file_path, targetpath)
+                    else:
+                        shutil.move(file_path, ABGABE_DIRECTORY)
+
+                    showDesktopMessage('File %s received!' %(filename))
                     fixFilePermissions(ABGABE_DIRECTORY)
             else:
                 os.unlink(file_path)
