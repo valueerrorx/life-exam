@@ -5,6 +5,12 @@ from config.shell_scripts import SHOT
 from common import *
 from config.enums import Command, DataType
 
+"""
+Contains functions and dispatcher dictionaries for Lines sent from the server to the client. Lines are
+patched through the dictionaries to return and call the proper function for the client to react to the servers
+orders.
+"""
+
 
 def end_msg(client, line):
     """
