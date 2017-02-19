@@ -239,14 +239,32 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
 
+        self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
+        self.workinganimation.setCacheMode(QMovie.CacheAll)
+        self.workinganimation.setSpeed(100)
+        self.ui.working.setMovie(self.workinganimation)
+
         checkFirewall(self)  # deactivates all iptable rules if any
         self.lc = LoopingCall(lambda: self._onAbgabe("all"))  # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
-
+        self.timer = False
         self.ui.show()
 
     def closeEvent(self, evnt):
         self.ui.showMinimized()
         evnt.ignore()
+
+    def _workingIndicatior(self,action, duration):
+        if self.timer and self.timer.isActive: # indicator is shown a second time - stop old kill-timer
+            self.timer.stop()
+        if action is True: # show working animation and start killtimer
+            self.workinganimation.start()
+            self.ui.working.show()
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(lambda: self._workingIndicatior(False, 0))
+            self.timer.start(duration)
+        else:
+            self.workinganimation.stop()
+            self.ui.working.hide()
 
     def buildProtocol(self,
                       addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
@@ -254,6 +272,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self)  # wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
 
     def _onAutoabgabe(self):
+        self._workingIndicatior(True, 500)
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  # minuten nicht sekunden
         if self.lc.running:
@@ -269,12 +288,14 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self._log("Abgabe-Intervall ist 0 - Auto-Abgabe deaktiviert")
 
     def _onLoadDefaults(self):
+        self._workingIndicatior(True, 500)
         self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
         os.system(copycommand)
 
     def _onSendFile(self, who):
         """send a file to all clients"""
+        self._workingIndicatior(True, 500)
         if not self.clients:
             self._log("no clients connected")
             return
@@ -290,6 +311,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             md5_hash = get_file_md5_hash(file_path)
 
             if who == "all":
+                self._workingIndicatior(True, 2000)
                 for i in self.clients:
                     self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
                     i.sendLine(
@@ -302,6 +324,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                     i.transport.write('\r\n')
                     i.setLineMode()  # When the transfer is finished, we go back to the line mode
             else:
+                self._workingIndicatior(True, 1000)
                 for i in self.clients:
                     if i.clientConnectionID == who:
                         self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
@@ -317,11 +340,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _onShowIP(self):
+        self._workingIndicatior(True, 500)
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-getmyip.sh")
         startcommand = "exec %s &" % (scriptfile)
         os.system(startcommand)
 
     def _onAbgabe(self, who):
+        self._workingIndicatior(True, 500)
         """get ABGABE folder"""
         if not self.clients:
             self._log("no clients connected")
@@ -329,33 +354,39 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
         self._log('Client Folder zB. ABGABE holen')
         if who == "all":
+            self._workingIndicatior(True, 2000)
             for i in self.clients:
                 # i.sendLine("FILETRANSFER SEND FOLDER %s none" %(folder)  )
                 filename = "Abgabe-%s" % (datetime.datetime.now().strftime("%H-%M-%S"))
                 i.sendLine("%s %s %s %s none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename))
         else:
+            self._workingIndicatior(True, 1000)
             for i in self.clients:
                 if i.clientConnectionID == who:
                     filename = "Abgabe-%s" % (datetime.datetime.now().strftime("%H-%M-%S"))
                     i.sendLine("%s %s %s %s none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename))
 
     def _onStartHotspot(self):
+        self._workingIndicatior(True, 500)
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")
         startcommand = "exec %s &" % (scriptfile)
         os.system(startcommand)
 
     def _onScreenshots(self, who):
+        self._workingIndicatior(True, 500)
         if not self.clients:
             self._log("no clients connected")
             return
 
         self._log("Updating screenshots")
         if who == "all":
+            self._workingIndicatior(True, 1000)
             for i in self.clients:
                 i.sendLine("%s %s %s %s.jpg none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT,
                                                      i.transport.client[
                                                          1]))  # the clients id is used as filename for the screenshot
         else:
+            self._workingIndicatior(True, 1000)
             for i in self.clients:
                 if i.clientConnectionID == who:
                     i.sendLine("%s %s %s %s.jpg none" % (
@@ -368,10 +399,12 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         invoke startexam.sh file on clients 
         
         """
+        self._workingIndicatior(True, 500)
         if not self.clients:
             self._log("no clients connected")
             return
 
+        self._workingIndicatior(True, 4000)
         self._log('Folder examconfig senden')
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
@@ -399,6 +432,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.setLineMode()
 
     def _onTestFirewall(self):
+        self._workingIndicatior(True, 1000)
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
             os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
 
@@ -441,6 +475,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self.ui.testfirewall.setText("Stoppe Firewall")
 
     def _onStartConfig(self):
+        self._workingIndicatior(True, 500)
         scriptfile = os.path.join(EXAMCONFIG_DIRECTORY, "startexam.sh")
         startcommand = "exec %s config &" % (scriptfile)
         os.system(startcommand)
@@ -459,6 +494,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _removeClient(self, clientID):
+        self._workingIndicatior(True, 500)
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
@@ -481,6 +517,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
     def _disableClientScreenshot(self, clientID):
+        self._workingIndicatior(True, 500)
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
