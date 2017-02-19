@@ -83,7 +83,7 @@ def prepare_screenshot(client, filename, *args):
     Prepares a screenshot to be sent
     :param client: clientprotocol
     :param filename: screenshot filename
-    :param args: (file_hash, client)
+    :param args: (file_hash)
     :return: filename
     """
     scriptfile = os.path.join(SCRIPTS_DIRECTORY, SHOT)
@@ -98,7 +98,7 @@ def prepare_folder(client, filename, *args):
     Prepares requested folder to be sent as zip file
     :param client: clientprotocol
     :param filename: folder archive filename
-    :param args: (file_hash, client)
+    :param args: (file_hash)
     :return: filename
     """
     if filename in client.factory.files:
@@ -113,7 +113,7 @@ def prepare_abgabe(client, filename, *args):
     Prepares Abgabe to be sent as zip archive
     :param client: clientprotocol
     :param filename: filename of abgabe archive
-    :param args: (file_hash, client)
+    :param args: (file_hash)
     :return: filename
     """
     client._triggerAutosave()
