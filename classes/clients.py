@@ -6,7 +6,7 @@ from config.enums import Command, DataType
 
 class ClientList:
     def __init__(self):
-        self.clients = dict()
+        self.clients = dict()   # type: dict
 
     def get_client(self, key):
         client = self.clients.get(key, None)  # type: MyServerProtocol
