@@ -157,7 +157,8 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
     cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
     cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/
+    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list
+    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
     
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    

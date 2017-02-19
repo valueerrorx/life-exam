@@ -146,7 +146,7 @@ sleep 0.5
     cp -a ${BACKUPDIR}calligra* ${HOME}.config/
     cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
-    
+    cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     
     
     
