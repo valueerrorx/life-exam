@@ -148,7 +148,7 @@ class MyServerProtocol(basic.LineReceiver):
             self.clientID = newID
             self.factory._log('New Connection from <b>%s </b>' % (newID))
             self.sendLine("%s %s %s %s.jpg none" % (
-            Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+                            Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
 
             return
 

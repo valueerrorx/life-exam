@@ -47,8 +47,8 @@ class ClientDialog(QtWidgets.QDialog):
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 os.system("sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
 
-                command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s' &" % (
-                    WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID)
+                command = "sudo -u %s -H twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s &" % (
+                    USER, WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID)
 
                 os.system(command)
             palettewarn = self.ui.studentid.palette()
