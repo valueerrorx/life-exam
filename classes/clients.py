@@ -50,4 +50,5 @@ class ClientList:
     def broadcast_line(self, line):
         for client in self.clients.itervalues():
             client.sendLine(line % client.clientConnectionID)
+            #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
 
