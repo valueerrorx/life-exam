@@ -229,6 +229,13 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>serverip</tabstop>
+  <tabstop>studentid</tabstop>
+  <tabstop>start</tabstop>
+  <tabstop>exit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
