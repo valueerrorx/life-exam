@@ -5,6 +5,9 @@
 import os
 import sys
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
