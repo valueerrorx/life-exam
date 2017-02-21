@@ -160,7 +160,6 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
     cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc #no systemshortcuts
-    cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf
     cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
@@ -172,8 +171,8 @@ sleep 0.5
 
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    
-    #sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
-    #sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
+    sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
+    sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
     sudo chown -R ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/
 fi
@@ -251,14 +250,13 @@ sleep 0.5
         fi
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT         #allow ESTABLISHED and RELATED (important for active server communication)
         sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
-        
         #sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  # castrated VPS 
 
         sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
         sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
 
         sleep 1
-        
+
         sudo iptables -P INPUT DROP          #drop the rest
         sudo iptables -P OUTPUT DROP
     }
