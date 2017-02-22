@@ -5,12 +5,16 @@
 import os
 import sys
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 import shutil
 import zipfile
 import time
+import datetime
 
 from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
@@ -77,15 +81,20 @@ class MyClientProtocol(basic.LineReceiver):
             self.setLineMode()
 
             if validate_file_md5_hash(file_path, self.file_data[4]):
-                print('File %s has been successfully transfered and saved' % (filename))
 
                 if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename, file_path)
                 elif self.file_data[2] == DataType.FILE:
-                    # FIXME try if destination already exists - save with timecode
-                    showDesktopMessage('File received!')
-                    shutil.move(file_path, ABGABE_DIRECTORY)
+
+                    if os.path.isfile(os.path.join(ABGABE_DIRECTORY, filename)):
+                        filename = "%s-%s" %(filename, datetime.datetime.now().strftime("%H-%M-%S")) #save with timecode
+                        targetpath = os.path.join(ABGABE_DIRECTORY, filename)
+                        shutil.move(file_path, targetpath)
+                    else:
+                        shutil.move(file_path, ABGABE_DIRECTORY)
+
+                    showDesktopMessage('File %s received!' %(filename))
                     fixFilePermissions(ABGABE_DIRECTORY)
             else:
                 os.unlink(file_path)
@@ -110,7 +119,7 @@ class MyClientProtocol(basic.LineReceiver):
                 try:
                     command = "pidof %s" % (app)
                     pid = subprocess.check_output(command, shell=True).rstrip()
-                    qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" % (app, pid, app)
+                    qdbuscommand = "sudo -u %s -H qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" % (USER, app, pid, app)
                     os.system(qdbuscommand)
                 except:
                     print "program not running"
@@ -129,8 +138,8 @@ class MyClientProtocol(basic.LineReceiver):
             print "ctrl+s sent to %s" % (application_id)
 
         # try the current active window too in order to catch other applications not in config.py
-        command = "xdotool getactivewindow && xdotool key ctrl+s &"
-        os.system(command)
+        #command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to whatch with konsole
+        #os.system(command)
 
     def _sendFile(self, filename, filetype):
         """send a file to the server"""
@@ -170,7 +179,10 @@ class MyClientProtocol(basic.LineReceiver):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')  # anhängen
             thisexamfile.write("\n")
-            thisexamfile.write(self.factory.options['host'])
+            thisexamfile.write(self.factory.options['host'])   # server IP
+            thisexamfile.write("\n")
+            thisexamfile.write("228.0.0.5")  # Multicast Address for Address Allocation for Private Internets
+
 
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
@@ -190,7 +202,17 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.files = None
         self.failcount = 0
         self.delay
-        self.factor = 1.8
+        #self.factor = 1.8
+
+    def clientConnectionFailed(self, connector, reason):
+        self.failcount += 1
+
+        if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+            command = "python client/student.py &"
+            os.system(command)
+            os._exit(1)
+
+        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     def buildProtocol(self, addr):
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol

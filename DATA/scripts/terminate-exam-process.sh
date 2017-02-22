@@ -18,7 +18,8 @@ then
         kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
         exit 1
     fi
-    echo "terminating old process"
-    PID=$(sudo cat ${PIDFILE} > /dev/null)
+
+    PID=$(sudo cat ${PIDFILE})
+    echo "terminating old process with pid $PID"
     sudo kill -9 $PID
 fi

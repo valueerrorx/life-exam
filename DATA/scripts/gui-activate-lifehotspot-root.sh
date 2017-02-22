@@ -122,13 +122,31 @@ sleep 1  #warte bis das interface up ist
 #-----------------------------------------------------#
 #  Zeige deine IP  (WLAN)
 #-----------------------------------------------------#
-IFACE=$(iwconfig 2>/dev/null |grep -o "^\w*")   #get wlan device name
-IP=$(ip -4 address show dev ${IFACE} |grep inet | awk '{print $2}'|cut -d '/' -f 1)
 
-if [ "$IP" = "" ]; then
-    sleep 4  #warte länger bis das interface up ist
+COUNTER=0
+
+findIface(){
+    IFACE=$(iwconfig 2>/dev/null |grep -o "^\w*")   #get wlan device name
     IP=$(ip -4 address show dev ${IFACE} |grep inet | awk '{print $2}'|cut -d '/' -f 1)
-fi
+    if [ "$IP" = "" ]; then
+        COUNTER=$(( $COUNTER + 1 ))
+        if [[($COUNTER -gt 3    )]];then
+            kdialog  --msgbox "Keine Wlan IP gefunden. AP Aktivierung schlug fehl!" --title 'LIFE' --caption "LIFE" > /dev/null
+            exit 0
+        else
+            sleep 4   #wait for ap config to take place
+            findIface
+        fi
+    
+    fi
+}
+findIface
+
+
+
+# if ip was found add route for multicast (exam-server) and show ip
+
+sudo route add -net 228.0.0.5 netmask 255.255.255.255 ${IFACE}
 kdialog  --msgbox "Deine wlan IP Adresse lautet:\n\n$IP" --title 'LIFE' --caption "LIFE" > /dev/null
             
 

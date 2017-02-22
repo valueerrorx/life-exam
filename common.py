@@ -114,15 +114,13 @@ def deleteFolderContent(folder):
 
 
 def prepareDirectories():
-    if not os.path.exists(
-            WORK_DIRECTORY):  # some scripts just need to be on a specific location otherwise plasma configfiles will not work
+    if not os.path.exists(WORK_DIRECTORY):  # scripts just need to be on a specific location for plasma configfiles
         os.makedirs(WORK_DIRECTORY)
         os.makedirs(CLIENTFILES_DIRECTORY)
         os.makedirs(SERVERFILES_DIRECTORY)
     else:  # cleanup
         deleteFolderContent(CLIENTFILES_DIRECTORY)
-        deleteFolderContent(
-            SERVERFILES_DIRECTORY)  # this deletes all transferred files from a previous session in the server dir .life/Server
+        deleteFolderContent(SERVERFILES_DIRECTORY)  # deletes all transferred files from previous session
 
     os.makedirs(CLIENTSCREENSHOT_DIRECTORY)
     os.makedirs(CLIENTUNZIP_DIRECTORY)
@@ -132,16 +130,20 @@ def prepareDirectories():
     os.makedirs(SERVERUNZIP_DIRECTORY)
     os.makedirs(SERVERZIP_DIRECTORY)
 
+    if not os.path.exists(ABGABE_DIRECTORY):
+        os.makedirs(ABGABE_DIRECTORY)
+
     copycommand = "cp -r ./DATA/scripts %s" % (WORK_DIRECTORY)
     os.system(copycommand)
 
     if not os.path.exists(
-            EXAMCONFIG_DIRECTORY) or PRESERVE_WORKDIR:  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
+            EXAMCONFIG_DIRECTORY) or not PRESERVE_WORKDIR:  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
         print "copying default examconfig to workdirectory"
         copycommand = "cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
         os.system(copycommand)
 
     fixFilePermissions(WORK_DIRECTORY)
+    fixFilePermissions(ABGABE_DIRECTORY)
 
 
 def fixFilePermissions(folder):

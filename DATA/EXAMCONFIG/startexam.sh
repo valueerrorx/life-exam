@@ -36,12 +36,21 @@ if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
 fi
+if [ -f "$EXAMLOCKFILE" ];then
+    kdialog  --yesno "Already running exam! \nDo you want to reload the Exam-Desktop?"  --title 'Starting Exam' --caption "Starting Exam"
+    # this way we could restart the desktop in exam mode just in case plasma or kwin did not start properly
+    if [ ! "$?" = 0 ]; then
+        exit  0   #cancel
+    else
+    sudo -u ${USER} -H kquitapp5 plasmashell & sleep 2
+    exec sudo -u ${USER} -H kstart5 plasmashell &
+    exec sudo -u ${USER} -H kwin --replace &
+    exit 0
+    fi
+
+fi
 if [ -f "/etc/kde5rc" ];then
     kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
-    exit 1
-fi
-if [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Already running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
 fi
 if [ ! -d "$BACKUPDIR" ];then
@@ -128,6 +137,7 @@ sleep 0.5
     cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}   # dolphin / filepicker places panel config
     cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
     cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
+    cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
     
     sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership
 
@@ -150,14 +160,15 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
     cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc #no systemshortcuts
-    cp -a ${LOCKDOWNDIR}Office.conf-EXAM ${HOME}.config/Kingsoft/Office.conf
     cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
     cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
     cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    
-    
+    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list
+    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
+
 if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]    # LOCK DOWN
 then    
     sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
@@ -182,10 +193,11 @@ qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
 sleep 0.5
 
-    mkdir $ABGABE > /dev/null
+    mkdir $ABGABE > /dev/null 2>&1
     sudo chown -R ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
     sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
-    
+    sudo touch $ABGABE   # update timestamp on live usb devices
+
     if [[  ( $MODE = "permanent" ) ]]
     then 
         echo "#!/bin/sh -e" > /etc/rc.local
@@ -216,15 +228,35 @@ sleep 0.5
     setIPtables(){
         sudo iptables -I INPUT 1 -i lo -j ACCEPT        #allow loopback 
         sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT     #allow DNS
+
         if [ -f $IPSFILE ]; then
             for IP in `cat $IPSFILE`; do        #allow input and output for ALLOWEDIP
                 echo "exception noticed $IP"
-                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
+                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443,5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443,5000 -j ACCEPT
+
+                sudo iptables -A INPUT  -p tcp -s $IP -m multiport --dports 80,443,5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s $IP -m multiport --dports 80,443,5000 -j ACCEPT
+                
+                
+                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --sports 80,443,5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --sports 80,443,5000 -j ACCEPT
+
+                sudo iptables -A INPUT  -p tcp -s $IP -m multiport --sports 80,443,5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s $IP -m multiport --sports 80,443,5000 -j ACCEPT
+                
+                
             done
         fi
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT         #allow ESTABLISHED and RELATED (important for active server communication)
         sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+        #sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  # castrated VPS 
+
+        sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+        sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+
+        sleep 1
+
         sudo iptables -P INPUT DROP          #drop the rest
         sudo iptables -P OUTPUT DROP
     }
@@ -245,8 +277,9 @@ sleep 0.5
     if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]
     then  
         stopIPtables
-        sleep 1
+        sleep 2
         setIPtables
+
     fi
     if [[  ( $MODE = "permanent" ) ]]
     then 
@@ -275,7 +308,7 @@ qdbus $progress setLabelText "Starte automatische Screenshots...."
         cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
         sudo chown -R ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
         sudo chmod -R 755 ${HOME}.config/autostart-scripts
-        nohup ${HOME}.config/autostart-scripts/auto-screenshot.sh  >/dev/null 2>&1 &
+        nohup sudo -u ${USER} -H ${HOME}.config/autostart-scripts/auto-screenshot.sh  >/dev/null 2>&1 &
     fi
 
 

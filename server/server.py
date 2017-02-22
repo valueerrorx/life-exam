@@ -3,6 +3,10 @@
 # TEACHER - SERVER #
 import os
 import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
@@ -79,36 +83,36 @@ class MyServerProtocol(basic.LineReceiver):
             self.setLineMode()
 
             if validate_file_md5_hash(file_path, self.file_data[3]):  # everything ok..  file received
-                self.factory._log('File %s has been successfully transfered' % (filename))
+                self.factory._log('File %s has been successfully transferred' % (filename))
 
                 if self.file_data[1] == DataType.SCREENSHOT:  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transfered file 
+                    fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self._createListItem(screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
                 elif self.file_data[1] == DataType.FOLDER:
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
-                                                                                       :-4])  # extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                                                                                       :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transfered file
+                    fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
                 elif self.file_data[1] == DataType.ABGABE:
                     extract_dir = os.path.join(ABGABE_DIRECTORY, self.clientName, filename[
-                                                                                  :-4])  # extract to unzipDIR / clientID / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                                                                                  :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
                     os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(ABGABE_DIRECTORY)  # fix filepermission of transfered file
+                    fixFilePermissions(ABGABE_DIRECTORY)  # fix filepermission of transferred file
 
             else:  # wrong file hash
                 os.unlink(file_path)
-                self.transport.write('File was successfully transfered but not saved, due to invalid MD5 hash\n')
+                self.transport.write('File was successfully transferred but not saved, due to invalid MD5 hash\n')
                 self.transport.write(Command.ENDMSG + '\n')
                 self.factory._log(
-                    'File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
+                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
 
         else:
             self.file_handler.write(data)
@@ -119,16 +123,16 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return
-            # trigger=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientID=self.file_data[4] ))
+            # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
 
         if line.startswith(Command.AUTH):
-            newID = self.file_data[1]  # AUTH is sent immediately after a connection is made and transfers the clientID
-            self._checkClientID(newID)  # check if this custom client id (entered by the student) is already taken
+            newID = self.file_data[1]  # AUTH is sent immediately after a connection is made and transfers the clientName
+            self._checkclientName(newID)  # check if this custom client id (entered by the student) is already taken
         elif line.startswith(Command.FILETRANSFER):
-            self.factory._log('Preparing File Transfer from Client...')
+            self.factory._log('Incoming File Transfer from Client <b>%s </b>' %(self.clientName ))
             self.setRawMode()  # this is a file - set to raw mode
 
-    def _checkClientID(self, newID):
+    def _checkclientName(self, newID):
         """searches for the newID in factory.clients and rejects the connection if found"""
 
         if newID in self.factory.client_list.clients.keys():
@@ -141,8 +145,10 @@ class MyServerProtocol(basic.LineReceiver):
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientName = newID
+            self.factory._log('New Connection from <b>%s </b>' % (newID))
             self.sendLine("%s %s %s %s.jpg none" % (
-            Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+                            Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+
             return
 
     def _createListItem(self, screenshot_file_path):
@@ -162,10 +168,11 @@ class MyServerProtocol(basic.LineReceiver):
             existingItem.picture.setPixmap(Pixmap)
             existingItem.info.setText('%s \n%s' % (self.clientName, self.clientConnectionID))
             existingItem.pID = self.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
+            existingItem.disabled = False
         else:  # create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
             item = QtWidgets.QListWidgetItem()
             item.setSizeHint(QtCore.QSize(140, 140));
-            item.id = self.clientName  # store clientID as itemID for later use (delete event)
+            item.id = self.clientName  # store clientName as itemID for later use (delete event)
             item.pID = self.clientConnectionID
             item.disabled = False
 
@@ -184,22 +191,26 @@ class MyServerProtocol(basic.LineReceiver):
             widget = QtWidgets.QWidget()
             widget.setLayout(grid)
             widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-            widget.customContextMenuRequested.connect(lambda: self.on_context_menu(item.pID))
+            widget.customContextMenuRequested.connect(lambda: self.on_context_menu(item.pID, item.disabled))
 
             self.factory.ui.listWidget.addItem(item)  # add the listitem to the listwidget
             self.factory.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
-    def on_context_menu(self, clientConnectionID):
+    def on_context_menu(self, clientConnectionID, isDisabled):
         menu = QtWidgets.QMenu()
 
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self.factory._onAbgabe(clientConnectionID))
-        action_2 = QtWidgets.QAction("Screenshot updaten", menu,
-                                     triggered=lambda: self.factory._onScreenshots(clientConnectionID))
-        action_3 = QtWidgets.QAction("Verbindung beenden", menu,
-                                     triggered=lambda: self.factory._removeClient(clientConnectionID))
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self.factory._onScreenshots(clientConnectionID))
+        action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self.factory._onSendFile(clientConnectionID))
+        action_4 = QtWidgets.QAction("Verbindung beenden", menu, triggered=lambda: self.factory._removeClient(clientConnectionID))
 
-        menu.addActions([action_1, action_2, action_3])
-        handled = True
+        menu.addActions([action_1, action_2, action_3, action_4])
+
+        if isDisabled:
+            action_1.setEnabled(False)
+            action_2.setEnabled(False)
+            action_3.setEnabled(False)
+
         cursor = QCursor()
         menu.exec_(cursor.pos())
 
@@ -217,7 +228,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(
-            lambda: self._onSendfile())  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
+            lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
@@ -229,47 +240,69 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
 
-        checkFirewall(self)  # deactivates all iptable rules if any
-        self.lc = LoopingCall(self._onAbgabe)  # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
+        self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
+        self.workinganimation.setCacheMode(QMovie.CacheAll)
+        self.workinganimation.setSpeed(100)
+        self.ui.working.setMovie(self.workinganimation)
 
+        checkFirewall(self)  # deactivates all iptable rules if any
+        self.lc = LoopingCall(lambda: self._onAbgabe("all"))  # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
+        self.timer = False
         self.ui.show()
 
     def closeEvent(self, evnt):
         self.ui.showMinimized()
         evnt.ignore()
 
-    def buildProtocol(self, addr):
-        # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        return MyServerProtocol(self)
-        # wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
+    def _workingIndicatior(self,action, duration):
+        if self.timer and self.timer.isActive: # indicator is shown a second time - stop old kill-timer
+            self.timer.stop()
+        if action is True: # show working animation and start killtimer
+            self.workinganimation.start()
+            self.ui.working.show()
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(lambda: self._workingIndicatior(False, 0))
+            self.timer.start(duration)
+        else:
+            self.workinganimation.stop()
+            self.ui.working.hide()
 
+    def buildProtocol(self,
+                      addr):  # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
+        return MyServerProtocol(
+            self)  # wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
 
     def _onAutoabgabe(self):
+        self._workingIndicatior(True, 500)
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  # minuten nicht sekunden
         if self.lc.running:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
             self.lc.stop()
+            self._log("<b>Auto-Submission deactivated </b>")
+            return
         if intervall is not 0:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
-            self._log("Auto-Abgabe im Intervall %s aktiviert" % (str(intervall)))
+            self._log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
             self.lc.start(minute_intervall)
         else:
-            self._log("Abgabe-Intervall ist 0 - Auto-Abgabe deaktiviert")
+            self._log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
 
     def _onLoadDefaults(self):
-        self._log('Standard Konfiguration für EXAM Desktop wurde wiederhergestellt.')
+        self._workingIndicatior(True, 500)
+        self._log('Default Configuration for EXAM Desktop restored.')
         copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
         os.system(copycommand)
 
-    def _onSendfile(self):
+    def _onSendFile(self, who):
         """send a file to all clients"""
+        self._workingIndicatior(True, 500)
         if not self.client_list.clients:
             self._log("no clients connected")
             return
         # show filepicker
         filedialog = QtWidgets.QFileDialog()
-        filedialog.setDirectory(SERVERFILES_DIRECTORY)  # set default directory
+        filedialog.setDirectory(ABGABE_DIRECTORY)  # set default directory
         file_path = filedialog.getOpenFileName()  # get filename
         file_path = file_path[0]
 
@@ -278,36 +311,60 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
 
-            for i in self.client_list.clients.values():
-                self._log('Sending file: %s (%d KB)' % (filename, file_size / 1024))
-                i.sendLine(
-                    '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
-                                          md5_hash))  # trigger clienttask type filename filehash
-                i.setRawMode()
-                for bytes in read_bytes_from_file(file_path):
-                    i.transport.write(bytes)
+            if who == "all":
+                self._workingIndicatior(True, 2000)
+                for i in self.client_list.clients:
+                    i.sendLine(
+                        '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
+                                              md5_hash))  # trigger clienttask type filename filehash
+                    i.setRawMode()
+                    for bytes in read_bytes_from_file(file_path):
+                        i.transport.write(bytes)
 
-                i.transport.write('\r\n')
-                i.setLineMode()  # When the transfer is finished, we go back to the line mode 
+                    i.transport.write('\r\n')
+                    i.setLineMode()  # When the transfer is finished, we go back to the line mode
+            else:
+                self._workingIndicatior(True, 1000)
+                for i in self.client_list.clients:
+                    if i.clientConnectionID == who:
+                        i.sendLine(
+                            '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
+                                                  md5_hash))  # trigger clienttask type filename filehash
+                        i.setRawMode()
+                        for bytes in read_bytes_from_file(file_path):
+                            i.transport.write(bytes)
+
+                        i.transport.write('\r\n')
+                        i.setLineMode()  # When the transfer is finished, we go back to the line mode
+                        who = i.clientName # this is just to make the log more verbose
+
+            self._log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+
 
     def _onShowIP(self):
+        self._workingIndicatior(True, 500)
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-getmyip.sh")
         startcommand = "exec %s &" % (scriptfile)
         os.system(startcommand)
 
     def _onAbgabe(self, who):
+        self._workingIndicatior(True, 500)
         """get ABGABE folder"""
-        self._log("Trying to get Abgabe")
+        self._log('<b>Requesting Client Folder ABGABE </b>')
+        time = 2000 if who is 'all' else 1000
+        self._workingIndicatior(True, time)
         if not self.client_list.request_abgabe(who):
             self._log("no clients connected")
 
     def _onStartHotspot(self):
+        self._workingIndicatior(True, 500)
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")
         startcommand = "exec %s &" % (scriptfile)
         os.system(startcommand)
 
     def _onScreenshots(self, who):
-        self._log("Trying to update screenshots")
+        self._log("<b>Requesting Screenshot Update </b>")
+        self._workingIndicatior(True, 1000)
         if not self.client_list.request_screenshots(who):
             self._log("no clients connected")
 
@@ -318,11 +375,13 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
         invoke startexam.sh file on clients 
         
         """
+        self._workingIndicatior(True, 500)
         if not self.client_list.clients:
             self._log("no clients connected")
             return
 
-        self._log('Folder examconfig senden')
+        self._workingIndicatior(True, 4000)
+        self._log('<b>Initializing Exam Mode On All Clients </b>')
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
         output_filename = os.path.join(SERVERZIP_DIRECTORY, filename)
@@ -335,11 +394,11 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
                 self.log('filename not found in directory')
                 return
 
-            self._log('Sending file: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
+        self._log('Sending Configuration: %s (%d KB)' % (filename, self.files[filename][1] / 1024))
 
+        for i in self.clients:
             i.transport.write('%s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename,
-                                                    self.files[filename][
-                                                        2]))  # trigger clienttask type filename filehash
+                                                    self.files[filename][2]))
             i.setRawMode()
             print self.files[filename][0]
             for bytes in read_bytes_from_file(self.files[filename][0]):
@@ -349,6 +408,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             i.setLineMode()
 
     def _onTestFirewall(self):
+        self._workingIndicatior(True, 1000)
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
             os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
 
@@ -391,6 +451,7 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
             self.ui.testfirewall.setText("Stoppe Firewall")
 
     def _onStartConfig(self):
+        self._workingIndicatior(True, 500)
         scriptfile = os.path.join(EXAMCONFIG_DIRECTORY, "startexam.sh")
         startcommand = "exec %s config &" % (scriptfile)
         os.system(startcommand)
@@ -408,33 +469,35 @@ class MyServerFactory(QtWidgets.QDialog, protocol.ServerFactory):
 
 
 
-    def _removeClient(self, clientID):
+    def _removeClient(self, clientName):
+        self._workingIndicatior(True, 500)
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
 
         for item in items:
-            if item.pID == clientID:
+            if item.pID == clientName:
                 print "item deleted"
                 sip.delete(
                     item)  # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
 
-        client = self.client_list.get_client(clientID)
+        client = self.client_list.get_client(clientName)
         client.refused = True
         client.sendLine("%s" % Command.REMOVED)
         client.transport.loseConnection()
         client.factory._log('Client Connection has been removed.')
 
-    def _disableClientScreenshot(self, clientID):
+    def _disableClientScreenshot(self, clientName):
+        self._workingIndicatior(True, 500)
         items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
 
         for item in items:
-            if clientID == item.id:
+            if clientName == item.id:
                 pixmap = QPixmap("pixmaps/nouserscreenshot.png")
                 item.picture.setPixmap(pixmap)
-                item.info.setText('%s \ndisconnected' % (clientID))
+                item.info.setText('%s \ndisconnected' % (clientName))
                 item.disabled = True
 
 
