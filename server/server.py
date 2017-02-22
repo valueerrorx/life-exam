@@ -430,11 +430,8 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onRemoveClient(self, client_name):
         self._workingIndicator(True, 500)
-        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
-        for index in xrange(self.ui.listWidget.count()):
-            items.append(self.ui.listWidget.item(index))
 
-        for item in items:
+        for item in self.get_list_widget_items():
             if item.pID == client_name:
                 print "item deleted"
                 sip.delete(
@@ -444,15 +441,12 @@ class ServerUI(QtWidgets.QDialog):
         client.refused = True
         client.sendLine("%s" % Command.REMOVED)
         client.transport.loseConnection()
-        self.factory.log('Client Connection has been removed.')
+        self.log('Client Connection has been removed.')
 
     def _disableClientScreenshot(self, clientName):
         self._workingIndicator(True, 500)
-        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
-        for index in xrange(self.window.ui.listWidget.count()):
-            items.append(self.window.ui.listWidget.item(index))
 
-        for item in items:
+        for item in self.get_list_widget_items():
             if clientName == item.id:
                 pixmap = QPixmap("pixmaps/nouserscreenshot.png")
                 item.picture.setPixmap(pixmap)
@@ -473,12 +467,8 @@ class ServerUI(QtWidgets.QDialog):
 
     def createListItem(self, client, screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
-        items = []  # create a list of items out of the listwidget items (the widget does not provide an iterable list
-        for index in xrange(self.ui.listWidget.count()):
-            items.append(self.ui.listWidget.item(index))
-
         existingItem = False
-        for item in items:
+        for item in self.get_list_widget_items():
             if item.id == client.clientName:
                 print "exists"
                 existingItem = item  # there should be only one matching item
@@ -519,7 +509,7 @@ class ServerUI(QtWidgets.QDialog):
     def _on_context_menu(self, client_connection_id, is_disabled):
         menu = QtWidgets.QMenu()
 
-        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self.factory._onAbgabe(client_connection_id))
+        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self._onAbgabe(client_connection_id))
         action_2 = QtWidgets.QAction("Screenshot updaten", menu,
                                      triggered=lambda: self._onScreenshots(client_connection_id))
         action_3 = QtWidgets.QAction("Datei senden", menu,
@@ -540,9 +530,13 @@ class ServerUI(QtWidgets.QDialog):
         return
 
     def get_list_widget_items(self):
+        """
+        Creates an iterable list of all widget elements aka student screenshots
+        :return: list of widget items
+        """
         items = []
-        for index in xrange(self.window.ui.listWidget.count()):
-            items.append(self.window.ui.listWidget.item(index))
+        for index in xrange(self.ui.listWidget.count()):
+            items.append(self.ui.listWidget.item(index))
         return items
 
 if __name__ == '__main__':
