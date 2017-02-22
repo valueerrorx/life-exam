@@ -10,7 +10,7 @@ import shutil
 from config.config import *
 
 
-def checkFirewall(self):
+def checkFirewall(firewall_ip_list):
     result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
     print result
     if result != "0":
@@ -22,9 +22,8 @@ def checkFirewall(self):
     ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
     lines = [line.rstrip('\n') for line in open(ipstore)]
 
-    ipfields = [self.ui.firewall1, self.ui.firewall2, self.ui.firewall3, self.ui.firewall4]
     count = 0
-    for i in ipfields:
+    for i in firewall_ip_list:
         try:
             ip = i.setText(lines[count])
         except IndexError:
