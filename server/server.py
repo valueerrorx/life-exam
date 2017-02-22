@@ -154,8 +154,6 @@ class MyServerProtocol(basic.LineReceiver):
             return
 
 
-
-
 class MyServerFactory(protocol.ServerFactory):
 
     def __init__(self, files_path):
