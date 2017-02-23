@@ -202,9 +202,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))  # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
-        self.ui.sendfile.clicked.connect(
-            lambda: self._onSendFile(
-                "all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
+        self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
@@ -253,7 +251,6 @@ class ServerUI(QtWidgets.QDialog):
 
         if file_path:
             self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
-
             success, filename, file_size, who = client_list.send_file(file_path, who)
 
             if success:
