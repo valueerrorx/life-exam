@@ -26,6 +26,8 @@ from config.config import *
 from classes.clients import *
 from common import *
 from config.enums import *
+# from classes.system_commander import *
+import classes.system_commander as system_commander
 
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
@@ -274,9 +276,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onShowIP(self):
         self._workingIndicator(True, 500)
-        scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-getmyip.sh")
-        startcommand = "exec %s &" % (scriptfile)
-        os.system(startcommand)
+        system_commander.show_ip()
 
     def _onAbgabe(self, who):
         self._workingIndicator(True, 500)
@@ -330,16 +330,12 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onStartConfig(self):
         self._workingIndicator(True, 500)
-        scriptfile = os.path.join(EXAMCONFIG_DIRECTORY, "startexam.sh")
-        startcommand = "exec %s config &" % scriptfile
-        os.system(startcommand)
+        system_commander.start_exam()
         self.ui.close()
 
     def _onStartHotspot(self):
         self._workingIndicator(True, 500)
-        scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")
-        startcommand = "exec %s &" % (scriptfile)
-        os.system(startcommand)
+        system_commander.start_hotspot()
 
     def _onTestFirewall(self):
         self._workingIndicator(True, 1000)
@@ -387,8 +383,7 @@ class ServerUI(QtWidgets.QDialog):
     def _onLoadDefaults(self):
         self._workingIndicator(True, 500)
         self.log('Default Configuration for EXAM Desktop restored.')
-        copycommand = "sudo cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
-        os.system(copycommand)
+        system_commander.copy('./DATA/EXAMCONFIG', WORK_DIRECTORY)
 
     def _onAutoabgabe(self):
         self._workingIndicator(True, 500)
