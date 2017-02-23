@@ -89,3 +89,11 @@ class ClientList:
 
         client.transport.write('\r\n')
 
+    def kick_client(self, client_id):
+        client = self.get_client(client_id)
+        if client:
+            client.refused = True
+            client.sendLine("%s" % Command.REMOVED)
+            client.transport.loseConnection()
+            return client.clientName
+        return False

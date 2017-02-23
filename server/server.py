@@ -66,7 +66,7 @@ class MyServerProtocol(basic.LineReceiver):
             self.transport.getPeer().host, len(self.factory.client_list.clients)))
 
         if not self.refused:
-            self.factory.window._disableClientScreenshot(self.clientName)
+            self.factory.window._disableClientScreenshot(self)
 
     # twisted
     def rawDataReceived(self, data):
@@ -401,30 +401,23 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
 
-    def _onRemoveClient(self, client_name):
+    def _onRemoveClient(self, client_id):
         self._workingIndicator(True, 500)
+        client_name = self.factory.client_list.kick_client(client_id)
+        if client_name:
+            sip.delete(self.get_list_widget_by_client_id(client_id))
+            # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
+        self.log('Connection to client <b> %s </b> has been <b>removed</b>.' % client_name)
 
-        for item in self.get_list_widget_items():
-            if item.pID == client_name:
-                print "item deleted"
-                sip.delete(
-                    item)  # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
-
-        client = self.factory.client_list.get_client(client_name)
-        client.refused = True
-        client.sendLine("%s" % Command.REMOVED)
-        client.transport.loseConnection()
-        self.log('Client Connection has been removed.')
-
-    def _disableClientScreenshot(self, clientName):
+    def _disableClientScreenshot(self, client):
         self._workingIndicator(True, 500)
-
-        for item in self.get_list_widget_items():
-            if clientName == item.id:
-                pixmap = QPixmap("pixmaps/nouserscreenshot.png")
-                item.picture.setPixmap(pixmap)
-                item.info.setText('%s \ndisconnected' % (clientName))
-                item.disabled = True
+        client_name = client.clientName
+        client_id = client.clientConnectionID
+        item = self.get_list_widget_by_client_id(client_id)
+        pixmap = QPixmap("pixmaps/nouserscreenshot.png")
+        item.picture.setPixmap(pixmap)
+        item.info.setText('%s \ndisconnected' % client_name)
+        item.disabled = True
 
     def log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
@@ -511,6 +504,12 @@ class ServerUI(QtWidgets.QDialog):
         for index in xrange(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
         return items
+
+    def get_list_widget_by_client_id(self, client_id):
+        for widget in self.get_list_widget_items():
+            if client_id is widget.pID:
+                return widget
+        return False
 
 if __name__ == '__main__':
     prepareDirectories()  # cleans everything and copies some scripts
