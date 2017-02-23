@@ -1,5 +1,8 @@
 import datetime
+import ntpath
+import os
 
+from common import get_file_md5_hash, read_bytes_from_file
 from server import MyServerProtocol
 from config.enums import Command, DataType
 
@@ -47,8 +50,42 @@ class ClientList:
 
         return True
 
+    def send_file(self, file_path, who):
+        if file_path:
+            filename = ntpath.basename(file_path)  # get filename without path
+            file_size = os.path.getsize(file_path)
+            md5_hash = get_file_md5_hash(file_path)
+
+            if who is 'all':
+                self.broadcast_file(file_path, filename, md5_hash)
+            else:
+                client = self.get_client(who)
+                client.sendLine('%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+                client.setRawMode()
+                who = client.clientName
+                self.send_bytes(client, file_path)
+                client.setLineMode()
+
+            return [True, filename, file_size, who]
+
+        return [False]
+
     def broadcast_line(self, line):
         for client in self.clients.itervalues():
             client.sendLine(line % client.clientConnectionID)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
+
+    def broadcast_file(self, file_path, filename, md5_hash):
+        for client in self.clients.values():
+            client.sendLine('%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+            client.setRawMode()
+            self.send_bytes(client, file_path)
+            client.setLineMode()
+
+
+    def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
+        for bytes in read_bytes_from_file(file_path):
+            client.transport.write(bytes)
+
+        client.transport.write('\r\n')
 

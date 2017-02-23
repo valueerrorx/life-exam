@@ -248,43 +248,26 @@ class ServerUI(QtWidgets.QDialog):
         if not client_list.clients:
             self.log("no clients connected")
             return
-        # show filepicker
-        filedialog = QtWidgets.QFileDialog()
-        filedialog.setDirectory(ABGABE_DIRECTORY)  # set default directory
-        file_path = filedialog.getOpenFileName()  # get filename
-        file_path = file_path[0]
+
+        file_path = self._showFilePicker(ABGABE_DIRECTORY)
 
         if file_path:
-            filename = ntpath.basename(file_path)  # get filename without path
-            file_size = os.path.getsize(file_path)
-            md5_hash = get_file_md5_hash(file_path)
+            self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
 
-            if who == "all":
-                self._workingIndicator(True, 2000)
-                for i in client_list.clients:
-                    i.sendLine(
-                        '%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
-                                            md5_hash))  # trigger clienttask type filename filehash
-                    i.setRawMode()
-                    for bytes in read_bytes_from_file(file_path):
-                        i.transport.write(bytes)
+            success, filename, file_size, who = client_list.send_file(file_path, who)
 
-                    i.transport.write('\r\n')
-                    i.setLineMode()  # When the transfer is finished, we go back to the line mode
+            if success:
+                self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
             else:
-                self._workingIndicator(True, 1000)
-                client = client_list.get_client(who)
-                client.sendLine('%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename),
-                                                md5_hash))  # trigger clienttask type filename filehash
-                client.setRawMode()
-                for bytes in read_bytes_from_file(file_path):
-                    client.transport.write(bytes)
+                self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
 
-                client.transport.write('\r\n')
-                client.setLineMode()  # When the transfer is finished, we go back to the line mode
-                who = client.clientName  # this is just to make the log more verbose
-
-            self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+    def _showFilePicker(self, directory):
+        # show filepicker
+        filedialog = QtWidgets.QFileDialog()
+        filedialog.setDirectory(directory)  # set default directory
+        file_path = filedialog.getOpenFileName()  # get filename
+        file_path = file_path[0]
+        return file_path
 
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
