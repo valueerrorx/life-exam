@@ -68,7 +68,7 @@ class ClientList:
 
             return [True, filename, file_size, who]
 
-        return [False]
+        return [False, None, None, who]
 
     def broadcast_line(self, line):
         for client in self.clients.itervalues():
