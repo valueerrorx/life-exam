@@ -442,7 +442,7 @@ class ServerUI(QtWidgets.QDialog):
         if existingItem:  # just update screenshot
             Pixmap = QPixmap(screenshot_file_path)
             existingItem.picture.setPixmap(Pixmap)
-            existingItem.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))
+            # existingItem.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID)) TODO: NOT NEEDED ? stuff already there
             existingItem.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
             existingItem.disabled = False
         else:  # create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item

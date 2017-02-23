@@ -84,8 +84,8 @@ class ClientList:
 
 
     def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
-        for bytes in read_bytes_from_file(file_path):
-            client.transport.write(bytes)
+        for b in read_bytes_from_file(file_path):
+            client.transport.write(b)
 
         client.transport.write('\r\n')
 
