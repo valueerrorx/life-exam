@@ -341,7 +341,7 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 1000)
         ipfields = self.get_firewall_adress_list()
         if self.ui.testfirewall.text() == "&Stoppe Firewall":
-            os.system("kdialog --passivepopup 'Die Firewall wird gestoppt!' 3 2> /dev/null & ")
+            system_commander.dialog_popup('Die Firewall wird gestoppt!')
 
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
             startcommand = "exec %s stop &" % (scriptfile)
@@ -373,7 +373,7 @@ class ServerUI(QtWidgets.QDialog):
                         # palettewarn.setColor(QPalette.Active, QPalette.Base, QColor(200, 80, 80))
                         i.setPalette(palettewarn)
 
-            os.system("kdialog --passivepopup 'Die Firewall wird aktiviert!' 3 2> /dev/null & ")
+            system_commander.dialog_popup("Die Firewall wird aktiviert!")
 
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
             startcommand = "exec %s start &" % (scriptfile)

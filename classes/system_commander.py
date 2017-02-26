@@ -24,3 +24,8 @@ def start_hotspot():
 def copy(source, target):
     copycommand = "sudo cp -r %s %s" % (source, target)
     os.system(copycommand)
+
+
+def dialog_popup(msg):
+    command = "kdialog --passivepopup '%s' 3 2> /dev/null & " % msg
+    os.system(command)
