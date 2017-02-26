@@ -92,7 +92,7 @@ class MyServerProtocol(basic.LineReceiver):
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
-                    self.factory.window.createListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+                    self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
                 elif self.file_data[1] == DataType.FOLDER:
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
@@ -389,7 +389,7 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  # minuten nicht sekunden
-        if self.lc.running:
+        if self.factory.lc.running:
             self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
             self.factory.lc.stop()
             self.log("<b>Auto-Submission deactivated </b>")
@@ -431,57 +431,56 @@ class ServerUI(QtWidgets.QDialog):
     def get_firewall_adress_list(self):
         return [self.ui.firewall1, self.ui.firewall2, self.ui.firewall3, self.ui.firewall4]
 
-    def createListItem(self, client, screenshot_file_path):
+    def createOrUpdateListItem(self, client, screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
-        existingItem = False
-        for item in self.get_list_widget_items():
-            if item.id == client.clientName:
-                print "exists"
-                existingItem = item  # there should be only one matching item
+        existing_item = self.get_list_widget_by_client_name(client.clientName)
 
-        if existingItem:  # just update screenshot
-            Pixmap = QPixmap(screenshot_file_path)
-            existingItem.picture.setPixmap(Pixmap)
-            # existingItem.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID)) TODO: NOT NEEDED ? stuff already there
-            existingItem.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
-            existingItem.disabled = False
-        else:  # create item - create labels - create gridlayout - addlabels to gridlayout - create widget - set widget to item
-            item = QtWidgets.QListWidgetItem()
-            item.setSizeHint(QtCore.QSize(140, 140));
-            item.id = client.clientName  # store clientName as itemID for later use (delete event)
-            item.pID = client.clientConnectionID
-            item.disabled = False
+        if existing_item:  # just update screenshot
+            self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
+        else:
+            self._addNewListItem(client, screenshot_file_path)
 
-            Pixmap = QPixmap(screenshot_file_path)
-            item.picture = QtWidgets.QLabel()
-            item.picture.setPixmap(Pixmap)
-            item.picture.setAlignment(QtCore.Qt.AlignCenter)
-            item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
-            item.info.setAlignment(QtCore.Qt.AlignCenter)
+    def _addNewListItem(self, client, screenshot_file_path):
+        item = QtWidgets.QListWidgetItem()
+        item.setSizeHint(QtCore.QSize(140, 140));
+        item.id = client.clientName  # store clientName as itemID for later use (delete event)
+        item.pID = client.clientConnectionID
+        item.disabled = False
 
-            grid = QtWidgets.QGridLayout()
-            grid.setSpacing(4)
-            grid.addWidget(item.picture, 1, 0)
-            grid.addWidget(item.info, 2, 0)
+        pixmap = QPixmap(screenshot_file_path)
+        item.picture = QtWidgets.QLabel()
+        item.picture.setPixmap(pixmap)
+        item.picture.setAlignment(QtCore.Qt.AlignCenter)
+        item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
+        item.info.setAlignment(QtCore.Qt.AlignCenter)
 
-            widget = QtWidgets.QWidget()
-            widget.setLayout(grid)
-            widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-            widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
+        grid = QtWidgets.QGridLayout()
+        grid.setSpacing(4)
+        grid.addWidget(item.picture, 1, 0)
+        grid.addWidget(item.info, 2, 0)
 
-            self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
-            self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
+        widget = QtWidgets.QWidget()
+        widget.setLayout(grid)
+        widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
+
+        self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
+        self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
+
+    def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
+        pixmap = QPixmap(screenshot_file_path)
+        existing_item.picture.setPixmap(pixmap)
+        existing_item.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))
+        existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
+        existing_item.disabled = False
 
     def _on_context_menu(self, client_connection_id, is_disabled):
         menu = QtWidgets.QMenu()
 
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self._onAbgabe(client_connection_id))
-        action_2 = QtWidgets.QAction("Screenshot updaten", menu,
-                                     triggered=lambda: self._onScreenshots(client_connection_id))
-        action_3 = QtWidgets.QAction("Datei senden", menu,
-                                     triggered=lambda: self._onSendFile(client_connection_id))
-        action_4 = QtWidgets.QAction("Verbindung beenden", menu,
-                                     triggered=lambda: self._onRemoveClient(client_connection_id))
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self._onScreenshots(client_connection_id))
+        action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self._onSendFile(client_connection_id))
+        action_4 = QtWidgets.QAction("Verbindung beenden", menu, triggered=lambda: self._onRemoveClient(client_connection_id))
 
         menu.addActions([action_1, action_2, action_3, action_4])
 
@@ -507,9 +506,20 @@ class ServerUI(QtWidgets.QDialog):
 
     def get_list_widget_by_client_id(self, client_id):
         for widget in self.get_list_widget_items():
-            if client_id is widget.pID:
+            if client_id == widget.pID:
+                print "Found existing list widget for client connectionId %s" % client_id
                 return widget
         return False
+
+    def get_list_widget_by_client_name(self, client_name):
+        for widget in self.get_list_widget_items():
+            if client_name == widget.id:
+                print "Found existing list widget for client name %s" % client_name
+                return widget
+        return False
+
+    def get_existing_or_skeleton_list_widget(self, client_name):
+        pass
 
 if __name__ == '__main__':
     prepareDirectories()  # cleans everything and copies some scripts

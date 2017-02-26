@@ -82,7 +82,6 @@ class ClientList:
             self.send_bytes(client, file_path)
             client.setLineMode()
 
-
     def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
         for b in read_bytes_from_file(file_path):
             client.transport.write(b)
