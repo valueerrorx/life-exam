@@ -6,7 +6,7 @@ import subprocess
 SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
-PRESERVE_WORKDIR = False
+PRESERVE_WORKDIR = True
 
 # these apps will try to autosave your work before "abgabe" via xdotool
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
