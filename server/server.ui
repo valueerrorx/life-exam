@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1040</width>
-    <height>574</height>
+    <height>576</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,7 +76,7 @@
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">background-color: rgba(255,0,0,0.3);</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -278,7 +278,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -593,7 +593,7 @@
            <widget class="QWidget" name="widget_8" native="true">
             <property name="maximumSize">
              <size>
-              <width>128</width>
+              <width>220</width>
               <height>16777215</height>
              </size>
             </property>
@@ -610,6 +610,12 @@
              </item>
              <item>
               <widget class="QSpinBox" name="aintervall">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="toolTip">
                 <string>0 - Automatische Abgabe deaktiviert</string>
                </property>
@@ -621,6 +627,16 @@
                </property>
                <property name="singleStep">
                 <number>1</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox">
+               <property name="text">
+                <string>Abgabe Ordner bereinigen</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -659,7 +675,7 @@
              <item>
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis der Schüler wird im Abgabeintervall (min)&lt;br/&gt;im Verzeichnis &amp;quot;Abgabe&amp;quot; archiviert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis der Schüler wird im &lt;br/&gt;Abgabeintervall (min) im Verzeichnis &amp;quot;Abgabe&amp;quot; archiviert.&lt;/p&gt;&lt;p&gt;Der Abgabe Ordner kann beim Start der sicheren&lt;br/&gt;Prüfungsumgebung bereinigt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -908,6 +924,27 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>startexam</tabstop>
+  <tabstop>starthotspot</tabstop>
+  <tabstop>showip</tabstop>
+  <tabstop>abgabe</tabstop>
+  <tabstop>screenshots</tabstop>
+  <tabstop>sendfile</tabstop>
+  <tabstop>autoabgabe</tabstop>
+  <tabstop>listWidget</tabstop>
+  <tabstop>exit</tabstop>
+  <tabstop>firewall1</tabstop>
+  <tabstop>firewall2</tabstop>
+  <tabstop>firewall3</tabstop>
+  <tabstop>firewall4</tabstop>
+  <tabstop>testfirewall</tabstop>
+  <tabstop>startconfig</tabstop>
+  <tabstop>loaddefaults</tabstop>
+  <tabstop>aintervall</tabstop>
+  <tabstop>logwidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

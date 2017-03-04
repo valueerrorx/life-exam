@@ -308,12 +308,11 @@ class ServerUI(QtWidgets.QDialog):
         shutil.make_archive(output_filename, 'zip', target_folder)
         filename = "%s.zip" % (filename)
 
-        # TODO: why is there a loop here, wohl nicht nötig oder :)
-        for client in client_list.clients.values():
-            self.factory.files = get_file_list(self.factory.files_path)
-            if filename not in self.factory.files:
-                self.log('filename not found in directory')
-                return
+
+        self.factory.files = get_file_list(self.factory.files_path)
+        if filename not in self.factory.files:
+            self.log('filename not found in directory')
+            return
 
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
