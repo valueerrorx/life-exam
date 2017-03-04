@@ -40,5 +40,5 @@ def cleanup(folder):
 
 
 def mountabgabe():
-    mountcommand = "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE %" % ABGABE_DIRECTORY
+    mountcommand = "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE %s" % ABGABE_DIRECTORY
     os.system(mountcommand)
