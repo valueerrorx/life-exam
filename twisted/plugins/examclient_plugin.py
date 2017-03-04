@@ -186,6 +186,7 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("228.0.0.5")  # Multicast Address for Address Allocation for Private Internets
 
             if cleanup_abgabe:
+                system_commander.mountabgabe()
                 system_commander.cleanup(ABGABE_DIRECTORY)
 
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable

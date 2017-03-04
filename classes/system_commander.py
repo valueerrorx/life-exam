@@ -38,3 +38,7 @@ def cleanup(folder):
     cleanuphiddencommand = "sudo rm -rf %/.* " % folder
     os.system(cleanuphiddencommand)
 
+
+def mountabgabe():
+    mountcommand = "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE %" % ABGABE_DIRECTORY
+    os.system(mountcommand)
