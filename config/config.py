@@ -17,7 +17,6 @@ USER_HOME_DIR = os.path.join("/home", str(USER))
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/EXAM")
 
 # work directory sub-dirs
-#TODO wo werden diese gebraucht? es handelt sich ausserdem bei nachstehender liste nicht nur um subs sondern auch um subsubs - ABGABE ist gar nicht dort
 SCRIPTS = "scripts"
 EXAMCONFIG = "EXAMCONFIG"
 CLIENT = "CLIENT"
