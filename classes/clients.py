@@ -26,7 +26,7 @@ class ClientList:
         if not self.clients:
             return False
 
-        line = "%s %s %s %s.jpg none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, "%s")
+        line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, "%s")
         if who is "all":
             self.broadcast_line(line)
         else:
@@ -40,7 +40,7 @@ class ClientList:
             return False
 
         filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H:%M:%S"), "%s")
-        line = "%s %s %s %s none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename)
+        line = "%s %s %s %s none none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename)
 
         if who is "all":
             self.broadcast_line(line)
@@ -60,7 +60,7 @@ class ClientList:
                 self.broadcast_file(file_path, filename, md5_hash)
             else:
                 client = self.get_client(who)
-                client.sendLine('%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+                client.sendLine('%s %s %s %s %s none' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
                 client.setRawMode()
                 who = client.clientName
                 self.send_bytes(client, file_path)
@@ -77,7 +77,7 @@ class ClientList:
 
     def broadcast_file(self, file_path, filename, md5_hash):
         for client in self.clients.values():
-            client.sendLine('%s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+            client.sendLine('%s %s %s %s %s none' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()

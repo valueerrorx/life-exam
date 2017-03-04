@@ -129,7 +129,6 @@ sleep 0.5
     cp -a ${HOME}.config/kglobalshortcutsrc ${BACKUPDIR}   # keyboardshortcuts
     
     #office
-    cp -a ${HOME}.config/Kingsoft/Office.conf ${BACKUPDIR}  
     cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
     cp -a ${HOME}.config/calligra* ${BACKUPDIR}
     
