@@ -302,6 +302,8 @@ class ServerUI(QtWidgets.QDialog):
 
         self._workingIndicator(True, 4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
+
+        cleanup_abgabe = self.ui.cleanabgabe.checkState()
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
         output_filename = os.path.join(SERVERZIP_DIRECTORY, filename)
@@ -317,7 +319,8 @@ class ServerUI(QtWidgets.QDialog):
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
         for client in client_list.clients.values():
-            client.transport.write('%s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2]))
+            #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
+            client.transport.write('%s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe ))
             client.setRawMode()
 
             print self.factory.files[filename][0]

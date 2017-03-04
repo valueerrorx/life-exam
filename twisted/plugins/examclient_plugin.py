@@ -22,6 +22,7 @@ from common import *
 from config import *
 from config.enums import DataType, Command
 from dispatch.line_dispatch_student import student_line_dispatcher
+import classes.system_commander as system_commander
 
 from twisted.application.internet import TCPClient
 # from twisted.application.service import Application
@@ -66,6 +67,7 @@ class MyClientProtocol(basic.LineReceiver):
     # twisted
     def rawDataReceived(self, data):
         filename = self.file_data[3]
+        cleanup_abgabe = self.file_data[6]
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
@@ -84,7 +86,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                 if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
-                    self._startExam(filename, file_path)
+                    self._startExam(filename, file_path, cleanup_abgabe)
                 elif self.file_data[2] == DataType.FILE:
 
                     if os.path.isfile(os.path.join(ABGABE_DIRECTORY, filename)):
@@ -162,7 +164,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.transport.write('\r\n')  # send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
-    def _startExam(self, filename, file_path):
+    def _startExam(self, filename, file_path, cleanup_abgabe ):
         """extracts the config folder and starts the startexam.sh script"""
 
         if self.factory.options['host'] != "127.0.0.1":  # testClient running on the same machine
@@ -183,6 +185,8 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("\n")
             thisexamfile.write("228.0.0.5")  # Multicast Address for Address Allocation for Private Internets
 
+            if cleanup_abgabe:
+                system_commander.cleanup(ABGABE_DIRECTORY)
 
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)

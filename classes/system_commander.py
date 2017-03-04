@@ -14,6 +14,7 @@ def start_exam():
     startcommand = "exec %s config &" % scriptfile
     os.system(startcommand)
 
+#TODO use systemcommander in examclient and add startexam EXAM (only CONFIG mode available right now)
 
 def start_hotspot():
     scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")
@@ -29,3 +30,11 @@ def copy(source, target):
 def dialog_popup(msg):
     command = "kdialog --passivepopup '%s' 3 2> /dev/null & " % msg
     os.system(command)
+
+
+def cleanup(folder):
+    cleanupcommand = "sudo rm -rf %/* " % folder
+    os.system(cleanupcommand)
+    cleanuphiddencommand = "sudo rm -rf %/.* " % folder
+    os.system(cleanuphiddencommand)
+
