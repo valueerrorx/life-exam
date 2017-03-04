@@ -150,8 +150,8 @@ class MyServerProtocol(basic.LineReceiver):
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID))
-            self.sendLine("%s %s %s %s.jpg none" % (
-                Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+            #transfer, send, screenshot, filename, hash, cleanabgabe
+            self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
 
             return
 
