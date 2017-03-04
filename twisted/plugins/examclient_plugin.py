@@ -67,7 +67,7 @@ class MyClientProtocol(basic.LineReceiver):
     # twisted
     def rawDataReceived(self, data):
         filename = self.file_data[3]
-        cleanup_abgabe = self.file_data[6]
+        cleanup_abgabe = self.file_data[5]
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
@@ -186,6 +186,7 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("228.0.0.5")  # Multicast Address for Address Allocation for Private Internets
 
             if cleanup_abgabe:
+                print "cleaning up abgabe"
                 system_commander.mountabgabe()
                 system_commander.cleanup(ABGABE_DIRECTORY)
 
