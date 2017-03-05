@@ -24,6 +24,9 @@ from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
 from config.config import *
 from classes.clients import *
+from classes.groups import *
+
+
 from common import *
 from config.enums import *
 # from classes.system_commander import *
@@ -156,6 +159,10 @@ class MyServerProtocol(basic.LineReceiver):
             return
 
 
+
+
+
+
 class MyServerFactory(protocol.ServerFactory):
 
     def __init__(self, files_path):
@@ -177,6 +184,11 @@ class MyServerFactory(protocol.ServerFactory):
         wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
         """
 
+
+
+
+
+
 class MultcastLifeServer(DatagramProtocol):
     def startProtocol(self):
         """
@@ -195,6 +207,10 @@ class MultcastLifeServer(DatagramProtocol):
             # reply directly (unicast) to the originating port:
             self.transport.write('SERVER: Assimilate', ("228.0.0.5", 8005))
             self.transport.write("SERVER: Assimilate", address)
+
+
+
+
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -216,12 +232,77 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
 
+        self.ui.groupadd.clicked.connect(self._onGroupadd)
+        self.ui.clientadd.clicked.connect(self._onClientadd)
+        self.ui.applychanges.clicked.connect(self._applyClientGroupSettings)
+
         self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
         self.workinganimation.setCacheMode(QMovie.CacheAll)
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         self.timer = False
+        self.GroupList = GroupList()
         self.ui.show()
+
+
+    def _onGroupadd(self):
+        newgroup = Group()  #create group object
+        self.GroupList.add_group(newgroup)   #add group to group list
+        self.GroupList.create_groupwidget(newgroup)   #create a widget
+        self.ui.grouplist.addItem(newgroup.item)  # add the listitem to the listwidget
+        self.ui.grouplist.setItemWidget(newgroup.item, newgroup.widget)  # set the widget as the listitem's widget
+
+        newgroup.widget.mouseReleaseEvent=lambda event: self._updateGroupInfo(newgroup)
+
+        return
+
+    def _onClientadd(self):
+        list=self.ui.grouplist
+        listItem = self.ui.grouplist.selectedItems()
+
+        groupname = listItem[0].name
+        group = self.GroupList.get_group(groupname)
+
+        newclient = Client()
+        group.add_client(newclient)
+        group.create_clientwidget(newclient)
+
+        self.ui.clientlist.addItem(newclient.item)  # add the listitem to the listwidget
+        self.ui.clientlist.setItemWidget(newclient.item, newclient.widget)  # set the widget as the listitem's widget
+
+        newclient.widget.mouseReleaseEvent=lambda event: self._updateClientInfo(newclient)
+
+    def _updateGroupInfo(self,group):
+        self.ui.groupname.setText(group.name)
+        self.ui.grouppw.setText(str(group.pin))
+
+    def _updateClientInfo(self,client):
+        self.ui.clientname.setText(client.name)
+
+    def _applyClientGroupSettings(self):
+        groupname = self.ui.groupname.text()
+        grouppw = self.ui.grouppw.text()
+        clientname = self.ui.clientname.text()
+
+        grouplistItem = self.ui.grouplist.selectedItems()
+        clientlistItem = self.ui.clientlist.selectedItems()
+
+
+        group = self.GroupList.get_group(grouplistItem[0].name)
+        group.name = groupname      #update group name
+        grouplistItem[0].info.setText(groupname)    #update widget info
+        grouplistItem[0].name = groupname           #updage widget name
+
+        client = group.get_client(clientlistItem[0].name)
+        client.name = clientname       #update client name
+        clientlistItem[0].info.setText(clientname)  #update widget info
+        clientlistItem[0].name = clientname         #updage widget name
+
+
+
+        return
+
+
 
     def closeEvent(self, evnt):
         self.showMinimized()
@@ -285,7 +366,7 @@ class ServerUI(QtWidgets.QDialog):
         time = 2000 if who is 'all' else 1000
         self._workingIndicator(True, time)
         if not self.factory.client_list.request_abgabe(who):
-            self.window.log("no clients connected")
+            self.log("no clients connected")
 
     def _onStartExam(self):
         """

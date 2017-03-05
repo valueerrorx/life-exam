@@ -278,7 +278,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -324,7 +324,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QListView" name="listView">
+                 <widget class="QListWidget" name="grouplist">
                   <property name="toolTip">
                    <string/>
                   </property>
@@ -346,7 +346,7 @@
                  <widget class="QWidget" name="widget_19" native="true">
                   <layout class="QHBoxLayout" name="horizontalLayout_9">
                    <item>
-                    <widget class="QPushButton" name="pushButton">
+                    <widget class="QPushButton" name="groupactivate">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                        <horstretch>0</horstretch>
@@ -379,7 +379,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton_2">
+                    <widget class="QToolButton" name="groupadd">
                      <property name="toolTip">
                       <string>Neue Gruppe hinzufügen</string>
                      </property>
@@ -390,7 +390,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton">
+                    <widget class="QToolButton" name="groupdel">
                      <property name="toolTip">
                       <string>Ausgewählte Gruppe löschen</string>
                      </property>
@@ -429,7 +429,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QListView" name="listView_2">
+                 <widget class="QListWidget" name="clientlist">
                   <property name="styleSheet">
                    <string notr="true">padding:0;margin-left:4px;</string>
                   </property>
@@ -455,7 +455,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton_4">
+                    <widget class="QToolButton" name="clientadd">
                      <property name="toolTip">
                       <string>Neuen Teilnehmer hinzufügen</string>
                      </property>
@@ -466,7 +466,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton_3">
+                    <widget class="QToolButton" name="clientdel">
                      <property name="toolTip">
                       <string>Ausgewählten Teilnehmer löschen</string>
                      </property>
@@ -518,6 +518,9 @@
                   <layout class="QVBoxLayout" name="verticalLayout_19">
                    <item>
                     <widget class="QLabel" name="label_10">
+                     <property name="styleSheet">
+                      <string notr="true">padding-left:0px;</string>
+                     </property>
                      <property name="text">
                       <string>Gruppeneinstellungen</string>
                      </property>
@@ -546,7 +549,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_3">
+                       <widget class="QLineEdit" name="groupname">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -578,7 +581,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_2">
+                       <widget class="QLineEdit" name="grouppw">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -616,6 +619,9 @@
                   <layout class="QVBoxLayout" name="verticalLayout_20">
                    <item>
                     <widget class="QLabel" name="label_11">
+                     <property name="styleSheet">
+                      <string notr="true">padding-left:0px;</string>
+                     </property>
                      <property name="text">
                       <string>Teilnehmereinstellungen</string>
                      </property>
@@ -641,7 +647,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit">
+                       <widget class="QLineEdit" name="clientname">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -663,7 +669,7 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_12">
                    <item>
-                    <widget class="QPushButton" name="pushButton_2">
+                    <widget class="QPushButton" name="applychanges">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>

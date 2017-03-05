@@ -8,7 +8,7 @@ import ipaddress
 import shutil
 
 from config.config import *
-
+from random import randint
 
 def checkFirewall(firewall_ip_list):
     result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
@@ -172,3 +172,9 @@ def showDesktopMessage(msg):
     message = "Exam Server: %s " % (msg)
     command = "sudo -u %s kdialog --title 'EXAM' --passivepopup '%s' 5" % (USER, message)
     os.system(command)
+
+
+def generatePin(n):
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)

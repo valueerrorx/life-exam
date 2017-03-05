@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import datetime
 import ntpath
 import os
@@ -6,6 +8,7 @@ from common import get_file_md5_hash, read_bytes_from_file
 from server import MyServerProtocol
 from config.enums import Command, DataType
 
+#TODO clientList ist ja eigentlich nur eine liste.. die aktionen die hier verfügbar sind sind eigentlich server actions
 
 class ClientList:
     def __init__(self):
