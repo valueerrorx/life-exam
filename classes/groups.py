@@ -16,15 +16,16 @@ class GroupList:
 
     def add_group(self, group):
         for existinggroup in self.groups:
-            if existinggroup.name == group.name:
+            if existinggroup.name == group.name:  #check if group name exists
                 print existinggroup.name
                 print group.name
                 pin = generatePin(4)
-                group.name = "%s-%s" % (group.name, pin)
+                group.name = "%s-%s" % (group.name, pin)    #add random pin to groupname and check again
                 self.add_group(group)
                 return
 
-        self.groups.append(group)
+        self.groups.append(group)   # just add group to grouplist
+
 
     def remove_group(self, group):
         self.groups.remove(group)

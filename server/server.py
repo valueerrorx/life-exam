@@ -4,6 +4,7 @@
 import os
 import sys
 
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -26,7 +27,6 @@ from config.config import *
 from classes.clients import *
 from classes.groups import *
 
-
 from common import *
 from config.enums import *
 # from classes.system_commander import *
@@ -36,8 +36,10 @@ from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
 
 
+
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
+
 
     def __init__(self, factory):
         self.factory = factory  # type: MyServerFactory
@@ -48,6 +50,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.refused = False
         self.clientConnectionID = ""
 
+
     # twisted
     def connectionMade(self):
         self.factory.client_list.add_client(self)
@@ -57,7 +60,8 @@ class MyServerProtocol(basic.LineReceiver):
         self.clientConnectionID = str(self.transport.client[1])
         self.factory.window.log(
             'Connection from: %s (%d clients total)' % (
-            self.transport.getPeer().host, len(self.factory.client_list.clients)))
+                self.transport.getPeer().host, len(self.factory.client_list.clients)))
+
 
     # twisted
     def connectionLost(self, reason):
@@ -66,10 +70,11 @@ class MyServerProtocol(basic.LineReceiver):
         self.file_data = ()
         self.factory.window.log(
             'Connection from %s lost (%d clients left)' % (
-            self.transport.getPeer().host, len(self.factory.client_list.clients)))
+                self.transport.getPeer().host, len(self.factory.client_list.clients)))
 
         if not self.refused:
             self.factory.window._disableClientScreenshot(self)
+
 
     # twisted
     def rawDataReceived(self, data):
@@ -95,7 +100,8 @@ class MyServerProtocol(basic.LineReceiver):
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
-                    self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+                    self.factory.window.createOrUpdateListItem(self,
+                                                               screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
                 elif self.file_data[1] == DataType.FOLDER:
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
@@ -123,6 +129,7 @@ class MyServerProtocol(basic.LineReceiver):
         else:
             self.file_handler.write(data)
 
+
     # twisted
     def lineReceived(self, line):
         """whenever the client sends something """
@@ -139,6 +146,7 @@ class MyServerProtocol(basic.LineReceiver):
             self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
             self.setRawMode()  # this is a file - set to raw mode
 
+
     def _checkclientName(self, newID):
         """searches for the newID in factory.clients and rejects the connection if found"""
 
@@ -153,23 +161,20 @@ class MyServerProtocol(basic.LineReceiver):
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID))
-            #transfer, send, screenshot, filename, hash, cleanabgabe
-            self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+            # transfer, send, screenshot, filename, hash, cleanabgabe
+            self.sendLine("%s %s %s %s.jpg none none" % (
+                Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
 
             return
 
 
 
-
-
-
 class MyServerFactory(protocol.ServerFactory):
-
     def __init__(self, files_path):
         self.files_path = files_path
-        self.client_list = ClientList()                         # type: ClientList
+        self.client_list = ClientList()  # type: ClientList
         self.files = None
-        self.window = ServerUI(self)                            # type: ServerUI
+        self.window = ServerUI(self)  # type: ServerUI
         self.lc = LoopingCall(lambda: self._onAbgabe("all"))
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
@@ -178,14 +183,13 @@ class MyServerFactory(protocol.ServerFactory):
     """
     http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
     """
+
+
     def buildProtocol(self, addr):
         return MyServerProtocol(self)
         """
         wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
         """
-
-
-
 
 
 
@@ -200,6 +204,7 @@ class MultcastLifeServer(DatagramProtocol):
         self.transport.joinGroup("228.0.0.5")
         # self.transport.write("SERVER: Assimilate", ("228.0.0.5", 8005))
 
+
     def datagramReceived(self, datagram, address):
         print "Datagram %s received from %s" % (repr(datagram), repr(address))
         if "CLIENT" in datagram:
@@ -210,17 +215,15 @@ class MultcastLifeServer(DatagramProtocol):
 
 
 
-
-
-
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
-        self.factory = factory     # type: MyServerFactory
+        self.factory = factory  # type: MyServerFactory
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))  # load UI
         self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
-        self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
+        self.ui.sendfile.clicked.connect(lambda: self._onSendFile(
+            "all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
@@ -246,17 +249,15 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onGroupadd(self):
-        #TODO check if group name unique !!!
+        # TODO check if group name unique !!!
 
-        newgroup = Group()  #create group object
-        self.GroupList.add_group(newgroup)   #add group to group list
-        self.GroupList.create_groupwidget(newgroup, self)   #create a widget
-
-
+        newgroup = Group()  # create group object
+        self.GroupList.add_group(newgroup)  # add group to group list
+        self.GroupList.create_groupwidget(newgroup, self)  # create a widget
 
 
     def _onClientadd(self):
-        #TODO check if client name unique !!!
+        # TODO check if client name unique !!!
 
         listItem = self.ui.grouplist.selectedItems()
         groupname = listItem[0].name
@@ -266,7 +267,7 @@ class ServerUI(QtWidgets.QDialog):
         group.create_clientwidget(newclient, self)
 
 
-    def _updateGroupInfo(self,group):
+    def _updateGroupInfo(self, group):
         self.ui.groupname.setText(group.name)
         self.ui.grouppw.setText(str(group.pin))
 
@@ -274,16 +275,14 @@ class ServerUI(QtWidgets.QDialog):
         for index in xrange(self.ui.clientlist.count()):
             items.append(self.ui.clientlist.item(index))
         for widget in items:
-            sip.delete(widget)   #deletes the whole widget - must be recreated - necessary ?
+            sip.delete(widget)  # deletes the whole widget - must be recreated - necessary ?
 
-        for client in group.clients:        # recreate widget and show
-            group.create_clientwidget(client,self)
+        for client in group.clients:  # recreate widget and show
+            group.create_clientwidget(client, self)
 
 
-
-    def _updateClientInfo(self,client):
+    def _updateClientInfo(self, client):
         self.ui.clientname.setText(client.name)
-
 
 
     def _applyClientGroupSettings(self):
@@ -294,26 +293,23 @@ class ServerUI(QtWidgets.QDialog):
         grouplistItem = self.ui.grouplist.selectedItems()
         clientlistItem = self.ui.clientlist.selectedItems()
 
-
         group = self.GroupList.get_group(grouplistItem[0].name)
-        group.name = groupname      #update group name
-        grouplistItem[0].info.setText(groupname)    #update widget info
-        grouplistItem[0].name = groupname           #updage widget name
+        group.name = groupname  # update group name
+        grouplistItem[0].info.setText(groupname)  # update widget info
+        grouplistItem[0].name = groupname  # updage widget name
 
         client = group.get_client(clientlistItem[0].name)
-        client.name = clientname       #update client name
-        clientlistItem[0].info.setText(clientname)  #update widget info
-        clientlistItem[0].name = clientname         #updage widget name
-
-
+        client.name = clientname  # update client name
+        clientlistItem[0].info.setText(clientname)  # update widget info
+        clientlistItem[0].name = clientname  # updage widget name
 
         return
-
 
 
     def closeEvent(self, evnt):
         self.showMinimized()
         evnt.ignore()
+
 
     def _workingIndicator(self, action, duration):
         if self.timer and self.timer.isActive:  # indicator is shown a second time - stop old kill-timer
@@ -328,6 +324,7 @@ class ServerUI(QtWidgets.QDialog):
             self.workinganimation.stop()
             self.ui.working.hide()
 
+
     def _onSendFile(self, who):
         """send a file to all clients"""
         self._workingIndicator(True, 500)
@@ -340,13 +337,16 @@ class ServerUI(QtWidgets.QDialog):
         file_path = self._showFilePicker(ABGABE_DIRECTORY)
 
         if file_path:
-            self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
+            self._workingIndicator(True,
+                                   2000)  # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
             success, filename, file_size, who = client_list.send_file(file_path, who)
 
             if success:
                 self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
             else:
-                self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+                self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (
+                    filename, file_size / 1024, who))
+
 
     def _showFilePicker(self, directory):
         # show filepicker
@@ -356,15 +356,18 @@ class ServerUI(QtWidgets.QDialog):
         file_path = file_path[0]
         return file_path
 
+
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
         self._workingIndicator(True, 1000)
         if not self.factory.client_list.request_screenshots(who):
             self.log("no clients connected")
 
+
     def _onShowIP(self):
         self._workingIndicator(True, 500)
         system_commander.show_ip()
+
 
     def _onAbgabe(self, who):
         self._workingIndicator(True, 500)
@@ -374,6 +377,7 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, time)
         if not self.factory.client_list.request_abgabe(who):
             self.log("no clients connected")
+
 
     def _onStartExam(self):
         """
@@ -398,7 +402,6 @@ class ServerUI(QtWidgets.QDialog):
         shutil.make_archive(output_filename, 'zip', target_folder)
         filename = "%s.zip" % (filename)
 
-
         self.factory.files = get_file_list(self.factory.files_path)
         if filename not in self.factory.files:
             self.log('filename not found in directory')
@@ -407,8 +410,10 @@ class ServerUI(QtWidgets.QDialog):
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
         for client in client_list.clients.values():
-            #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
-            client.transport.write('%s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe ))
+            # command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
+            client.transport.write('%s %s %s %s %s %s\n' % (
+                Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2],
+                cleanup_abgabe))
             client.setRawMode()
 
             print self.factory.files[filename][0]
@@ -418,14 +423,17 @@ class ServerUI(QtWidgets.QDialog):
             client.transport.write('\r\n')
             client.setLineMode()
 
+
     def _onStartConfig(self):
         self._workingIndicator(True, 500)
         system_commander.start_exam()
         self.ui.close()
 
+
     def _onStartHotspot(self):
         self._workingIndicator(True, 500)
         system_commander.start_hotspot()
+
 
     def _onTestFirewall(self):
         self._workingIndicator(True, 1000)
@@ -470,10 +478,12 @@ class ServerUI(QtWidgets.QDialog):
             os.system(startcommand)
             self.ui.testfirewall.setText("Stoppe Firewall")
 
+
     def _onLoadDefaults(self):
         self._workingIndicator(True, 500)
         self.log('Default Configuration for EXAM Desktop restored.')
         system_commander.copy('./DATA/EXAMCONFIG', WORK_DIRECTORY)
+
 
     def _onAutoabgabe(self):
         self._workingIndicator(True, 500)
@@ -491,6 +501,7 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
 
+
     def _onRemoveClient(self, client_id):
         self._workingIndicator(True, 500)
         client_name = self.factory.client_list.kick_client(client_id)
@@ -498,6 +509,7 @@ class ServerUI(QtWidgets.QDialog):
             sip.delete(self.get_list_widget_by_client_id(client_id))
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
         self.log('Connection to client <b> %s </b> has been <b>removed</b>.' % client_name)
+
 
     def _disableClientScreenshot(self, client):
         self._workingIndicator(True, 500)
@@ -509,17 +521,21 @@ class ServerUI(QtWidgets.QDialog):
         item.info.setText('%s \ndisconnected' % client_name)
         item.disabled = True
 
+
     def log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
+
 
     def _onAbbrechen(self):  # Exit button
         os.remove(SERVER_PIDFILE)
         self.ui.close()
         os._exit(0)  # otherwise only the gui is closed and connections are kept alive
 
+
     def get_firewall_adress_list(self):
         return [self.ui.firewall1, self.ui.firewall2, self.ui.firewall3, self.ui.firewall4]
+
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
@@ -529,6 +545,7 @@ class ServerUI(QtWidgets.QDialog):
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
         else:
             self._addNewListItem(client, screenshot_file_path)
+
 
     def _addNewListItem(self, client, screenshot_file_path):
         item = QtWidgets.QListWidgetItem()
@@ -557,6 +574,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
+
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         pixmap = QPixmap(screenshot_file_path)
         existing_item.picture.setPixmap(pixmap)
@@ -564,13 +582,16 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.disabled = False
 
+
     def _on_context_menu(self, client_connection_id, is_disabled):
         menu = QtWidgets.QMenu()
 
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self._onAbgabe(client_connection_id))
-        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self._onScreenshots(client_connection_id))
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu,
+                                     triggered=lambda: self._onScreenshots(client_connection_id))
         action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self._onSendFile(client_connection_id))
-        action_4 = QtWidgets.QAction("Verbindung beenden", menu, triggered=lambda: self._onRemoveClient(client_connection_id))
+        action_4 = QtWidgets.QAction("Verbindung beenden", menu,
+                                     triggered=lambda: self._onRemoveClient(client_connection_id))
 
         menu.addActions([action_1, action_2, action_3, action_4])
 
@@ -584,6 +605,7 @@ class ServerUI(QtWidgets.QDialog):
 
         return
 
+
     def get_list_widget_items(self):
         """
         Creates an iterable list of all widget elements aka student screenshots
@@ -594,12 +616,14 @@ class ServerUI(QtWidgets.QDialog):
             items.append(self.ui.listWidget.item(index))
         return items
 
+
     def get_list_widget_by_client_id(self, client_id):
         for widget in self.get_list_widget_items():
             if client_id == widget.pID:
                 print "Found existing list widget for client connectionId %s" % client_id
                 return widget
         return False
+
 
     def get_list_widget_by_client_name(self, client_name):
         for widget in self.get_list_widget_items():
@@ -608,8 +632,11 @@ class ServerUI(QtWidgets.QDialog):
                 return widget
         return False
 
+
     def get_existing_or_skeleton_list_widget(self, client_name):
         pass
+
+
 
 if __name__ == '__main__':
     prepareDirectories()  # cleans everything and copies some scripts
@@ -622,6 +649,7 @@ if __name__ == '__main__':
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor
+
 
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
 
