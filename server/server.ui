@@ -287,6 +287,10 @@
          </size>
         </property>
         <widget class="QWidget" name="tab_5">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>../pixmaps/addgroup.png</normaloff>../pixmaps/addgroup.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Verwaltung</string>
          </attribute>
