@@ -25,12 +25,10 @@ class GroupList:
         group.item = QtWidgets.QListWidgetItem()
         group.item.name = group.name  # store clientName as itemID for later use (delete event)
         group.item.info = QtWidgets.QLabel('%s' % (group.name))
-        grid = QtWidgets.QGridLayout()
-        grid.setSpacing(4)
-        grid.addWidget(group.item.info, 1, 0)
+        grid = QtWidgets.QVBoxLayout()
+        grid.addWidget(group.item.info)
         group.widget = QtWidgets.QWidget()
         group.widget.setLayout(grid)
-
         return
 
     def remove_groupwidget(self, group):
@@ -63,9 +61,8 @@ class Group:
         client.item = QtWidgets.QListWidgetItem()
         client.item.name = client.name  # store clientName as itemID for later use (delete event)
         client.item.info = QtWidgets.QLabel('%s' % (client.name))
-        grid = QtWidgets.QGridLayout()
-        grid.setSpacing(4)
-        grid.addWidget(client.item.info, 1, 0)
+        grid = QtWidgets.QVBoxLayout()
+        grid.addWidget(client.item.info)
         client.widget = QtWidgets.QWidget()
         client.widget.setLayout(grid)
         return

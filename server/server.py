@@ -246,6 +246,8 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onGroupadd(self):
+        #TODO check if group name unique !!!
+
         newgroup = Group()  #create group object
         self.GroupList.add_group(newgroup)   #add group to group list
         self.GroupList.create_groupwidget(newgroup)   #create a widget
@@ -256,8 +258,11 @@ class ServerUI(QtWidgets.QDialog):
 
         return
 
+
+
     def _onClientadd(self):
-        list=self.ui.grouplist
+        #TODO check if client name unique !!!
+
         listItem = self.ui.grouplist.selectedItems()
 
         groupname = listItem[0].name
@@ -272,12 +277,29 @@ class ServerUI(QtWidgets.QDialog):
 
         newclient.widget.mouseReleaseEvent=lambda event: self._updateClientInfo(newclient)
 
+
     def _updateGroupInfo(self,group):
         self.ui.groupname.setText(group.name)
         self.ui.grouppw.setText(str(group.pin))
 
+        items = []
+        for index in xrange(self.ui.clientlist.count()):
+            items.append(self.ui.clientlist.item(index))
+        for widget in items:
+            sip.delete(widget)   #deletes the whole widget - must be recreated - necessary ?
+
+        for client in group.clients:
+            group.create_clientwidget(client)   # recreate widget and show
+            self.ui.clientlist.addItem(client.item)  # add the listitem to the listwidget
+            self.ui.clientlist.setItemWidget(client.item, client.widget)  # set the widget as the listitem's widget
+            client.widget.mouseReleaseEvent=lambda event: self._updateClientInfo(client)     #set mouse event on the new widget
+
+
+
     def _updateClientInfo(self,client):
         self.ui.clientname.setText(client.name)
+
+
 
     def _applyClientGroupSettings(self):
         groupname = self.ui.groupname.text()
