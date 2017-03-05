@@ -250,13 +250,8 @@ class ServerUI(QtWidgets.QDialog):
 
         newgroup = Group()  #create group object
         self.GroupList.add_group(newgroup)   #add group to group list
-        self.GroupList.create_groupwidget(newgroup)   #create a widget
-        self.ui.grouplist.addItem(newgroup.item)  # add the listitem to the listwidget
-        self.ui.grouplist.setItemWidget(newgroup.item, newgroup.widget)  # set the widget as the listitem's widget
+        self.GroupList.create_groupwidget(newgroup, self)   #create a widget
 
-        newgroup.widget.mouseReleaseEvent=lambda event: self._updateGroupInfo(newgroup)
-
-        return
 
 
 
@@ -264,18 +259,11 @@ class ServerUI(QtWidgets.QDialog):
         #TODO check if client name unique !!!
 
         listItem = self.ui.grouplist.selectedItems()
-
         groupname = listItem[0].name
         group = self.GroupList.get_group(groupname)
-
         newclient = Client()
         group.add_client(newclient)
-        group.create_clientwidget(newclient)
-
-        self.ui.clientlist.addItem(newclient.item)  # add the listitem to the listwidget
-        self.ui.clientlist.setItemWidget(newclient.item, newclient.widget)  # set the widget as the listitem's widget
-
-        newclient.widget.mouseReleaseEvent=lambda event: self._updateClientInfo(newclient)
+        group.create_clientwidget(newclient, self)
 
 
     def _updateGroupInfo(self,group):
@@ -288,11 +276,8 @@ class ServerUI(QtWidgets.QDialog):
         for widget in items:
             sip.delete(widget)   #deletes the whole widget - must be recreated - necessary ?
 
-        for client in group.clients:
-            group.create_clientwidget(client)   # recreate widget and show
-            self.ui.clientlist.addItem(client.item)  # add the listitem to the listwidget
-            self.ui.clientlist.setItemWidget(client.item, client.widget)  # set the widget as the listitem's widget
-            client.widget.mouseReleaseEvent=lambda event: self._updateClientInfo(client)     #set mouse event on the new widget
+        for client in group.clients:        # recreate widget and show
+            group.create_clientwidget(client,self)
 
 
 

@@ -15,13 +15,23 @@ class GroupList:
         return None
 
     def add_group(self, group):
+        for existinggroup in self.groups:
+            if existinggroup.name == group.name:
+                print existinggroup.name
+                print group.name
+                pin = generatePin(4)
+                group.name = "%s-%s" % (group.name, pin)
+                self.add_group(group)
+                return
+
         self.groups.append(group)
 
     def remove_group(self, group):
         self.groups.remove(group)
 
 
-    def create_groupwidget(self, group):
+    def create_groupwidget(self, group, serverui):
+        """creates a widget for a group, adds it to the grouplistwidget and adds a mousevent"""
         group.item = QtWidgets.QListWidgetItem()
         group.item.name = group.name  # store clientName as itemID for later use (delete event)
         group.item.info = QtWidgets.QLabel('%s' % (group.name))
@@ -29,7 +39,10 @@ class GroupList:
         grid.addWidget(group.item.info)
         group.widget = QtWidgets.QWidget()
         group.widget.setLayout(grid)
-        return
+        serverui.ui.grouplist.addItem(group.item)  # add the listitem to the listwidget
+        serverui.ui.grouplist.setItemWidget(group.item, group.widget)  # set the widget as the listitem's widget
+        group.widget.mouseReleaseEvent = lambda event: serverui._updateGroupInfo(group)
+
 
     def remove_groupwidget(self, group):
         return
@@ -57,7 +70,8 @@ class Group:
     def remove_client(self, client):
         self.clients.remove(client)
 
-    def create_clientwidget(self, client):
+    def create_clientwidget(self, client, serverui):
+        """creates a widget for a client, adds it to the clientlistwidget and adds a mousevent"""
         client.item = QtWidgets.QListWidgetItem()
         client.item.name = client.name  # store clientName as itemID for later use (delete event)
         client.item.info = QtWidgets.QLabel('%s' % (client.name))
@@ -65,7 +79,9 @@ class Group:
         grid.addWidget(client.item.info)
         client.widget = QtWidgets.QWidget()
         client.widget.setLayout(grid)
-        return
+        serverui.ui.clientlist.addItem(client.item)  # add the listitem to the listwidget
+        serverui.ui.clientlist.setItemWidget(client.item, client.widget)  # set the widget as the listitem's widget
+        client.widget.mouseReleaseEvent=lambda event: serverui._updateClientInfo(client)
 
 
 
