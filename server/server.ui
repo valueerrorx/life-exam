@@ -278,7 +278,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="iconSize">
          <size>
@@ -325,6 +325,9 @@
                 </item>
                 <item>
                  <widget class="QListView" name="listView">
+                  <property name="toolTip">
+                   <string/>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">padding:0;margin-left:4px</string>
                   </property>
@@ -350,6 +353,9 @@
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
+                     <property name="toolTip">
+                      <string>Ausgewählte Gruppe aktivieren</string>
+                     </property>
                      <property name="text">
                       <string>Aktivieren</string>
                      </property>
@@ -374,6 +380,9 @@
                    </item>
                    <item>
                     <widget class="QToolButton" name="toolButton_2">
+                     <property name="toolTip">
+                      <string>Neue Gruppe hinzufügen</string>
+                     </property>
                      <property name="icon">
                       <iconset>
                        <normaloff>../pixmaps/add.png</normaloff>../pixmaps/add.png</iconset>
@@ -382,6 +391,9 @@
                    </item>
                    <item>
                     <widget class="QToolButton" name="toolButton">
+                     <property name="toolTip">
+                      <string>Ausgewählte Gruppe löschen</string>
+                     </property>
                      <property name="icon">
                       <iconset>
                        <normaloff>../pixmaps/remove.png</normaloff>../pixmaps/remove.png</iconset>
@@ -444,6 +456,9 @@
                    </item>
                    <item>
                     <widget class="QToolButton" name="toolButton_4">
+                     <property name="toolTip">
+                      <string>Neuen Teilnehmer hinzufügen</string>
+                     </property>
                      <property name="icon">
                       <iconset>
                        <normaloff>../pixmaps/add.png</normaloff>../pixmaps/add.png</iconset>
@@ -452,6 +467,9 @@
                    </item>
                    <item>
                     <widget class="QToolButton" name="toolButton_3">
+                     <property name="toolTip">
+                      <string>Ausgewählten Teilnehmer löschen</string>
+                     </property>
                      <property name="icon">
                       <iconset>
                        <normaloff>../pixmaps/remove.png</normaloff>../pixmaps/remove.png</iconset>
@@ -657,6 +675,9 @@
                        <width>0</width>
                        <height>31</height>
                       </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Einstellungen übernehmen</string>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">margin-right:4px</string>
@@ -1053,6 +1074,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="cleanabgabe">
+               <property name="styleSheet">
+                <string notr="true">margin:0px;</string>
+               </property>
                <property name="text">
                 <string>Abgabe Ordner bereinigen</string>
                </property>
