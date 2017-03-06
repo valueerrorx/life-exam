@@ -285,7 +285,7 @@ class ServerUI(QtWidgets.QDialog):
         time = 2000 if who is 'all' else 1000
         self._workingIndicator(True, time)
         if not self.factory.client_list.request_abgabe(who):
-            self.window.log("no clients connected")
+            self.log("no clients connected")
 
     def _onStartExam(self):
         """
