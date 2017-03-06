@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>415</width>
-    <height>273</height>
+    <height>309</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,7 +38,7 @@
      <x>10</x>
      <y>10</y>
      <width>391</width>
-     <height>241</height>
+     <height>291</height>
     </rect>
    </property>
    <property name="font">
@@ -101,8 +101,8 @@
     <widget class="QPushButton" name="start">
      <property name="geometry">
       <rect>
-       <x>140</x>
-       <y>160</y>
+       <x>130</x>
+       <y>210</y>
        <width>111</width>
        <height>31</height>
       </rect>
@@ -118,7 +118,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>160</y>
+       <y>210</y>
        <width>111</width>
        <height>31</height>
       </rect>
@@ -224,6 +224,32 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="studentid_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>150</y>
+       <width>171</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">padding:4px;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="infoid_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>261</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pincode</string>
      </property>
     </widget>
    </widget>
