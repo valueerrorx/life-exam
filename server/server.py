@@ -162,11 +162,12 @@ class MyServerFactory(protocol.ServerFactory):
         self.files_path = files_path
         self.client_list = ClientList()                         # type: ClientList
         self.files = None
+        self.pincode = generatePin(5)
+        self.examid = "Exam-%s" % generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self._onAbgabe("all"))
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
-
 
     """
     http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
@@ -221,6 +222,10 @@ class ServerUI(QtWidgets.QDialog):
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         self.timer = False
+
+        self.ui.pinlabel.setText("Pincode: <b>%s</b>" % self.factory.pincode  )
+        self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
+
         self.ui.show()
 
     def closeEvent(self, evnt):
