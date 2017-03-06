@@ -8,3 +8,6 @@ Tools needed in order to provide 100% functionality are:
 - imagemagick
 - kde plasma 5.9
 
+- python enum
+- python twisted 16.3.0
+
