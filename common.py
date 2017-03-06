@@ -8,6 +8,16 @@ import ipaddress
 import shutil
 
 from config.config import *
+from random import randint
+
+
+
+def generatePin(n):
+    """generates a random number in the given length n """
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)
+
 
 
 def checkFirewall(firewall_ip_list):
