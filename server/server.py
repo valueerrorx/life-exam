@@ -195,6 +195,7 @@ class MultcastLifeServer(DatagramProtocol):
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
             self.transport.write('SERVER: Assimilate', ("228.0.0.5", 8005))
+            self.transport.write("SERVER: Assimilate", ('ich ','bin'))
             self.transport.write("SERVER: Assimilate", address)
 
 

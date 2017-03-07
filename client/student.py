@@ -99,7 +99,6 @@ qt5reactor.install()  # imported from file and needed for Qt to function properl
 
 from twisted.internet import reactor
 
-reactor.listenMulticast(8005, MulticastLifeClient(),
-                        listenMultiple=True)
+reactor.listenMulticast(8005, MulticastLifeClient(), listenMultiple=True)
 
 sys.exit(app.exec_())
