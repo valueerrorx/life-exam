@@ -17,3 +17,5 @@ class Command(Enum):
     REMOVED = "RM"
     GET = "G"
     SEND = "S"
+    REQUESTDATA = "RD"
+    RECEIVEDATA = "SD"
