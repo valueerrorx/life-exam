@@ -252,6 +252,16 @@
       <string>Pincode</string>
      </property>
     </widget>
+    <widget class="QComboBox" name="serverdropdown">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>90</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

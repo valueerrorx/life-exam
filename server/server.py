@@ -158,8 +158,9 @@ class MyServerProtocol(basic.LineReceiver):
 
 class MyServerFactory(protocol.ServerFactory):
 
-    def __init__(self, files_path):
+    def __init__(self, files_path, reactor):
         self.files_path = files_path
+        self.reactor = reactor
         self.client_list = ClientList()                         # type: ClientList
         self.files = None
         self.pincode = generatePin(5)
@@ -168,6 +169,8 @@ class MyServerFactory(protocol.ServerFactory):
         self.lc = LoopingCall(lambda: self._onAbgabe("all"))
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
+        #starting multicast server here in order to provide "factory" information via broadcast
+        self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
 
     """
     http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
@@ -179,24 +182,26 @@ class MyServerFactory(protocol.ServerFactory):
         """
 
 class MultcastLifeServer(DatagramProtocol):
+    def __init__(self, factory):
+         self.factory = factory
+
     def startProtocol(self):
-        """
-        Called after protocol has started listening.
-        """
-        # Set the TTL>1 so multicast will cross router hops:
-        self.transport.setTTL(5)
-        # Join a specific multicast group:
-        self.transport.joinGroup("228.0.0.5")
-        # self.transport.write("SERVER: Assimilate", ("228.0.0.5", 8005))
+        """Called after protocol has started listening. """
+        self.transport.setTTL(5)     # Set the TTL>1 so multicast will cross router hops:
+        self.transport.joinGroup("228.0.0.5")   # Join a specific multicast group:
 
     def datagramReceived(self, datagram, address):
-        print "Datagram %s received from %s" % (repr(datagram), repr(address))
+
         if "CLIENT" in datagram:
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
-            self.transport.write('SERVER: Assimilate', ("228.0.0.5", 8005))
-            self.transport.write("SERVER: Assimilate", ('ich ','bin'))
-            self.transport.write("SERVER: Assimilate", address)
+            print "Datagram %s received from %s" % (repr(datagram), repr(address))
+
+            message = "SERVER %s" % self.factory.examid
+            self.transport.write(message, ("228.0.0.5", 8005))
+
+            #self.transport.write("SERVER: Assimilate", address)  #this is NOT WORKINC
+
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -554,10 +559,9 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
 
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
-
-    reactor.listenMulticast(8005, MultcastLifeServer(),
-                            listenMultiple=True)
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor ))  # start the server on SERVER_PORT
+    # moved multicastserver starting sequence to factory
+    #reactor.listenMulticast(8005, MultcastLifeServer(), listenMultiple=True)
 
     print ('Listening on port %d' % (SERVER_PORT))
     reactor.run()

@@ -16,13 +16,14 @@ sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 import qt5reactor
-from common import checkIP, prepareDirectories
+from common import checkIP, prepareDirectories, clean_and_split_input
 from config.config import *
 
 
 class ClientDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
+        self.examserver = dict()
         self._initUi()
         prepareDirectories()
 
@@ -59,12 +60,18 @@ class ClientDialog(QtWidgets.QDialog):
             palettewarn.setColor(self.ui.serverip.backgroundRole(), QColor(200, 80, 80))
             self.ui.serverip.setPalette(palettewarn)
 
+    def _updateServerlist(self):
+        for server in self.examserver:
+            self.ui.serverdropdown.addItem(server)
+
+
 
 class MulticastLifeClient(DatagramProtocol):
     def __init__(self):
         self.loopObj = None
         self.server_found = False
         self.server_ip = "0.0.0.0"
+        self.info = None
 
     def startProtocol(self):
         # Join the multicast address, so we can receive replies:
@@ -75,20 +82,29 @@ class MulticastLifeClient(DatagramProtocol):
         self.loopObj.start(2, now=False)
 
     def datagramReceived(self, datagram, address):
-        if "CLIENT" not in datagram:
-            if not self.server_found:
-                self.loopObj.stop()
-
+        if "SERVER" in datagram:
             self.server_found = True
             self.server_ip = address[0]
+            self.info = clean_and_split_input(datagram)
+
+            if self.info[1] not in dialog.examserver:
+                dialog.examserver.update({ self.info[1] : str(address[0]) })
+                print dialog.examserver
+                dialog._updateServerlist()
+
             dialog.ui.serverip.setText(str(address[0]))
             dialog.ui.serversearch.setText("Server Found!")
             dialog.ui.servercheck.setPixmap(QPixmap("pixmaps/checked.png"))
+            print "Datagram %s received from %s" % (repr(datagram), repr(address))
 
-        print "Datagram %s received from %s" % (repr(datagram), repr(address))
+
 
     def _sendProbe(self):
+        #if self.server_found:
+            #self.loopObj.stop()
+       # else:
         self.transport.write('CLIENT: Looking', ("228.0.0.5", 8005))
+
 
 
 app = QtWidgets.QApplication(sys.argv)
