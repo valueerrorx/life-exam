@@ -38,7 +38,6 @@ class MyServerProtocol(basic.LineReceiver):
 
     def __init__(self, factory):
         self.factory = factory  # type: MyServerFactory
-        self.delimiter = '\n'
         self.clientName = ""
         self.file_handler = None
         self.file_data = ()

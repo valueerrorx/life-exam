@@ -36,7 +36,6 @@ from twisted.application.service import IServiceMaker
 class MyClientProtocol(basic.LineReceiver):
     def __init__(self, factory):
         self.factory = factory
-        self.delimiter = '\n'
         self.file_handler = None
         self.buffer = []
         self.file_data = ()
