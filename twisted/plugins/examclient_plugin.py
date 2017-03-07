@@ -31,6 +31,8 @@ from zope.interface import implements
 from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
+from classes.message import *
+import pickle
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -47,6 +49,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.file_data = ()
         self.sendLine('%s %s' % (Command.AUTH, self.factory.options['id']))
+        # self.sendLine(pickle.dumps(AuthMessage(id=self.factory.options['id']), protocol=pickle.HIGHEST_PROTOCOL))
         print('Connected to the server')
         showDesktopMessage('Connected to the server')
 

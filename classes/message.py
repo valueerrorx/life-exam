@@ -1,3 +1,4 @@
+import pickle
 from collections import OrderedDict
 from wheel.signatures import assertTrue
 
@@ -7,16 +8,32 @@ from config.enums import Command, DataType
 class Message(object):
     def __init__(self, command, **kwargs):
         self.command = command
-        self.arguments = OrderedDict().update(kwargs)  # type: OrderedDict
+        self.arguments = OrderedDict()  # type: OrderedDict
+        self.arguments.update(kwargs)
 
     def __str__(self):
         return " ".join(
             ((" ".join((self.command, self.data_type))), (" ".join(value) for value in self.arguments.values())))
 
+    @classmethod
+    def getPickledMessage(cls, clazz, **kwargs):
+        message = clazz(**kwargs)
+        return pickle.dumps(message, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 class EndMessage(Message):
     def __init__(self, **kwargs):
         Message.__init(self, Command.ENDMSG, **kwargs)
+
+
+class RefusedMessage(Message):
+    def __init__(self, **kwargs):
+        Message.__init(self, Command.REFUSED, **kwargs)
+
+
+class RemovedMessage(Message):
+    def __init__(self, **kwargs):
+        Message.__init(self, Command.REMOVED, **kwargs)
 
 
 class AuthMessage(Message):
@@ -105,3 +122,15 @@ class ReceiveFolderMessage(ReceiveDataMessage):
 class ReceiveExamMessage(ReceiveDataMessage):
     def __init__(self, **kwargs):
         ReceiveDataMessage.__init__(self, DataType.EXAM, **kwargs)
+
+
+class ReceiveDataMessageFactory:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def get_rcv_data_message_for_type(cls, data_type):
+        return {
+            DataType.FILE: ReceiveFileMessage,
+            DataType.ABGABE: ReceiveExamMessage
+        }.get(data_type, None)

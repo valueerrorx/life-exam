@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # TEACHER - SERVER #
 import os
+import pickle
 import sys
 
 reload(sys)
@@ -28,6 +29,7 @@ from common import *
 from config.enums import *
 # from classes.system_commander import *
 import classes.system_commander as system_commander
+from classes.message import *
 
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
@@ -41,6 +43,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.clientName = ""
         self.file_handler = None
         self.file_data = ()
+        self.current_message = None  # type: Message
         self.refused = False
         self.clientConnectionID = ""
 
@@ -122,6 +125,8 @@ class MyServerProtocol(basic.LineReceiver):
     # twisted
     def lineReceived(self, line):
         """whenever the client sends something """
+        # message = pickle.loads(line)
+
         self.file_data = clean_and_split_input(line)
         if len(self.file_data) == 0 or self.file_data == '':
             return
