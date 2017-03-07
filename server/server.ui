@@ -151,7 +151,7 @@
          <item>
           <widget class="QToolButton" name="abgabe">
            <property name="toolTip">
-            <string>Prüfungsordner herunterladen</string>
+            <string>Abgabe Ordner einsammeln</string>
            </property>
            <property name="statusTip">
             <string/>
@@ -278,7 +278,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -766,7 +766,7 @@
              <item>
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis der Schüler kann im &lt;br/&gt;Abgabeintervall (min) im Verzeichnis &amp;quot;Abgabe&amp;quot;&lt;br/&gt;archiviert werden.&lt;/p&gt;&lt;p&gt;Der Abgabe Ordner kann beim Start der sicheren&lt;br/&gt;Prüfungsumgebung bereinigt werden.&lt;/p&gt;&lt;p&gt;Durch einen Test der Firewall-Ausnahmen &lt;br/&gt;werden diese gespeichert.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis der Schüler kann im &lt;br/&gt;Abgabeintervall (min) im lokalen Verzeichnis &amp;quot;Eingang&amp;quot;&lt;br/&gt;archiviert werden.&lt;/p&gt;&lt;p&gt;Der Abgabe Ordner der Schüler kann beim Start der sicheren&lt;br/&gt;Prüfungsumgebung bereinigt werden.&lt;/p&gt;&lt;p&gt;Durch einen Test der Firewall-Ausnahmen &lt;br/&gt;werden diese gespeichert.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
