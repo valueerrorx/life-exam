@@ -32,6 +32,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
+        self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)
 
     def _onAbbrechen(self):  # Exit button
         self.ui.close()
@@ -61,9 +62,13 @@ class ClientDialog(QtWidgets.QDialog):
             self.ui.serverip.setPalette(palettewarn)
 
     def _updateServerlist(self):
+        self.ui.serverdropdown.clear()
         for server in self.examserver:
             self.ui.serverdropdown.addItem(server)
 
+    def _updateIP(self):
+        current = self.ui.serverdropdown.currentText()
+        self.ui.serverip.setText(self.examserver.get(current) )
 
 
 class MulticastLifeClient(DatagramProtocol):
@@ -92,7 +97,7 @@ class MulticastLifeClient(DatagramProtocol):
                 print dialog.examserver
                 dialog._updateServerlist()
 
-            dialog.ui.serverip.setText(str(address[0]))
+
             dialog.ui.serversearch.setText("Server Found!")
             dialog.ui.servercheck.setPixmap(QPixmap("pixmaps/checked.png"))
             print "Datagram %s received from %s" % (repr(datagram), repr(address))
