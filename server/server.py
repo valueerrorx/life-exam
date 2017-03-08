@@ -67,6 +67,9 @@ class MyServerProtocol(basic.LineReceiver):
 
         if not self.refused:
             self.factory.window._disableClientScreenshot(self)
+            self.factory.disconnected_list.append(self.clientName)  #keep client name in disconnected_list
+        else:
+            self.factory.disconnected_list.remove(self.clientName)   # this one is not coming back
 
     # twisted
     def rawDataReceived(self, data):
@@ -170,7 +173,8 @@ class MyServerFactory(protocol.ServerFactory):
     def __init__(self, files_path, reactor):
         self.files_path = files_path
         self.reactor = reactor
-        self.client_list = ClientList()                         # type: ClientList
+        self.client_list = ClientList() # type: ClientList
+        self.disconnected_list = []
         self.files = None
         self.pincode = generatePin(5)
         self.examid = "Exam-%s" % generatePin(3)
@@ -206,7 +210,8 @@ class MultcastLifeServer(DatagramProtocol):
             # reply directly (unicast) to the originating port:
             print "Datagram %s received from %s" % (repr(datagram), repr(address))
 
-            message = "SERVER %s" % self.factory.examid
+            serverinfo = self.factory.examid + " " + " ".join(self.factory.disconnected_list)
+            message = "SERVER %s" % serverinfo
             self.transport.write(message, ("228.0.0.5", 8005))
 
             #self.transport.write("SERVER: Assimilate", address)  #this is NOT WORKINC

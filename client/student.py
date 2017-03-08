@@ -40,6 +40,10 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
         self.ui.pincode.textChanged.connect(lambda: self._changePalette(self.ui.pincode,'ok'))
 
+
+
+
+
     def _onAbbrechen(self):  # Exit button
         self.ui.close()
 
@@ -75,8 +79,6 @@ class ClientDialog(QtWidgets.QDialog):
             palettedefault = item.palette()
             palettedefault.setColor(item.backgroundRole(), QColor(255, 255, 255))
             item.setPalette(palettedefault)
-            
-            
 
     def _updateServerlist(self):
         """updates the dropdownmenu if new servers are found"""
@@ -88,6 +90,9 @@ class ClientDialog(QtWidgets.QDialog):
         """updates the ip address fiel according to the selection in the dropdownmenu """
         current = self.ui.serverdropdown.currentText()
         self.ui.serverip.setText(self.examserver.get(current) )
+
+
+
 
 
 class MulticastLifeClient(DatagramProtocol):
@@ -105,6 +110,9 @@ class MulticastLifeClient(DatagramProtocol):
         if "SERVER" in datagram:
             self.server_ip = address[0]
             self.info = clean_and_split_input(datagram)
+            self.disconnected_clients = self.info[2:]
+            self.completer = QtWidgets.QCompleter(self.disconnected_clients)
+            dialog.ui.studentid.setCompleter(self.completer)
 
             if self.info[1] not in dialog.examserver:   #if this is a new server name 
                 for key in dialog.examserver:

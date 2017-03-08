@@ -259,7 +259,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Name des Servers</string>
+      <string>Name der Prüfung</string>
      </property>
      <property name="indent">
       <number>2</number>
