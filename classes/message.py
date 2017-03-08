@@ -8,12 +8,16 @@ from config.enums import Command, DataType
 class Message(object):
     def __init__(self, command, **kwargs):
         self.command = command
+        self.data_type = None
         self.arguments = OrderedDict()  # type: OrderedDict
         self.arguments.update(kwargs)
 
     def __str__(self):
         return " ".join(
             ((" ".join((self.command, self.data_type))), (" ".join(value) for value in self.arguments.values())))
+
+    def verify(self):
+        pass
 
     @classmethod
     def getPickledMessage(cls, clazz, **kwargs):
@@ -23,28 +27,30 @@ class Message(object):
 
 class EndMessage(Message):
     def __init__(self, **kwargs):
-        Message.__init(self, Command.ENDMSG, **kwargs)
+        Message.__init__(self, Command.ENDMSG, **kwargs)
 
 
 class RefusedMessage(Message):
     def __init__(self, **kwargs):
-        Message.__init(self, Command.REFUSED, **kwargs)
+        Message.__init__(self, Command.REFUSED, **kwargs)
 
 
 class RemovedMessage(Message):
     def __init__(self, **kwargs):
-        Message.__init(self, Command.REMOVED, **kwargs)
+        Message.__init__(self, Command.REMOVED, **kwargs)
 
 
 class AuthMessage(Message):
     def __init__(self, **kwargs):
         """
         AuthMessage
-        :param kwargs: requires named argument 'id'
+        :param kwargs: requires named argument 'id' and 'pin_code'
         """
-        # TODO: cannot get this assert to work....
-        assert "id" in kwargs.keys(), "Keyword argument id missing"
+        if {"id", "pin_code"} <= set(**kwargs):
+            raise MalformedMessageException
+
         Message.__init__(self, Command.AUTH, **kwargs)
+
 
 
 class RequestDataMessage(Message):
@@ -55,8 +61,8 @@ class RequestDataMessage(Message):
         :param data_type: DataType
         :param kwargs: see subclasse for required kwargs
         """
-        self.data_type = data_type
         Message.__init__(self, Command.REQUESTDATA, **kwargs)
+        self.data_type = data_type
 
 
 class RequestFileMessage(RequestDataMessage):
@@ -99,8 +105,8 @@ class ReceiveDataMessage(Message):
         :param data_type: DataType
         :param kwargs: see subclasse for required kwargs
         """
-        self.data_type = data_type
         Message.__init__(self, Command.RECEIVEDATA, **kwargs)
+        self.data_type = data_type
 
 
 class ReceiveFileMessage(ReceiveDataMessage):
@@ -134,3 +140,7 @@ class ReceiveDataMessageFactory:
             DataType.FILE: ReceiveFileMessage,
             DataType.ABGABE: ReceiveExamMessage
         }.get(data_type, None)
+
+
+class MalformedMessageException(object):
+    pass

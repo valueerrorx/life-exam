@@ -30,6 +30,7 @@ from config.enums import *
 # from classes.system_commander import *
 import classes.system_commander as system_commander
 from classes.message import *
+import classes.messenger as messenger
 
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
@@ -68,14 +69,13 @@ class MyServerProtocol(basic.LineReceiver):
             self.transport.getPeer().host, len(self.factory.client_list.clients)))
 
         if not self.refused:
-            self.factory.window._disableClientScreenshot(self)
+            self.factory.window.disableClientScreenshot(self)
 
     # twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
-        filename = self.file_data[2]
-        file_path = os.path.join(self.factory.files_path, filename)
-        # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
+        file_name = self.current_message.arguments.get('file_name')
+        file_path = os.path.join(self.factory.files_path, file_name)
 
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
@@ -88,36 +88,14 @@ class MyServerProtocol(basic.LineReceiver):
             self.setLineMode()
 
             if validate_file_md5_hash(file_path, self.file_data[3]):  # everything ok..  file received
-                self.factory.window.log('File %s has been successfully transferred' % (filename))
-
-                if self.file_data[1] == DataType.SCREENSHOT:  # screenshot is received on initial connection
-                    screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
-                    os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
-                    self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
-
-                elif self.file_data[1] == DataType.FOLDER:
-                    extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
-                                                                                       :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
-                    with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
-                    os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
-
-                elif self.file_data[1] == DataType.ABGABE:
-                    extract_dir = os.path.join(ABGABE_DIRECTORY, self.clientName, filename[
-                                                                                  :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
-                    with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
-                    os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(ABGABE_DIRECTORY)  # fix filepermission of transferred file
-
+                self.factory.window.log('File %s has been successfully transferred' % file_name)
+                self._handleData(self.current_message)(file_name, file_path)
             else:  # wrong file hash
                 os.unlink(file_path)
                 self.transport.write('File was successfully transferred but not saved, due to invalid MD5 hash\n')
                 self.transport.write(Command.ENDMSG + '\n')
                 self.factory.window.log(
-                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
+                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % file_name)
 
         else:
             self.file_handler.write(data)
@@ -125,48 +103,105 @@ class MyServerProtocol(basic.LineReceiver):
     # twisted
     def lineReceived(self, line):
         """whenever the client sends something """
-        # message = pickle.loads(line)
-
-        self.file_data = clean_and_split_input(line)
-        if len(self.file_data) == 0 or self.file_data == '':
+        try:
+            message = pickle.loads(line)
+        except:
             return
-            # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
 
-        if line.startswith(Command.AUTH):  # AUTH is sent immediately after a connection is made and transfers the clientName
-            print "auth request received"
-            newID = self.file_data[1] 
-            pincode = self.file_data[2]
-            self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
-        elif line.startswith(Command.FILETRANSFER):
-            self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
-            self.setRawMode()  # this is a file - set to raw mode
+        self.current_message = message
+        self._handleMessage(message)(message)
 
-    def _checkclientAuth(self, newID, pincode):
-        """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
+    def _checkclientAuth(self, message):
+        """
+        searches for the newID in factory.clients and rejects the connection if found or wrong pincode
+        :param message: An AuthMessage
+        :type message: AuthMessage
+        :return:
+        :rtype:
+        """
+        (id_to_check, pincode) = message.arguments
 
-        if newID in self.factory.client_list.clients.keys():
+        if id_to_check in self.factory.client_list.clients.keys():
             print "this user already exists and is connected"
             self.refused = True
-            self.sendLine(Command.REFUSED)
+            messenger.refuse(self)
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
+            self.factory.window.log('Client Connection from %s has been refused. User already exists' % id_to_check)
             return
         elif int(pincode) != self.factory.pincode:
             print pincode
             print self.factory.pincode
             print "wrong pincode"
             self.refused = True
-            self.sendLine(Command.REFUSED)
+            messenger.refuse(self)
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID))
+            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % id_to_check)
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             print "pincode ok"
-            self.clientName = newID
-            self.factory.window.log('New Connection from <b>%s </b>' % (newID))
-            #transfer, send, screenshot, filename, hash, cleanabgabe
-            self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+            self.clientName = id_to_check
+            self.factory.window.log('New Connection from <b>%s </b>' % id_to_check)
+            messenger.request_screenshot(self, file_name=id_to_check)
             return
+
+    @classmethod
+    def _handleMessage(cls, message):
+        """
+        Returns function for handling message. Add new functions here if you want to handle new types of messages
+        :param message:
+        :type message:
+        :return:
+        :rtype: function
+        """
+        return {
+            Command.AUTH: cls._authorize,
+            Command.RECEIVEDATA: cls._receiveFile
+
+        }.get(message.command, None)
+
+    @classmethod
+    def _handleData(cls, message):
+        """
+
+        :param message:
+        :type message: Message
+        :return:
+        :rtype: function
+        """
+        return {
+            DataType.SCREENSHOT: cls._handleScreenshot,
+            DataType.FOLDER: cls._handleFolder,
+            DataType.FILE: "",
+            DataType.ABGABE: cls._handleAbgabe
+        }.get(message.data_type, None)
+
+    def _handleScreenshot(self, file_name, file_path):
+        screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, file_name)
+        os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
+        fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
+        self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+
+    def _handleFolder(self, file_name, file_path):
+        self._extract(file_name, file_path, SERVERUNZIP_DIRECTORY)
+
+    def _handleAbgabe(self, file_name, file_path):
+        self._extract(file_name, file_path, ABGABE_DIRECTORY)
+
+    def _extract(self, file_name, file_path, directory):
+        extract_dir = os.path.join(directory, self.clientName, file_name[
+                                                                      :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+        with zipfile.ZipFile(file_path, "r") as zip_ref:
+            zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
+        os.unlink(file_path)  # delete zip file
+        fixFilePermissions(directory)  # fix filepermission of transferred file
+
+    def _authorize(self, message):
+        print "auth request received"
+        self._checkclientAuth(message)
+
+    def _receiveFile(self, message):
+        self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
+        self.setRawMode()  # this is a file - set to raw mode
 
 
 class MyServerFactory(protocol.ServerFactory):
@@ -196,7 +231,7 @@ class MyServerFactory(protocol.ServerFactory):
 
 class MultcastLifeServer(DatagramProtocol):
     def __init__(self, factory):
-         self.factory = factory
+        self.factory = factory
 
     def startProtocol(self):
         """Called after protocol has started listening. """
@@ -442,7 +477,7 @@ class ServerUI(QtWidgets.QDialog):
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
         self.log('Connection to client <b> %s </b> has been <b>removed</b>.' % client_name)
 
-    def _disableClientScreenshot(self, client):
+    def disableClientScreenshot(self, client):
         self._workingIndicator(True, 500)
         client_name = client.clientName
         client_id = client.clientConnectionID

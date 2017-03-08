@@ -19,15 +19,15 @@ def broadcast_message(connections, msg_func, **kwargs):
         msg_func(connection, **kwargs)
 
 
-def request_screenshot(connection, **kwargs):
+def request_screenshot(connection, file_name=""):
     """
     Requests a screenshot of a connection
     :param connection:
     :type connection: MyServerProtocol
-    :param kwargs: Should contain named argument 'file_name=xxxx.jpg'
+    :param file_name: Should contain named argument 'file_name=xxxx.jpg'
     :return: None
     """
-    connection.sendLine(Message.getPickledMessage(RequestScreenshotMessage, **kwargs))
+    connection.sendLine(Message.getPickledMessage(RequestScreenshotMessage, file_name=file_name))
 
 
 def request_abgabe(connection):
