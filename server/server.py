@@ -132,45 +132,58 @@ class MyServerProtocol(basic.LineReceiver):
             return
             # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
 
-        if line.startswith(Command.AUTH):
-            newID = self.file_data[
-                1]  # AUTH is sent immediately after a connection is made and transfers the clientName
-            self._checkclientName(newID)  # check if this custom client id (entered by the student) is already taken
+        if line.startswith(Command.AUTH):  # AUTH is sent immediately after a connection is made and transfers the clientName
+            print "auth request received"
+            newID = self.file_data[1] 
+            pincode = self.file_data[2]
+            self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
         elif line.startswith(Command.FILETRANSFER):
             self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
             self.setRawMode()  # this is a file - set to raw mode
 
-    def _checkclientName(self, newID):
-        """searches for the newID in factory.clients and rejects the connection if found"""
+    def _checkclientAuth(self, newID, pincode):
+        """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
 
         if newID in self.factory.client_list.clients.keys():
             print "this user already exists and is connected"
             self.refused = True
             self.sendLine(Command.REFUSED)
             self.transport.loseConnection()
-            self.factory.log('Client Connection from %s has been refused. User already exists' % (newID))
-
+            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
+            return
+        elif int(pincode) != self.factory.pincode:
+            print pincode
+            print self.factory.pincode
+            print "wrong pincode"
+            self.refused = True
+            self.sendLine(Command.REFUSED)
+            self.transport.loseConnection()
+            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID))
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
+            print "pincode ok"
             self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID))
             #transfer, send, screenshot, filename, hash, cleanabgabe
             self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
-
             return
 
 
 class MyServerFactory(protocol.ServerFactory):
 
-    def __init__(self, files_path):
+    def __init__(self, files_path, reactor):
         self.files_path = files_path
+        self.reactor = reactor
         self.client_list = ClientList()                         # type: ClientList
         self.files = None
+        self.pincode = generatePin(5)
+        self.examid = "Exam-%s" % generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self._onAbgabe("all"))
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
-
+        #starting multicast server here in order to provide "factory" information via broadcast
+        self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
 
     """
     http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
@@ -182,23 +195,26 @@ class MyServerFactory(protocol.ServerFactory):
         """
 
 class MultcastLifeServer(DatagramProtocol):
+    def __init__(self, factory):
+         self.factory = factory
+
     def startProtocol(self):
-        """
-        Called after protocol has started listening.
-        """
-        # Set the TTL>1 so multicast will cross router hops:
-        self.transport.setTTL(5)
-        # Join a specific multicast group:
-        self.transport.joinGroup("228.0.0.5")
-        # self.transport.write("SERVER: Assimilate", ("228.0.0.5", 8005))
+        """Called after protocol has started listening. """
+        self.transport.setTTL(5)     # Set the TTL>1 so multicast will cross router hops:
+        self.transport.joinGroup("228.0.0.5")   # Join a specific multicast group:
 
     def datagramReceived(self, datagram, address):
-        print "Datagram %s received from %s" % (repr(datagram), repr(address))
+
         if "CLIENT" in datagram:
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
-            self.transport.write('SERVER: Assimilate', ("228.0.0.5", 8005))
-            self.transport.write("SERVER: Assimilate", address)
+            print "Datagram %s received from %s" % (repr(datagram), repr(address))
+
+            message = "SERVER %s" % self.factory.examid
+            self.transport.write(message, ("228.0.0.5", 8005))
+
+            #self.transport.write("SERVER: Assimilate", address)  #this is NOT WORKINC
+
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -225,7 +241,18 @@ class ServerUI(QtWidgets.QDialog):
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         self.timer = False
+
+        self.ui.pinlabel.setText("Pincode: <b>%s</b>" % self.factory.pincode  )
+        self.ui.examlabeledit.setText(self.factory.examid  )
+        self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
+        self.ui.examlabeledit.textChanged.connect(self._updateExamName)
+
         self.ui.show()
+
+
+    def _updateExamName(self):
+        self.factory.examid = self.ui.examlabeledit.text()
+        self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
 
     def closeEvent(self, evnt):
         self.showMinimized()
@@ -289,7 +316,7 @@ class ServerUI(QtWidgets.QDialog):
         time = 2000 if who is 'all' else 1000
         self._workingIndicator(True, time)
         if not self.factory.client_list.request_abgabe(who):
-            self.window.log("no clients connected")
+            self.log("no clients connected")
 
     def _onStartExam(self):
         """
@@ -539,10 +566,9 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
 
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY))  # start the server on SERVER_PORT
-
-    reactor.listenMulticast(8005, MultcastLifeServer(),
-                            listenMultiple=True)
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor ))  # start the server on SERVER_PORT
+    # moved multicastserver starting sequence to factory
+    #reactor.listenMulticast(8005, MultcastLifeServer(), listenMultiple=True)
 
     print ('Listening on port %d' % (SERVER_PORT))
     reactor.run()

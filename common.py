@@ -8,6 +8,16 @@ import ipaddress
 import shutil
 
 from config.config import *
+from random import randint
+
+
+
+def generatePin(n):
+    """generates a random number in the given length n """
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)
+
 
 
 def checkFirewall(firewall_ip_list):
@@ -131,6 +141,10 @@ def prepareDirectories():
 
     if not os.path.exists(ABGABE_DIRECTORY):
         os.makedirs(ABGABE_DIRECTORY)
+        
+    if not os.path.exists(EINGANG_DIRECTORY):
+        os.makedirs(EINGANG_DIRECTORY)  
+    
 
     copycommand = "cp -r ./DATA/scripts %s" % (WORK_DIRECTORY)
     os.system(copycommand)
@@ -143,6 +157,7 @@ def prepareDirectories():
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(ABGABE_DIRECTORY)
+    fixFilePermissions(EINGANG_DIRECTORY)
 
 
 def fixFilePermissions(folder):
