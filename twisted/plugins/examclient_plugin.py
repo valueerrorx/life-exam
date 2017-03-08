@@ -47,7 +47,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
-        self.sendLine('%s %s' % (Command.AUTH, self.factory.options['id']))
+        self.sendLine('%s %s %s' % (Command.AUTH, self.factory.options['id'],  self.factory.options['pincode']))
         print('Connected to the server')
         showDesktopMessage('Connected to the server')
 
@@ -244,7 +244,8 @@ export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
 class Options(usage.Options):
     optParameters = [["port", "p", 5000, "The port number to connect to."],
                      ["host", "h", '127.0.0.1', "The host machine to connect to."],
-                     ["id", "i", 'unnamed', "A custom unique Client id."]
+                     ["id", "i", 'unnamed', "A custom unique Client id."],
+                     ["pincode", "c", '12345', "The pincode needed for authorization"]
                      ]
 
 

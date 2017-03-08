@@ -141,6 +141,10 @@ def prepareDirectories():
 
     if not os.path.exists(ABGABE_DIRECTORY):
         os.makedirs(ABGABE_DIRECTORY)
+        
+    if not os.path.exists(EINGANG_DIRECTORY):
+        os.makedirs(EINGANG_DIRECTORY)  
+    
 
     copycommand = "cp -r ./DATA/scripts %s" % (WORK_DIRECTORY)
     os.system(copycommand)
@@ -153,6 +157,7 @@ def prepareDirectories():
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(ABGABE_DIRECTORY)
+    fixFilePermissions(EINGANG_DIRECTORY)
 
 
 def fixFilePermissions(folder):
