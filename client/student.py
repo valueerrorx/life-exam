@@ -37,6 +37,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)
         self.ui.studentid.textChanged.connect(lambda: self._changePalette(self.ui.studentid, 'ok'))
+        self.ui.studentid.setFocus()
         self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
         self.ui.pincode.textChanged.connect(lambda: self._changePalette(self.ui.pincode,'ok'))
 

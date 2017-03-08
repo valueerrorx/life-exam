@@ -270,9 +270,11 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>serverip</tabstop>
   <tabstop>studentid</tabstop>
+  <tabstop>pincode</tabstop>
   <tabstop>start</tabstop>
+  <tabstop>serverdropdown</tabstop>
+  <tabstop>serverip</tabstop>
   <tabstop>exit</tabstop>
  </tabstops>
  <resources/>
