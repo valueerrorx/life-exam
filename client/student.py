@@ -38,6 +38,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)
         self.ui.studentid.textChanged.connect(lambda: self._changePalette(self.ui.studentid, 'ok'))
         self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
+        self.ui.pincode.textChanged.connect(lambda: self._changePalette(self.ui.pincode,'ok'))
 
     def _onAbbrechen(self):  # Exit button
         self.ui.close()
