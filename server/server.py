@@ -128,31 +128,40 @@ class MyServerProtocol(basic.LineReceiver):
             return
             # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
 
-        if line.startswith(Command.AUTH):
-            newID = self.file_data[
-                1]  # AUTH is sent immediately after a connection is made and transfers the clientName
-            self._checkclientName(newID)  # check if this custom client id (entered by the student) is already taken
+        if line.startswith(Command.AUTH):  # AUTH is sent immediately after a connection is made and transfers the clientName
+            print "auth request received"
+            newID = self.file_data[1] 
+            pincode = self.file_data[2]
+            self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
         elif line.startswith(Command.FILETRANSFER):
             self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
             self.setRawMode()  # this is a file - set to raw mode
 
-    def _checkclientName(self, newID):
-        """searches for the newID in factory.clients and rejects the connection if found"""
+    def _checkclientAuth(self, newID, pincode):
+        """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
 
         if newID in self.factory.client_list.clients.keys():
             print "this user already exists and is connected"
             self.refused = True
             self.sendLine(Command.REFUSED)
             self.transport.loseConnection()
-            self.factory.log('Client Connection from %s has been refused. User already exists' % (newID))
-
+            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
+            return
+        elif int(pincode) != self.factory.pincode:
+            print pincode
+            print self.factory.pincode
+            print "wrong pincode"
+            self.refused = True
+            self.sendLine(Command.REFUSED)
+            self.transport.loseConnection()
+            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID))
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
+            print "pincode ok"
             self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID))
             #transfer, send, screenshot, filename, hash, cleanabgabe
             self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
-
             return
 
 
@@ -232,20 +241,14 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.pinlabel.setText("Pincode: <b>%s</b>" % self.factory.pincode  )
         self.ui.examlabeledit.setText(self.factory.examid  )
         self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
-
         self.ui.examlabeledit.textChanged.connect(self._updateExamName)
 
-    
-
         self.ui.show()
-
 
 
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit.text()
         self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
-    
-
 
     def closeEvent(self, evnt):
         self.showMinimized()
