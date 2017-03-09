@@ -441,8 +441,8 @@ class ServerUI(QtWidgets.QDialog):
     def _onRemoveClient(self, client_id):
         self._workingIndicator(True, 500)
         client_name = self.factory.client_list.kick_client(client_id)
-        if client_name:
-            sip.delete(self.get_list_widget_by_client_id(client_id))
+        #if client_name:
+        sip.delete(self.get_list_widget_by_client_id(client_id))   #remove client widget no matter if client still is connected or not
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
         self.log('Connection to client <b> %s </b> has been <b>removed</b>.' % client_name)
 
@@ -505,9 +505,10 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
-        
-        self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
-        
+        try:
+            self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
+        except:
+            return
         pixmap = QPixmap(screenshot_file_path)
         existing_item.picture.setPixmap(pixmap)
         existing_item.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))
