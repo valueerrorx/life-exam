@@ -69,8 +69,11 @@ class MyServerProtocol(basic.LineReceiver):
             self.factory.window._disableClientScreenshot(self)
             self.factory.disconnected_list.append(self.clientName)  #keep client name in disconnected_list
         else:
-            self.factory.disconnected_list.remove(self.clientName)   # this one is not coming back
-
+            try:
+                self.factory.disconnected_list.remove(self.clientName)   # this one is not coming back
+            except:
+                return
+            
     # twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
@@ -502,6 +505,9 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
+        
+        self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
+        
         pixmap = QPixmap(screenshot_file_path)
         existing_item.picture.setPixmap(pixmap)
         existing_item.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))

@@ -27,6 +27,9 @@ class ClientDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
         self.examserver = dict()
+        self.disconnected_clients = dict()
+        self.completer = QtWidgets.QCompleter()
+        self.completerlist = []
         self._initUi()
         prepareDirectories()
 
@@ -36,6 +39,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)
+        self.ui.serverdropdown.activated.connect(self._updateIP)
         self.ui.studentid.textChanged.connect(lambda: self._changePalette(self.ui.studentid, 'ok'))
         self.ui.studentid.setFocus()
         self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
@@ -91,6 +95,11 @@ class ClientDialog(QtWidgets.QDialog):
         """updates the ip address fiel according to the selection in the dropdownmenu """
         current = self.ui.serverdropdown.currentText()
         self.ui.serverip.setText(self.examserver.get(current) )
+        
+        self.completerlist = self.disconnected_clients.get(current)  # gets a list from the dict
+        self.completer = QtWidgets.QCompleter(self.completerlist)
+        self.ui.studentid.setCompleter(self.completer)
+       
 
 
 
@@ -111,9 +120,8 @@ class MulticastLifeClient(DatagramProtocol):
         if "SERVER" in datagram:
             self.server_ip = address[0]
             self.info = clean_and_split_input(datagram)
-            self.disconnected_clients = self.info[2:]
-            self.completer = QtWidgets.QCompleter(self.disconnected_clients)
-            dialog.ui.studentid.setCompleter(self.completer)
+            
+            dialog.disconnected_clients.update({ self.info[1] : self.info[2:] })   # { servername : ['clientname1','clientname2'] }
 
             if self.info[1] not in dialog.examserver:   #if this is a new server name 
                 for key in dialog.examserver:
