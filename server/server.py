@@ -179,7 +179,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.client_list = ClientList() # type: ClientList
         self.disconnected_list = []
         self.files = None
-        self.pincode = generatePin(5)
+        self.pincode = generatePin(4)
         self.examid = "Exam-%s" % generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self._onAbgabe("all"))
