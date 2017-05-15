@@ -54,8 +54,10 @@ class ClientList:
         if file_path:
 
             filename = ntpath.basename(file_path)  # get filename without path
+            filename = str(filename).replace(" ", "_")
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
+
 
             
             if who is 'all':
