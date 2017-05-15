@@ -52,15 +52,18 @@ class ClientList:
 
     def send_file(self, file_path, who):
         if file_path:
+
             filename = ntpath.basename(file_path)  # get filename without path
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
 
+            
             if who is 'all':
                 self.broadcast_file(file_path, filename, md5_hash)
             else:
                 client = self.get_client(who)
                 client.sendLine('%s %s %s %s %s none' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+                #FIXME filename with spaces is not transferred because of invalid filehash (which is not invalid but a part of the name is taken as hash on client side)
                 client.setRawMode()
                 who = client.clientName
                 self.send_bytes(client, file_path)

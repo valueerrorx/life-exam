@@ -104,17 +104,17 @@ class MyServerProtocol(basic.LineReceiver):
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
                                                                                        :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
+                        zip_ref.extractall(extract_dir)  
                     os.unlink(file_path)  # delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
                 elif self.file_data[1] == DataType.ABGABE:
-                    extract_dir = os.path.join(ABGABE_DIRECTORY, self.clientName, filename[
+                    extract_dir = os.path.join(EINGANG_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)  # derzeitiges verzeichnis ist .life/SERVER/unzip
+                        zip_ref.extractall(extract_dir) 
                     os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(ABGABE_DIRECTORY)  # fix filepermission of transferred file
+                    fixFilePermissions(EINGANG_DIRECTORY)  # fix filepermission of transferred file
 
             else:  # wrong file hash
                 os.unlink(file_path)
@@ -259,7 +259,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
 
     def closeEvent(self, evnt):
-        self.showMinimized()
+        #self.showMinimized()  #shows a weird window in the last version #FIXME
         evnt.ignore()
 
     def _workingIndicator(self, action, duration):
@@ -284,7 +284,7 @@ class ServerUI(QtWidgets.QDialog):
             self.log("no clients connected")
             return
 
-        file_path = self._showFilePicker(ABGABE_DIRECTORY)
+        file_path = self._showFilePicker(EINGANG_DIRECTORY)
 
         if file_path:
             self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
