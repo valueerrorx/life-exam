@@ -58,6 +58,7 @@ class MyServerProtocol(basic.LineReceiver):
 
     # twisted
     def connectionLost(self, reason):
+        print reason
         self.factory.client_list.remove_client(self)
         self.file_handler = None
         self.file_data = ()
@@ -508,7 +509,7 @@ class ServerUI(QtWidgets.QDialog):
         try:
             self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
         except:
-            return
+            pass            #changed return to pass otherwise the screenshot is not updated
         pixmap = QPixmap(screenshot_file_path)
         existing_item.picture.setPixmap(pixmap)
         existing_item.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))
