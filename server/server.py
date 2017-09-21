@@ -247,9 +247,9 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.working.setMovie(self.workinganimation)
         self.timer = False
 
-        self.ui.pinlabel.setText("Pincode: <b>%s</b>" % self.factory.pincode  )
+        self.ui.currentpin.setText("<b>%s</b>" % self.factory.pincode  )
         self.ui.examlabeledit.setText(self.factory.examid  )
-        self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
+        self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit.textChanged.connect(self._updateExamName)
 
         self.ui.show()
@@ -257,7 +257,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit.text()
-        self.ui.examlabel.setText("Prüfungsname: <b>%s</b>" % self.factory.examid  )
+        self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
 
     def closeEvent(self, evnt):
         #self.showMinimized()  #shows a weird window in the last version #FIXME
