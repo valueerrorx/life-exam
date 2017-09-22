@@ -222,6 +222,27 @@ class MultcastLifeServer(DatagramProtocol):
 
 
 
+
+
+
+class ScreenshotWindow(QtWidgets.QDialog):
+    def __init__(self, screenshot, clientname, screenshot_file_path):
+        QtWidgets.QDialog.__init__(self)
+        self.screenshot = screenshot
+        text =  "Screenshot - %s - %s" %(screenshot, clientname)
+
+        self.setGeometry(100,100,800,600)
+        oImage = QImage(screenshot_file_path)
+        sImage = oImage.scaled(QtCore.QSize(800,600))                   # resize Image to widgets size
+        palette = QPalette()
+        palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
+        self.setPalette(palette)
+
+        self.setWindowTitle(text)
+
+
+
+
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
@@ -489,7 +510,8 @@ class ServerUI(QtWidgets.QDialog):
         item.picture = QtWidgets.QLabel()
         item.picture.setPixmap(pixmap)
         item.picture.setAlignment(QtCore.Qt.AlignCenter)
-        item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
+        #item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
+        item.info = QtWidgets.QLabel('%s' % (client.clientName))
         item.info.setAlignment(QtCore.Qt.AlignCenter)
 
         grid = QtWidgets.QGridLayout()
@@ -501,6 +523,7 @@ class ServerUI(QtWidgets.QDialog):
         widget.setLayout(grid)
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(item.pID, item.id, screenshot_file_path)
 
         self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
@@ -515,6 +538,13 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))
         existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.disabled = False
+
+    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
+        screenshotfilename = "%s.jpg" % client_connection_id
+        screenshotwindow = ScreenshotWindow(screenshotfilename, client_name, screenshot_file_path)
+        screenshotwindow.exec_()
+
+
 
     def _on_context_menu(self, client_connection_id, is_disabled):
         menu = QtWidgets.QMenu()

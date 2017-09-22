@@ -55,7 +55,7 @@ class ClientDialog(QtWidgets.QDialog):
     def _onStartExamClient(self):
         SERVER_IP = self.ui.serverip.text()
         ID = self.ui.studentid.text()
-        PIN = self.ui.pincode.text()
+        PIN = self.ui.pincode.text()   #BUG FIXME - wenn pincode ein sonderzeichen beinhaltet crashed alles
         
         if checkIP(SERVER_IP):
             if ID == "":

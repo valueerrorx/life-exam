@@ -31,7 +31,7 @@ def connection_refused(client, line):
     :param line: line recieived
     :return:
     """
-    showDesktopMessage('Connection refused!\n Client ID already taken!')
+    showDesktopMessage('Connection refused!\n Client ID already taken or wrong PIN!')
     client.factory.failcount = 100
 
 
