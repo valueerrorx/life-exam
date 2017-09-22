@@ -124,7 +124,7 @@ def prepare_abgabe(client, filename, *args):
     """
     client._triggerAutosave()
     time.sleep(2)  # TODO: make autosave return that it is finished!
-    target_folder = ABGABE_DIRECTORY
+    target_folder = SHARE_DIRECTORY
     output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
     shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
     return "%s.zip" % filename  # this is the filename of the zip file

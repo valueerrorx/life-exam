@@ -44,8 +44,8 @@ rule_5=open,,,,file,,$HOME/.local/share/applications/,true
 rule_6=list,,,,file,,$HOME/.local/share/applications/,true
 
 
-rule_7=open,,,,file,,$HOME/ABGABE,true
-rule_8=list,,,,file,,$HOME/ABGABE,true
+rule_7=open,,,,file,,$HOME/SHARE,true
+rule_8=list,,,,file,,$HOME/SHARE,true
 
 rule_9=open,,,,file,,$TMP,true
 rule_10=list,,,,file,,$TMP,true

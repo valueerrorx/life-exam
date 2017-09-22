@@ -18,7 +18,7 @@ CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
 BACKUPDIR="${HOME}.life/unlockedbackup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-ABGABE="${HOME}ABGABE/"
+SHARE="${HOME}SHARE/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 MODE=$1
@@ -186,27 +186,27 @@ fi
 
 
 #---------------------------------#
-# MOUNT ABGABE                    #
+# MOUNT SHARE                    #
 #---------------------------------#
 qdbus $progress Set "" value 4
-qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis ABGABE...."
+qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
 sleep 0.5
 
-    mkdir $ABGABE > /dev/null 2>&1
-    sudo chown -R ${USER}:${USER} $ABGABE   # twistd runs as root - fix permissions
-    sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE $ABGABE
-    sudo touch $ABGABE   # update timestamp on live usb devices
+    mkdir $SHARE > /dev/null 2>&1
+    sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
+    sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/SHARE $SHARE
+    sudo touch $SHARE   # update timestamp on live usb devices
 
     if [[  ( $MODE = "permanent" ) ]]
     then 
         echo "#!/bin/sh -e" > /etc/rc.local
-        echo "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/ABGABE /home/student/ABGABE" >> /etc/rc.local
-        sudo cp "${SCRIPTDIR}USB-Kopie.desktop" $ABGABE
+        echo "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/SHARE /home/student/SHARE" >> /etc/rc.local
+        sudo cp "${SCRIPTDIR}USB-Kopie.desktop" $SHARE
     fi
     
     if [[ ( $MODE = "config" ) ]]
     then
-        sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" $ABGABE  # erstelle link um config zu speichern
+        sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" $SHARE  # erstelle link um config zu speichern
        
     fi
 

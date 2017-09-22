@@ -14,7 +14,7 @@ HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 BACKUPDIR="${HOME}.life/unlockedbackup/" 
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
-ABGABE="${HOME}ABGABE/"
+SHARE="${HOME}SHARE/"
 
 MODE=$1
 if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  ]]
@@ -91,12 +91,12 @@ then
         cp -a ${HOME}.config/user-dirs.dirs ${LOCKDOWNDIR}       #default directories for documents music etc.
         cp -a ${HOME}.config/mimeapps.list ${LOCKDOWNDIR}mimeapps.list-EXAM
         
-        sudo rm "${ABGABE}Speichere Prüfungsumgebung.desktop"
+        sudo rm "${SHARE}Speichere Prüfungsumgebung.desktop"
     elif [ "$answer" = 1 ]; then
         #------------------------------------------------#
         # CONTINUE WITHOUT SAVING                        #
         #------------------------------------------------#
-        sudo rm "${ABGABE}Speichere Prüfungsumgebung.desktop"
+        sudo rm "${SHARE}Speichere Prüfungsumgebung.desktop"
     else
         exit 1   #cancel
     fi;
@@ -105,7 +105,7 @@ fi
 
 if [[ ( $MODE = "exam" ) ]]
 then 
-    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner ABGABE gesichert ? " --title "EXAM" --caption "EXAM";
+    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM" --caption "EXAM";
     if [ "$?" = 0 ]; then
         sleep 0
     else
@@ -155,7 +155,7 @@ sleep 0.5
 #---------------------------------#
     # sichere exam start und end infos
     date >> $EXAMLOCKFILE
-    sudo cp $EXAMLOCKFILE $ABGABE
+    sudo cp $EXAMLOCKFILE $SHARE
     sudo rm $EXAMLOCKFILE
     sleep 0.5
 
@@ -165,13 +165,13 @@ sleep 0.5
     
 
 #---------------------------------#
-# UMOUNT ABGABE                   #
+# UMOUNT SHARE                   #
 #---------------------------------#
 qdbus $progress Set "" value 2
-qdbus $progress setLabelText "Verzeichnis ABGABE wird freigegeben...."
+qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
 sleep 0.5
 
-    sudo umount -l $ABGABE
+    sudo umount -l $SHARE
 
 
     

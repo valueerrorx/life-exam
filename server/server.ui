@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
+    <width>974</width>
     <height>640</height>
    </rect>
   </property>
@@ -59,17 +59,29 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QToolButton" name="startexam">
+          <widget class="QPushButton" name="startexam">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="mouseTracking">
             <bool>false</bool>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="toolTip">
             <string>Prüfungsumgebung starten</string>
            </property>
            <property name="statusTip">
+            <string/>
+           </property>
+           <property name="accessibleName">
+            <string/>
+           </property>
+           <property name="accessibleDescription">
             <string/>
            </property>
            <property name="autoFillBackground">
@@ -79,7 +91,7 @@
             <string notr="true">background-color: rgba(255,0,0,0.3);</string>
            </property>
            <property name="text">
-            <string>...</string>
+            <string>Exam starten</string>
            </property>
            <property name="icon">
             <iconset>
@@ -94,70 +106,30 @@
            <property name="checkable">
             <bool>false</bool>
            </property>
-           <property name="popupMode">
-            <enum>QToolButton::DelayedPopup</enum>
+           <property name="default">
+            <bool>true</bool>
            </property>
-           <property name="autoRaise">
-            <bool>false</bool>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="starthotspot">
+          <widget class="QPushButton" name="abgabe">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="toolTip">
-            <string>Accesspoint aktivieren</string>
+            <string>Alle Arbeiten einsammeln</string>
            </property>
            <property name="statusTip">
             <string/>
            </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="showip">
-           <property name="toolTip">
-            <string>IP Adresse anzeigen</string>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <property name="text">
-            <string>...</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="abgabe">
-           <property name="toolTip">
-            <string>Abgabe Ordner einsammeln</string>
-           </property>
-           <property name="statusTip">
-            <string/>
-           </property>
-           <property name="text">
-            <string>...</string>
+            <string>Arbeiten einsammeln</string>
            </property>
            <property name="icon">
             <iconset>
@@ -169,35 +141,24 @@
              <height>32</height>
             </size>
            </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="screenshots">
+          <widget class="QPushButton" name="sendfile">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
            <property name="toolTip">
-            <string>Screenshots aktualisieren</string>
+            <string>Datei an alle Clients senden</string>
            </property>
            <property name="text">
-            <string>...</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../pixmaps/pictures.png</normaloff>../pixmaps/pictures.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="sendfile">
-           <property name="toolTip">
             <string>Datei senden</string>
-           </property>
-           <property name="text">
-            <string>...</string>
            </property>
            <property name="icon">
             <iconset>
@@ -209,15 +170,127 @@
              <height>32</height>
             </size>
            </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="autoabgabe">
+          <widget class="Line" name="line_2">
+           <property name="maximumSize">
+            <size>
+             <width>2</width>
+             <height>45</height>
+            </size>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="screenshots">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Screenshots aktualisieren</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/pictures.png</normaloff>../pixmaps/pictures.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="starthotspot">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Accesspoint aktivieren</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="showip">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>IP Adresse anzeigen</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="autoabgabe">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Automatische Abgabe starten/stoppen</string>
            </property>
            <property name="text">
-            <string>...</string>
+            <string/>
            </property>
            <property name="icon">
             <iconset>
@@ -228,6 +301,12 @@
              <width>32</width>
              <height>32</height>
             </size>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -249,20 +328,35 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_21">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="sizeConstraint">
+            <enum>QLayout::SetMinimumSize</enum>
+           </property>
            <property name="topMargin">
-            <number>5</number>
+            <number>8</number>
            </property>
            <property name="bottomMargin">
-            <number>5</number>
+            <number>8</number>
            </property>
            <item>
             <widget class="QLabel" name="currentlabel">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>12</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>exam-123</string>
@@ -274,12 +368,21 @@
            </item>
            <item>
             <widget class="QLabel" name="currentpin">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>12</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>1234</string>
@@ -312,14 +415,17 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_10">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <property name="sizeConstraint">
             <enum>QLayout::SetMinimumSize</enum>
            </property>
            <property name="topMargin">
-            <number>5</number>
+            <number>8</number>
            </property>
            <property name="bottomMargin">
-            <number>5</number>
+            <number>8</number>
            </property>
            <item>
             <widget class="QLabel" name="examlabel">
@@ -328,6 +434,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
              </property>
              <property name="font">
               <font>
@@ -341,7 +453,7 @@
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>Exam</string>
+              <string>Name</string>
              </property>
              <property name="textFormat">
               <enum>Qt::RichText</enum>
@@ -359,6 +471,12 @@
            </item>
            <item>
             <widget class="QLabel" name="pinlabel">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>12</pointsize>
@@ -1142,16 +1260,27 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>startexam</tabstop>
+  <tabstop>abgabe</tabstop>
+  <tabstop>sendfile</tabstop>
+  <tabstop>screenshots</tabstop>
   <tabstop>starthotspot</tabstop>
   <tabstop>showip</tabstop>
-  <tabstop>abgabe</tabstop>
-  <tabstop>screenshots</tabstop>
-  <tabstop>sendfile</tabstop>
   <tabstop>autoabgabe</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>listWidget</tabstop>
+  <tabstop>exit</tabstop>
   <tabstop>logwidget</tabstop>
+  <tabstop>examlabeledit</tabstop>
+  <tabstop>firewall1</tabstop>
+  <tabstop>firewall2</tabstop>
+  <tabstop>firewall3</tabstop>
+  <tabstop>firewall4</tabstop>
+  <tabstop>testfirewall</tabstop>
+  <tabstop>aintervall</tabstop>
+  <tabstop>cleanabgabe</tabstop>
+  <tabstop>startconfig</tabstop>
+  <tabstop>loaddefaults</tabstop>
  </tabstops>
  <resources/>
  <connections/>

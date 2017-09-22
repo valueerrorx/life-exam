@@ -89,15 +89,15 @@ class MyClientProtocol(basic.LineReceiver):
                     self._startExam(filename, file_path, cleanup_abgabe)
                 elif self.file_data[2] == DataType.FILE:
 
-                    if os.path.isfile(os.path.join(ABGABE_DIRECTORY, filename)):
+                    if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
                         filename = "%s-%s" %(filename, datetime.datetime.now().strftime("%H-%M-%S")) #save with timecode
-                        targetpath = os.path.join(ABGABE_DIRECTORY, filename)
+                        targetpath = os.path.join(SHARE_DIRECTORY, filename)
                         shutil.move(file_path, targetpath)
                     else:
-                        shutil.move(file_path, ABGABE_DIRECTORY)
+                        shutil.move(file_path, SHARE_DIRECTORY)
 
                     showDesktopMessage('File %s received!' %(filename))
-                    fixFilePermissions(ABGABE_DIRECTORY)
+                    fixFilePermissions(SHARE_DIRECTORY)
             else:
                 os.unlink(file_path)
                 print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
@@ -188,7 +188,7 @@ class MyClientProtocol(basic.LineReceiver):
             if cleanup_abgabe:
                 print "cleaning up abgabe"
                 system_commander.mountabgabe()
-                system_commander.cleanup(ABGABE_DIRECTORY)
+                system_commander.cleanup(SHARE_DIRECTORY)
 
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)

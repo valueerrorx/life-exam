@@ -2,8 +2,8 @@
 TabbedMode=false
 
 [File Dialogs]
-OpenDocument=/home/student/ABGABE
-SaveDocument=/home/student/ABGABE
+OpenDocument=/home/student/SHARE
+SaveDocument=/home/student/SHARE
 
 [Interface]
 ResolutionX=14.1732529
@@ -27,7 +27,7 @@ Zoom=114
 ZoomMode=1
 
 [KFileDialog Settings]
-Recent URLs[$e]=file:$HOME/ABGABE/
+Recent URLs[$e]=file:$HOME/SHARE/
 
 [MainWindow]
 Window-Maximized 768x1366=true
@@ -38,10 +38,10 @@ ko_windowstate=AAAA/wAAAAD9AAAAAQAAAAEAAAVWAAACZ/wCAAAAB/sAAAAgAHMAaABhAHIAZQBkA
 Units=cm
 
 [Recent Dirs]
-OpenDialog[$e]=$HOME/ABGABE
+OpenDialog[$e]=$HOME/SHARE
 
 [RecentFiles]
-File1[$e]=$HOME/ABGABE/test.odt
+File1[$e]=$HOME/SHARE/test.odt
 Name1[$e]=test.odt
 
 [Spelling]

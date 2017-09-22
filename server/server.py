@@ -110,12 +110,12 @@ class MyServerProtocol(basic.LineReceiver):
                     fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
                 elif self.file_data[1] == DataType.ABGABE:
-                    extract_dir = os.path.join(EINGANG_DIRECTORY, self.clientName, filename[
+                    extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir) 
                     os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(EINGANG_DIRECTORY)  # fix filepermission of transferred file
+                    fixFilePermissions(SHARE_DIRECTORY)  # fix filepermission of transferred file
 
             else:  # wrong file hash
                 os.unlink(file_path)
@@ -285,7 +285,7 @@ class ServerUI(QtWidgets.QDialog):
             self.log("no clients connected")
             return
 
-        file_path = self._showFilePicker(EINGANG_DIRECTORY)
+        file_path = self._showFilePicker(SHARE_DIRECTORY)
 
         if file_path:
             self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
@@ -316,8 +316,8 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onAbgabe(self, who):
         self._workingIndicator(True, 500)
-        """get ABGABE folder"""
-        self.log('<b>Requesting Client Folder ABGABE </b>')
+        """get SHARE folder"""
+        self.log('<b>Requesting Client Folder SHARE </b>')
         time = 2000 if who is 'all' else 1000
         self._workingIndicator(True, time)
         if not self.factory.client_list.request_abgabe(who):

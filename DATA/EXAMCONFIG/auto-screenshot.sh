@@ -11,7 +11,7 @@ LOOPS=48;           #repeat - but not indefinitely..  4h
 
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
-MOUNTPOINT="${HOME}ABGABE/.screenshots/"
+MOUNTPOINT="${HOME}SHARE/.screenshots/"
     
 
 

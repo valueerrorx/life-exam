@@ -139,11 +139,10 @@ def prepareDirectories():
     os.makedirs(SERVERUNZIP_DIRECTORY)
     os.makedirs(SERVERZIP_DIRECTORY)
 
-    if not os.path.exists(ABGABE_DIRECTORY):
-        os.makedirs(ABGABE_DIRECTORY)
+    if not os.path.exists(SHARE_DIRECTORY):
+        os.makedirs(SHARE_DIRECTORY)
         
-    if not os.path.exists(EINGANG_DIRECTORY):
-        os.makedirs(EINGANG_DIRECTORY)  
+
     
 
     copycommand = "cp -r ./DATA/scripts %s" % (WORK_DIRECTORY)
@@ -156,8 +155,8 @@ def prepareDirectories():
         os.system(copycommand)
 
     fixFilePermissions(WORK_DIRECTORY)
-    fixFilePermissions(ABGABE_DIRECTORY)
-    fixFilePermissions(EINGANG_DIRECTORY)
+    fixFilePermissions(SHARE_DIRECTORY)
+
 
 
 def fixFilePermissions(folder):

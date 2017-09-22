@@ -17,7 +17,7 @@ USER_HOME_DIR = os.path.join("/home", str(USER))
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/EXAM")
 
 # work directory sub-dirs
-#TODO wo werden diese gebraucht? es handelt sich ausserdem bei nachstehender liste nicht nur um subs sondern auch um subsubs - ABGABE ist gar nicht dort
+#TODO wo werden diese gebraucht? es handelt sich ausserdem bei nachstehender liste nicht nur um subs sondern auch um subsubs - SHARE ist gar nicht dort
 SCRIPTS = "scripts"
 EXAMCONFIG = "EXAMCONFIG"
 CLIENT = "CLIENT"
@@ -25,9 +25,8 @@ SHOTS = "screenshots"
 UNZIP = "unzip"
 ZIP = "zip"
 SERVER = "SERVER"
-ABGABE = "ABGABE"
-EINGANG = "EINGANG"
 
+SHARE = "SHARE"   # im home verzeichnis wird der ordner SHARE angelegt - dieser dient als arbeitsverzeichnis für lehrer und schüler
 
 
 # work directory for client and server  - absolute paths 
@@ -45,8 +44,8 @@ SERVERSCREENSHOT_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, SHOTS)
 SERVERUNZIP_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, UNZIP)
 SERVERZIP_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, ZIP)
 
-ABGABE_DIRECTORY = os.path.join(USER_HOME_DIR, ABGABE)
-EINGANG_DIRECTORY = os.path.join(USER_HOME_DIR, EINGANG)
+SHARE_DIRECTORY = os.path.join(USER_HOME_DIR, SHARE)
+
 
 
 SERVER_PIDFILE = os.path.join(WORK_DIRECTORY,'server.pid')

@@ -38,7 +38,7 @@ DialogHeight=540
 DialogWidth=720
 
 [Containments][1][Applets][31][Configuration][General]
-url=file:///home/student/ABGABE
+url=file:///home/student/SHARE
 
 [Containments][1][Applets][33]
 immutability=1
