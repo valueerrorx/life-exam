@@ -657,7 +657,7 @@
                <property name="iconSize">
                 <size>
                  <width>140</width>
-                 <height>140</height>
+                 <height>120</height>
                 </size>
                </property>
                <property name="movement">
@@ -675,7 +675,7 @@
                <property name="gridSize">
                 <size>
                  <width>140</width>
-                 <height>140</height>
+                 <height>120</height>
                 </size>
                </property>
                <property name="viewMode">

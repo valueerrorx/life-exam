@@ -231,9 +231,9 @@ class ScreenshotWindow(QtWidgets.QDialog):
         self.screenshot = screenshot
         text =  "Screenshot - %s - %s" %(screenshot, clientname)
 
-        self.setGeometry(100,100,800,600)
+        self.setGeometry(100,100,800,500)
         oImage = QImage(screenshot_file_path)
-        sImage = oImage.scaled(QtCore.QSize(800,600))                   # resize Image to widgets size
+        sImage = oImage.scaled(QtCore.QSize(800,500))                   # resize Image to widgets size
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)
@@ -507,10 +507,11 @@ class ServerUI(QtWidgets.QDialog):
         item.disabled = False
 
         pixmap = QPixmap(screenshot_file_path)
+        pixmap = pixmap.scaled(QtCore.QSize(120,75))
         item.picture = QtWidgets.QLabel()
         item.picture.setPixmap(pixmap)
         item.picture.setAlignment(QtCore.Qt.AlignCenter)
-        #item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
+        item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
         item.info = QtWidgets.QLabel('%s' % (client.clientName))
         item.info.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -534,8 +535,9 @@ class ServerUI(QtWidgets.QDialog):
         except:
             pass            #changed return to pass otherwise the screenshot is not updated
         pixmap = QPixmap(screenshot_file_path)
+        pixmap = pixmap.scaled(QtCore.QSize(160, 100))
         existing_item.picture.setPixmap(pixmap)
-        existing_item.info.setText('%s \n%s' % (client.clientName, client.clientConnectionID))
+        existing_item.info.setText('%s' % (client.clientName))
         existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.disabled = False
 
