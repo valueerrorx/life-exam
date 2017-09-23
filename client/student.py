@@ -8,7 +8,8 @@ from PyQt5.QtGui import QPixmap
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 
-from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtGui import QIcon, QColor, QRegExpValidator
+from PyQt5.QtCore import QRegExp
 import sys
 import os
 
@@ -45,8 +46,17 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
         self.ui.pincode.textChanged.connect(lambda: self._changePalette(self.ui.pincode,'ok'))
 
+        char_regex=QRegExp("[a-z-A-Z\-_]+")   # only allow specif characters in textfields
+        char_validator = QRegExpValidator(char_regex)
+        self.ui.studentid.setValidator(char_validator)
 
+        num_regex=QRegExp("[0-9_]+")
+        num_validator = QRegExpValidator(num_regex)
+        self.ui.pincode.setValidator(num_validator)
 
+        ip_regex=QRegExp("[0-9\._]+")
+        ip_validator = QRegExpValidator(ip_regex)
+        self.ui.serverip.setValidator(ip_validator)
 
 
     def _onAbbrechen(self):  # Exit button
