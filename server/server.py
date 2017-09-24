@@ -231,6 +231,7 @@ class ScreenshotWindow(QtWidgets.QDialog):
         self.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.screenshot = screenshot
         text =  "Screenshot - %s - %s" %(screenshot, clientname)
+        self.setWindowTitle(text)
 
         self.setGeometry(100,100,1200,675)
         self.setFixedSize(1200, 675)
@@ -240,8 +241,13 @@ class ScreenshotWindow(QtWidgets.QDialog):
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)
 
-        self.setWindowTitle(text)
+        button = QtWidgets.QPushButton('PyQt5 button', self)
+        button.setToolTip('Archiviere Sceenshot')
+        button.move(100, 70)
+        button.clicked.connect(self._archivescreenshot())
 
+    def _archivescreenshot(self):
+        print "screensshot archived"
 
 
 
