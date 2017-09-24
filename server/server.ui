@@ -657,7 +657,7 @@
                <property name="iconSize">
                 <size>
                  <width>140</width>
-                 <height>120</height>
+                 <height>100</height>
                 </size>
                </property>
                <property name="movement">
@@ -670,12 +670,12 @@
                 <enum>QListView::Batched</enum>
                </property>
                <property name="spacing">
-                <number>5</number>
+                <number>1</number>
                </property>
                <property name="gridSize">
                 <size>
                  <width>140</width>
-                 <height>120</height>
+                 <height>100</height>
                 </size>
                </property>
                <property name="viewMode">

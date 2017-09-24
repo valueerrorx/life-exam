@@ -228,12 +228,14 @@ class MultcastLifeServer(DatagramProtocol):
 class ScreenshotWindow(QtWidgets.QDialog):
     def __init__(self, screenshot, clientname, screenshot_file_path):
         QtWidgets.QDialog.__init__(self)
+        self.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.screenshot = screenshot
         text =  "Screenshot - %s - %s" %(screenshot, clientname)
 
-        self.setGeometry(100,100,800,500)
+        self.setGeometry(100,100,1200,675)
+        self.setFixedSize(1200, 675)
         oImage = QImage(screenshot_file_path)
-        sImage = oImage.scaled(QtCore.QSize(800,500))                   # resize Image to widgets size
+        sImage = oImage.scaled(QtCore.QSize(1200,675))                   # resize Image to widgets size
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)
@@ -507,7 +509,7 @@ class ServerUI(QtWidgets.QDialog):
         item.disabled = False
 
         pixmap = QPixmap(screenshot_file_path)
-        pixmap = pixmap.scaled(QtCore.QSize(120,75))
+        pixmap = pixmap.scaled(QtCore.QSize(120,67))
         item.picture = QtWidgets.QLabel()
         item.picture.setPixmap(pixmap)
         item.picture.setAlignment(QtCore.Qt.AlignCenter)
@@ -516,7 +518,7 @@ class ServerUI(QtWidgets.QDialog):
         item.info.setAlignment(QtCore.Qt.AlignCenter)
 
         grid = QtWidgets.QGridLayout()
-        grid.setSpacing(4)
+        grid.setSpacing(1)
         grid.addWidget(item.picture, 1, 0)
         grid.addWidget(item.info, 2, 0)
 
@@ -535,7 +537,7 @@ class ServerUI(QtWidgets.QDialog):
         except:
             pass            #changed return to pass otherwise the screenshot is not updated
         pixmap = QPixmap(screenshot_file_path)
-        pixmap = pixmap.scaled(QtCore.QSize(160, 100))
+        pixmap = pixmap.scaled(QtCore.QSize(120, 67))
         existing_item.picture.setPixmap(pixmap)
         existing_item.info.setText('%s' % (client.clientName))
         existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
