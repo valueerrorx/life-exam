@@ -259,14 +259,22 @@ class ScreenshotWindow(QtWidgets.QDialog):
         button3.resize(150,40)
         button3.clicked.connect(lambda: serverui._onScreenshots(client_connection_id))
 
+        button4 = QtWidgets.QPushButton('Fenster schließen', self)
+        button4.move(1020, 430)
+        button4.resize(150,40)
+        button4.clicked.connect(self._onClose)
+
+
+    def _onClose(self):  # Exit button
+        self.close()
+
+
 
     def _archivescreenshot(self):
-
         filedialog = QtWidgets.QFileDialog()
         filedialog.setDirectory(SHARE_DIRECTORY)  # set default directory
         file_path = filedialog.getSaveFileName()  # get filename
         file_path = file_path[0]
-
 
         if file_path:
             os.rename(self.screenshot_file_path, file_path)
