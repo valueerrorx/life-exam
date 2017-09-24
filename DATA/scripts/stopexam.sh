@@ -168,10 +168,10 @@ sleep 0.5
 # UMOUNT SHARE                   #
 #---------------------------------#
 qdbus $progress Set "" value 2
-qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
+#qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
 sleep 0.5
 
-    sudo umount -l $SHARE
+   # sudo umount -l $SHARE
 
 
     
