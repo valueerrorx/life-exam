@@ -15,6 +15,7 @@ from twisted.internet.protocol import DatagramProtocol
 import qt5reactor
 import ipaddress
 import datetime
+import time
 import sip
 import zipfile
 import ntpath
@@ -226,13 +227,15 @@ class MultcastLifeServer(DatagramProtocol):
 
 
 class ScreenshotWindow(QtWidgets.QDialog):
-    def __init__(self, screenshot, clientname, screenshot_file_path):
+    def __init__(self, serverui, screenshot, clientname, screenshot_file_path, client_connection_id):
         QtWidgets.QDialog.__init__(self)
         self.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
         self.screenshot = screenshot
+        self.serverui = serverui
+        self.screenshot_file_path = screenshot_file_path
+        self.client_connection_id = client_connection_id
         text =  "Screenshot - %s - %s" %(screenshot, clientname)
         self.setWindowTitle(text)
-
         self.setGeometry(100,100,1200,675)
         self.setFixedSize(1200, 675)
         oImage = QImage(screenshot_file_path)
@@ -241,14 +244,38 @@ class ScreenshotWindow(QtWidgets.QDialog):
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)
 
-        button = QtWidgets.QPushButton('PyQt5 button', self)
-        button.setToolTip('Archiviere Sceenshot')
-        button.move(100, 70)
-        button.clicked.connect(self._archivescreenshot())
+        button1 = QtWidgets.QPushButton('Screenshot archivieren', self)
+        button1.move(1020, 580)
+        button1.resize(150,40)
+        button1.clicked.connect(self._archivescreenshot)
+
+        button2 = QtWidgets.QPushButton('Abgabe holen', self)
+        button2.move(1020, 480)
+        button2.resize(150,40)
+        button2.clicked.connect(lambda: serverui._onAbgabe(client_connection_id))
+
+        button3 = QtWidgets.QPushButton('Screenshot updaten', self)
+        button3.move(1020, 530)
+        button3.resize(150,40)
+        button3.clicked.connect(lambda: serverui._onScreenshots(client_connection_id))
 
 
     def _archivescreenshot(self):
-        print "screensshot archived"
+
+        filedialog = QtWidgets.QFileDialog()
+        filedialog.setDirectory(SHARE_DIRECTORY)  # set default directory
+        file_path = filedialog.getSaveFileName()  # get filename
+        file_path = file_path[0]
+
+
+        if file_path:
+            os.rename(self.screenshot_file_path, file_path)
+            print "screensshot archived"
+
+
+
+
+
 
 
 
@@ -348,8 +375,8 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         """get SHARE folder"""
         self.log('<b>Requesting Client Folder SHARE </b>')
-        time = 2000 if who is 'all' else 1000
-        self._workingIndicator(True, time)
+        itime = 2000 if who is 'all' else 1000
+        self._workingIndicator(True, itime)
         if not self.factory.client_list.request_abgabe(who):
             self.log("no clients connected")
 
@@ -550,10 +577,18 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.disabled = False
 
+        self.screenshotwindow.oImage = QImage(screenshot_file_path)
+        self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
+        self.screenshotwindow.palette = QPalette()
+        self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
+        self.screenshotwindow.setPalette(self.screenshotwindow.palette)
+
+
+
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         screenshotfilename = "%s.jpg" % client_connection_id
-        screenshotwindow = ScreenshotWindow(screenshotfilename, client_name, screenshot_file_path)
-        screenshotwindow.exec_()
+        self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
+        self.screenshotwindow.exec_()
 
 
 
