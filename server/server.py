@@ -246,6 +246,7 @@ class ScreenshotWindow(QtWidgets.QDialog):
         button.move(100, 70)
         button.clicked.connect(self._archivescreenshot())
 
+
     def _archivescreenshot(self):
         print "screensshot archived"
 
