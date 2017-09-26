@@ -19,6 +19,7 @@ import time
 import sip
 import zipfile
 import ntpath
+import shutil
 
 from twisted.internet import protocol
 from twisted.protocols import basic
@@ -113,6 +114,14 @@ class MyServerProtocol(basic.LineReceiver):
                 elif self.file_data[1] == DataType.ABGABE:
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
+
+
+                    if os.path.isfile(user_dir):
+                        print "file with the same name found"   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
+                        newname = "%s-%s" %(user_dir, generatePin(5))
+                        os.rename(user_dir, newname)
+
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir) 
                     os.unlink(file_path)  # delete zip file
@@ -277,7 +286,8 @@ class ScreenshotWindow(QtWidgets.QDialog):
         file_path = file_path[0]
 
         if file_path:
-            os.rename(self.screenshot_file_path, file_path)
+            #os.rename(self.screenshot_file_path, file_path)  #moves the file (its not available in src anymore)
+            shutil.copyfile(self.screenshot_file_path,file_path)
             print "screensshot archived"
 
 
@@ -317,6 +327,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit.textChanged.connect(self._updateExamName)
 
+        self.screenshotwindow = False
         self.ui.show()
 
 
