@@ -19,6 +19,18 @@ def generatePin(n):
     return randint(range_start, range_end)
 
 
+def checkIfFileExists(filename):
+    if os.path.isfile(filename):
+        print "file with the same name found"   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
+        newname = "%s-%s" %(filename, generatePin(6))
+        if os.path.isfile(newname):
+            checkIfFileExists(newname)
+        else:
+            os.rename(filename, newname)
+            return
+    else:
+        return
+
 
 def checkFirewall(firewall_ip_list):
     result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()

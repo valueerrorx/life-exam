@@ -115,12 +115,7 @@ class MyServerProtocol(basic.LineReceiver):
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
-
-
-                    if os.path.isfile(user_dir):
-                        print "file with the same name found"   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
-                        newname = "%s-%s" %(user_dir, generatePin(5))
-                        os.rename(user_dir, newname)
+                    checkIfFileExists(user_dir)  ## checks if filename is taken and renames this file in order to make room for the userfolder
 
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
                         zip_ref.extractall(extract_dir) 
