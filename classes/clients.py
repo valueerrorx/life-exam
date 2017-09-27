@@ -39,7 +39,7 @@ class ClientList:
         if not self.clients:
             return False
 
-        filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H:%M:%S"), "%s")
+        filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H-%M-%S"), "%s")
         line = "%s %s %s %s none none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename)
 
         if who is "all":
