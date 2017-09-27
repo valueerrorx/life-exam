@@ -6,7 +6,11 @@ import subprocess
 SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
-PRESERVE_WORKDIR = True
+
+VERSION = '1.0'
+
+PRESERVE_WORKDIR = True    ## TODO -  wir sollten hier die versions nummer im WORKDIR ablegen und checken und im falle eines updates das workdir mit den neuen files überschreiben - nicht erhalten
+
 
 # these apps will try to autosave your work before "abgabe" via xdotool
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];

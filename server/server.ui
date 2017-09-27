@@ -1035,6 +1035,13 @@
               <widget class="QWidget" name="widget_11" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_12">
                 <item>
+                 <widget class="QLabel" name="version">
+                  <property name="text">
+                   <string>Version 1.0</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLabel" name="infotext_2">
                   <property name="styleSheet">
                    <string notr="true">padding-top:4px;</string>

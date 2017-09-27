@@ -316,7 +316,7 @@ class ServerUI(QtWidgets.QDialog):
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         self.timer = False
-
+        self.ui.version.setText("<b>Version</b> %s" % VERSION )
         self.ui.currentpin.setText("<b>%s</b>" % self.factory.pincode  )
         self.ui.examlabeledit.setText(self.factory.examid  )
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
