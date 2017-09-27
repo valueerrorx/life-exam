@@ -322,7 +322,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit.textChanged.connect(self._updateExamName)
 
-        self.screenshotwindow = False
         self.ui.show()
 
 
@@ -551,7 +550,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _addNewListItem(self, client, screenshot_file_path):
         item = QtWidgets.QListWidgetItem()
-        item.setSizeHint(QtCore.QSize(140, 140));
+        item.setSizeHint(QtCore.QSize(140, 100));
         item.id = client.clientName  # store clientName as itemID for later use (delete event)
         item.pID = client.clientConnectionID
         item.disabled = False
@@ -591,12 +590,14 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.disabled = False
 
-        self.screenshotwindow.oImage = QImage(screenshot_file_path)
-        self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
-        self.screenshotwindow.palette = QPalette()
-        self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
-        self.screenshotwindow.setPalette(self.screenshotwindow.palette)
-
+        try:
+            self.screenshotwindow.oImage = QImage(screenshot_file_path)
+            self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
+            self.screenshotwindow.palette = QPalette()
+            self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
+            self.screenshotwindow.setPalette(self.screenshotwindow.palette)
+        except:
+            pass
 
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
