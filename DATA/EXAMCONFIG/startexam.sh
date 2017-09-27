@@ -329,7 +329,16 @@ sleep 0.5
     if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]
     then 
         sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
-        sudo chmod 600 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin
+        
+        #make sure nothing is mounted in /media
+        
+        sudo umount /media/*
+        sudo umount /media/student/*
+        sudo umount -l /media/*
+        sudo umount -l /media/student/*
+        
+        sudo chmod 600 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin   !!! could be fatal if something is mounted there already  for examle "casper-rw" (this would immediately kill the flashdrive)
+       
         sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  verbieten
         sudo chmod 644 /usr/bin/xterm
         sudo chmod 644 /usr/bin/konsole
