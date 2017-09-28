@@ -158,7 +158,7 @@ sleep 0.5
 
     cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
-    cp -a ${LOCKDOWNDIR}kglobalshortcutsrc-EXAM ${HOME}.config/kglobalshortcutsrc #no systemshortcuts
+
     cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
@@ -175,15 +175,13 @@ then
     sudo chown -R ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/
     
-    
-    #qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true
-
+    qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
 fi
 
 
 
 
-    
+
     
     
     
@@ -334,7 +332,7 @@ sleep 0.5
     then 
         sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
         
-        #make sure nothing is mounted in /media
+        #make sure nothing is mounted in /media  !! IMPORTANT !! otherwise this will mess up the user rights on mounted partitions
         
         sudo umount /media/*
         sudo umount /media/student/*

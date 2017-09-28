@@ -77,8 +77,7 @@ then
        #kde
         cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
         cp -a ${HOME}.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
-        cp -a ${HOME}.config/kglobalshortcutsrc ${LOCKDOWNDIR}/kglobalshortcutsrc-EXAM   #always use the "noshortcuts" file - don't allow configuring for now
-       
+
         #office
         cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM   # wps office
         cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM   # libre office
@@ -138,7 +137,7 @@ sleep 0.5
 
     cp -a ${BACKUPDIR}plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
     cp -a ${BACKUPDIR}kwinrc ${HOME}.config/
-    cp -a ${BACKUPDIR}kglobalshortcutsrc ${HOME}.config/
+
     cp -a ${BACKUPDIR}Office.conf ${HOME}.config/Kingsoft/
     cp -a ${BACKUPDIR}registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
     cp -a ${BACKUPDIR}user-places.xbel ${HOME}.local/share/
@@ -148,8 +147,11 @@ sleep 0.5
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
-    
-    
+
+    qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
+
+
+
 #---------------------------------#
 # REMOVE EXAM LOCKFILE            #
 #---------------------------------#
