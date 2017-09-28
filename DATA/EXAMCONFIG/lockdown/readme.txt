@@ -5,7 +5,6 @@ Teilweise werden diese auch durch die Anpassung des Prüfungsdesktops verändert
 
 IconItem.qml - (Das Icon Starter Applet hört nicht auf den KISOK Modus diese Datei wurde daher von mir gepatcht)
 kde5rc - (Die wichtigste Datei für den KIOSK Modus beihaltet die meiste Sperrinformation)
-kglobalshortcutsrc - (Alle Keyboardshortcuts sind in dieser deaktiviert)
 kwinrc - (spezielle Einstellungen des Windowmanagers)
 Office.conf  - (wps office Einstellungen)
 plasma - (Beihaltet die gesamte Plasma Desktop Konfiguration - Applets usw.)
