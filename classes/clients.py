@@ -31,7 +31,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientConnectionID)
+            client.sendLine(line % client.clientName)
 
         return True
 
