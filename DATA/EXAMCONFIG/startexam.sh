@@ -174,6 +174,10 @@ then
     sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
     sudo chown -R ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/
+    
+    
+    #qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true
+
 fi
 
 
