@@ -174,8 +174,6 @@ then
     sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
     sudo chown -R ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/
-    
-    qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
 fi
 
 
@@ -434,7 +432,8 @@ qdbus $progress close
     exec sudo -u ${USER} -H kstart5 plasmashell &
     sleep 2
     exec sudo -u ${USER} -H kwin --replace &
-    
+    sleep 4
+    exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
     
 
 
