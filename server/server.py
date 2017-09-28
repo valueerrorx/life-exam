@@ -188,7 +188,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.pincode = generatePin(4)
         self.examid = "Exam-%s" % generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
-        self.lc = LoopingCall(lambda: self._onAbgabe("all"))
+        self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         #starting multicast server here in order to provide "factory" information via broadcast
