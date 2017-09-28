@@ -31,7 +31,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientName)
+            client.sendLine(line % client.clientConnectionID)
 
         return True
 
@@ -46,7 +46,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientName)
+            client.sendLine(line % client.clientConnectionID)
 
         return True
 
@@ -77,7 +77,7 @@ class ClientList:
 
     def broadcast_line(self, line):
         for client in self.clients.itervalues():
-            client.sendLine(line % client.clientName)
+            client.sendLine(line % client.clientConnectionID)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
 
     def broadcast_file(self, file_path, filename, md5_hash):
