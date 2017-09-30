@@ -31,6 +31,12 @@ start_new_session=false
 shell_access=false
 
 
+[KDE Control Module Restrictions]
+device_automounter_kcm.desktop=false
+formats.desktop=false
+clock.desktop=false
+
+
 
 [KDE URL Restrictions][$i]
 rule_count=16
