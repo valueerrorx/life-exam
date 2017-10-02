@@ -10,6 +10,8 @@ import shutil
 from config.config import *
 from random import randint
 
+import datetime
+import time
 
 
 def generatePin(n):
@@ -153,6 +155,9 @@ def prepareDirectories():
 
     if not os.path.exists(SHARE_DIRECTORY):
         os.makedirs(SHARE_DIRECTORY)
+    else:
+        settime = time.time()  # zip does not support filetimes before 1980 .. WTF ??
+        os.utime(SHARE_DIRECTORY, (settime,settime))
         
 
     
