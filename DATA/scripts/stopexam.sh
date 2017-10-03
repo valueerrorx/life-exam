@@ -74,12 +74,19 @@ then
         # SAVE CURRENT EXAM CONFIG FILES TO LOCKDOWNDIR  #
         #------------------------------------------------#
        
+        #quit plasmashell in order to make is store the configuration
+        
+        sudo -u ${USER} -H kquitapp5 plasmashell &
+        sleep 2
+        exec sudo -u ${USER} -H kwin --replace &
+       
+       
        #kde
         cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
         cp -a ${HOME}.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
 
         #office
-        cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM   # wps office
+        #cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM   # wps office
         cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM   # libre office
         cp -a ${HOME}.config/calligra* ${LOCKDOWNDIR}  # calligra office (best with kde kiosk)
 

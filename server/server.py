@@ -189,6 +189,8 @@ class MyServerFactory(protocol.ServerFactory):
         self.examid = "Exam-%s" % generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
+        self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
+        self.lcs.start(30)   #TODO make this configurable over the UI
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         #starting multicast server here in order to provide "factory" information via broadcast
@@ -304,6 +306,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
         self.ui.startexam.clicked.connect(self._onStartExam)
+        self.ui.openshare.clicked.connect(self._onOpenshare)
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
         self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
@@ -324,6 +327,9 @@ class ServerUI(QtWidgets.QDialog):
 
         self.ui.show()
 
+    def _onOpenshare(self):
+        startcommand = "exec sudo -u %s -H /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
+        os.system(startcommand)
 
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit.text()
