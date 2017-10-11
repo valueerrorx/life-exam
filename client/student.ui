@@ -109,7 +109,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">padding:4px;</string>
+      <string notr="true">padding:0px;</string>
      </property>
      <property name="text">
       <string/>
@@ -128,7 +128,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">padding:4px;</string>
+      <string notr="true">padding:0px;</string>
      </property>
     </widget>
     <widget class="QLabel" name="infoid">
@@ -195,7 +195,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">padding:4px;</string>
+      <string notr="true">padding:0px;</string>
      </property>
     </widget>
     <widget class="QLabel" name="infoid_2">
