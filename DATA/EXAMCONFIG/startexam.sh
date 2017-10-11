@@ -28,6 +28,17 @@ then
     exit 1
 fi
 
+if [[ ( $MODE = "config" ) ]]
+then
+    kdialog  --yesno 'Wollen sie den Exam Desktop manuell anpassen?' --title 'Starting Exam' --caption "Starting Exam"
+    if [ "$?" = 0 ]; then
+        sleep 0
+    else
+        exit 1
+    fi
+fi
+
+
 
 #--------------------------------#
 # Check if root and running exam #
