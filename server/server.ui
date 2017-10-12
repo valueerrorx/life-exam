@@ -576,7 +576,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1264,7 +1264,7 @@ Prüfungsbeginn löschen</string>
              <item>
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis &amp;quot;share&amp;quot; der Schüler kann im &lt;br/&gt;Abgabeintervall (min) im lokalen Verzeichnis &amp;quot;share&amp;quot;&lt;br/&gt;archiviert werden.&lt;/p&gt;&lt;p&gt;Der &amp;quot;share&amp;quot; Ordner der Schüler kann beim Start der sicheren&lt;br/&gt;Prüfungsumgebung bereinigt werden.&lt;/p&gt;&lt;p&gt;Durch einen Test der Firewall-Ausnahmen &lt;br/&gt;werden diese gespeichert.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das vollständige Arbeitsverzeichnis &amp;quot;share&amp;quot; der Schüler kann im &lt;br/&gt;Abgabeintervall (min) im lokalen Verzeichnis &amp;quot;share&amp;quot;&lt;br/&gt;archiviert werden.&lt;/p&gt;&lt;p&gt;Der &amp;quot;share&amp;quot; Ordner der Schüler kann beim Start der sicheren&lt;br/&gt;Prüfungsumgebung bereinigt werden.&lt;/p&gt;&lt;p&gt;Durch einen Test der Firewall-Ausnahmen &lt;br/&gt;werden diese gespeichert.&lt;br/&gt;Sie können die Firewall-Ausnahmen lokal testen&lt;br/&gt;bevor sie zu den Schülern transferiert werden.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
