@@ -33,7 +33,7 @@ import classes.system_commander as system_commander
 
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
-
+from PyQt5.QtCore import QRegExp
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -325,6 +325,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit.textChanged.connect(self._updateExamName)
 
+        
+
         self.ui.show()
 
     def _onOpenshare(self):
@@ -455,10 +457,14 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         system_commander.start_hotspot()
 
+    def get_firewall_adress_list(self):
+        return [[self.ui.firewall1,self.ui.port1],[self.ui.firewall2,self.ui.port2],[self.ui.firewall3,self.ui.port3],[self.ui.firewall4,self.ui.port4]]
+
     def _onTestFirewall(self):
         self._workingIndicator(True, 1000)
         ipfields = self.get_firewall_adress_list()
-        if self.ui.testfirewall.text() == "&Stoppe Firewall":
+
+        if self.ui.testfirewall.text() == "Stoppe &Firewall":    #really don't know why qt sometimes adds these & signs to the ui
             system_commander.dialog_popup('Die Firewall wird gestoppt!')
 
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
@@ -467,9 +473,9 @@ class ServerUI(QtWidgets.QDialog):
             self.ui.testfirewall.setText("Firewall testen")
 
             for i in ipfields:
-                palettedefault = i.palette()
+                palettedefault = i[0].palette()
                 palettedefault.setColor(QPalette.Active, QPalette.Base, QColor(255, 255, 255))
-                i.setPalette(palettedefault)
+                i[0].setPalette(palettedefault)
 
         elif self.ui.testfirewall.text() == "&Firewall testen":
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
@@ -477,19 +483,20 @@ class ServerUI(QtWidgets.QDialog):
 
             number = 0
             for i in ipfields:
-                ip = i.text()
+                ip = i[0].text()
+                port = i[1].text()
                 if checkIP(ip):
                     thisexamfile = open(ipstore, 'a+')  # anhängen
                     number += 1
                     if number is not 1:  # zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
                         thisexamfile.write("\n")
-                    thisexamfile.write("%s" % ip)
+                    thisexamfile.write("%s:%s" %(ip,port) )
                 else:
                     if ip != "":
-                        palettewarn = i.palette()
-                        palettewarn.setColor(i.backgroundRole(), QColor(200, 80, 80))
+                        palettewarn = i[0].palette()
+                        palettewarn.setColor(i[0].backgroundRole(), QColor(200, 80, 80))
                         # palettewarn.setColor(QPalette.Active, QPalette.Base, QColor(200, 80, 80))
-                        i.setPalette(palettewarn)
+                        i[0].setPalette(palettewarn)
 
             system_commander.dialog_popup("Die Firewall wird aktiviert!")
 
@@ -545,9 +552,6 @@ class ServerUI(QtWidgets.QDialog):
         os.remove(SERVER_PIDFILE)
         self.ui.close()
         os._exit(0)  # otherwise only the gui is closed and connections are kept alive
-
-    def get_firewall_adress_list(self):
-        return [self.ui.firewall1, self.ui.firewall2, self.ui.firewall3, self.ui.firewall4]
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""

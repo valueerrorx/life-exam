@@ -9,8 +9,14 @@ USER=$(logname)   #logname seems to always deliver the current xsession user - n
 HOME="/home/${USER}/"
 
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
- 
- 
+
+# cat $IPSFILE
+# 10.0.0.1, 80
+# 10.2.2.22, 443
+# IPPORTARRAY = [ [10.0.01] , [80] ]
+
+
+
 setIPtables(){
     #allow loopback 
     sudo iptables -I INPUT 1 -i lo -j ACCEPT
@@ -23,8 +29,12 @@ setIPtables(){
         #allow input and output for ALLOWEDIP
         for IP in `cat $IPSFILE`; do
             echo "exception noticed $IP"
-            sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
-            sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443 -j ACCEPT
+             IPPORTARRAY=(${IP//:/ })
+
+
+            sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dport ${IPPORTARRAY[1]} -j ACCEPT
+            sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dport ${IPPORTARRAY[1]} -j ACCEPT
+
         done
     fi
     

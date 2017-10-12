@@ -46,10 +46,13 @@ def checkFirewall(firewall_ip_list):
     ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
     lines = [line.rstrip('\n') for line in open(ipstore)]
 
+
     count = 0
     for i in firewall_ip_list:
         try:
-            ip = i.setText(lines[count])
+            lineslist = [x.strip() for x in lines[count].split(':')]
+            ip = i[0].setText(lineslist[0])
+            port = i[1].setText(lineslist[1])
         except IndexError:
             continue
         count += 1
