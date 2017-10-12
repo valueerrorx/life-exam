@@ -444,7 +444,11 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onStartConfig(self):
         self._workingIndicator(True, 500)
-        system_commander.start_exam()
+        if self.ui.radiomath.isChecked():
+            subject = "math"
+        else:
+            subject = "lang"
+        system_commander.start_config(subject)
         self.ui.close()
 
     def _onStartHotspot(self):

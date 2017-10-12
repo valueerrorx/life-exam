@@ -80,9 +80,18 @@ then
         sleep 2
         exec sudo -u ${USER} -H kwin --replace &
        
-       
-       #kde
-        cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM  
+
+       #plasma
+       SUBJECT=$(cat $EXAMLOCKFILE)
+       if [[ ( $SUBJECT = "math" ) ]]
+       then
+            cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM-M
+       else
+            cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM-L
+       fi
+
+
+        #kwin
         cp -a ${HOME}.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
 
         #office
@@ -145,7 +154,7 @@ sleep 0.5
     cp -a ${BACKUPDIR}plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
     cp -a ${BACKUPDIR}kwinrc ${HOME}.config/
 
-    cp -a ${BACKUPDIR}Office.conf ${HOME}.config/Kingsoft/
+    #cp -a ${BACKUPDIR}Office.conf ${HOME}.config/Kingsoft/
     cp -a ${BACKUPDIR}registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
     cp -a ${BACKUPDIR}user-places.xbel ${HOME}.local/share/
     cp -a ${BACKUPDIR}dolphinrc ${HOME}.config/
@@ -174,7 +183,7 @@ sleep 0.5
     
 
 #---------------------------------#
-# UMOUNT SHARE                   #
+# UMOUNT SHARE                   #    SHARE is now permanently mounted on life sticks
 #---------------------------------#
 qdbus $progress Set "" value 2
 #qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."

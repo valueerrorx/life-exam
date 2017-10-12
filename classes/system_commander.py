@@ -9,9 +9,9 @@ def show_ip():
     os.system(startcommand)
 
 
-def start_exam():
+def start_config(subject):
     scriptfile = os.path.join(EXAMCONFIG_DIRECTORY, "startexam.sh")
-    startcommand = "exec %s config &" % scriptfile
+    startcommand = "exec %s config %s &" %(scriptfile, subject)
     os.system(startcommand)
 
 #TODO use systemcommander in examclient and add startexam EXAM (only CONFIG mode available right now)

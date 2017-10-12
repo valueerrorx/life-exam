@@ -22,6 +22,11 @@ SHARE="${HOME}SHARE/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 MODE=$1
+SUBJECT=$2
+
+
+
+
 if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
 then
     kdialog  --msgbox 'Parameter is missing <config> <exam> <permanent>' --title 'Starting Exam' --caption "Starting Exam"
@@ -30,7 +35,13 @@ fi
 
 if [[ ( $MODE = "config" ) ]]
 then
-    kdialog  --yesno 'Wollen sie den Exam Desktop manuell anpassen?' --title 'Starting Exam' --caption "Starting Exam"
+    if [[ ( $SUBJECT = "math" ) ]]
+    then
+        DESKTOPNAME="Mathematik"
+    else
+        DESKTOPNAME="Sprachen/Deutsch"
+    fi
+    kdialog  --yesno "Wollen sie den Exam Desktop für $DESKTOPNAME manuell anpassen?" --title 'Starting Exam' --caption "Starting Exam"
     if [ "$?" = 0 ]; then
         sleep 0
     else
@@ -116,7 +127,7 @@ qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.5
 
     touch $EXAMLOCKFILE
-    date > $EXAMLOCKFILE
+    echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
     sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
 
 
@@ -166,8 +177,15 @@ sleep 0.5
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.5
+    if [[ ( $SUBJECT = "math" ) ]]
+    then
+        cp -a ${LOCKDOWNDIR}plasma-EXAM-M    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Mathematik
+    else
+        cp -a ${LOCKDOWNDIR}plasma-EXAM-L    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Deutsch/Sprachen
+    fi
 
-    cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
+
+
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
 
     cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
@@ -310,6 +328,8 @@ sleep 0.5
 #---------------------------------#
 # COPY AUTOSTART SCRIPTS          #
 #---------------------------------#
+#FIXME anstelle automatischer screenshots wäre es besser bei jeder "abgabe" diese auch lokal zu archivieren
+
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
 
@@ -430,6 +450,7 @@ qdbus $progress close
     pactl set-sink-volume 0 90%
     paplay /usr/share/sounds/KDE-Sys-Question.ogg
 
+    #FIXME man könnte auch einfach ksmserver neustarten bzw. Xorg - dann würde kein programm überdauern (derzeit aber unpraktisch und etwas brachial)
 
     # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
     pkill -f google && killall google-chrome && killall google-chrome-stable
@@ -437,6 +458,7 @@ qdbus $progress close
     pkill -f writer && killall writer
     pkill -f konsole && killall konsole
     pkill -f geogebra && killall geogebra
+    pkill -f kate && killall kate
 
     sudo -u ${USER} -H kquitapp5 plasmashell &
     sleep 2

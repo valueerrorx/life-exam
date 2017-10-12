@@ -960,6 +960,23 @@
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_19">
                 <item>
+                 <widget class="QRadioButton" name="radiomath">
+                  <property name="text">
+                   <string>&amp;Mathematik</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="radiolanguage">
+                  <property name="text">
+                   <string>Sprache&amp;n</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="startconfig">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">

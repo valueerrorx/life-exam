@@ -9,7 +9,7 @@ SERVER_PORT = 5000
 
 VERSION = '1.0'
 
-PRESERVE_WORKDIR = True    ## TODO -  wir sollten hier die versions nummer im WORKDIR ablegen und checken und im falle eines updates das workdir mit den neuen files überschreiben - nicht erhalten
+PRESERVE_WORKDIR = False    ## TODO -  wir sollten hier die versions nummer im WORKDIR ablegen und checken und im falle eines updates das workdir mit den neuen files überschreiben - nicht erhalten
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool
