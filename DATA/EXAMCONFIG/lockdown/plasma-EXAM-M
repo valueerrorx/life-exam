@@ -92,21 +92,6 @@ plugin=org.kde.plasma.icon
 localPath=/home/student/.local/share/plasma_icons/org.kde.kate.desktop
 url=file:///usr/share/applications/org.kde.kate.desktop
 
-[Containments][2][Applets][21]
-immutability=1
-plugin=org.kde.plasma.icon
-
-[Containments][2][Applets][21][Configuration]
-localPath=/home/student/.local/share/plasma_icons/org.kde.calligrawords.desktop
-url=file:///usr/share/applications/org.kde.calligrawords.desktop
-
-[Containments][2][Applets][22]
-immutability=1
-plugin=org.kde.plasma.icon
-
-[Containments][2][Applets][22][Configuration]
-localPath=/home/student/.local/share/plasma_icons/org.kde.calligrasheets.desktop
-url=file:///usr/share/applications/org.kde.calligrasheets.desktop
 
 [Containments][2][Applets][23]
 immutability=1
@@ -124,13 +109,6 @@ plugin=org.kde.plasma.icon
 localPath=/home/student/.local/share/plasma_icons/org.kde.kcalc.desktop
 url=file:///usr/share/applications/org.kde.kcalc.desktop
 
-[Containments][2][Applets][25]
-immutability=1
-plugin=org.kde.plasma.icon
-
-[Containments][2][Applets][25][Configuration]
-localPath=/home/student/.local/share/plasma_icons/gimp.desktop
-url=file:///home/student/.local/share/applications/gimp.desktop
 
 [Containments][2][Applets][28]
 immutability=1
