@@ -325,7 +325,12 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit.textChanged.connect(self._updateExamName)
 
-        
+        num_regex=QRegExp("[0-9_]+")
+        num_validator = QRegExpValidator(num_regex)
+        self.ui.port1.setValidator(num_validator)
+        self.ui.port2.setValidator(num_validator)
+        self.ui.port3.setValidator(num_validator)
+        self.ui.port4.setValidator(num_validator)
 
         self.ui.show()
 
