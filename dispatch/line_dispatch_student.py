@@ -66,8 +66,17 @@ def file_transfer_request(client, line):
     filetype = client.file_data[2]
     filename = client.file_data[3]
     file_hash = client.file_data[4]
-    cleanup_abgabe = client.file_data[5]
-    subject =  client.file_data[6]
+    
+    # not every line sendline statement needs to be updated if a new attribute is added
+    try:
+        cleanup_abgabe = client.file_data[5]
+    except IndexError:
+        cleanup_abgabe = "none"
+     
+    try:
+        subject =  client.file_data[6]
+    except IndexError:
+        subject =  "none"
     
     #(trigger, task, filetype, filename, file_hash, cleanup_abgabe, subject) = client.file_data[0:7]
     
