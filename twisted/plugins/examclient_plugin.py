@@ -68,6 +68,8 @@ class MyClientProtocol(basic.LineReceiver):
     def rawDataReceived(self, data):
         filename = self.file_data[3]
         cleanup_abgabe = self.file_data[5]
+        subject = self.file_data[6]
+        
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
