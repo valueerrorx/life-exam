@@ -294,6 +294,11 @@ class ScreenshotWindow(QtWidgets.QDialog):
 
 
 
+
+
+
+
+
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
@@ -340,11 +345,9 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port3.setValidator(num_validator)
         self.ui.port4.setValidator(num_validator)
 
-
-
-
-
         self.ui.show()
+
+
 
     def _onOpenshare(self):
         startcommand = "exec sudo -u %s -H /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
@@ -449,9 +452,15 @@ class ServerUI(QtWidgets.QDialog):
 
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
+        if self.ui.radiomath.isChecked():
+            subject = "math"
+        else:
+            subject = "lang"
+
+
         for client in client_list.clients.values():
             #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
-            client.transport.write('%s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe ))
+            client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe, subject ))
             client.setRawMode()
 
             print self.factory.files[filename][0]

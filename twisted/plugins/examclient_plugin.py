@@ -86,7 +86,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                 if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
-                    self._startExam(filename, file_path, cleanup_abgabe)
+                    self._startExam(filename, file_path, cleanup_abgabe, subject)
                 elif self.file_data[2] == DataType.FILE:
 
                     if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
@@ -164,7 +164,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.transport.write('\r\n')  # send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
-    def _startExam(self, filename, file_path, cleanup_abgabe ):
+    def _startExam(self, filename, file_path, cleanup_abgabe, subject ):
         """extracts the config folder and starts the startexam.sh script"""
 
         if self.factory.options['host'] != "127.0.0.1":  # testClient running on the same machine
@@ -193,7 +193,7 @@ class MyClientProtocol(basic.LineReceiver):
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo %s/startexam.sh exam &" % EXAMCONFIG_DIRECTORY  # start as user even if the twistd daemon is run by root
+            startcommand = "sudo %s/startexam.sh exam %s &" %(EXAMCONFIG_DIRECTORY, subject) # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original

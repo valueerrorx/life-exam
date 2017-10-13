@@ -56,8 +56,8 @@ def file_transfer_request(client, line):
     """
     client.file_data = clean_and_split_input(line)
     client.factory.files = get_file_list(client.factory.files_path)
-    (trigger, task, filetype, filename, file_hash, cleanup_abgabe) = client.file_data[0:6]
-    student_file_request_dispatcher[task](client, filetype, filename, file_hash, cleanup_abgabe)
+    (trigger, task, filetype, filename, file_hash, cleanup_abgabe, subject) = client.file_data[0:7]
+    student_file_request_dispatcher[task](client, filetype, filename, file_hash, cleanup_abgabe, subject)
 
 
 def send_file_request(client, filetype, *args):
