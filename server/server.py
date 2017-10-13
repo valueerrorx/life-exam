@@ -566,9 +566,13 @@ class ServerUI(QtWidgets.QDialog):
         client_id = client.clientConnectionID
         item = self.get_list_widget_by_client_id(client_id)
         pixmap = QPixmap("pixmaps/nouserscreenshot.png")
-        item.picture.setPixmap(pixmap)
-        item.info.setText('%s \ndisconnected' % client_name)
-        item.disabled = True
+        try:
+            item.picture.setPixmap(pixmap)
+            item.info.setText('%s \ndisconnected' % client_name)
+            item.disabled = True
+        except:
+            #item not found because first connection attempt
+            return
 
     def log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")

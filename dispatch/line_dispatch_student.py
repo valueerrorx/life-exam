@@ -56,7 +56,18 @@ def file_transfer_request(client, line):
     """
     client.file_data = clean_and_split_input(line)
     client.factory.files = get_file_list(client.factory.files_path)
-    (trigger, task, filetype, filename, file_hash, cleanup_abgabe, subject) = client.file_data[0:7]
+    
+    # explizit ist besser als implizit.. der ganze linedispatcher verursacht einen overhead an komplexizität (simple if statements waren übersichtlicher)
+    trigger = client.file_data[0]
+    task = client.file_data[1]
+    filetype = client.file_data[2]
+    filename = client.file_data[3]
+    file_hash = client.file_data[4]
+    cleanup_abgabe = client.file_data[5]
+    subject =  client.file_data[6]
+    
+    #(trigger, task, filetype, filename, file_hash, cleanup_abgabe, subject) = client.file_data[0:7]
+    
     student_file_request_dispatcher[task](client, filetype, filename, file_hash, cleanup_abgabe, subject)
 
 
