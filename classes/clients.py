@@ -21,8 +21,32 @@ class ClientList:
     def remove_client(self, client):
         del self.clients[client.clientConnectionID]
 
-    def request_screenshots(self, who):
+    def lock_screens(self, who):
+        if not self.clients:
+            return False
+        line = "%s %s" % (Command.LOCK, "%s")
+        if who is "all":
+            self.broadcast_line(line)
+        else:
+            client = self.get_client(who)
+            client.sendLine(line % client.clientConnectionID)
 
+        return True
+
+    def unlock_screens(self, who):
+        if not self.clients:
+            return False
+        line = "%s %s" % (Command.UNLOCK, "%s")
+        if who is "all":
+            self.broadcast_line(line)
+        else:
+            client = self.get_client(who)
+            client.sendLine(line % client.clientConnectionID)
+
+        return True
+
+
+    def request_screenshots(self, who):
         if not self.clients:
             return False
 

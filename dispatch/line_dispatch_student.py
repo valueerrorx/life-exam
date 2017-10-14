@@ -8,12 +8,23 @@ from config.shell_scripts import SHOT
 from common import *
 from config.enums import Command, DataType
 
+
+
 """
 Contains functions and dispatcher dictionaries for Lines sent from the server to the client. Lines are
 patched through the dictionaries to return and call the proper function for the client to react to the servers
 orders.
 """
 
+
+
+
+
+
+"""
+student_line_dispatcher
+level 1
+"""
 
 def end_msg(client, line):
     """
@@ -47,7 +58,16 @@ def connection_removed(client, line):
     """
     showDesktopMessage('Connection aborted by the Teacher!')
     client.factory.failcount = 100
-    
+
+def lock_screen(client, line):
+    """Just locks the client screens
+    :param client: ClientProtocol
+    :param line: Line received from server
+    :return:
+    """
+    lockScreen(client, line)
+    return
+
 
 def file_transfer_request(client, line):
     """
@@ -83,6 +103,16 @@ def file_transfer_request(client, line):
     student_file_request_dispatcher[task](client, filetype, filename, file_hash, cleanup_abgabe, subject)
 
 
+
+
+
+
+
+"""
+student_file_request_dispatcher
+level 2
+"""
+
 def send_file_request(client, filetype, *args):
     """
     Dispatches Method to prepare requested file transfer and sends file
@@ -106,6 +136,19 @@ def get_file_request(client, *args):
     """
     client.setRawMode()
 
+
+
+
+
+
+
+
+
+
+"""
+student_prepare_filetype_dispatcher
+level 3
+"""
 
 def prepare_screenshot(client, filename, *args):
     """
@@ -167,7 +210,8 @@ student_line_dispatcher = {
     Command.REFUSED: connection_refused,
     Command.REMOVED: connection_removed,
     Command.FILETRANSFER: file_transfer_request,
-
+    Command.LOCK: lock_screen,
+    Command.UNLOCK: lock_screen,
 }
 
 """

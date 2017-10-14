@@ -4,21 +4,28 @@
 # pkill -9 -f lockscreen.py
 
 import sys, os, subprocess
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWidgets
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import Qt
+
 
 class ScreenlockWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
-        super(ScreenlockWindow, self).__init__(parent)
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint )
+    def __init__(self):
+        #super(ScreenlockWindow, self).__init__(parent)
+        QtWidgets.QMainWindow.__init__(self)
+        self.setWindowIcon(QIcon("pixmaps/windowicon.png"))
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint )
         self.setStyleSheet("ScreenlockWindow {background-color: black;}")
         self.label = QtWidgets.QLabel("")
-        self.pixmap = QtGui.QPixmap("pixmaps/windowicon.png")
+        self.pixmap = QPixmap("pixmaps/windowicon.png")
         self.label.setPixmap(self.pixmap)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignCenter)
         self.layout().addWidget(self.label)
         self.label.move(QtWidgets.QApplication.desktop().screen().rect().center()- self.rect().center())
         self.grabMouse()
         self.grabKeyboard()
+
+        self.setWindowModality(Qt.NonModal)
         
         USER = str(subprocess.check_output("logname", shell=True).rstrip())
         command = "exec sudo -u %s -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true" % USER

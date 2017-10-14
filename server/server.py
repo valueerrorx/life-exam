@@ -185,6 +185,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.client_list = ClientList() # type: ClientList
         self.disconnected_list = []
         self.files = None
+        self.clientslocked = False
         self.pincode = generatePin(4)
         self.examid = "Exam-%s" % generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
@@ -192,6 +193,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
         self.lcs.start(30)   #TODO make this configurable over the UI
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
+
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         #starting multicast server here in order to provide "factory" information via broadcast
         self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
@@ -317,6 +319,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
+        self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
 
         self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
@@ -346,6 +349,24 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port4.setValidator(num_validator)
 
         self.ui.show()
+
+    def _onScreenlock(self,who):
+        """locks the client screens"""
+        self.log("<b>Locking Client Screens </b>")
+        self._workingIndicator(True, 1000)
+
+        if self.factory.clientslocked:
+            self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
+            self.factory.clientslocked = False
+            if not self.factory.client_list.unlock_screens(who):
+                self.log("no clients connected")
+        else:
+            self.ui.screenlock.setIcon(QIcon("pixmaps/chronometer-off.png"))
+            self.factory.clientslocked = True
+            if not self.factory.client_list.lock_screens(who):
+                self.log("no clients connected")
+                self.factory.clientslocked = False
+                self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
 
 
 

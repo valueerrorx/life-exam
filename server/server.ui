@@ -227,6 +227,32 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="screenlock">
+           <property name="toolTip">
+            <string>Bildschirm sperren/entsperren</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/network-wired-symbolic.png</normaloff>../pixmaps/network-wired-symbolic.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="screenshots">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
@@ -576,7 +602,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>

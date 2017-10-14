@@ -13,6 +13,34 @@ from random import randint
 import datetime
 import time
 
+import sys, os, subprocess
+from PyQt5 import QtWidgets
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
+
+from client.lockscreen import ScreenlockWindow
+
+
+
+
+def lockScreen(client, line):
+    """opens lockscreen.py or kills it """
+    lines = clean_and_split_input(line)
+    # FIXME check if client.app already exists !!
+    if lines[0] == "LKS":
+        print "locking screen"
+        startcommand = "exec sudo -u %s -H python client/lockscreen.py &" %(USER) #kill it if it already exists
+        os.system(startcommand)
+
+    else:
+        print "closing lockscreen"
+        startcommand = "exec sudo pkill -9 -f lockscreen.py &"
+        os.system(startcommand)
+
+
+
+
+
 
 def generatePin(n):
     """generates a random number in the given length n """

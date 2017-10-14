@@ -5,6 +5,7 @@
 import os
 import sys
 
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -112,6 +113,7 @@ class MyClientProtocol(basic.LineReceiver):
     def lineReceived(self, line):
         line_handler = student_line_dispatcher.get(line.split()[0], None)
         line_handler(self, line) if line_handler is not None else self.buffer.append(line)
+
 
     def _triggerAutosave(self):
         """this function uses xdotool to find windows and trigger ctrl+s shortcut on them

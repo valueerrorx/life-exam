@@ -80,6 +80,8 @@ class ClientDialog(QtWidgets.QDialog):
                 command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s' &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
                 os.system(command)
+                # for non daemon mode manual to track bugs
+                #sudo twistd -n --pidfile /home/student/.life/EXAM/client.pid examclient -p 5000 -h 10.0.0.110 -i ich -c 2604
             
         else:
             self._changePalette(self.ui.serverip, "warn")
