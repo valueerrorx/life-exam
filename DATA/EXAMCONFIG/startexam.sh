@@ -283,7 +283,7 @@ sleep 0.5
         sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
         #sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  # castrated VPS 
 
-        #needed for multicast (twisted)
+        #needed for multicast (twisted)  Multicast Address for Address Allocation for Private Internets
         sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
         sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
 
