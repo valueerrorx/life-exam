@@ -185,7 +185,7 @@ class MyClientProtocol(basic.LineReceiver):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')  # anhängen
             thisexamfile.write("\n")
-            thisexamfile.write("%s,5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
+            thisexamfile.write("%s:5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
 
             if cleanup_abgabe:
                 print "cleaning up abgabe"
