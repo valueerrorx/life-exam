@@ -68,7 +68,7 @@ def lock_screen(client, line):
     lockScreen(client, line)
     return
 
-def lock_screen(client, line):
+def exitExam(client, line):
     """start stopexam.sh
     :param client: ClientProtocol
     :param line: Line received from server
@@ -76,7 +76,7 @@ def lock_screen(client, line):
     """
     print "stopping exam"
     startcommand = "sudo %s/scripts/stopexam.sh exam &" %(WORK_DIRECTORY) # start as user even if the twistd daemon is run by root
-     os.system(startcommand)  # start script
+    os.system(startcommand)  # start script
 
     return
 
