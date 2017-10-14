@@ -68,6 +68,19 @@ def lock_screen(client, line):
     lockScreen(client, line)
     return
 
+def lock_screen(client, line):
+    """start stopexam.sh
+    :param client: ClientProtocol
+    :param line: Line received from server
+    :return:
+    """
+    print "stopping exam"
+    startcommand = "sudo %s/scripts/stopexam.sh exam &" %(WORK_DIRECTORY) # start as user even if the twistd daemon is run by root
+     os.system(startcommand)  # start script
+
+    return
+
+
 
 def file_transfer_request(client, line):
     """
@@ -212,6 +225,7 @@ student_line_dispatcher = {
     Command.FILETRANSFER: file_transfer_request,
     Command.LOCK: lock_screen,
     Command.UNLOCK: lock_screen,
+    Command.EXITEXAM: exitExam,
 }
 
 """

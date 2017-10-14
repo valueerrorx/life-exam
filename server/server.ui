@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>992</width>
-    <height>658</height>
+    <width>1061</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -115,6 +115,35 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="sendfile">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Datei an alle Clients senden</string>
+           </property>
+           <property name="text">
+            <string>Datei senden</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/quickopen-file.png</normaloff>../pixmaps/quickopen-file.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="abgabe">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
@@ -129,7 +158,7 @@
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Arbeiten einsammeln</string>
+            <string>Abgabe</string>
            </property>
            <property name="icon">
             <iconset>
@@ -150,19 +179,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="sendfile">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
+          <widget class="QPushButton" name="exitexam">
            <property name="toolTip">
-            <string>Datei an alle Clients senden</string>
+            <string>Prüfungsumgebung beenden</string>
            </property>
            <property name="text">
-            <string>Datei senden</string>
+            <string>Exam beenden</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>../pixmaps/quickopen-file.png</normaloff>../pixmaps/quickopen-file.png</iconset>
+             <normaloff>../pixmaps/document-noedit.png</normaloff>../pixmaps/document-noedit.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -200,7 +226,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::TabFocus</enum>
            </property>
            <property name="toolTip">
             <string>Share Odner öffnen</string>
@@ -228,6 +254,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="screenlock">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Bildschirm sperren/entsperren</string>
            </property>
@@ -381,7 +410,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
+             <width>20</width>
              <height>20</height>
             </size>
            </property>
@@ -1487,6 +1516,12 @@ Prüfungsbeginn löschen</string>
       </sizepolicy>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <property name="sizePolicy">
@@ -1496,9 +1531,24 @@ Prüfungsbeginn löschen</string>
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QWidget" name="widget_14" native="true">
            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QLabel" name="working">
               <property name="text">
@@ -1567,8 +1617,11 @@ Prüfungsbeginn löschen</string>
  </widget>
  <tabstops>
   <tabstop>startexam</tabstop>
-  <tabstop>abgabe</tabstop>
   <tabstop>sendfile</tabstop>
+  <tabstop>abgabe</tabstop>
+  <tabstop>exitexam</tabstop>
+  <tabstop>openshare</tabstop>
+  <tabstop>screenlock</tabstop>
   <tabstop>screenshots</tabstop>
   <tabstop>starthotspot</tabstop>
   <tabstop>showip</tabstop>

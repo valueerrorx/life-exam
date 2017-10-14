@@ -19,3 +19,4 @@ class Command(Enum):
     SEND = "S"
     LOCK = "LKS"
     UNLOCK = "ULKS"
+    EXITEXAM = "EXIT"

@@ -191,7 +191,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
-        self.lcs.start(30)   #TODO make this configurable over the UI
+        self.lcs.start(20)   #TODO make this configurable over the UI
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
 
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
@@ -320,6 +320,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
+        self.ui.exitexam.clicked.connect(lambda: self._onExitExam("all"))
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
 
         self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
@@ -349,6 +350,18 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port4.setValidator(num_validator)
 
         self.ui.show()
+
+
+    def _onExitExam(self,who):
+        self.log("<b>Finishing Exam </b>")
+        self._workingIndicator(True, 2000)
+        # first fetch abgabe
+        if not self.factory.client_list.request_abgabe(who):
+            self.log("no clients connected")
+        # then send the exam exit signal
+        if not self.factory.client_list.exit_exam(who):
+            self.log("no clients connected")
+
 
     def _onScreenlock(self,who):
         """locks the client screens"""
@@ -553,7 +566,9 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onLoadDefaults(self):
         self._workingIndicator(True, 500)
+        showDesktopMessage('Default Configuration for EXAM Desktop restored.')
         self.log('Default Configuration for EXAM Desktop restored.')
+
         system_commander.copy('./DATA/EXAMCONFIG', WORK_DIRECTORY)
 
     def _onAutoabgabe(self):
