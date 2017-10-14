@@ -361,13 +361,12 @@ class ServerUI(QtWidgets.QDialog):
             if not self.factory.client_list.unlock_screens(who):
                 self.log("no clients connected")
         else:
-            self.ui.screenlock.setIcon(QIcon("pixmaps/chronometer-off.png"))
+            self.ui.screenlock.setIcon(QIcon("pixmaps/unlock.png"))
             self.factory.clientslocked = True
             if not self.factory.client_list.lock_screens(who):
                 self.log("no clients connected")
                 self.factory.clientslocked = False
                 self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
-
 
 
     def _onOpenshare(self):

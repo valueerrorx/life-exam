@@ -260,26 +260,30 @@ sleep 0.5
         if [ -f $IPSFILE ]; then
             for IP in `cat $IPSFILE`; do        #allow input and output for ALLOWEDIP
                 echo "exception noticed $IP"
-                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --dports 80,443,5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --dports 80,443,5000 -j ACCEPT
+                IPPORTARRAY=(${IP//:/ })
+                # destination - destinationports
+                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
 
-                sudo iptables -A INPUT  -p tcp -s $IP -m multiport --dports 80,443,5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -s $IP -m multiport --dports 80,443,5000 -j ACCEPT
-                
-                
-                sudo iptables -A INPUT  -p tcp -d $IP -m multiport --sports 80,443,5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -d $IP -m multiport --sports 80,443,5000 -j ACCEPT
+                # source - destinationports
+                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
 
-                sudo iptables -A INPUT  -p tcp -s $IP -m multiport --sports 80,443,5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -s $IP -m multiport --sports 80,443,5000 -j ACCEPT
-                
-                
+                # destination - sourceports
+                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+
+                # source - sourceports
+                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+
             done
         fi
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT         #allow ESTABLISHED and RELATED (important for active server communication)
         sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
         #sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  # castrated VPS 
 
+        #needed for multicast (twisted)
         sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
         sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
 
