@@ -28,7 +28,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.setWindowModality(Qt.NonModal)
 
 
-    def clickedEvent(self.event):
+    def clickedEvent(self,event):
         event.ignore()
         return
 
