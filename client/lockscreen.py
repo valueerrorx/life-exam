@@ -5,7 +5,7 @@
 
 import sys, os, subprocess
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QIcon, QKeySequence
 from PyQt5.QtCore import Qt
 
 
@@ -24,19 +24,44 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.label.move(QtWidgets.QApplication.desktop().screen().rect().center()- self.rect().center())
         self.grabMouse()
         self.grabKeyboard()
-
+        self.grabShortcut(QKeySequence(Qt.AltModifier))
         self.setWindowModality(Qt.NonModal)
 
-        
-        
-    def keyPressEvent(self, event):
-        return
-    
-    def mouseReleaseEvent(self, event):
+
+    def clickedEvent(event):
+        event.ignore()
         return
 
-    def mouseMoveEvent(self, event):
+    def mousePressEvent(self,event):
+        event.ignore()
         return
+
+    def dragEnterEvent(self, event):
+        event.ignore()
+        pass
+
+    def QMouseEvent(self,event):
+        event.ignore()
+
+    def dragMoveEvent(self, event):
+        event.ignore()
+        pass
+
+    
+    def mouseReleaseEvent(self, event):
+        event.ignore()
+        pass
+
+    def mouseMoveEvent(self, event):
+        event.ignore()
+        pass
+
+    def moveEvent(self,event):
+        self.move(0,0)
+        event.ignore()
+        pass
+
+
 
 
 if __name__ == "__main__":
@@ -46,3 +71,4 @@ if __name__ == "__main__":
     myapp.setFixedSize(6000, 6000)
     myapp.show()
     sys.exit(app.exec_())
+
