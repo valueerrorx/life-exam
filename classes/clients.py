@@ -90,7 +90,15 @@ class ClientList:
 
         return True
 
-    def send_file(self, file_path, who):
+
+    def send_file(self, file_path, who, datatype, cleanup_abgabe="none", subject="none"):
+        """
+        Dispatches Method to prepare requested file transfer and sends file
+        :param file_path: absolute filepath
+        :param who: all or client id
+        :param args: (cleanup_abgabe, subject) for exam mode
+        """
+
         if file_path:
 
             filename = ntpath.basename(file_path)  # get filename without path
@@ -98,13 +106,11 @@ class ClientList:
             file_size = os.path.getsize(file_path)
             md5_hash = get_file_md5_hash(file_path)
 
-
-            
             if who is 'all':
                 self.broadcast_file(file_path, filename, md5_hash)
             else:
                 client = self.get_client(who)
-                client.sendLine('%s %s %s %s %s none' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+                client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe, subject ))  # trigger clienttask type filename filehash)
                 #FIXME filename with spaces is not transferred because of invalid filehash (which is not invalid but a part of the name is taken as hash on client side)
                 client.setRawMode()
                 who = client.clientName

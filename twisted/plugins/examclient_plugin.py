@@ -67,6 +67,7 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted
     def rawDataReceived(self, data):
+        print self.file_data
         filename = self.file_data[3]
         cleanup_abgabe = self.file_data[5]
         subject = self.file_data[6]

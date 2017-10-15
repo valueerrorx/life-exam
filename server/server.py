@@ -312,7 +312,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
-        self.ui.startexam.clicked.connect(self._onStartExam)
+        self.ui.startexam.clicked.connect(lambda: self._onStartExam("all"))
         self.ui.openshare.clicked.connect(self._onOpenshare)
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
         self.ui.startconfig.clicked.connect(self._onStartConfig)
@@ -350,17 +350,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port4.setValidator(num_validator)
 
         self.ui.show()
-
-
-    def _onExitExam(self,who):
-        self.log("<b>Finishing Exam </b>")
-        self._workingIndicator(True, 2000)
-        # first fetch abgabe
-        if not self.factory.client_list.request_abgabe(who):
-            self.log("no clients connected")
-        # then send the exam exit signal
-        if not self.factory.client_list.exit_exam(who):
-            self.log("no clients connected")
 
 
     def _onScreenlock(self,who):
@@ -420,7 +409,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if file_path:
             self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
-            success, filename, file_size, who = client_list.send_file(file_path, who)
+            success, filename, file_size, who = client_list.send_file(file_path, who, DataType.FILE)
 
             if success:
                 self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
@@ -454,7 +443,7 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.client_list.request_abgabe(who):
             self.log("no clients connected")
 
-    def _onStartExam(self):
+    def _onStartExam(self, who):
         """
                 ZIP examconfig folder
                 send configuration-zip to clients - unzip there
@@ -471,13 +460,15 @@ class ServerUI(QtWidgets.QDialog):
         self.log('<b>Initializing Exam Mode On All Clients </b>')
 
         cleanup_abgabe = self.ui.cleanabgabe.checkState()
+        # create zip file of all examconfigs
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
         output_filename = os.path.join(SERVERZIP_DIRECTORY, filename)
         shutil.make_archive(output_filename, 'zip', target_folder)
         filename = "%s.zip" % (filename)
+        file_path = os.path.join(SERVERZIP_DIRECTORY, filename)  #now with .zip extension
 
-
+        #regenerate filelist and check for zip file
         self.factory.files = get_file_list(self.factory.files_path)
         if filename not in self.factory.files:
             self.log('filename not found in directory')
@@ -485,23 +476,41 @@ class ServerUI(QtWidgets.QDialog):
 
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
+        # check for exam mode
         if self.ui.radiomath.isChecked():
             subject = "math"
         else:
             subject = "lang"
 
+        # send line and file to all clients
+        client_list.send_file(file_path, who, DataType.EXAM, cleanup_abgabe, subject )
 
-        for client in client_list.clients.values():
-            #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
-            client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe, subject ))
-            client.setRawMode()
+        # for client in client_list.clients.values():
+        #     #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
+        #     client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe, subject ))
+        #     client.setRawMode()
+        #
+        #     print self.factory.files[filename][0]
+        #     for bytes in read_bytes_from_file(self.factory.files[filename][0]):
+        #         client.transport.write(bytes)
+        #
+        #     client.transport.write('\r\n')
+        #     client.setLineMode()
 
-            print self.factory.files[filename][0]
-            for bytes in read_bytes_from_file(self.factory.files[filename][0]):
-                client.transport.write(bytes)
 
-            client.transport.write('\r\n')
-            client.setLineMode()
+
+    def _onExitExam(self,who):
+        self.log("<b>Finishing Exam </b>")
+        self._workingIndicator(True, 2000)
+        # first fetch abgabe
+        if not self.factory.client_list.request_abgabe(who):
+            self.log("no clients connected")
+        # then send the exam exit signal
+        if not self.factory.client_list.exit_exam(who):
+            self.log("no clients connected")
+
+
+
 
     def _onStartConfig(self):
         self._workingIndicator(True, 500)
@@ -692,14 +701,22 @@ class ServerUI(QtWidgets.QDialog):
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self._onAbgabe(client_connection_id))
         action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self._onScreenshots(client_connection_id))
         action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self._onSendFile(client_connection_id))
-        action_4 = QtWidgets.QAction("Verbindung beenden", menu, triggered=lambda: self._onRemoveClient(client_connection_id))
+        action_4 = QtWidgets.QAction("Exam starten", menu, triggered=lambda: self._onStartExam(client_connection_id))
+        action_5 = QtWidgets.QAction("Exam beenden", menu, triggered=lambda: self._onExitExam(client_connection_id))
+        action_6 = QtWidgets.QAction("Verbindung trennen", menu,
+                                     triggered=lambda: self._onRemoveClient(client_connection_id))
+        menu.addActions([action_1, action_2, action_3, action_4, action_5, action_6])
 
-        menu.addActions([action_1, action_2, action_3, action_4])
+
+
 
         if is_disabled:
             action_1.setEnabled(False)
             action_2.setEnabled(False)
             action_3.setEnabled(False)
+            action_4.setEnabled(False)
+            action_5.setEnabled(False)
+            action_6.setText("Widget entfernen")
 
         cursor = QCursor()
         menu.exec_(cursor.pos())
