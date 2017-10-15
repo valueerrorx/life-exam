@@ -26,10 +26,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.grabKeyboard()
 
         self.setWindowModality(Qt.NonModal)
-        
-        USER = str(subprocess.check_output("logname", shell=True).rstrip())
-        command = "exec sudo -u %s -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true" % USER
-        os.system(command)
+
         
         
     def keyPressEvent(self, event):

@@ -29,6 +29,10 @@ def lockScreen(client, line):
     # FIXME check if client.app already exists !!
     if lines[0] == "LKS":
         print "locking screen"
+
+        command = "exec sudo -u %s -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true" %(USER)
+        os.system(command)
+
         startcommand = "exec sudo -u %s -H python client/lockscreen.py &" %(USER) #kill it if it already exists
         os.system(startcommand)
 

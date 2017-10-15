@@ -107,7 +107,7 @@ class ClientList:
             md5_hash = get_file_md5_hash(file_path)
 
             if who is 'all':
-                self.broadcast_file(file_path, filename, md5_hash)
+                self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe, subject)
             else:
                 client = self.get_client(who)
                 client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe, subject ))  # trigger clienttask type filename filehash)
@@ -126,9 +126,9 @@ class ClientList:
             client.sendLine(line % client.clientConnectionID)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
 
-    def broadcast_file(self, file_path, filename, md5_hash):
+    def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe, subject):
         for client in self.clients.values():
-            client.sendLine('%s %s %s %s %s none' % (Command.FILETRANSFER, Command.GET, DataType.FILE, str(filename), md5_hash))  # trigger clienttask type filename filehash)
+            client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe, subject))  # trigger clienttask type filename filehash)
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()
