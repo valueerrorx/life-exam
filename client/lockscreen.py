@@ -28,7 +28,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.setWindowModality(Qt.NonModal)
 
 
-    def clickedEvent(event):
+    def clickedEvent(self.event):
         event.ignore()
         return
 
@@ -40,14 +40,10 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         event.ignore()
         pass
 
-    def QMouseEvent(self,event):
-        event.ignore()
-
     def dragMoveEvent(self, event):
         event.ignore()
         pass
 
-    
     def mouseReleaseEvent(self, event):
         event.ignore()
         pass
