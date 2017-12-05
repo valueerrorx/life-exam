@@ -7,6 +7,7 @@ import sys, os, subprocess
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPixmap, QIcon, QKeySequence
 from PyQt5.QtCore import Qt
+from subprocess import Popen, PIPE, STDOUT
 
 
 class ScreenlockWindow(QtWidgets.QMainWindow):
@@ -26,7 +27,6 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.grabKeyboard()
         self.grabShortcut(QKeySequence(Qt.AltModifier))
         self.setWindowModality(Qt.NonModal)
-
 
     def clickedEvent(self,event):
         event.ignore()
@@ -61,6 +61,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
+    
     app = QtWidgets.QApplication(sys.argv)
     myapp = ScreenlockWindow()
     myapp.setGeometry(app.desktop().screenGeometry())

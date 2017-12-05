@@ -119,10 +119,10 @@ class MyClientProtocol(basic.LineReceiver):
     def _triggerAutosave(self):
         """this function uses xdotool to find windows and trigger ctrl+s shortcut on them
             which will show the save dialog the first time and silently save the document the next time
-        """
+        """ 
         app_id_list = []
         for app in SAVEAPPS:
-            if app == "calligrawords" or app == "calligrasheets":  # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
+            if app == "calligrawords" or app == "calligrasheets" or app == "kate":  # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
                 try:
                     command = "pidof %s" % (app)
                     pid = subprocess.check_output(command, shell=True).rstrip()
