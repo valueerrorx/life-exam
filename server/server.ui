@@ -401,6 +401,32 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="printer">
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Druckerkonfiguration übertragen</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/printer.png</normaloff>../pixmaps/printer.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -1132,6 +1158,12 @@
                <layout class="QVBoxLayout" name="verticalLayout_19">
                 <item>
                  <widget class="QRadioButton" name="radiomath">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>24</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>&amp;Mathematik</string>
                   </property>
@@ -1142,6 +1174,12 @@
                 </item>
                 <item>
                  <widget class="QRadioButton" name="radiolanguage">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>24</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Sprache&amp;n</string>
                   </property>
@@ -1626,9 +1664,9 @@ Prüfungsbeginn löschen</string>
   <tabstop>starthotspot</tabstop>
   <tabstop>showip</tabstop>
   <tabstop>autoabgabe</tabstop>
+  <tabstop>printer</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>listWidget</tabstop>
-  <tabstop>exit</tabstop>
   <tabstop>examlabeledit</tabstop>
   <tabstop>firewall1</tabstop>
   <tabstop>port1</tabstop>
@@ -1646,6 +1684,7 @@ Prüfungsbeginn löschen</string>
   <tabstop>aintervall</tabstop>
   <tabstop>cleanabgabe</tabstop>
   <tabstop>logwidget</tabstop>
+  <tabstop>exit</tabstop>
  </tabstops>
  <resources/>
  <connections/>
