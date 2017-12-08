@@ -7,7 +7,7 @@ class DataType(Enum):
     ABGABE = "AB"
     EXAM = "EX"
     FILE = "FI"
-
+    PRINTER = "PR"
 
 class Command(Enum):
     ENDMSG = "E"

@@ -102,6 +102,10 @@ class MyClientProtocol(basic.LineReceiver):
 
                     showDesktopMessage('File %s received!' %(filename))
                     fixFilePermissions(SHARE_DIRECTORY)
+                elif self.file_data[2] == DataType.PRINTER:
+                    showDesktopMessage('Receiving Printer Configuration')
+                    self._activatePrinterconfig(filename, file_path)
+
             else:
                 os.unlink(file_path)
                 print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
@@ -168,6 +172,19 @@ class MyClientProtocol(basic.LineReceiver):
 
         self.transport.write('\r\n')  # send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
+
+
+    def _activatePrinterconfig(self, filename, file_path):
+        """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
+
+        with zipfile.ZipFile(file_path, "r") as zip_ref:
+            zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
+        os.unlink(file_path)  # delete zip file
+        time.sleep(2)
+
+        command = "sudo systemctl restart cups.service &"
+        os.system(command)
+
 
     def _startExam(self, filename, file_path, cleanup_abgabe, subject ):
         """extracts the config folder and starts the startexam.sh script"""

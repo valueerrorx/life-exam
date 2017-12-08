@@ -322,6 +322,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
         self.ui.exitexam.clicked.connect(lambda: self._onExitExam("all"))
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
+        self.ui.printconf.clicked.connect(self._onPrintconf)
+        self.ui.printer.clicked.connect(lambda: self._onSendPrintconf("all"))
 
         self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
         self.workinganimation.setCacheMode(QMovie.CacheAll)
@@ -351,6 +353,49 @@ class ServerUI(QtWidgets.QDialog):
 
         self.ui.show()
 
+
+    def _onSendPrintconf(self,who):
+        """send the printer configuration to all clients"""
+        self._workingIndicator(True, 500)
+        client_list = self.factory.client_list
+
+        if not client_list.clients:
+            self.log("no clients connected")
+            return
+
+        self._workingIndicator(True, 4000)
+        self.log('<b>Sending Printer Configuration to All Clients </b>')
+
+
+        # create zip file of /etc/cups
+        target_folder = PRINTERCONFIG_DIRECTORY
+        filename = "PRINTERCONFIG"
+        output_filename = os.path.join(SERVERZIP_DIRECTORY, filename)
+        shutil.make_archive(output_filename, 'zip', target_folder)
+        filename = "%s.zip" % (filename)
+        file_path = os.path.join(SERVERZIP_DIRECTORY, filename)  # now with .zip extension
+
+        # regenerate filelist and check for zip file
+        self.factory.files = get_file_list(self.factory.files_path)
+        if filename not in self.factory.files:
+            self.log('filename not found in directory')
+            return
+
+        self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
+
+
+
+        # send line and file to all clients
+        client_list.send_file(file_path, who, DataType.PRINTER)
+
+
+
+
+
+
+    def _onPrintconf(selfs):
+        command = "kcmshell5 kcm_printer_manager &"
+        os.system(command)
 
     def _onScreenlock(self,who):
         """locks the client screens"""

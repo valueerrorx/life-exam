@@ -20,7 +20,7 @@
   <property name="maximumSize">
    <size>
     <width>990</width>
-    <height>862</height>
+    <height>622</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -450,7 +450,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -638,80 +638,6 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="Line" name="line_3">
-                     <property name="maximumSize">
-                      <size>
-                       <width>2</width>
-                       <height>45</height>
-                      </size>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="starthotspot">
-                     <property name="focusPolicy">
-                      <enum>Qt::TabFocus</enum>
-                     </property>
-                     <property name="toolTip">
-                      <string>Accesspoint aktivieren</string>
-                     </property>
-                     <property name="statusTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>32</width>
-                       <height>32</height>
-                      </size>
-                     </property>
-                     <property name="autoDefault">
-                      <bool>false</bool>
-                     </property>
-                     <property name="flat">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="showip">
-                     <property name="focusPolicy">
-                      <enum>Qt::TabFocus</enum>
-                     </property>
-                     <property name="toolTip">
-                      <string>IP Adresse anzeigen</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>32</width>
-                       <height>32</height>
-                      </size>
-                     </property>
-                     <property name="autoDefault">
-                      <bool>false</bool>
-                     </property>
-                     <property name="flat">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
                     <widget class="QPushButton" name="openshare">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -847,8 +773,11 @@
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QScrollArea" name="scrollArea">
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
             <property name="styleSheet">
-             <string notr="true">margin-top:12px;</string>
+             <string notr="true">margin-top:12px; </string>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -862,8 +791,11 @@
                <x>0</x>
                <y>0</y>
                <width>918</width>
-               <height>813</height>
+               <height>912</height>
               </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">#scrollAreaWidgetContents {background-color:transparent; }</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_24">
               <item>
@@ -925,22 +857,138 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QWidget" name="widget_30" native="true">
+                     <widget class="QWidget" name="widget_31" native="true">
                       <property name="styleSheet">
-                       <string notr="true">margin:4px; padding:4px;margin-left:14px;</string>
+                       <string notr="true"/>
                       </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_19">
+                      <layout class="QVBoxLayout" name="verticalLayout_26">
                        <item>
-                        <widget class="QLineEdit" name="examlabeledit">
-                         <property name="maximumSize">
-                          <size>
-                           <width>170</width>
-                           <height>16777215</height>
-                          </size>
+                        <widget class="QWidget" name="widget_32" native="true">
+                         <property name="styleSheet">
+                          <string notr="true">margin-left:10px;margin-bottom:0;</string>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_20">
+                          <item>
+                           <widget class="QLabel" name="label_17">
+                            <property name="minimumSize">
+                             <size>
+                              <width>130</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>200</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin-left:10px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Prüfungsname</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="examlabeledit">
+                            <property name="maximumSize">
+                             <size>
+                              <width>170</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="focusPolicy">
+                             <enum>Qt::TabFocus</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true"/>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_9">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QWidget" name="widget_20" native="true">
+                         <property name="layoutDirection">
+                          <enum>Qt::LeftToRight</enum>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true"/>
+                          <string notr="true">margin-left:10px;margin-top:0;</string>
                          </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_11">
+                          <item>
+                           <widget class="QLabel" name="label_6">
+                            <property name="minimumSize">
+                             <size>
+                              <width>130</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>200</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin-left:10px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Abgabeintervall</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QSpinBox" name="aintervall">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="toolTip">
+                             <string>0 - Automatische Abgabe deaktiviert</string>
+                            </property>
+                            <property name="minimum">
+                             <number>0</number>
+                            </property>
+                            <property name="maximum">
+                             <number>300</number>
+                            </property>
+                            <property name="singleStep">
+                             <number>1</number>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_10">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                       </layout>
@@ -948,8 +996,11 @@
                     </item>
                     <item>
                      <widget class="QCheckBox" name="cleanabgabe">
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
                       <property name="styleSheet">
-                       <string notr="true">margin:4px; padding:4px; margin-left:14px;</string>
+                       <string notr="true">margin:4px; padding:4px; margin-left:142px;</string>
                       </property>
                       <property name="text">
                        <string>Schülerordner 'share' bei Prüfungsbeginn löschen</string>
@@ -973,116 +1024,13 @@
                          <property name="sizeHint" stdset="0">
                           <size>
                            <width>20</width>
-                           <height>10</height>
+                           <height>20</height>
                           </size>
                          </property>
                         </spacer>
                        </item>
                       </layout>
                      </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QGroupBox" name="groupBox_4">
-                <property name="styleSheet">
-                 <string notr="true">margin-top:0px;</string>
-                </property>
-                <property name="title">
-                 <string/>
-                </property>
-                <property name="flat">
-                 <bool>false</bool>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_20">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QLabel" name="label">
-                   <property name="styleSheet">
-                    <string notr="true">margin:4px; padding:4px;</string>
-                   </property>
-                   <property name="text">
-                    <string>Abgabe</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="widget_20" native="true">
-                   <property name="styleSheet">
-                    <string notr="true">margin:4px; padding:4px;margin-left:14px;</string>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_11">
-                    <item>
-                     <widget class="QSpinBox" name="aintervall">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="toolTip">
-                       <string>0 - Automatische Abgabe deaktiviert</string>
-                      </property>
-                      <property name="minimum">
-                       <number>0</number>
-                      </property>
-                      <property name="maximum">
-                       <number>300</number>
-                      </property>
-                      <property name="singleStep">
-                       <number>1</number>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="label_6">
-                      <property name="styleSheet">
-                       <string notr="true">margin:0px;</string>
-                      </property>
-                      <property name="text">
-                       <string>Intervall</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="widget_28" native="true">
-                   <layout class="QVBoxLayout" name="verticalLayout_22">
-                    <item>
-                     <spacer name="verticalSpacer_3">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::MinimumExpanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>10</height>
-                       </size>
-                      </property>
-                     </spacer>
                     </item>
                    </layout>
                   </widget>
@@ -1141,11 +1089,20 @@
                    <layout class="QHBoxLayout" name="horizontalLayout_16">
                     <item>
                      <widget class="QWidget" name="widget_27" native="true">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>32</height>
+                       </size>
+                      </property>
                       <property name="maximumSize">
                        <size>
-                        <width>150</width>
+                        <width>136</width>
                         <height>16777215</height>
                        </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_7">
                        <item>
@@ -1155,6 +1112,9 @@
                            <width>16777215</width>
                            <height>24</height>
                           </size>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">padding:0px;</string>
@@ -1169,11 +1129,20 @@
                        </item>
                        <item>
                         <widget class="QRadioButton" name="radiolanguage">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>32</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
                            <width>16777215</width>
                            <height>24</height>
                           </size>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">padding:0px;</string>
@@ -1206,11 +1175,20 @@
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>140</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
+                         </property>
                          <property name="toolTip">
                           <string>Den Prüfungsdesktop im entsperrten Zustand laden&lt;br&gt; um Anpassungen vorzunehmen.</string>
                          </property>
                          <property name="layoutDirection">
-                          <enum>Qt::RightToLeft</enum>
+                          <enum>Qt::LeftToRight</enum>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">padding: 8px;</string>
@@ -1218,18 +1196,53 @@
                          <property name="text">
                           <string>Anpassen</string>
                          </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../pixmaps/document-edit.png</normaloff>../pixmaps/document-edit.png</iconset>
+                         </property>
+                         <property name="autoDefault">
+                          <bool>false</bool>
+                         </property>
+                         <property name="flat">
+                          <bool>false</bool>
+                         </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QPushButton" name="loaddefaults">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>140</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
+                         </property>
                          <property name="toolTip">
                           <string>Standard Einstellungen für den Prüfungsdesktop wiederherstellen </string>
+                         </property>
+                         <property name="layoutDirection">
+                          <enum>Qt::LeftToRight</enum>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">padding: 8px;</string>
                          </property>
                          <property name="text">
                           <string> Zurücksetzen</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../pixmaps/document-noedit.png</normaloff>../pixmaps/document-noedit.png</iconset>
+                         </property>
+                         <property name="autoDefault">
+                          <bool>false</bool>
                          </property>
                         </widget>
                        </item>
@@ -1249,7 +1262,7 @@
                          </property>
                          <property name="sizeHint" stdset="0">
                           <size>
-                           <width>550</width>
+                           <width>561</width>
                            <height>20</height>
                           </size>
                          </property>
@@ -1275,7 +1288,171 @@
                       <property name="sizeHint" stdset="0">
                        <size>
                         <width>20</width>
-                        <height>10</height>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_4">
+                <property name="styleSheet">
+                 <string notr="true">margin-top:0px;</string>
+                </property>
+                <property name="title">
+                 <string/>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_20">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="styleSheet">
+                    <string notr="true">margin:4px; padding:4px;</string>
+                   </property>
+                   <property name="text">
+                    <string>Diverses</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_28" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_22">
+                    <item>
+                     <widget class="QWidget" name="widget_23" native="true">
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_18">
+                       <item>
+                        <widget class="QPushButton" name="showip">
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
+                         </property>
+                         <property name="toolTip">
+                          <string>IP Adresse anzeigen</string>
+                         </property>
+                         <property name="text">
+                          <string>IP Adresse</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>32</width>
+                           <height>32</height>
+                          </size>
+                         </property>
+                         <property name="autoDefault">
+                          <bool>false</bool>
+                         </property>
+                         <property name="flat">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="starthotspot">
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
+                         </property>
+                         <property name="toolTip">
+                          <string>Accesspoint aktivieren</string>
+                         </property>
+                         <property name="statusTip">
+                          <string/>
+                         </property>
+                         <property name="text">
+                          <string>Accesspoint</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>32</width>
+                           <height>32</height>
+                          </size>
+                         </property>
+                         <property name="autoDefault">
+                          <bool>false</bool>
+                         </property>
+                         <property name="flat">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="printconf">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::TabFocus</enum>
+                         </property>
+                         <property name="text">
+                          <string>Drucker Konfiguration</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../pixmaps/printer.png</normaloff>../pixmaps/printer.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>32</width>
+                           <height>32</height>
+                          </size>
+                         </property>
+                         <property name="autoDefault">
+                          <bool>false</bool>
+                         </property>
+                         <property name="flat">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="verticalSpacer_3">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::MinimumExpanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>30</height>
                        </size>
                       </property>
                      </spacer>
@@ -1299,19 +1476,19 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_17">
                  <property name="spacing">
-                  <number>4</number>
+                  <number>0</number>
                  </property>
                  <property name="leftMargin">
-                  <number>4</number>
+                  <number>0</number>
                  </property>
                  <property name="topMargin">
-                  <number>4</number>
+                  <number>0</number>
                  </property>
                  <property name="rightMargin">
-                  <number>4</number>
+                  <number>0</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>4</number>
+                  <number>0</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_12">
@@ -1349,6 +1526,12 @@
                         <height>200</height>
                        </size>
                       </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin-right:0;</string>
+                      </property>
                       <property name="placeholderText">
                        <string>0.0.0.0</string>
                       </property>
@@ -1371,12 +1554,28 @@
                      </widget>
                     </item>
                     <item>
+                     <widget class="QLabel" name="label_13">
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;padding:0;</string>
+                      </property>
+                      <property name="text">
+                       <string>:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QLineEdit" name="port1">
                       <property name="maximumSize">
                        <size>
-                        <width>100</width>
+                        <width>70</width>
                         <height>16777215</height>
                        </size>
+                      </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;</string>
                       </property>
                       <property name="placeholderText">
                        <string>80</string>
@@ -1419,6 +1618,12 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin-right:0;</string>
+                      </property>
                       <property name="placeholderText">
                        <string>0.0.0.0</string>
                       </property>
@@ -1441,12 +1646,28 @@
                      </widget>
                     </item>
                     <item>
+                     <widget class="QLabel" name="label_14">
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;padding:0;</string>
+                      </property>
+                      <property name="text">
+                       <string>:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QLineEdit" name="port2">
                       <property name="maximumSize">
                        <size>
-                        <width>100</width>
+                        <width>70</width>
                         <height>16777215</height>
                        </size>
+                      </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;</string>
                       </property>
                       <property name="placeholderText">
                        <string>443</string>
@@ -1489,6 +1710,12 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin-right:0;</string>
+                      </property>
                       <property name="placeholderText">
                        <string>0.0.0.0</string>
                       </property>
@@ -1511,12 +1738,28 @@
                      </widget>
                     </item>
                     <item>
+                     <widget class="QLabel" name="label_15">
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;padding:0;</string>
+                      </property>
+                      <property name="text">
+                       <string>:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QLineEdit" name="port3">
                       <property name="maximumSize">
                        <size>
-                        <width>100</width>
+                        <width>70</width>
                         <height>16777215</height>
                        </size>
+                      </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;</string>
                       </property>
                       <property name="placeholderText">
                        <string>21</string>
@@ -1559,6 +1802,12 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin-right:0;</string>
+                      </property>
                       <property name="placeholderText">
                        <string>0.0.0.0</string>
                       </property>
@@ -1581,12 +1830,28 @@
                      </widget>
                     </item>
                     <item>
+                     <widget class="QLabel" name="label_16">
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;padding:0;</string>
+                      </property>
+                      <property name="text">
+                       <string>:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QLineEdit" name="port4">
                       <property name="maximumSize">
                        <size>
-                        <width>100</width>
+                        <width>70</width>
                         <height>16777215</height>
                        </size>
+                      </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">margin:0;</string>
                       </property>
                       <property name="placeholderText">
                        <string>8080</string>
@@ -1623,11 +1888,18 @@
                         <height>16777215</height>
                        </size>
                       </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::TabFocus</enum>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">padding:8px</string>
                       </property>
                       <property name="text">
                        <string>Firewall testen</string>
+                      </property>
+                      <property name="icon">
+                       <iconset>
+                        <normaloff>../pixmaps/security.png</normaloff>../pixmaps/security.png</iconset>
                       </property>
                      </widget>
                     </item>
@@ -1639,6 +1911,28 @@
                       <property name="sizeHint" stdset="0">
                        <size>
                         <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_30" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_19">
+                    <item>
+                     <spacer name="verticalSpacer_5">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::MinimumExpanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
                         <height>20</height>
                        </size>
                       </property>
@@ -1901,6 +2195,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="focusPolicy">
+               <enum>Qt::TabFocus</enum>
+              </property>
               <property name="layoutDirection">
                <enum>Qt::LeftToRight</enum>
               </property>
@@ -1933,7 +2230,23 @@
   <tabstop>abgabe</tabstop>
   <tabstop>exitexam</tabstop>
   <tabstop>tabWidget</tabstop>
+  <tabstop>screenlock</tabstop>
+  <tabstop>screenshots</tabstop>
+  <tabstop>autoabgabe</tabstop>
+  <tabstop>printer</tabstop>
+  <tabstop>openshare</tabstop>
   <tabstop>listWidget</tabstop>
+  <tabstop>exit</tabstop>
+  <tabstop>examlabeledit</tabstop>
+  <tabstop>aintervall</tabstop>
+  <tabstop>cleanabgabe</tabstop>
+  <tabstop>radiomath</tabstop>
+  <tabstop>radiolanguage</tabstop>
+  <tabstop>startconfig</tabstop>
+  <tabstop>loaddefaults</tabstop>
+  <tabstop>showip</tabstop>
+  <tabstop>starthotspot</tabstop>
+  <tabstop>printconf</tabstop>
   <tabstop>firewall1</tabstop>
   <tabstop>port1</tabstop>
   <tabstop>firewall2</tabstop>
@@ -1942,9 +2255,9 @@
   <tabstop>port3</tabstop>
   <tabstop>firewall4</tabstop>
   <tabstop>port4</tabstop>
-  <tabstop>aintervall</tabstop>
+  <tabstop>testfirewall</tabstop>
+  <tabstop>scrollArea</tabstop>
   <tabstop>logwidget</tabstop>
-  <tabstop>exit</tabstop>
  </tabstops>
  <resources/>
  <connections/>
