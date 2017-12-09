@@ -11,7 +11,7 @@ VERSION = '1.0'
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool
-SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'geogebra', 'calc', 'spreadsheets'];
+SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets'];
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip()
