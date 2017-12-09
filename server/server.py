@@ -332,9 +332,9 @@ class ServerUI(QtWidgets.QDialog):
         self.timer = False
         self.ui.version.setText("<b>Version</b> %s" % VERSION )
         self.ui.currentpin.setText("<b>%s</b>" % self.factory.pincode  )
-        self.ui.examlabeledit.setText(self.factory.examid  )
+        self.ui.examlabeledit1.setText(self.factory.examid  )
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
-        self.ui.examlabeledit.textChanged.connect(self._updateExamName)
+        self.ui.examlabeledit1.textChanged.connect(self._updateExamName)
 
         num_regex=QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
@@ -421,7 +421,7 @@ class ServerUI(QtWidgets.QDialog):
         os.system(startcommand)
 
     def _updateExamName(self):
-        self.factory.examid = self.ui.examlabeledit.text()
+        self.factory.examid = self.ui.examlabeledit1.text()
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
 
     def closeEvent(self, evnt):

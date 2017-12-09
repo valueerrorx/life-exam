@@ -104,7 +104,7 @@ class MyClientProtocol(basic.LineReceiver):
                     fixFilePermissions(SHARE_DIRECTORY)
                 elif self.file_data[2] == DataType.PRINTER:
                     showDesktopMessage('Receiving Printer Configuration')
-                    self._activatePrinterconfig(filename, file_path)
+                    self._activatePrinterconfig(file_path)
 
             else:
                 os.unlink(file_path)
@@ -174,14 +174,16 @@ class MyClientProtocol(basic.LineReceiver):
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
 
 
-    def _activatePrinterconfig(self, filename, file_path):
+    def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
-
+        print "extracting received printer config"
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
         os.unlink(file_path)  # delete zip file
         time.sleep(2)
 
+        print "restarting cups service"
+        showDesktopMessage('Restarting Cups Printer Service')
         command = "sudo systemctl restart cups.service &"
         os.system(command)
 

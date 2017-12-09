@@ -450,7 +450,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -789,7 +789,7 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>0</y>
+               <y>-499</y>
                <width>918</width>
                <height>912</height>
               </rect>
@@ -891,18 +891,12 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLineEdit" name="examlabeledit">
+                           <widget class="QLineEdit" name="examlabeledit1">
                             <property name="maximumSize">
                              <size>
-                              <width>170</width>
+                              <width>150</width>
                               <height>16777215</height>
                              </size>
-                            </property>
-                            <property name="focusPolicy">
-                             <enum>Qt::TabFocus</enum>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true"/>
                             </property>
                            </widget>
                           </item>
@@ -972,6 +966,9 @@
                             </property>
                             <property name="singleStep">
                              <number>1</number>
+                            </property>
+                            <property name="value">
+                             <number>4</number>
                             </property>
                            </widget>
                           </item>
@@ -1515,19 +1512,10 @@
                     <item>
                      <widget class="QLineEdit" name="firewall1">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>200</height>
-                       </size>
-                      </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">margin-right:0;</string>
@@ -1571,11 +1559,8 @@
                         <height>16777215</height>
                        </size>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
-                      </property>
                       <property name="styleSheet">
-                       <string notr="true">margin:0;</string>
+                       <string notr="true">margin:4</string>
                       </property>
                       <property name="placeholderText">
                        <string>80</string>
@@ -1613,13 +1598,16 @@
                     <item>
                      <widget class="QLineEdit" name="firewall2">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>200</height>
+                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">margin-right:0;</string>
@@ -1663,11 +1651,8 @@
                         <height>16777215</height>
                        </size>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
-                      </property>
                       <property name="styleSheet">
-                       <string notr="true">margin:0;</string>
+                       <string notr="true">margin:4</string>
                       </property>
                       <property name="placeholderText">
                        <string>443</string>
@@ -1705,13 +1690,16 @@
                     <item>
                      <widget class="QLineEdit" name="firewall3">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>200</height>
+                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">margin-right:0;</string>
@@ -1755,14 +1743,11 @@
                         <height>16777215</height>
                        </size>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
-                      </property>
                       <property name="styleSheet">
-                       <string notr="true">margin:0;</string>
+                       <string notr="true">margin:4</string>
                       </property>
                       <property name="placeholderText">
-                       <string>21</string>
+                       <string>9100</string>
                       </property>
                      </widget>
                     </item>
@@ -1797,13 +1782,16 @@
                     <item>
                      <widget class="QLineEdit" name="firewall4">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>200</height>
+                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">margin-right:0;</string>
@@ -1847,11 +1835,8 @@
                         <height>16777215</height>
                        </size>
                       </property>
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
-                      </property>
                       <property name="styleSheet">
-                       <string notr="true">margin:0;</string>
+                       <string notr="true">margin:4</string>
                       </property>
                       <property name="placeholderText">
                        <string>8080</string>
@@ -1966,13 +1951,186 @@
               <widget class="QWidget" name="widget_11" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_12">
                 <item>
-                 <widget class="QLabel" name="infotext_2">
+                 <spacer name="verticalSpacer_7">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>23</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_33" native="true">
                   <property name="styleSheet">
-                   <string notr="true">padding-top:4px;</string>
+                   <string notr="true">margin-bottom:10px;</string>
                   </property>
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Firewall&lt;/span&gt;&lt;br/&gt;Nachdem sie Ausnahmen für die Firewall definiert haben (z.B für Drucker, Schulserver, etc.) &lt;br/&gt;drücken sie auf &amp;quot;Firewall testen&amp;quot; um die Einstellungen lokal zu überprüfen und zu speichern.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Abgabe&lt;/span&gt;&lt;br/&gt;Das vollständige Arbeitsverzeichnis &amp;quot;share&amp;quot; der Schüler kann im Abgabeintervall (min) &lt;br/&gt;im lokalen Verzeichnis &amp;quot;share&amp;quot; archiviert werden. Aktivieren sie hierfür die &amp;quot;automatische Abgabe&amp;quot;.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Desktop&lt;/span&gt;&lt;br/&gt;Sie können den Prüfungsdesktop anpassen und festlegen welche Programme während der Prüfung &lt;br/&gt;schnell erreichbar sein sollen. Speichern Sie die Änderungen an der Prüfungsumgebung &lt;br/&gt;mit Hilfe des Programmes &amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können im Anpassungsmodus auch ohne Anwendungsmenü jedes beliebige Programm ausführen&lt;br/&gt;in dem Sie das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface sichtbar zu machen.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Drucker&lt;/span&gt;&lt;br/&gt;Sie konnen am Lehrercomputer einen Netzwerkdrucker konfigurieren und diese Einstellung an alle&lt;br/&gt;Prüfungscomputer übertragen. Klicken sie hierfür auf &amp;quot;Druckerkonfiguration übertragen&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <layout class="QHBoxLayout" name="horizontalLayout_21">
+                   <item>
+                    <widget class="QLabel" name="label_21">
+                     <property name="minimumSize">
+                      <size>
+                       <width>40</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>40</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../pixmaps/download.png</pixmap>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="infotext_2">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Abgabe&lt;/span&gt;&lt;br/&gt;Das vollständige Arbeitsverzeichnis &amp;quot;share&amp;quot; der Schüler kann im Abgabeintervall (min) &lt;br/&gt;im lokalen Verzeichnis &amp;quot;share&amp;quot; archiviert werden. Aktivieren sie hierfür die &amp;quot;automatische Abgabe&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_34" native="true">
+                  <property name="styleSheet">
+                   <string notr="true">margin-bottom:10px;</string>
                   </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_23">
+                   <item>
+                    <widget class="QLabel" name="label_22">
+                     <property name="minimumSize">
+                      <size>
+                       <width>40</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>40</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../pixmaps/security.png</pixmap>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_18">
+                     <property name="text">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Firewall&lt;br/&gt;&lt;/span&gt;Nachdem sie Ausnahmen für die Firewall definiert haben (z.B für Drucker, Schulserver, etc.) &lt;br/&gt;drücken sie auf &amp;quot;Firewall testen&amp;quot; um die Einstellungen lokal zu überprüfen und zu speichern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_36" native="true">
+                  <property name="styleSheet">
+                   <string notr="true">margin-bottom:10px;</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_22">
+                   <item>
+                    <widget class="QLabel" name="label_23">
+                     <property name="minimumSize">
+                      <size>
+                       <width>40</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>40</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../pixmaps/printer.png</pixmap>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_19">
+                     <property name="text">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Drucker&lt;/span&gt;&lt;br/&gt;Sie konnen am Lehrercomputer einen Netzwerkdrucker konfigurieren und diese Einstellung an alle&lt;br/&gt;Prüfungscomputer übertragen. Klicken sie hierfür auf &amp;quot;Druckerkonfiguration übertragen&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_35" native="true">
+                  <property name="styleSheet">
+                   <string notr="true">margin-bottom:10px;</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_24">
+                   <item>
+                    <widget class="QLabel" name="label_24">
+                     <property name="minimumSize">
+                      <size>
+                       <width>40</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>40</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../pixmaps/document-edit.png</pixmap>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_20">
+                     <property name="text">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Desktop&lt;/span&gt;&lt;br/&gt;Sie können den Prüfungsdesktop anpassen und festlegen welche Programme während der Prüfung &lt;br/&gt;schnell erreichbar sein sollen. Speichern Sie die Änderungen an der Prüfungsumgebung &lt;br/&gt;mit Hilfe des Programmes &amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können im Anpassungsmodus auch ohne Anwendungsmenü jedes beliebige Programm ausführen&lt;br/&gt;in dem Sie das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface sichtbar zu machen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                 <item>
@@ -1994,19 +2152,6 @@
              <item>
               <widget class="QWidget" name="widget_10" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_13">
-                <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="pixmap">
-                   <pixmap>../pixmaps/windowicon.png</pixmap>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
                 <item>
                  <spacer name="verticalSpacer_6">
                   <property name="orientation">
@@ -2096,7 +2241,7 @@
                    </sizepolicy>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">margin:0 4px 0 4px;</string>
+                   <string notr="true">margin:1 4px 0 4px;</string>
                   </property>
                  </widget>
                 </item>
@@ -2237,7 +2382,6 @@
   <tabstop>openshare</tabstop>
   <tabstop>listWidget</tabstop>
   <tabstop>exit</tabstop>
-  <tabstop>examlabeledit</tabstop>
   <tabstop>aintervall</tabstop>
   <tabstop>cleanabgabe</tabstop>
   <tabstop>radiomath</tabstop>
@@ -2247,14 +2391,6 @@
   <tabstop>showip</tabstop>
   <tabstop>starthotspot</tabstop>
   <tabstop>printconf</tabstop>
-  <tabstop>firewall1</tabstop>
-  <tabstop>port1</tabstop>
-  <tabstop>firewall2</tabstop>
-  <tabstop>port2</tabstop>
-  <tabstop>firewall3</tabstop>
-  <tabstop>port3</tabstop>
-  <tabstop>firewall4</tabstop>
-  <tabstop>port4</tabstop>
   <tabstop>testfirewall</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>logwidget</tabstop>
