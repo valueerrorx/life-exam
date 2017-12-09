@@ -12,7 +12,7 @@ LOOPS=48;           #repeat - but not indefinitely..  4h
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 MOUNTPOINT="${HOME}SHARE/.screenshots/"
-    
+SHARE="${HOME}SHARE/"
 
 
 shoot(){
@@ -21,6 +21,7 @@ shoot(){
         for (( c=1; c<=$LOOPS; c++ ))
         do
             import -window root -resize 160x100! ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
+            cp ${SHARE}* ${MOUNTPOINT}
         done
     else
         mkdir -p $MOUNTPOINT
