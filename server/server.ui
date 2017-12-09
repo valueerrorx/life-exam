@@ -450,7 +450,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -789,7 +789,7 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-499</y>
+               <y>0</y>
                <width>918</width>
                <height>912</height>
               </rect>
@@ -2382,6 +2382,8 @@
   <tabstop>openshare</tabstop>
   <tabstop>listWidget</tabstop>
   <tabstop>exit</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>examlabeledit1</tabstop>
   <tabstop>aintervall</tabstop>
   <tabstop>cleanabgabe</tabstop>
   <tabstop>radiomath</tabstop>
@@ -2391,8 +2393,15 @@
   <tabstop>showip</tabstop>
   <tabstop>starthotspot</tabstop>
   <tabstop>printconf</tabstop>
+  <tabstop>firewall1</tabstop>
+  <tabstop>port1</tabstop>
+  <tabstop>firewall2</tabstop>
+  <tabstop>port2</tabstop>
+  <tabstop>firewall3</tabstop>
+  <tabstop>port3</tabstop>
+  <tabstop>firewall4</tabstop>
+  <tabstop>port4</tabstop>
   <tabstop>testfirewall</tabstop>
-  <tabstop>scrollArea</tabstop>
   <tabstop>logwidget</tabstop>
  </tabstops>
  <resources/>
