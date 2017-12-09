@@ -23,6 +23,8 @@ then
     kdialog  --msgbox 'Ihre wlan Karte unterstützt die Accesspoint-Funktion nicht!\nStoppe Programm' --title 'LIFE' --caption "LIFE" > /dev/null
     exit 0
 else
+    kdialog  --msgbox 'Das LIFE EXAM Programm muss neugestartet werden!' --title 'LIFE' --caption "LIFE" > /dev/null
+    sudo pkill -f server.py
     echo " "
 fi
 
