@@ -64,3 +64,7 @@ rule_14=list,,,,file,,$HOME/.life/,true
 
 rule_15=open,,,,file,,$HOME/.local/share/plasma_icons/,true
 rule_16=list,,,,file,,$HOME/.local/share/plasma_icons/,true
+
+rule_17=open,,,,file,,/usr/share/,true
+rule_18=list,,,,file,,/usr/share/,true
+
