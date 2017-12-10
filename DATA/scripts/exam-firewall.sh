@@ -51,6 +51,7 @@ setIPtables(){
         sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
         sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
 
+        #needed for geogebra 6 in order to avoid a 2 minute timeout on this server (some service for mathematical calculations - google domain)
         sudo iptables -A INPUT -p tcp -d 172.217.16.206 --dport 443 -j ACCEPT
         sudo iptables -A OUTPUT -p tcp -d 172.217.16.206 --dport 443 -j ACCEPT
 
