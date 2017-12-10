@@ -365,7 +365,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self._workingIndicator(True, 4000)
         self.log('<b>Sending Printer Configuration to All Clients </b>')
-
+        system_commander.dialog_popup('Sending Printer Configuration to All Clients')
 
         # create zip file of /etc/cups
         target_folder = PRINTERCONFIG_DIRECTORY
