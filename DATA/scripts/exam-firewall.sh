@@ -18,35 +18,48 @@ IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 
 
 setIPtables(){
-    #allow loopback 
-    sudo iptables -I INPUT 1 -i lo -j ACCEPT
-    #allow DNS
-    sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-  
-  
-    if [ -f $IPSFILE ]; then
-        echo "ipsfile found"
-        #allow input and output for ALLOWEDIP
-        for IP in `cat $IPSFILE`; do
-            echo "exception noticed $IP"
-             IPPORTARRAY=(${IP//:/ })
+        sudo iptables -I INPUT 1 -i lo -j ACCEPT        #allow loopback
+        sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT     #allow DNS
+
+        if [ -f $IPSFILE ]; then
+            for IP in `cat $IPSFILE`; do        #allow input and output for ALLOWEDIP
+                echo "exception noticed $IP"
+                IPPORTARRAY=(${IP//:/ })
+                # destination - destinationports
+                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+
+                # source - destinationports
+                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+
+                # destination - sourceports
+                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+
+                # source - sourceports
+                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+
+            done
+        fi
+        sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT         #allow ESTABLISHED and RELATED (important for active server communication)
+        sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+        #sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  # castrated VPS
+
+        #needed for multicast (twisted)  Multicast Address for Address Allocation for Private Internets
+        sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+        sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+
+        sudo iptables -A INPUT -p tcp -d 172.217.16.206 --dport 443 -j ACCEPT
+        sudo iptables -A OUTPUT -p tcp -d 172.217.16.206 --dport 443 -j ACCEPT
 
 
-            sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dport ${IPPORTARRAY[1]} -j ACCEPT
-            sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dport ${IPPORTARRAY[1]} -j ACCEPT
+        sleep 1
 
-        done
-    fi
-    
-    #allow ESTABLISHED and RELATED (important for active server communication)  
-    # (the server is now added from the client automatically - this could be used as loophole to use the internet in exam mode)
-    sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-    sudo iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
-
-    #drop the rest
-    sudo iptables -P INPUT DROP
-    sudo iptables -P OUTPUT DROP
-}
+        sudo iptables -P INPUT DROP          #drop the rest
+        sudo iptables -P OUTPUT DROP
+    }
 
 
     

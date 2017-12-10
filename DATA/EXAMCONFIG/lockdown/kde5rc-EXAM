@@ -68,3 +68,5 @@ rule_16=list,,,,file,,$HOME/.local/share/plasma_icons/,true
 rule_17=open,,,,file,,/usr/share/,true
 rule_18=list,,,,file,,/usr/share/,true
 
+rule_19=open,,,,file,,/usr/share/geogebra-classic,true
+rule_20=list,,,,file,,/usr/share/geogebra-classic,true
