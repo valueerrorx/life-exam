@@ -7,7 +7,7 @@ SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
 
-VERSION = '1.0'
+VERSION = '1.1'
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool

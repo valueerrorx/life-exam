@@ -207,7 +207,7 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("\n")
             thisexamfile.write("%s:5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
 
-            if cleanup_abgabe:
+            if cleanup_abgabe == 1:
                 print "cleaning up abgabe"
                 system_commander.mountabgabe()
                 system_commander.cleanup(SHARE_DIRECTORY)
