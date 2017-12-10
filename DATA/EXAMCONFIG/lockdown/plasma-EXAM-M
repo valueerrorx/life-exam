@@ -98,8 +98,8 @@ immutability=1
 plugin=org.kde.plasma.icon
 
 [Containments][2][Applets][23][Configuration]
-localPath=/home/student/.local/share/plasma_icons/geogebra (2).desktop
-url=file:///usr/share/applications/geogebra.desktop
+localPath=/home/student/.local/share/plasma_icons/geogebra-classic.desktop
+url=file:///usr/share/applications/geogebra-classic.desktop
 
 [Containments][2][Applets][24]
 immutability=1
