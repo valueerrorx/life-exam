@@ -12,4 +12,9 @@ Tools needed in order to provide 100% functionality are:
 - python twisted 16.3.0
 
 
+![Image of life-exam](http://life-edu.eu/images/life-exam180106.png)
+
+
+
+
 
