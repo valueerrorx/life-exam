@@ -223,13 +223,16 @@ sleep 0.5
 
     mkdir $SHARE > /dev/null 2>&1
     sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
-    sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/SHARE $SHARE
+    
+    CURRENTUID=$(id -u ${USER})
+    
+    sudo mount -o umask=002,uid=${CURRENTUID},gid=${CURRENTUID} /dev/disk/by-label/SHARE $SHARE
     sudo touch $SHARE   # update timestamp on live usb devices
 
     if [[  ( $MODE = "permanent" ) ]]
     then 
         echo "#!/bin/sh -e" > /etc/rc.local
-        echo "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/SHARE /home/student/SHARE" >> /etc/rc.local
+        echo "sudo mount -o umask=002,uid=${CURRENTUID},gid=${CURRENTUID} /dev/disk/by-label/SHARE /home/student/SHARE" >> /etc/rc.local
         sudo cp "${SCRIPTDIR}USB-Kopie.desktop" $SHARE
     fi
     
