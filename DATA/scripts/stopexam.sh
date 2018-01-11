@@ -20,7 +20,7 @@ MODE=$1
 if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  ]]
 then
     kdialog  --msgbox 'Parameter is missing <config> <exam> ' --title 'Stopping Exam' --caption "Stopping Exam"
-    exit 1
+    exit 0
 fi
 
 
@@ -35,7 +35,7 @@ fi
 
 if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
-    exit 1
+    exit 0
 fi
 
 
