@@ -184,7 +184,7 @@ sleep 0.5
         cp -a ${LOCKDOWNDIR}plasma-EXAM-L    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Deutsch/Sprachen
     fi
 
-
+    rm -rf ${HOME}.local/share/Trash > /dev/null 2>&1
 
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
 
