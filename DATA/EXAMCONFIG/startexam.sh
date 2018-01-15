@@ -464,13 +464,16 @@ qdbus $progress close
 
     #FIXME man könnte auch einfach ksmserver neustarten bzw. Xorg - dann würde kein programm überdauern (derzeit aber unpraktisch und etwas brachial)
 
-    # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
+    pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
     pkill -f google && killall google-chrome && killall google-chrome-stable
     pkill -f firefox  && killall firefox
     pkill -f writer && killall writer
     pkill -f konsole && killall konsole
     pkill -f geogebra && killall geogebra
     pkill -f kate && killall kate
+    pkill -f systemsettings && killall systemsettings5
+    pkill -f nextcloud
+    pkill -f calligra
 
     sudo -u ${USER} -H kquitapp5 plasmashell &
     sleep 2
