@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>872</width>
-    <height>667</height>
+    <height>661</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,31 +42,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>860</width>
-       <height>607</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>860</width>
-       <height>607</height>
-      </size>
-     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QWidget" name="widget" native="true">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>70</height>
+          <height>64</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>65</height>
+          <height>64</height>
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -450,7 +438,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -466,7 +454,7 @@
           </sizepolicy>
          </property>
          <property name="styleSheet">
-          <string notr="true">margin-left: 4px;margin-right:4px;</string>
+          <string notr="true"/>
          </property>
          <attribute name="icon">
           <iconset>
@@ -497,16 +485,46 @@
                 <string notr="true">margin:0px; padding:0px;</string>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QWidget" name="widget_18" native="true">
                   <property name="styleSheet">
                    <string notr="true">margin:0px; padding:0px;</string>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_8">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QLabel" name="label_7">
                      <property name="styleSheet">
-                      <string notr="true">margin-left:4px;margin-top:0px;</string>
+                      <string notr="true">margin:0px;margin-left:6px;</string>
                      </property>
                      <property name="text">
                       <string>Clients</string>
@@ -518,12 +536,43 @@
                 </item>
                 <item>
                  <widget class="QWidget" name="widget_16" native="true">
-                  <layout class="QVBoxLayout" name="verticalLayout_8"/>
+                  <layout class="QVBoxLayout" name="verticalLayout_8">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                  </layout>
                  </widget>
                 </item>
                 <item>
                  <widget class="QWidget" name="widget_17" native="true">
                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QPushButton" name="screenlock">
                      <property name="focusPolicy">
@@ -2192,6 +2241,21 @@
           <string>Log</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_14">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
           <item>
            <widget class="QWidget" name="widget_12" native="true">
             <property name="sizePolicy">
@@ -2204,16 +2268,31 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true">padding:0px;</string>
+             <string notr="true">padding:0px;margin:0px;</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_9">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QWidget" name="widget_13" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_15">
                 <item>
                  <widget class="QLabel" name="label_3">
                   <property name="styleSheet">
-                   <string notr="true">margin:4px;margin-top:9px;margin-bottom:8px;</string>
+                   <string notr="true">margin-bottom:3px;margin-top:3px;</string>
                   </property>
                   <property name="text">
                    <string>Connection Log</string>
@@ -2232,6 +2311,21 @@
              <item>
               <widget class="QWidget" name="widget_6" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_16">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QTextBrowser" name="logwidget">
                   <property name="sizePolicy">
@@ -2241,7 +2335,7 @@
                    </sizepolicy>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">margin:1 4px 0 4px;</string>
+                   <string notr="true"/>
                   </property>
                  </widget>
                 </item>
