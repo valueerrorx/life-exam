@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>990</width>
-    <height>622</height>
+    <width>872</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,12 +16,6 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>990</width>
-    <height>622</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Exam Server</string>
@@ -48,10 +42,16 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>860</width>
+       <height>607</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
-       <width>978</width>
-       <height>562</height>
+       <width>860</width>
+       <height>607</height>
       </size>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -790,7 +790,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>918</width>
+               <width>800</width>
                <height>912</height>
               </rect>
              </property>
@@ -1145,7 +1145,7 @@
                           <string notr="true">padding:0px;</string>
                          </property>
                          <property name="text">
-                          <string>Sprache&amp;n</string>
+                          <string>&amp;Sprachen</string>
                          </property>
                         </widget>
                        </item>
@@ -2141,7 +2141,7 @@
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>22</height>
                    </size>
                   </property>
                  </spacer>
