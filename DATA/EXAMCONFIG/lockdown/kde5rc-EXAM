@@ -1,23 +1,33 @@
 [KDE Action Restrictions][$i]
 
+
+action/go_up=false
+action/options_configure_toolbars=false
+action/options_configure=false
+action/options_show_menubar=false
+action/go_home=false
+action/home=false
+action/file_new=false
+action/editfiletype=false
+action/openwith=false
+
+
+
 action/switch_user=false
 action/lock_screen=false
 action/logout=false
 action/kwin_rmb=false
 action/plasma/containment_actions=false
 action/run_command=false
-
 action/options_show_toolbar=false
 action/show_places_panel=false
 action/show_information_panel=false
 action/show_folders_panel=false
-
 action/lock_panels=false
 
 plasma/plasmashell/unlockedDesktop=false
 plasma/allow_configure_when_locked=false
 plasma/containment_actions=false
-
 plasma-desktop/add_activities=false
 
 unlockedDesktop=false
@@ -26,8 +36,6 @@ movable_toolbars=false
 run_command=false  
 switch_user=false
 start_new_session=false
-
-
 shell_access=false
 
 
@@ -35,6 +43,8 @@ shell_access=false
 device_automounter_kcm.desktop=false
 formats.desktop=false
 clock.desktop=false
+
+
 
 
 
