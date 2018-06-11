@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>872</width>
-    <height>661</height>
+    <height>665</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -438,7 +438,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -838,9 +838,9 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>0</y>
+               <y>-181</y>
                <width>800</width>
-               <height>912</height>
+               <height>994</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -1092,6 +1092,12 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>274</height>
+                 </size>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">margin-top:0px;</string>
                 </property>
@@ -1129,102 +1135,46 @@
                  </item>
                  <item>
                   <widget class="QWidget" name="widget_4" native="true">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true">margin:4px; padding:4px;margin-left:14px;</string>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_16">
                     <item>
-                     <widget class="QWidget" name="widget_27" native="true">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>136</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true"/>
-                      </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_7">
-                       <item>
-                        <widget class="QRadioButton" name="radiomath">
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>24</height>
-                          </size>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">padding:0px;</string>
-                         </property>
-                         <property name="text">
-                          <string>&amp;Mathematik</string>
-                         </property>
-                         <property name="checked">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QRadioButton" name="radiolanguage">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>32</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>24</height>
-                          </size>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">padding:0px;</string>
-                         </property>
-                         <property name="text">
-                          <string>&amp;Sprachen</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
                      <widget class="QWidget" name="widget_2" native="true">
                       <property name="maximumSize">
                        <size>
-                        <width>160</width>
-                        <height>16777215</height>
+                        <width>210</width>
+                        <height>16777212</height>
                        </size>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">margin:4px;</string>
+                       <string notr="true">margin:0px;</string>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_18">
                        <item>
-                        <widget class="QPushButton" name="startconfig">
+                        <widget class="QPushButton" name="addapp">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>200</width>
+                           <height>46</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
-                           <width>140</width>
-                           <height>16777215</height>
+                           <width>200</width>
+                           <height>46</height>
                           </size>
                          </property>
                          <property name="focusPolicy">
@@ -1240,7 +1190,7 @@
                           <string notr="true">padding: 8px;</string>
                          </property>
                          <property name="text">
-                          <string>Anpassen</string>
+                          <string>Programmliste speichern</string>
                          </property>
                          <property name="icon">
                           <iconset>
@@ -1255,42 +1205,17 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="loaddefaults">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
+                        <spacer name="verticalSpacer_8">
+                         <property name="orientation">
+                          <enum>Qt::Vertical</enum>
                          </property>
-                         <property name="maximumSize">
+                         <property name="sizeHint" stdset="0">
                           <size>
-                           <width>140</width>
-                           <height>16777215</height>
+                           <width>20</width>
+                           <height>40</height>
                           </size>
                          </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="toolTip">
-                          <string>Standard Einstellungen für den Prüfungsdesktop wiederherstellen </string>
-                         </property>
-                         <property name="layoutDirection">
-                          <enum>Qt::LeftToRight</enum>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">padding: 8px;</string>
-                         </property>
-                         <property name="text">
-                          <string> Zurücksetzen</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../pixmaps/document-noedit.png</normaloff>../pixmaps/document-noedit.png</iconset>
-                         </property>
-                         <property name="autoDefault">
-                          <bool>false</bool>
-                         </property>
-                        </widget>
+                        </spacer>
                        </item>
                       </layout>
                      </widget>
@@ -1299,20 +1224,11 @@
                      <widget class="QWidget" name="widget_24" native="true">
                       <layout class="QHBoxLayout" name="horizontalLayout_10">
                        <item>
-                        <spacer name="horizontalSpacer_3">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
+                        <widget class="QListWidget" name="applist">
+                         <property name="styleSheet">
+                          <string notr="true">padding:0px;margin:0px;</string>
                          </property>
-                         <property name="sizeType">
-                          <enum>QSizePolicy::Preferred</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>561</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
+                        </widget>
                        </item>
                       </layout>
                      </widget>
@@ -1334,7 +1250,7 @@
                       <property name="sizeHint" stdset="0">
                        <size>
                         <width>20</width>
-                        <height>20</height>
+                        <height>10</height>
                        </size>
                       </property>
                      </spacer>
@@ -2430,8 +2346,14 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>88</width>
-                <height>0</height>
+                <width>200</width>
+                <height>46</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>46</height>
                </size>
               </property>
               <property name="focusPolicy">
@@ -2480,10 +2402,7 @@
   <tabstop>examlabeledit1</tabstop>
   <tabstop>aintervall</tabstop>
   <tabstop>cleanabgabe</tabstop>
-  <tabstop>radiomath</tabstop>
-  <tabstop>radiolanguage</tabstop>
-  <tabstop>startconfig</tabstop>
-  <tabstop>loaddefaults</tabstop>
+  <tabstop>addapp</tabstop>
   <tabstop>showip</tabstop>
   <tabstop>starthotspot</tabstop>
   <tabstop>printconf</tabstop>

@@ -11,8 +11,9 @@
 import os
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#from importlib import reload    #not needed in python3 anymore.. it's always utf-8
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
@@ -67,7 +68,7 @@ class MyServerProtocol(basic.LineReceiver):
 
     # twisted
     def connectionLost(self, reason):
-        print reason
+        print(reason)
         self.factory.client_list.remove_client(self)
         self.file_handler = None
         self.file_data = ()
@@ -148,7 +149,7 @@ class MyServerProtocol(basic.LineReceiver):
             # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
 
         if line.startswith(Command.AUTH):  # AUTH is sent immediately after a connection is made and transfers the clientName
-            print "auth request received"
+            print("auth request received")
             newID = self.file_data[1] 
             pincode = self.file_data[2]
             self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
@@ -160,23 +161,23 @@ class MyServerProtocol(basic.LineReceiver):
         """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
 
         if newID in self.factory.client_list.clients.keys():
-            print "this user already exists and is connected"
+            print("this user already exists and is connected")
             self.refused = True
             self.sendLine(Command.REFUSED)
             self.transport.loseConnection()
             self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
             return
         elif int(pincode) != self.factory.pincode:
-            print pincode
-            print self.factory.pincode
-            print "wrong pincode"
+            print(pincode)
+            print(self.factory.pincode)
+            print("wrong pincode")
             self.refused = True
             self.sendLine(Command.REFUSED)
             self.transport.loseConnection()
             self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID))
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
-            print "pincode ok"
+            print("pincode ok")
             self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID))
             #transfer, send, screenshot, filename, hash, cleanabgabe
@@ -228,7 +229,7 @@ class MultcastLifeServer(DatagramProtocol):
         if "CLIENT" in datagram:
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
-            print "Datagram %s received from %s" % (repr(datagram), repr(address))
+            print("Datagram %s received from %s" % (repr(datagram), repr(address)) )
 
             serverinfo = self.factory.examid + " " + " ".join(self.factory.disconnected_list)
             message = "SERVER %s" % serverinfo
@@ -294,7 +295,7 @@ class ScreenshotWindow(QtWidgets.QDialog):
         if file_path:
             #os.rename(self.screenshot_file_path, file_path)  #moves the file (its not available in src anymore)
             shutil.copyfile(self.screenshot_file_path,file_path)
-            print "screensshot archived"
+            print("screensshot archived")
 
 
 
@@ -322,9 +323,12 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.startexam.clicked.connect(lambda: self._onStartExam("all"))
         self.ui.openshare.clicked.connect(self._onOpenshare)
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
-        self.ui.startconfig.clicked.connect(self._onStartConfig)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
-        self.ui.loaddefaults.clicked.connect(self._onLoadDefaults)
+        
+        self.ui.addapp.clicked.connect(self._onStartConfig)
+        #self.ui.deleteapp.clicked.connect(self._onLoadDefaults)
+        
+        
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
         self.ui.exitexam.clicked.connect(lambda: self._onExitExam("all"))
@@ -788,14 +792,14 @@ class ServerUI(QtWidgets.QDialog):
     def get_list_widget_by_client_id(self, client_id):
         for widget in self.get_list_widget_items():
             if client_id == widget.pID:
-                print "Found existing list widget for client connectionId %s" % client_id
+                print("Found existing list widget for client connectionId %s" % client_id )
                 return widget
         return False
 
     def get_list_widget_by_client_name(self, client_name):
         for widget in self.get_list_widget_items():
             if client_name == widget.id:
-                print "Found existing list widget for client name %s" % client_name
+                print("Found existing list widget for client name %s" % client_name )
                 return widget
         return False
 
