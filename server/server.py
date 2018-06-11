@@ -8,6 +8,10 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 
+# sudo -H pip3 install twisted  # we need twisted for python3
+
+
+
 import os
 import sys
 

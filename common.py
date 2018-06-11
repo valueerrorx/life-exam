@@ -33,7 +33,7 @@ def lockScreen(client, line):
     lines = clean_and_split_input(line)
     # FIXME check if client.app already exists !!
     if lines[0] == "LKS":
-        print "locking screen"
+        print("locking screen")
 
         ##check if a serverprocess is running and do not lock screen if any (dirty hack to prevent locking yourself as a teacher when connected at the same time
         #answer = subprocess.Popen(["ps aux|grep server.py|wc -l"],shell=True, stdout=subprocess.PIPE)
@@ -49,7 +49,7 @@ def lockScreen(client, line):
         os.system(startcommand)
 
     else:
-        print "closing lockscreen"
+        print("closing lockscreen")
         startcommand = "exec sudo pkill -9 -f lockscreen.py &"
         os.system(startcommand)
 
@@ -67,7 +67,7 @@ def generatePin(n):
 
 def checkIfFileExists(filename):
     if os.path.isfile(filename):
-        print "file with the same name found"   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
+        print("file with the same name found")   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
         newname = "%s-%s" %(filename, generatePin(6))
         if os.path.isfile(newname):
             checkIfFileExists(newname)
@@ -80,9 +80,9 @@ def checkIfFileExists(filename):
 
 def checkFirewall(firewall_ip_list):
     result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
-    print result
+    print(result)
     if result != "0":
-        print "stopping ip tables"
+        print("stopping ip tables")
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
         startcommand = "exec %s stop &" % (scriptfile)
         os.system(startcommand)
@@ -213,7 +213,7 @@ def prepareDirectories():
     os.system(copycommand)
 
     if not os.path.exists(EXAMCONFIG_DIRECTORY):  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
-        print "copying default examconfig to workdirectory"
+        print("copying default examconfig to workdirectory")
         copycommand = "cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
         os.system(copycommand)
     else:
@@ -232,13 +232,13 @@ def fixFilePermissions(folder):
     in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root"""
     if folder:
         if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
-            print "fixing file permissions"
+            print("fixing file permissions")
             chowncommand = "sudo chown -R %s:%s %s" % (USER, USER, folder)
             os.system(chowncommand)
         else:
-            print "exam folder location outside of /home/ is not allowed"
+            print("exam folder location outside of /home/ is not allowed")
     else:
-        print "no folder given"
+        print("no folder given")
 
 
 def writePidFile():

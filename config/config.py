@@ -20,7 +20,7 @@ VERSION = '1.1'
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets'];
 
 # find username and set user home directory
-USER = subprocess.check_output("logname", shell=True).rstrip()
+USER = subprocess.check_output("logname", shell=True).rstrip().decode()
 USER_HOME_DIR = os.path.join("/home", str(USER))
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/EXAM")
 
