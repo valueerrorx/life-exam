@@ -75,7 +75,6 @@ class MyClientProtocol(basic.LineReceiver):
         print self.file_data
         filename = self.file_data[3]
         cleanup_abgabe = self.file_data[5]
-        subject = self.file_data[6]
         
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
@@ -95,7 +94,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                 if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
-                    self._startExam(filename, file_path, cleanup_abgabe, subject)
+                    self._startExam(filename, file_path, cleanup_abgabe)
                 elif self.file_data[2] == DataType.FILE:
 
                     if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
@@ -193,7 +192,7 @@ class MyClientProtocol(basic.LineReceiver):
         os.system(command)
 
 
-    def _startExam(self, filename, file_path, cleanup_abgabe, subject ):
+    def _startExam(self, filename, file_path, cleanup_abgabe ):
         """extracts the config folder and starts the startexam.sh script"""
 
         if self.factory.options['host'] != "127.0.0.1":  # testClient running on the same machine
@@ -220,7 +219,7 @@ class MyClientProtocol(basic.LineReceiver):
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo %s/startexam.sh exam %s &" %(EXAMCONFIG_DIRECTORY, subject) # start as user even if the twistd daemon is run by root
+            startcommand = "sudo %s/startexam.sh exam &" %(EXAMCONFIG_DIRECTORY) # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original

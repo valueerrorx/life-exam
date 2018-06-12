@@ -4,8 +4,8 @@
 #
 # CLIENT FILE - START EXAM
 #
-# dieses Skript erwartet einen Parameter:   <exam>  <config>  <permanent>
-# es wird dadurch unterschieden ob man den konfigurations modus oder den exam modus (oder permanent) startet
+# dieses Skript erwartet einen Parameter:   <exam>  <permanent>
+# es wird dadurch unterschieden ob man den  den exam modus (oder permanent) startet
 
 
 
@@ -22,32 +22,18 @@ SHARE="${HOME}SHARE/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 MODE=$1
-SUBJECT=$2
 
 
 
 
-if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
+
+if [[ ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
 then
-    kdialog  --msgbox 'Parameter is missing <config> <exam> <permanent>' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Parameter is missing <exam> <permanent>' --title 'Starting Exam' --caption "Starting Exam"
     exit 1
 fi
 
-if [[ ( $MODE = "config" ) ]]
-then
-    if [[ ( $SUBJECT = "math" ) ]]
-    then
-        DESKTOPNAME="Mathematik"
-    else
-        DESKTOPNAME="Sprachen/Deutsch"
-    fi
-    kdialog  --yesno "Wollen sie den Exam Desktop für $DESKTOPNAME manuell anpassen?" --title 'Starting Exam' --caption "Starting Exam"
-    if [ "$?" = 0 ]; then
-        sleep 0
-    else
-        exit 1
-    fi
-fi
+
 
 
 
@@ -127,7 +113,7 @@ qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.5
 
     touch $EXAMLOCKFILE
-    echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
+    # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
     sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
 
 
@@ -177,12 +163,9 @@ sleep 0.5
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.5
-    if [[ ( $SUBJECT = "math" ) ]]
-    then
-        cp -a ${LOCKDOWNDIR}plasma-EXAM-M    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Mathematik
-    else
-        cp -a ${LOCKDOWNDIR}plasma-EXAM-L    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Deutsch/Sprachen
-    fi
+   
+    cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
+  
 
     rm -rf ${HOME}.local/share/Trash > /dev/null 2>&1
 
@@ -236,11 +219,6 @@ sleep 0.5
         sudo cp "${SCRIPTDIR}USB-Kopie.desktop" $SHARE
     fi
     
-    if [[ ( $MODE = "config" ) ]]
-    then
-        sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" $SHARE  # erstelle link um config zu speichern
-       
-    fi
 
 
 

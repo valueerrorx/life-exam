@@ -15,6 +15,7 @@
 import os
 import sys
 
+
 #from importlib import reload    #not needed in python3 anymore.. it's always utf-8
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
@@ -39,6 +40,7 @@ from twisted.internet.task import LoopingCall
 from config.config import *
 from classes.clients import *
 from common import *
+from applist import *
 from config.enums import *
 # from classes.system_commander import *
 import classes.system_commander as system_commander
@@ -46,6 +48,10 @@ import classes.system_commander as system_commander
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtCore import QRegExp
+
+
+
+
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -329,10 +335,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         
-        self.ui.addapp.clicked.connect(self._onStartConfig)
-        #self.ui.deleteapp.clicked.connect(self._onLoadDefaults)
-        
-        
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
         self.ui.exitexam.clicked.connect(lambda: self._onExitExam("all"))
@@ -367,6 +369,10 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port4.setValidator(num_validator)
 
         self.ui.show()
+        
+  
+        findApps(self.ui.applist, self.ui.appview)
+       
 
 
     def _onSendPrintconf(self,who):
@@ -536,18 +542,14 @@ class ServerUI(QtWidgets.QDialog):
 
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
-        # check for exam mode
-        if self.ui.radiomath.isChecked():
-            subject = "math"
-        else:
-            subject = "lang"
+
 
         # send line and file to all clients
-        client_list.send_file(file_path, who, DataType.EXAM, cleanup_abgabe, subject )
+        client_list.send_file(file_path, who, DataType.EXAM, cleanup_abgabe )
 
         # for client in client_list.clients.values():
         #     #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
-        #     client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe, subject ))
+        #     client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe ))
         #     client.setRawMode()
         #
         #     print self.factory.files[filename][0]
@@ -571,15 +573,6 @@ class ServerUI(QtWidgets.QDialog):
 
 
 
-
-    def _onStartConfig(self):
-        self._workingIndicator(True, 500)
-        if self.ui.radiomath.isChecked():
-            subject = "math"
-        else:
-            subject = "lang"
-        system_commander.start_config(subject)
-        self.ui.close()
 
     def _onStartHotspot(self):
         self._workingIndicator(True, 500)

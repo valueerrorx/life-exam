@@ -74,7 +74,7 @@ def exitExam(client, line):
     :param line: Line received from server
     :return:
     """
-    print "stopping exam"
+    print("stopping exam")
     startcommand = "sudo %s/scripts/stopexam.sh exam &" %(WORK_DIRECTORY) # start as user even if the twistd daemon is run by root
     os.system(startcommand)  # start script
 
@@ -105,15 +105,10 @@ def file_transfer_request(client, line):
         cleanup_abgabe = client.file_data[5]
     except IndexError:
         cleanup_abgabe = "none"
-     
-    try:
-        subject =  client.file_data[6]
-    except IndexError:
-        subject =  "none"
     
-    #(trigger, task, filetype, filename, file_hash, cleanup_abgabe, subject) = client.file_data[0:7]
+    #(trigger, task, filetype, filename, file_hash, cleanup_abgabe) = client.file_data[0:6]
     
-    student_file_request_dispatcher[task](client, filetype, filename, file_hash, cleanup_abgabe, subject)
+    student_file_request_dispatcher[task](client, filetype, filename, file_hash, cleanup_abgabe)
 
 
 

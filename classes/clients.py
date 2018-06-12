@@ -91,12 +91,12 @@ class ClientList:
         return True
 
 
-    def send_file(self, file_path, who, datatype, cleanup_abgabe="none", subject="none"):
+    def send_file(self, file_path, who, datatype, cleanup_abgabe="none"):
         """
         Dispatches Method to prepare requested file transfer and sends file
         :param file_path: absolute filepath
         :param who: all or client id
-        :param args: (cleanup_abgabe, subject) for exam mode
+        :param args: (cleanup_abgabe) for exam mode
         """
 
         if file_path:
@@ -107,10 +107,10 @@ class ClientList:
             md5_hash = get_file_md5_hash(file_path)
 
             if who is 'all':
-                self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe, subject)
+                self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe)
             else:
                 client = self.get_client(who)
-                client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe, subject ))  # trigger clienttask type filename filehash)
+                client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
                 #FIXME filename with spaces is not transferred because of invalid filehash (which is not invalid but a part of the name is taken as hash on client side)
                 client.setRawMode()
                 who = client.clientName
@@ -126,9 +126,9 @@ class ClientList:
             client.sendLine(line % client.clientConnectionID)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
 
-    def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe, subject):
+    def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe):
         for client in self.clients.values():
-            client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe, subject))  # trigger clienttask type filename filehash)
+            client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash)
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()

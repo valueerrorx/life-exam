@@ -80,7 +80,7 @@ def checkIfFileExists(filename):
 
 def checkFirewall(firewall_ip_list):
     result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
-    print(result)
+    #print(result)
     if result != "0":
         print("stopping ip tables")
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")

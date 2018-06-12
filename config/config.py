@@ -13,7 +13,7 @@ SERVER_IP = "localhost"
 SERVER_PORT = 5000
 
 
-VERSION = '1.1'
+VERSION = '1.2'
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool
@@ -55,7 +55,9 @@ SERVERZIP_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, ZIP)
 SHARE_DIRECTORY = os.path.join(USER_HOME_DIR, SHARE)
 PRINTERCONFIG_DIRECTORY = "/etc/cups"
 
+PLASMACONFIG = os.path.join(EXAMCONFIG_DIRECTORY,"lockdown/plasma-EXAM") # (this should be the config file that is then transferred to the clients and used for the exam desktop)
 
+print(PLASMACONFIG)
 
 SERVER_PIDFILE = os.path.join(WORK_DIRECTORY,'server.pid')
 
