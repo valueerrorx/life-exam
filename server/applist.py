@@ -236,6 +236,8 @@ def get_activated_apps():
     reads plasmaconfig file and searches for pinned apps in the taskmanager
     """
   
+    activated_apps = []
+    
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG))
         
@@ -248,25 +250,24 @@ def get_activated_apps():
             except:
                 continue
 
-    # get activated apps
-    activated_apps = []
-    for targetsection in taskmanagersections:
-        launchers_section = "%s][Configuration][General" %(targetsection)
-        
-        try:
-            activate_apps_string = config[launchers_section]["launchers"]
-        except KeyError:   #key does not exist..  no pinned applications yet
-            config[launchers_section] = {}   
-            config[launchers_section]["launchers"] = []  #create section(key)
+        # get activated apps
+        for targetsection in taskmanagersections:
+            launchers_section = "%s][Configuration][General" %(targetsection)
             
-            appstring="applications:GeoGebra"    #add at least one application to activated apps
-            config[launchers_section]["launchers"].append(appstring) #and prevent empty desktops
-       
-        for app in config[launchers_section]["launchers"]:
-            app = app.split(":")
-            #print(app[1])
-            activated_apps.append(app[1])
-       
+            try:
+                activate_apps_string = config[launchers_section]["launchers"]
+            except KeyError:   #key does not exist..  no pinned applications yet
+                config[launchers_section] = {}   
+                config[launchers_section]["launchers"] = []  #create section(key)
+                
+                appstring="applications:GeoGebra"    #add at least one application to activated apps
+                config[launchers_section]["launchers"].append(appstring) #and prevent empty desktops
+        
+            for app in config[launchers_section]["launchers"]:
+                app = app.split(":")
+                #print(app[1])
+                activated_apps.append(app[1])
+        
         
             
             
