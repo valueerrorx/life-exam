@@ -23,9 +23,13 @@ then
     kdialog  --msgbox 'Ihre wlan Karte unterstützt die Accesspoint-Funktion nicht!\nStoppe Programm' --title 'LIFE' --caption "LIFE" > /dev/null
     exit 0
 else
-    kdialog  --msgbox 'Das LIFE EXAM Programm muss neugestartet werden!' --title 'LIFE' --caption "LIFE" > /dev/null
-    sudo pkill -f server.py
-    echo " "
+    kdialog --warningcontinuecancel "Das LIFE EXAM Programm muss für diese Aktion neugestartet werden!" --title "LIFE" --caption "LIFE";
+    if [ "$?" = 0 ]; then
+        sudo pkill -f server.py
+        echo " "
+    else
+        exit 1 
+    fi;
 fi
 
 #just restart networkmanager (kills accesspoint) and exit
