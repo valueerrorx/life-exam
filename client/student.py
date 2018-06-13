@@ -135,6 +135,8 @@ class MulticastLifeClient(DatagramProtocol):
         self.loopObj.start(2, now=False)
 
     def datagramReceived(self, datagram, address):
+        datagram = datagram.decode()
+        
         if "SERVER" in datagram:
             self.server_ip = address[0]
             self.info = clean_and_split_input(datagram)
@@ -159,7 +161,15 @@ class MulticastLifeClient(DatagramProtocol):
         """ Send to 228.0.0.5:8005 - all listeners on the multicast address
             (including us) will receive this message.
         """
-        self.transport.write('CLIENT: Looking', ("228.0.0.5", 8005))
+        try:
+            self.transport.write(b'CLIENT: Looking', ("228.0.0.5", 8005))
+        except Exception as e:
+            print("an exception occurred")
+            print(e)
+
+
+
+
 
 
 

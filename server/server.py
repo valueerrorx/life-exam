@@ -235,8 +235,10 @@ class MultcastLifeServer(DatagramProtocol):
         self.transport.joinGroup("228.0.0.5")   # Join a specific multicast group:
 
     def datagramReceived(self, datagram, address):
-        print(datagram)
-        if "CLIENT" in str(datagram):
+       
+        datagram = datagram.decode()
+        
+        if "CLIENT" in datagram:
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
             print("Datagram %s received from %s" % (repr(datagram), repr(address)) )
