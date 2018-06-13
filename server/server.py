@@ -234,8 +234,8 @@ class MultcastLifeServer(DatagramProtocol):
         self.transport.setTTL(5)     # Set the TTL>1 so multicast will cross router hops:
         self.transport.joinGroup("228.0.0.5")   # Join a specific multicast group:
 
-    def datagramReceived(self, datagram, address):
-
+    def datagramReceived(self, str(datagram), address):
+        print(datagram)
         if "CLIENT" in datagram:
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
