@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 from enum import Enum
 
 
@@ -20,3 +21,6 @@ class Command(Enum):
     LOCK = "LKS"
     UNLOCK = "ULKS"
     EXITEXAM = "EXIT"
+
+
+print(Command.AUTH) 

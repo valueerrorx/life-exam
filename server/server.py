@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/env python3
 # TEACHER - SERVER #
 #
 # Copyright (C) 2017 Thomas Michael Weissel
@@ -784,7 +783,7 @@ class ServerUI(QtWidgets.QDialog):
         :return: list of widget items
         """
         items = []
-        for index in xrange(self.ui.listWidget.count()):
+        for index in range(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
         return items
 

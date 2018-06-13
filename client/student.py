@@ -25,6 +25,13 @@ import os
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
+
+application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0,application_path)
+
+#FIXME  need to add the application root to pythonpath for twisted plugin
+
+
 import qt5reactor
 from common import checkIP, prepareDirectories, clean_and_split_input
 from config.config import *

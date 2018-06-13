@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/env python3
 # STUDENT - CLIENT #
 #
 # Copyright (C) 2017 Thomas Michael Weissel
@@ -11,8 +10,8 @@
 import os
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
@@ -33,7 +32,10 @@ import classes.system_commander as system_commander
 from twisted.application.internet import TCPClient
 # from twisted.application.service import Application
 
-from zope.interface import implements
+
+from zope.interface import implementer
+
+
 from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
@@ -53,7 +55,12 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
-        self.sendLine('%s %s %s' % (Command.AUTH, self.factory.options['id'],  self.factory.options['pincode']))
+        print(Command.AUTH) 
+        
+        line = '%s %s %s' % (Command.AUTH, self.factory.options['id'],  self.factory.options['pincode'])
+        line = bytes(line,'utf-8 ')
+        print(line)           
+        self.sendLine(line)
         print('Connected to the server')
         showDesktopMessage('Connected to the server')
 
@@ -72,7 +79,7 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted
     def rawDataReceived(self, data):
-        print self.file_data
+        print(self.file_data)
         filename = self.file_data[3]
         cleanup_abgabe = self.file_data[5]
         
@@ -137,7 +144,7 @@ class MyClientProtocol(basic.LineReceiver):
                     qdbuscommand = "sudo -u %s -H qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" % (USER, app, pid, app)
                     os.system(qdbuscommand)
                 except:
-                    print "program not running"
+                    print("program not running")
 
             else:  # make a list of the other running apps
                 command = "xdotool search --name %s &" % (app)
@@ -150,7 +157,7 @@ class MyClientProtocol(basic.LineReceiver):
         for application_id in app_id_list:  # try to invoke ctrl+s on the running apps
             command = "xdotool windowactivate %s && xdotool key ctrl+s &" % (application_id)
             os.system(command)
-            print "ctrl+s sent to %s" % (application_id)
+            print("ctrl+s sent to %s" % (application_id) )
 
         # try the current active window too in order to catch other applications not in config.py
         #command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to whatch with konsole
@@ -180,13 +187,13 @@ class MyClientProtocol(basic.LineReceiver):
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
-        print "extracting received printer config"
+        print("extracting received printer config")
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
         os.unlink(file_path)  # delete zip file
         time.sleep(2)
 
-        print "restarting cups service"
+        print("restarting cups service")
         showDesktopMessage('Restarting Cups Printer Service')
         command = "sudo systemctl restart cups.service &"
         os.system(command)
@@ -212,7 +219,7 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("%s:5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
 
             if cleanup_abgabe == "2":    #checkbox sends 0 for unchecked and 2 for checked
-                print "cleaning up abgabe"
+                print("cleaning up abgabe")
                 system_commander.mountabgabe()
                 system_commander.cleanup(SHARE_DIRECTORY)
 
@@ -275,8 +282,9 @@ class Options(usage.Options):
                      ]
 
 
+
+@implementer(IServiceMaker, IPlugin)
 class MyServiceMaker(object):
-    implements(IServiceMaker, IPlugin)
     tapname = "examclient"
     description = "Exam Client"
     options = Options
