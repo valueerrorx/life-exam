@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2017 Thomas Michael Weissel
@@ -19,8 +19,8 @@ from PyQt5.QtCore import QRegExp
 import sys
 import os
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
@@ -153,7 +153,7 @@ class MulticastLifeClient(DatagramProtocol):
 
             dialog.ui.serversearch.setText("Server Found!")
             dialog.ui.servercheck.setPixmap(QPixmap("pixmaps/checked.png"))
-            print "Datagram %s received from %s" % (repr(datagram), repr(address))
+            print("Datagram %s received from %s" % (repr(datagram), repr(address)) )
 
     def _sendProbe(self):
         """ Send to 228.0.0.5:8005 - all listeners on the multicast address
