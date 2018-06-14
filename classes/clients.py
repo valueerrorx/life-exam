@@ -24,7 +24,7 @@ class ClientList:
     def exit_exam(self, who):
         if not self.clients:
             return False
-        line = "%s %s" % (Command.EXITEXAM, "%s")
+        line = "%s %s" % (Command.EXITEXAM.value, "%s")
         if who is "all":
             self.broadcast_line(line)
         else:
@@ -40,7 +40,7 @@ class ClientList:
     def lock_screens(self, who):
         if not self.clients:
             return False
-        line = "%s %s" % (Command.LOCK, "%s")
+        line = "%s %s" % (Command.LOCK.value, "%s")
         if who is "all":
             self.broadcast_line(line)
         else:
@@ -52,7 +52,7 @@ class ClientList:
     def unlock_screens(self, who):
         if not self.clients:
             return False
-        line = "%s %s" % (Command.UNLOCK, "%s")
+        line = "%s %s" % (Command.UNLOCK.value, "%s")
         if who is "all":
             self.broadcast_line(line)
         else:
@@ -66,7 +66,7 @@ class ClientList:
         if not self.clients:
             return False
 
-        line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, "%s")
+        line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, "%s")
         if who is "all":
             self.broadcast_line(line)
         else:
@@ -80,7 +80,7 @@ class ClientList:
             return False
 
         filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H-%M-%S"), "%s")
-        line = "%s %s %s %s none none" % (Command.FILETRANSFER, Command.SEND, DataType.ABGABE, filename)
+        line = "%s %s %s %s none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.ABGABE.value, filename)
 
         if who is "all":
             self.broadcast_line(line)
@@ -110,7 +110,7 @@ class ClientList:
                 self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe)
             else:
                 client = self.get_client(who)
-                client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
+                client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
                 #FIXME filename with spaces is not transferred because of invalid filehash (which is not invalid but a part of the name is taken as hash on client side)
                 client.setRawMode()
                 who = client.clientName
@@ -122,13 +122,16 @@ class ClientList:
         return [False, None, None, who]
 
     def broadcast_line(self, line):
-        for client in self.clients.itervalues():
-            client.sendLine(line % client.clientConnectionID)
+        for client in self.clients.values():
+            line = line % client.clientConnectionID
+            print(line)
+            line = bytes(line,"utf-8")
+            client.sendLine(line)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
 
     def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe):
         for client in self.clients.values():
-            client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER, Command.GET, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash)
+            client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash)
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()
@@ -143,7 +146,7 @@ class ClientList:
         client = self.get_client(client_id)
         if client:
             client.refused = True
-            client.sendLine("%s" % Command.REMOVED)
+            client.sendLine("%s" % Command.REMOVED.value)
             client.transport.loseConnection()
             return client.clientName
         return False

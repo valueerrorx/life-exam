@@ -57,7 +57,7 @@ class MyServerProtocol(basic.LineReceiver):
 
     def __init__(self, factory):
         self.factory = factory  # type: MyServerFactory
-        self.delimiter = '\n'
+        #self.delimiter = '\n'
         self.clientName = ""
         self.file_handler = None
         self.file_data = ()
@@ -114,13 +114,13 @@ class MyServerProtocol(basic.LineReceiver):
             if validate_file_md5_hash(file_path, self.file_data[3]):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
 
-                if self.file_data[1] == DataType.SCREENSHOT:  # screenshot is received on initial connection
+                if self.file_data[1] == DataType.SCREENSHOT.value:  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
-                elif self.file_data[1] == DataType.FOLDER:
+                elif self.file_data[1] == DataType.FOLDER.value:
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
                                                                                        :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
@@ -128,7 +128,7 @@ class MyServerProtocol(basic.LineReceiver):
                     os.unlink(file_path)  # delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
-                elif self.file_data[1] == DataType.ABGABE:
+                elif self.file_data[1] == DataType.ABGABE.value:
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
@@ -142,7 +142,7 @@ class MyServerProtocol(basic.LineReceiver):
             else:  # wrong file hash
                 os.unlink(file_path)
                 self.transport.write('File was successfully transferred but not saved, due to invalid MD5 hash\n')
-                self.transport.write(Command.ENDMSG + '\n')
+                self.transport.write(Command.ENDMSG.value + b'\n')
                 self.factory.window.log(
                     'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
 
@@ -156,13 +156,15 @@ class MyServerProtocol(basic.LineReceiver):
         if len(self.file_data) == 0 or self.file_data == '':
             return
             # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
-
-        if line.startswith(Command.AUTH):  # AUTH is sent immediately after a connection is made and transfers the clientName
+        print("------DEBUG------")
+        print(line)
+        
+        if line.startswith(Command.AUTH.value):  # AUTH is sent immediately after a connection is made and transfers the clientName
             print("auth request received")
             newID = self.file_data[1] 
             pincode = self.file_data[2]
             self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
-        elif line.startswith(Command.FILETRANSFER):
+        elif line.startswith(Command.FILETRANSFER.value):
             self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
             self.setRawMode()  # this is a file - set to raw mode
 
@@ -172,7 +174,7 @@ class MyServerProtocol(basic.LineReceiver):
         if newID in self.factory.client_list.clients.keys():
             print("this user already exists and is connected")
             self.refused = True
-            self.sendLine(Command.REFUSED)
+            self.sendLine(Command.REFUSED.value)
             self.transport.loseConnection()
             self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
             return
@@ -181,7 +183,7 @@ class MyServerProtocol(basic.LineReceiver):
             print(self.factory.pincode)
             print("wrong pincode")
             self.refused = True
-            self.sendLine(Command.REFUSED)
+            self.sendLine(Command.REFUSED.value)
             self.transport.loseConnection()
             self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID))
             return
@@ -190,7 +192,7 @@ class MyServerProtocol(basic.LineReceiver):
             self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID))
             #transfer, send, screenshot, filename, hash, cleanabgabe
-            self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER, Command.SEND, DataType.SCREENSHOT, self.transport.client[1]))
+            self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1]))
             return
 
 
@@ -408,7 +410,7 @@ class ServerUI(QtWidgets.QDialog):
 
 
         # send line and file to all clients
-        client_list.send_file(file_path, who, DataType.PRINTER)
+        client_list.send_file(file_path, who, DataType.PRINTER.value)
 
 
 
@@ -476,7 +478,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if file_path:
             self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
-            success, filename, file_size, who = client_list.send_file(file_path, who, DataType.FILE)
+            success, filename, file_size, who = client_list.send_file(file_path, who, DataType.FILE.value)
 
             if success:
                 self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
@@ -546,11 +548,11 @@ class ServerUI(QtWidgets.QDialog):
 
 
         # send line and file to all clients
-        client_list.send_file(file_path, who, DataType.EXAM, cleanup_abgabe )
+        client_list.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe )
 
         # for client in client_list.clients.values():
         #     #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
-        #     client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER, Command.GET, DataType.EXAM, filename, self.factory.files[filename][2], cleanup_abgabe ))
+        #     client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER.value, Command.GET.value, DataType.EXAM.value, filename, self.factory.files[filename][2], cleanup_abgabe ))
         #     client.setRawMode()
         #
         #     print self.factory.files[filename][0]

@@ -44,7 +44,7 @@ from twisted.application.service import IServiceMaker
 class MyClientProtocol(basic.LineReceiver):
     def __init__(self, factory):
         self.factory = factory
-        self.delimiter = '\n'
+        #self.delimiter = '\n'
         self.file_handler = None
         self.buffer = []
         self.file_data = ()
@@ -55,11 +55,11 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.file_handler = None
         self.file_data = ()
-        print(Command.AUTH) 
+       
         
-        line = '%s %s %s' % (Command.AUTH, self.factory.options['id'],  self.factory.options['pincode'])
+        line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'],  self.factory.options['pincode'])
+        
         line = bytes(line,'utf-8 ')
-        print(line)           
         self.sendLine(line)
         print('Connected to the server')
         showDesktopMessage('Connected to the server')
@@ -99,10 +99,10 @@ class MyClientProtocol(basic.LineReceiver):
 
             if validate_file_md5_hash(file_path, self.file_data[4]):
 
-                if self.file_data[2] == DataType.EXAM:  # initialize exam mode.. unzip and start exam
+                if self.file_data[2] == DataType.EXAM.value:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename, file_path, cleanup_abgabe)
-                elif self.file_data[2] == DataType.FILE:
+                elif self.file_data[2] == DataType.FILE.value:
 
                     if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
                         filename = "%s-%s" %(filename, datetime.datetime.now().strftime("%H-%M-%S")) #save with timecode
@@ -113,7 +113,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                     showDesktopMessage('File %s received!' %(filename))
                     fixFilePermissions(SHARE_DIRECTORY)
-                elif self.file_data[2] == DataType.PRINTER:
+                elif self.file_data[2] == DataType.PRINTER.value:
                     showDesktopMessage('Receiving Printer Configuration')
                     self._activatePrinterconfig(file_path)
 
@@ -173,7 +173,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         if filetype in vars(DataType).values():
             self.transport.write(
-                '%s %s %s %s\n' % (Command.FILETRANSFER, filetype, filename, self.factory.files[filename][2])) # command type filename filehash
+                '%s %s %s %s\n' % (Command.FILETRANSFER.value, filetype, filename, self.factory.files[filename][2])) # command type filename filehash
         else:
             return  # TODO: inform that nothing has been done
 
