@@ -98,19 +98,26 @@ class MyServerProtocol(basic.LineReceiver):
     def rawDataReceived(self, data):
         """ handle incoming byte data """
         filename = self.file_data[2]
-        file_path = os.path.join(self.factory.files_path, filename)
+        
+        print("DEBUG: rawDataReceived")
+        
+        print(self.factory.files_path)
+        file_path = os.path.join(self.factory.files_path, filename.decode())
         # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
 
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
 
-        if data.endswith('\r\n'):  # Last chunk
+        
+        if data.endswith(b'\r\n'):  # Last chunk
             data = data[:-2]
             self.file_handler.write(data)
             self.file_handler.close()
             self.file_handler = None
             self.setLineMode()
 
+            print(self.file_data[3])
+            
             if validate_file_md5_hash(file_path, self.file_data[3]):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
 
@@ -141,10 +148,10 @@ class MyServerProtocol(basic.LineReceiver):
 
             else:  # wrong file hash
                 os.unlink(file_path)
-                self.transport.write('File was successfully transferred but not saved, due to invalid MD5 hash\n')
-                self.transport.write(Command.ENDMSG.value + b'\n')
+                self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
+                self.transport.write(Command.ENDMSG.tobytes() + b'\n')
                 self.factory.window.log(
-                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
+                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename.decode()))
 
         else:
             self.file_handler.write(data)
@@ -153,18 +160,16 @@ class MyServerProtocol(basic.LineReceiver):
     def lineReceived(self, line):
         """whenever the client sends something """
         self.file_data = clean_and_split_input(line)
+        print("DEBUG: line received: %s" %line)
         if len(self.file_data) == 0 or self.file_data == '':
             return
             # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
-        print("------DEBUG------")
-        print(line)
-        
-        if line.startswith(Command.AUTH.value):  # AUTH is sent immediately after a connection is made and transfers the clientName
+        if line.startswith(Command.AUTH.tobytes()):  # AUTH is sent immediately after a connection is made and transfers the clientName
             print("auth request received")
             newID = self.file_data[1] 
             pincode = self.file_data[2]
             self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
-        elif line.startswith(Command.FILETRANSFER.value):
+        elif line.startswith(Command.FILETRANSFER.tobytes()):
             self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
             self.setRawMode()  # this is a file - set to raw mode
 
@@ -174,25 +179,25 @@ class MyServerProtocol(basic.LineReceiver):
         if newID in self.factory.client_list.clients.keys():
             print("this user already exists and is connected")
             self.refused = True
-            self.sendLine(Command.REFUSED.value)
+            self.sendLine(Command.REFUSED.tobytes())
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
+            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID.decode()))
             return
         elif int(pincode) != self.factory.pincode:
-            print(pincode)
-            print(self.factory.pincode)
             print("wrong pincode")
             self.refused = True
-            self.sendLine(Command.REFUSED.value)
+            self.sendLine(Command.REFUSED.tobytes())
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID))
+            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID.decode() ))
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             print("pincode ok")
             self.clientName = newID
-            self.factory.window.log('New Connection from <b>%s </b>' % (newID))
+            self.factory.window.log('New Connection from <b>%s </b>' % (newID.decode()))
             #transfer, send, screenshot, filename, hash, cleanabgabe
-            self.sendLine("%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1]))
+            
+            line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
+            self.sendLine(line.encode())
             return
 
 

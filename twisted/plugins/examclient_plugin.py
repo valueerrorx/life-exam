@@ -60,7 +60,9 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'],  self.factory.options['pincode'])
         
         line = bytes(line,'utf-8 ')
+        print(line)
         self.sendLine(line)
+        
         print('Connected to the server')
         showDesktopMessage('Connected to the server')
 
@@ -127,6 +129,7 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted
     def lineReceived(self, line):
+        print("DEBUG: line received: %s" %line)
         line_handler = student_line_dispatcher.get(line.split()[0], None)
         line_handler(self, line) if line_handler is not None else self.buffer.append(line)
 
@@ -167,23 +170,26 @@ class MyClientProtocol(basic.LineReceiver):
         """send a file to the server"""
         self.factory.files = get_file_list(
             self.factory.files_path)  # rebuild here just in case something changed (zip/screensho created )
-        if not filename in self.factory.files:  # if folder exists
-            self.sendLine('filename not found in client directory')
+
+        if not filename.decode() in self.factory.files:  # if folder exists
+            self.sendLine(b'filename not found in client directory')
             return
-
-        if filetype in vars(DataType).values():
-            self.transport.write(
-                '%s %s %s %s\n' % (Command.FILETRANSFER.value, filetype, filename, self.factory.files[filename][2])) # command type filename filehash
+        
+        if filetype.decode() in DataType.list():
+            line = '%s %s %s %s\n' % (Command.FILETRANSFER.value, filetype.decode(), filename.decode(), self.factory.files[filename.decode()][2])  # command type filename filehash
+            line = line.encode()
+            self.transport.write(line) 
         else:
+            print("sendfile request not processed")
             return  # TODO: inform that nothing has been done
-
+        
         self.setRawMode()
-        for bytes in read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
+        for bytes in read_bytes_from_file(self.factory.files[filename.decode()][0]):  # complete filepath as arg
             self.transport.write(bytes)
 
-        self.transport.write('\r\n')  # send this to inform the server that the datastream is finished
+        self.transport.write(b'\r\n')  # send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
-
+        print("DEBUG: Filetransfer finished, back to linemode")
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""

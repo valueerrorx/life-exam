@@ -124,7 +124,6 @@ class ClientList:
     def broadcast_line(self, line):
         for client in self.clients.values():
             line = line % client.clientConnectionID
-            print(line)
             line = bytes(line,"utf-8")
             client.sendLine(line)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary

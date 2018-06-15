@@ -27,7 +27,6 @@ from PyQt5.QtCore import Qt
 from client.lockscreen import ScreenlockWindow
 
 
-
 def lockScreen(client, line):
     """opens lockscreen.py or kills it """
     lines = clean_and_split_input(line)

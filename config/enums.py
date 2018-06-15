@@ -2,23 +2,39 @@
 from enum import Enum
 
 
-
 class DataType(Enum):
-    SCREENSHOT = b"SS"
-    FOLDER = b"FO"
-    ABGABE = b"AB"
-    EXAM = b"EX"
-    FILE = b"FI"
-    PRINTER = b"PR"
+    SCREENSHOT = "SS"
+    FOLDER = "FO"
+    ABGABE = "AB"
+    EXAM = "EX"
+    FILE = "FI"
+    PRINTER = "PR"
+    
+    def tobytes(self):
+        return bytes(self.value,'utf-8')
+    
+    @staticmethod
+    def list():
+        return list(map(lambda c: c.value, DataType))
+
 
 class Command(Enum):
-    ENDMSG = b"E"
-    AUTH = b"AU"
-    FILETRANSFER = b"FT"
-    REFUSED = b"RE"
-    REMOVED = b"RM"
-    GET = b"G"
-    SEND = b"S"
-    LOCK = b"LKS"
-    UNLOCK = b"ULKS"
-    EXITEXAM = b"EXIT"
+    ENDMSG = "E"
+    AUTH = "AU"
+    FILETRANSFER = "FT"
+    REFUSED = "RE"
+    REMOVED = "RM"
+    GET = "G"
+    SEND = "S"
+    LOCK = "LKS"
+    UNLOCK = "ULKS"
+    EXITEXAM = "EXIT"
+    
+    def tobytes(self):
+        return bytes(self.value,'utf-8')
+    
+    @staticmethod
+    def list():
+        return list(map(lambda c: c.value, Command))
+    
+    
