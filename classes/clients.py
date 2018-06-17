@@ -123,7 +123,7 @@ class ClientList:
 
     def broadcast_line(self, line):
         for client in self.clients.values():
-            line = line % client.clientConnectionID
+            line = line % client.clientConnectionID    #substitue the last %s in line with clientConnectionID
             print(line)
             line = bytes(line,"utf-8")
             client.sendLine(line)
