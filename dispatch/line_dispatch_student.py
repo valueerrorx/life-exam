@@ -130,6 +130,7 @@ def send_file_request(client, filetype, *args):
     :param args: (filename, file_hash)
     :return:
     """
+    
     filename = student_prepare_filetype_dispatcher[filetype](client, *args)
     client._sendFile(filename, filetype)
 
@@ -169,7 +170,7 @@ def prepare_screenshot(client, filename, *args):
     :return: filename
     """
     scriptfile = os.path.join(SCRIPTS_DIRECTORY, SHOT)
-    screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename)
+    screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename.decode())
     command = "%s %s" % (scriptfile, screenshotfile)
     os.system(command)
     return filename
@@ -216,28 +217,28 @@ level 2 calls level 3 functions according to datatype to do the actual preparati
 Level 1 Dispatch
 """
 student_line_dispatcher = {
-    Command.ENDMSG: end_msg,
-    Command.REFUSED: connection_refused,
-    Command.REMOVED: connection_removed,
-    Command.FILETRANSFER: file_transfer_request,
-    Command.LOCK: lock_screen,
-    Command.UNLOCK: lock_screen,
-    Command.EXITEXAM: exitExam,
+    Command.ENDMSG.tobytes(): end_msg,
+    Command.REFUSED.tobytes(): connection_refused,
+    Command.REMOVED.tobytes(): connection_removed,
+    Command.FILETRANSFER.tobytes(): file_transfer_request,
+    Command.LOCK.tobytes(): lock_screen,
+    Command.UNLOCK.tobytes(): lock_screen,
+    Command.EXITEXAM.tobytes(): exitExam,
 }
 
 """
 Level 2 Dispatch
 """
 student_file_request_dispatcher = {
-    Command.SEND: send_file_request,
-    Command.GET: get_file_request
+    Command.SEND.tobytes(): send_file_request,
+    Command.GET.tobytes(): get_file_request
 }
 
 """
 Level 3 Dispatch
 """
 student_prepare_filetype_dispatcher = {
-    DataType.SCREENSHOT: prepare_screenshot,
-    DataType.FOLDER: prepare_folder,
-    DataType.ABGABE: prepare_abgabe
+    DataType.SCREENSHOT.tobytes(): prepare_screenshot,
+    DataType.FOLDER.tobytes(): prepare_folder,
+    DataType.ABGABE.tobytes(): prepare_abgabe
 }
