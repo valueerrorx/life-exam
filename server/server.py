@@ -97,12 +97,12 @@ class MyServerProtocol(basic.LineReceiver):
     # twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
-        filename = self.file_data[2]
+        filename = self.file_data[2].decode()
         
-        print("DEBUG: rawDataReceived")
+        print("DEBUG102: rawDataReceived")
         
         print(self.factory.files_path)
-        file_path = os.path.join(self.factory.files_path, filename.decode())
+        file_path = os.path.join(self.factory.files_path, filename)
         # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
 
         if not self.file_handler:
@@ -118,16 +118,19 @@ class MyServerProtocol(basic.LineReceiver):
 
             print(self.file_data[3])
             
-            if validate_file_md5_hash(file_path, self.file_data[3]):  # everything ok..  file received
+            if validate_file_md5_hash(file_path, self.file_data[3].decode()):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
 
-                if self.file_data[1] == DataType.SCREENSHOT.value:  # screenshot is received on initial connection
+                print(self.file_data[1])
+                print(DataType.SCREENSHOT.tobytes())
+                
+                if self.file_data[1] == DataType.SCREENSHOT.tobytes():  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
-                elif self.file_data[1] == DataType.FOLDER.value:
+                elif self.file_data[1] == DataType.FOLDER.tobytes():
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
                                                                                        :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
@@ -135,7 +138,7 @@ class MyServerProtocol(basic.LineReceiver):
                     os.unlink(file_path)  # delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
-                elif self.file_data[1] == DataType.ABGABE.value:
+                elif self.file_data[1] == DataType.ABGABE.tobytes():
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
@@ -149,9 +152,9 @@ class MyServerProtocol(basic.LineReceiver):
             else:  # wrong file hash
                 os.unlink(file_path)
                 self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
-                self.transport.write(Command.ENDMSG.tobytes() + b'\n')
+                self.transport.write(Command.ENDMSG.tobytes() + b'\r\n')
                 self.factory.window.log(
-                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename.decode()))
+                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
 
         else:
             self.file_handler.write(data)
@@ -176,8 +179,8 @@ class MyServerProtocol(basic.LineReceiver):
     def _checkclientAuth(self, newID, pincode):
         """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
 
-        if newID in self.factory.client_list.clients.keys():
-            print("this user already exists and is connected")
+        if newID.decode() in self.factory.client_list.clients.keys():
+            print("this user already exists and is connected")   #FIXME keys contains numbers - newID is a name .. how does this work?
             self.refused = True
             self.sendLine(Command.REFUSED.tobytes())
             self.transport.loseConnection()
@@ -192,10 +195,9 @@ class MyServerProtocol(basic.LineReceiver):
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             print("pincode ok")
-            self.clientName = newID
+            clientName = newID.decode()
             self.factory.window.log('New Connection from <b>%s </b>' % (newID.decode()))
             #transfer, send, screenshot, filename, hash, cleanabgabe
-            
             line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
             self.sendLine(line.encode())
             return

@@ -112,6 +112,7 @@ class ClientList:
                 client = self.get_client(who)
                 client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
                 #FIXME filename with spaces is not transferred because of invalid filehash (which is not invalid but a part of the name is taken as hash on client side)
+                # is it ?  we already remove the space and replace it with _  ??
                 client.setRawMode()
                 who = client.clientName
                 self.send_bytes(client, file_path)

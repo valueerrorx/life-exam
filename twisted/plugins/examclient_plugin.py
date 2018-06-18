@@ -63,8 +63,8 @@ class MyClientProtocol(basic.LineReceiver):
         print(line)
         self.sendLine(line)
         
-        print('Connected to the server')
-        showDesktopMessage('Connected to the server')
+        print('Connected. Auth sent to the server')
+        showDesktopMessage('Connected. Auth sent to the server')
 
     # twisted
     def connectionLost(self, reason):
@@ -75,7 +75,7 @@ class MyClientProtocol(basic.LineReceiver):
         showDesktopMessage('Connection to the server has been lost')
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "python client/student.py &"
+            command = "python3 client/student.py &"
             os.system(command)
             os._exit(1)
 
@@ -129,7 +129,14 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted
     def lineReceived(self, line):
-        print("DEBUG: line received: %s" %line)
+        """the only purpose of this function is to
+        trigger the line dispatcher which only exists to figure
+        out what the line tells the client to do..  (insteod of 
+        a simple if-else statement. 
+        
+        the dispatcher then triggers the correct function in in examclient_plugin.py
+        """
+        print("DEBUG139: line received: %s" %line)
         line_handler = student_line_dispatcher.get(line.split()[0], None)
         line_handler(self, line) if line_handler is not None else self.buffer.append(line)
 
@@ -176,7 +183,9 @@ class MyClientProtocol(basic.LineReceiver):
             return
         
         if filetype.decode() in DataType.list():
-            line = '%s %s %s %s\n' % (Command.FILETRANSFER.value, filetype.decode(), filename.decode(), self.factory.files[filename.decode()][2])  # command type filename filehash
+            line = '%s %s %s %s\r\n' % (Command.FILETRANSFER.value, filetype.decode(), filename.decode(), self.factory.files[filename.decode()][2])  # command type filename filehash
+            print("this is the filehash from the clientside")
+            print(self.factory.files[filename.decode()][2])
             line = line.encode()
             self.transport.write(line) 
         else:
@@ -189,7 +198,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         self.transport.write(b'\r\n')  # send this to inform the server that the datastream is finished
         self.setLineMode()  # When the transfer is finished, we go back to the line mode 
-        print("DEBUG: Filetransfer finished, back to linemode")
+        print("DEBUG201: Filetransfer finished, back to linemode")
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
