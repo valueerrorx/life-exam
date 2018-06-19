@@ -60,7 +60,7 @@ class MyServerProtocol(basic.LineReceiver):
         #self.delimiter = '\n'
         self.clientName = ""
         self.file_handler = None
-        self.file_data = ()
+        self.line_data_list = ()
         self.refused = False
         self.clientConnectionID = ""
 
@@ -68,7 +68,7 @@ class MyServerProtocol(basic.LineReceiver):
     def connectionMade(self):
         self.factory.client_list.add_client(self)
         self.file_handler = None
-        self.file_data = ()
+        self.line_data_list = ()
         self.refused = False
         self.clientConnectionID = str(self.transport.client[1])
         self.factory.window.log(
@@ -80,7 +80,7 @@ class MyServerProtocol(basic.LineReceiver):
         print(reason)
         self.factory.client_list.remove_client(self)
         self.file_handler = None
-        self.file_data = ()
+        self.line_data_list = ()
         self.factory.window.log(
             'Connection from %s lost (%d clients left)' % (
             self.transport.getPeer().host, len(self.factory.client_list.clients)))
@@ -97,18 +97,13 @@ class MyServerProtocol(basic.LineReceiver):
     # twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
-        filename = self.file_data[2].decode()
-        
-        print("DEBUG102: rawDataReceived")
-        
-        print(self.factory.files_path)
+        filename = self.line_data_list[2]
         file_path = os.path.join(self.factory.files_path, filename)
         # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
 
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
 
-        
         if data.endswith(b'\r\n'):  # Last chunk
             data = data[:-2]
             self.file_handler.write(data)
@@ -116,21 +111,16 @@ class MyServerProtocol(basic.LineReceiver):
             self.file_handler = None
             self.setLineMode()
 
-            print(self.file_data[3])
-            
-            if validate_file_md5_hash(file_path, self.file_data[3].decode()):  # everything ok..  file received
+            if validate_file_md5_hash(file_path, self.line_data_list[3]):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
-
-                print(self.file_data[1])
-                print(DataType.SCREENSHOT.tobytes())
                 
-                if self.file_data[1] == DataType.SCREENSHOT.tobytes():  # screenshot is received on initial connection
+                if self.line_data_list[1] == DataType.SCREENSHOT.value:  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
-                elif self.file_data[1] == DataType.FOLDER.tobytes():
+                elif self.line_data_list[1] == DataType.FOLDER.value:
                     extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
                                                                                        :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
@@ -138,7 +128,7 @@ class MyServerProtocol(basic.LineReceiver):
                     os.unlink(file_path)  # delete zip file
                     fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
-                elif self.file_data[1] == DataType.ABGABE.tobytes():
+                elif self.line_data_list[1] == DataType.ABGABE.value:
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
                                                                                   :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
@@ -159,47 +149,54 @@ class MyServerProtocol(basic.LineReceiver):
         else:
             self.file_handler.write(data)
 
+
+    def sendEncodedLine(self,line):
+        # twisted
+        self.sendLine(line.encode() )
+
+
     # twisted
     def lineReceived(self, line):
         """whenever the client sends something """
-        self.file_data = clean_and_split_input(line)
-        print("DEBUG: line received: %s" %line)
-        if len(self.file_data) == 0 or self.file_data == '':
+        line = line.decode()  # we get bytes but need strings
+        self.line_data_list = clean_and_split_input(line)
+        print( self.line_data_list)
+        
+        if len(self.line_data_list) == 0 or self.line_data_list == '':
             return
-            # command=self.file_data[0] type=self.file_data[1] filename=self.file_data[2] filehash=self.file_data[3] (( clientName=self.file_data[4] ))
-        if line.startswith(Command.AUTH.tobytes()):  # AUTH is sent immediately after a connection is made and transfers the clientName
+            # command=self.line_data_list[0] type=self.line_data_list[1] filename=self.line_data_list[2] filehash=self.line_data_list[3] (( clientName=self.line_data_list[4] ))
+        if self.line_data_list[0] == Command.AUTH.value: # AUTH is sent immediately after a connection is made and transfers the clientName
             print("auth request received")
-            newID = self.file_data[1] 
-            pincode = self.file_data[2]
+            newID = self.line_data_list[1] 
+            pincode = self.line_data_list[2]
             self._checkclientAuth(newID, pincode)  # check if this custom client id (entered by the student) is already taken
-        elif line.startswith(Command.FILETRANSFER.tobytes()):
+        elif self.line_data_list[0] == Command.FILETRANSFER.value:
             self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
             self.setRawMode()  # this is a file - set to raw mode
 
     def _checkclientAuth(self, newID, pincode):
         """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
-
-        if newID.decode() in self.factory.client_list.clients.keys():
-            print("this user already exists and is connected")   #FIXME keys contains numbers - newID is a name .. how does this work?
+        if newID in self.factory.client_list.clients.keys():
+            print("this user already exists and is connected")   #TEST keys contains numbers - newID is a name .. how does this work?
             self.refused = True
-            self.sendLine(Command.REFUSED.tobytes())
+            self.sendEncodedLine(Command.REFUSED.value)
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID.decode()))
+            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
             return
         elif int(pincode) != self.factory.pincode:
             print("wrong pincode")
             self.refused = True
-            self.sendLine(Command.REFUSED.tobytes())
+            self.sendEncodedLine(Command.REFUSED.value)
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID.decode() ))
+            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID ))
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             print("pincode ok")
-            clientName = newID.decode()
-            self.factory.window.log('New Connection from <b>%s </b>' % (newID.decode()))
+            clientName = newID
+            self.factory.window.log('New Connection from <b>%s </b>' % (newID) )
             #transfer, send, screenshot, filename, hash, cleanabgabe
             line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
-            self.sendLine(line.encode())
+            self.sendEncodedLine(line)
             return
 
 
@@ -217,7 +214,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
-        self.lcs.start(20)   #TODO make this configurable over the UI
+        self.lcs.start(SCREENSHOTINTERVALL)   #TODO make this configurable over the UI
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
 
         checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
@@ -340,14 +337,14 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
         self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
-        self.ui.startexam.clicked.connect(lambda: self._onStartExam("all"))
+        self.ui.startexam.clicked.connect(lambda: self._on_start_exam("all"))
         self.ui.openshare.clicked.connect(self._onOpenshare)
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
         
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
-        self.ui.exitexam.clicked.connect(lambda: self._onExitExam("all"))
+        self.ui.exitexam.clicked.connect(lambda: self._on_exit_exam("all"))
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
         self.ui.printconf.clicked.connect(self._onPrintconf)
         self.ui.printer.clicked.connect(lambda: self._onSendPrintconf("all"))
@@ -378,10 +375,11 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port3.setValidator(num_validator)
         self.ui.port4.setValidator(num_validator)
 
+        findApps(self.ui.applist, self.ui.appview)
+        
         self.ui.show()
         
-  
-        findApps(self.ui.applist, self.ui.appview)
+        
        
 
 
@@ -519,13 +517,13 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.client_list.request_abgabe(who):
             self.log("no clients connected")
 
-    def _onStartExam(self, who):
+    def _on_start_exam(self, who):
         """
-                ZIP examconfig folder
-                send configuration-zip to clients - unzip there
-                invoke startexam.sh file on clients
+        ZIP examconfig folder
+        send configuration-zip to clients - unzip there
+        invoke startexam.sh file on clients
 
-                """
+        """
         self._workingIndicator(True, 500)
         client_list = self.factory.client_list
         if not client_list.clients:
@@ -557,21 +555,9 @@ class ServerUI(QtWidgets.QDialog):
         # send line and file to all clients
         client_list.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe )
 
-        # for client in client_list.clients.values():
-        #     #command.filtransfer and command.get trigger rawMode on clients - Datatype.exam triggers exam mode after filename is received
-        #     client.transport.write('%s %s %s %s %s %s %s\n' % (Command.FILETRANSFER.value, Command.GET.value, DataType.EXAM.value, filename, self.factory.files[filename][2], cleanup_abgabe ))
-        #     client.setRawMode()
-        #
-        #     print self.factory.files[filename][0]
-        #     for bytes in read_bytes_from_file(self.factory.files[filename][0]):
-        #         client.transport.write(bytes)
-        #
-        #     client.transport.write('\r\n')
-        #     client.setLineMode()
 
 
-
-    def _onExitExam(self,who):
+    def _on_exit_exam(self,who):
         self.log("<b>Finishing Exam </b>")
         self._workingIndicator(True, 2000)
         # first fetch abgabe
@@ -764,8 +750,8 @@ class ServerUI(QtWidgets.QDialog):
         action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self._onAbgabe(client_connection_id))
         action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self._onScreenshots(client_connection_id))
         action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self._onSendFile(client_connection_id))
-        action_4 = QtWidgets.QAction("Exam starten", menu, triggered=lambda: self._onStartExam(client_connection_id))
-        action_5 = QtWidgets.QAction("Exam beenden", menu, triggered=lambda: self._onExitExam(client_connection_id))
+        action_4 = QtWidgets.QAction("Exam starten", menu, triggered=lambda: self._on_start_exam(client_connection_id))
+        action_5 = QtWidgets.QAction("Exam beenden", menu, triggered=lambda: self._on_exit_exam(client_connection_id))
         action_6 = QtWidgets.QAction("Verbindung trennen", menu,
                                      triggered=lambda: self._onRemoveClient(client_connection_id))
         menu.addActions([action_1, action_2, action_3, action_4, action_5, action_6])

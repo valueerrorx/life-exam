@@ -169,10 +169,16 @@ def prepare_screenshot(client, filename, *args):
     :param args: (file_hash)
     :return: filename
     """
+    print("SCREENSHOT IS PREPARED")
+    
+    
     scriptfile = os.path.join(SCRIPTS_DIRECTORY, SHOT)
-    screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename.decode())
+    screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename)
     command = "%s %s" % (scriptfile, screenshotfile)
     os.system(command)
+    
+
+    
     return filename
 
 
@@ -186,7 +192,7 @@ def prepare_folder(client, filename, *args):
     """
     if filename in client.factory.files:
         target_folder = client.factory.files[filename[0]]
-        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
+        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
         shutil.make_archive(output_filename, 'zip', target_folder)
         return "%s.zip" % filename
 
@@ -202,7 +208,7 @@ def prepare_abgabe(client, filename, *args):
     client._triggerAutosave()
     time.sleep(2)  # TODO: make autosave return that it is finished!
     target_folder = SHARE_DIRECTORY
-    output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
+    output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
     shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
     return "%s.zip" % filename  # this is the filename of the zip file
 
@@ -217,28 +223,28 @@ level 2 calls level 3 functions according to datatype to do the actual preparati
 Level 1 Dispatch
 """
 student_line_dispatcher = {
-    Command.ENDMSG.tobytes(): end_msg,
-    Command.REFUSED.tobytes(): connection_refused,
-    Command.REMOVED.tobytes(): connection_removed,
-    Command.FILETRANSFER.tobytes(): file_transfer_request,
-    Command.LOCK.tobytes(): lock_screen,
-    Command.UNLOCK.tobytes(): lock_screen,
-    Command.EXITEXAM.tobytes(): exitExam,
+    Command.ENDMSG.value: end_msg,
+    Command.REFUSED.value: connection_refused,
+    Command.REMOVED.value: connection_removed,
+    Command.FILETRANSFER.value: file_transfer_request,
+    Command.LOCK.value: lock_screen,
+    Command.UNLOCK.value: lock_screen,
+    Command.EXITEXAM.value: exitExam,
 }
 
 """
 Level 2 Dispatch
 """
 student_file_request_dispatcher = {
-    Command.SEND.tobytes(): send_file_request,
-    Command.GET.tobytes(): get_file_request
+    Command.SEND.value: send_file_request,
+    Command.GET.value: get_file_request
 }
 
 """
 Level 3 Dispatch
 """
 student_prepare_filetype_dispatcher = {
-    DataType.SCREENSHOT.tobytes(): prepare_screenshot,
-    DataType.FOLDER.tobytes(): prepare_folder,
-    DataType.ABGABE.tobytes(): prepare_abgabe
+    DataType.SCREENSHOT.value: prepare_screenshot,
+    DataType.FOLDER.value: prepare_folder,
+    DataType.ABGABE.value: prepare_abgabe
 }

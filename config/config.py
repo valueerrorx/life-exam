@@ -15,6 +15,7 @@ SERVER_PORT = 5000
 
 VERSION = '1.2'
 
+SCREENSHOTINTERVALL = 30
 
 # these apps will try to autosave your work before "abgabe" via xdotool
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets'];

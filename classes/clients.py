@@ -29,7 +29,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientConnectionID)    #replace %s in line with connectionID
+            client.sendEncodedLine(line % client.clientConnectionID)    #replace %s in line with connectionID
         return True
 
 
@@ -45,7 +45,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientConnectionID)
+            client.sendEncodedLine(line % client.clientConnectionID)
         return True
 
 
@@ -57,7 +57,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientConnectionID)
+            client.sendEncodedLine(line % client.clientConnectionID)
 
         return True
 
@@ -71,7 +71,7 @@ class ClientList:
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
-            client.sendLine(line % client.clientConnectionID)
+            client.sendEncodedLine(line % client.clientConnectionID  )
 
         return True
 
@@ -81,12 +81,14 @@ class ClientList:
 
         filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H-%M-%S"), "%s")
         line = "%s %s %s %s none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.ABGABE.value, filename)
-
+        
         if who is "all":
             self.broadcast_line(line)
         else:
-            client = self.get_client(who)
-            client.sendLine(line % client.clientConnectionID)
+            client = self.get_client(who)          
+            client.sendEncodedLine(line % client.clientConnectionID) # filename still has an empty %s to fill with client id
+            
+           
 
         return True
 
@@ -98,9 +100,7 @@ class ClientList:
         :param who: all or client id
         :param args: (cleanup_abgabe) for exam mode
         """
-
         if file_path:
-
             filename = ntpath.basename(file_path)  # get filename without path
             filename = str(filename).replace(" ", "_")
             file_size = os.path.getsize(file_path)
@@ -110,9 +110,7 @@ class ClientList:
                 self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe)
             else:
                 client = self.get_client(who)
-                client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
-                #FIXME filename with spaces is not transferred because of invalid filehash (which is not invalid but a part of the name is taken as hash on client side)
-                # is it ?  we already remove the space and replace it with _  ??
+                client.sendEncodedLine('%s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
                 client.setRawMode()
                 who = client.clientName
                 self.send_bytes(client, file_path)
@@ -122,32 +120,35 @@ class ClientList:
 
         return [False, None, None, who]
 
+
     def broadcast_line(self, line):
         for client in self.clients.values():
 
             line = line % client.clientConnectionID    #substitue the last %s in line with clientConnectionID
-            line = bytes(line,"utf-8")
-            client.sendLine(line)
+            client.sendEncodedLine(line)
             #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
+
 
     def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe):
         for client in self.clients.values():
-            client.sendLine('%s %s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash)
+            client.sendEncodedLine('%s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash)
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()
+
 
     def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
         for b in read_bytes_from_file(file_path):
             client.transport.write(b)
 
-        client.transport.write('\r\n')
+        client.transport.write(b'\r\n')
+
 
     def kick_client(self, client_id):
         client = self.get_client(client_id)
         if client:
             client.refused = True
-            client.sendLine("%s" % Command.REMOVED.value)
+            client.sendEncodedLine("%s" % Command.REMOVED.value)
             client.transport.loseConnection()
             return client.clientName
         return False

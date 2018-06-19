@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>872</width>
-    <height>665</height>
+    <width>924</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -845,8 +845,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>800</width>
-               <height>994</height>
+               <width>852</width>
+               <height>1014</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -995,7 +995,7 @@
                              </size>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">margin-left:10px;</string>
+                             <string notr="true">margin-left:0px;</string>
                             </property>
                             <property name="text">
                              <string>Abgabeintervall</string>
@@ -1005,19 +1005,43 @@
                           <item>
                            <widget class="QSpinBox" name="aintervall">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
                             </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>46</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>80</width>
+                              <height>46</height>
+                             </size>
+                            </property>
                             <property name="toolTip">
                              <string>0 - Automatische Abgabe deaktiviert</string>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px;margin-left:3px;</string>
+                            </property>
+                            <property name="wrapping">
+                             <bool>false</bool>
+                            </property>
+                            <property name="frame">
+                             <bool>true</bool>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignCenter</set>
                             </property>
                             <property name="minimum">
                              <number>0</number>
                             </property>
                             <property name="maximum">
-                             <number>300</number>
+                             <number>30</number>
                             </property>
                             <property name="singleStep">
                              <number>1</number>

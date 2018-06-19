@@ -47,21 +47,16 @@ class MyClientProtocol(basic.LineReceiver):
         #self.delimiter = '\n'
         self.file_handler = None
         self.buffer = []
-        self.file_data = ()
+        self.line_data_list = ()
         prepareDirectories()  # cleans everything and copies script files 
 
     # twisted
     def connectionMade(self):
         self.buffer = []
         self.file_handler = None
-        self.file_data = ()
-       
-        
+        self.line_data_list = ()
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'],  self.factory.options['pincode'])
-        
-        line = bytes(line,'utf-8 ')
-        print(line)
-        self.sendLine(line)
+        self.sendEncodedLine(line)
         
         print('Connected. Auth sent to the server')
         showDesktopMessage('Connected. Auth sent to the server')
@@ -70,7 +65,7 @@ class MyClientProtocol(basic.LineReceiver):
     def connectionLost(self, reason):
         self.factory.failcount += 1
         self.file_handler = None
-        self.file_data = ()
+        self.line_data_list = ()
         print('Connection to the server has been lost')
         showDesktopMessage('Connection to the server has been lost')
 
@@ -81,9 +76,9 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted
     def rawDataReceived(self, data):
-        print(self.file_data)
-        filename = self.file_data[3]
-        cleanup_abgabe = self.file_data[5]
+        print(self.line_data_list)
+        filename = self.line_data_list[3]
+        cleanup_abgabe = self.line_data_list[5]
         
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
@@ -92,19 +87,19 @@ class MyClientProtocol(basic.LineReceiver):
             self.file_handler = open(file_path, 'wb')
 
 
-        if data.endswith('\r\n'):
+        if data.endswith(b'\r\n'):
             data = data[:-2]
             self.file_handler.write(data)
             self.file_handler.close()
             self.file_handler = None
             self.setLineMode()
 
-            if validate_file_md5_hash(file_path, self.file_data[4]):
+            if validate_file_md5_hash(file_path, self.line_data_list[4]):
 
-                if self.file_data[2] == DataType.EXAM.value:  # initialize exam mode.. unzip and start exam
+                if self.line_data_list[2] == DataType.EXAM.value:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename, file_path, cleanup_abgabe)
-                elif self.file_data[2] == DataType.FILE.value:
+                elif self.line_data_list[2] == DataType.FILE.value:
 
                     if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
                         filename = "%s-%s" %(filename, datetime.datetime.now().strftime("%H-%M-%S")) #save with timecode
@@ -115,7 +110,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                     showDesktopMessage('File %s received!' %(filename))
                     fixFilePermissions(SHARE_DIRECTORY)
-                elif self.file_data[2] == DataType.PRINTER.value:
+                elif self.line_data_list[2] == DataType.PRINTER.value:
                     showDesktopMessage('Receiving Printer Configuration')
                     self._activatePrinterconfig(file_path)
 
@@ -127,6 +122,14 @@ class MyClientProtocol(basic.LineReceiver):
             self.file_handler.write(data)
 
 
+
+    def sendEncodedLine(self,line):
+        # twisted
+        self.sendLine(line.encode() )
+
+
+
+
     # twisted
     def lineReceived(self, line):
         """the only purpose of this function is to
@@ -136,8 +139,13 @@ class MyClientProtocol(basic.LineReceiver):
         
         the dispatcher then triggers the correct function in in examclient_plugin.py
         """
-        print("DEBUG139: line received: %s" %line)
-        line_handler = student_line_dispatcher.get(line.split()[0], None)
+        
+        line = line.decode()   #decode the moment you recieve a line and encode it right before you send
+        print("DEBUG139: line received and decoded: %s" %line)
+        
+        self.line_data_list = clean_and_split_input(line)
+        
+        line_handler = student_line_dispatcher.get(self.line_data_list[0], None)
         line_handler(self, line) if line_handler is not None else self.buffer.append(line)
 
 
@@ -148,13 +156,22 @@ class MyClientProtocol(basic.LineReceiver):
         app_id_list = []
         for app in SAVEAPPS:
             if app == "calligrawords" or app == "calligrasheets" or app == "kate":  # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
+                if app == "kate":   
+                    savetrigger = "file_save_all"
+                else: 
+                    savetrigger = "file_save"
                 try:
                     command = "pidof %s" % (app)
-                    pid = subprocess.check_output(command, shell=True).rstrip()
-                    qdbuscommand = "sudo -u %s -H qdbus org.kde.%s-%s /%s/MainWindow_1/actions/file_save trigger" % (USER, app, pid, app)
-                    os.system(qdbuscommand)
+                    pids = subprocess.check_output(command, shell=True).decode().rstrip()
+                    print(pids)
+                    pids = pids.split(' ')
+                    print(pids)
+                    for pid in pids:
+                        qdbuscommand = "sudo -u %s -H qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
+                        print(qdbuscommand)
+                        os.system(qdbuscommand)
                 except:
-                    print("program not running")
+                    print("program not running") 
 
             else:  # make a list of the other running apps
                 command = "xdotool search --name %s &" % (app)
@@ -178,22 +195,18 @@ class MyClientProtocol(basic.LineReceiver):
         self.factory.files = get_file_list(
             self.factory.files_path)  # rebuild here just in case something changed (zip/screensho created )
 
-        if not filename.decode() in self.factory.files:  # if folder exists
+        if not filename in self.factory.files:  # if folder exists
             self.sendLine(b'filename not found in client directory')
             return
         
-        if filetype.decode() in DataType.list():
-            line = '%s %s %s %s\r\n' % (Command.FILETRANSFER.value, filetype.decode(), filename.decode(), self.factory.files[filename.decode()][2])  # command type filename filehash
-            print("this is the filehash from the clientside")
-            print(self.factory.files[filename.decode()][2])
-            line = line.encode()
-            self.transport.write(line) 
+        if filetype in DataType.list():
+            line = '%s %s %s %s' % (Command.FILETRANSFER.value, filetype, filename, self.factory.files[filename][2])  # command type filename filehash
+            self.sendEncodedLine(line)
         else:
-            print("sendfile request not processed")
             return  # TODO: inform that nothing has been done
         
         self.setRawMode()
-        for bytes in read_bytes_from_file(self.factory.files[filename.decode()][0]):  # complete filepath as arg
+        for bytes in read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
             self.transport.write(bytes)
 
         self.transport.write(b'\r\n')  # send this to inform the server that the datastream is finished

@@ -1,0 +1,40 @@
+Server  (server.py)
+
+server empfängt zwei signale:
+
+AUTH  (startet _checkclientAuth() - checkt pincode und name)
+FILETRANSFER (startet setRawMode() )
+
+
+server sendet viele verschiedene signale
+der sendevorgang wird vom UI vorbereitet...
+_on_exit_exam
+
+und in der clients.py abgeschlossen...
+exit_exam()
+
+
+
+clients.py (class ClientList) verwaltet alle mit dem 
+server verbundenen clients, kick, get, usw. und beinhaltet
+alle funktionen für die kommunikation mit einem client
+
+request_screenshot()
+request_abgabe()
+unlock_screen()
+...
+...
+
+
+der server braucht eigentlich keinen dispatcher für eigene aktionen
+da er nur 2 aktionen kennt
+
+
+
+
+Client  (examclient_plugin)   - twisted plugin
+
+emfängt mehrere signale und übergibt jede line dem student_line_dispatcher (line_dispatch_student.py)
+
+
+
