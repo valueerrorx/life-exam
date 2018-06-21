@@ -9,15 +9,8 @@
 
 # sudo -H pip3 install twisted  # we need twisted for python3
 
-
-
 import os
 import sys
-
-
-#from importlib import reload    #not needed in python3 anymore.. it's always utf-8
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
 
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
@@ -37,7 +30,7 @@ from twisted.internet import protocol
 from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
 from config.config import *
-from classes.clients import *
+from classes.server2client import *
 from common import *
 from applist import *
 from config.enums import *
@@ -66,24 +59,24 @@ class MyServerProtocol(basic.LineReceiver):
 
     # twisted
     def connectionMade(self):
-        self.factory.client_list.add_client(self)
+        self.factory.server_to_client.add_client(self)
         self.file_handler = None
         self.line_data_list = ()
         self.refused = False
         self.clientConnectionID = str(self.transport.client[1])
         self.factory.window.log(
             'Connection from: %s (%d clients total)' % (
-            self.transport.getPeer().host, len(self.factory.client_list.clients)))
+            self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
 
     # twisted
     def connectionLost(self, reason):
         print(reason)
-        self.factory.client_list.remove_client(self)
+        self.factory.server_to_client.remove_client(self)
         self.file_handler = None
         self.line_data_list = ()
         self.factory.window.log(
             'Connection from %s lost (%d clients left)' % (
-            self.transport.getPeer().host, len(self.factory.client_list.clients)))
+            self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
 
         if not self.refused:
             self.factory.window._disableClientScreenshot(self)
@@ -176,7 +169,7 @@ class MyServerProtocol(basic.LineReceiver):
 
     def _checkclientAuth(self, newID, pincode):
         """searches for the newID in factory.clients and rejects the connection if found or wrong pincode"""
-        if newID in self.factory.client_list.clients.keys():
+        if newID in self.factory.server_to_client.clients.keys():
             print("this user already exists and is connected")   #TEST keys contains numbers - newID is a name .. how does this work?
             self.refused = True
             self.sendEncodedLine(Command.REFUSED.value)
@@ -205,7 +198,7 @@ class MyServerFactory(protocol.ServerFactory):
     def __init__(self, files_path, reactor):
         self.files_path = files_path
         self.reactor = reactor
-        self.client_list = ClientList() # type: ClientList
+        self.server_to_client = ServerToClient() # type: ServerToClient
         self.disconnected_list = []
         self.files = None
         self.clientslocked = False
@@ -354,6 +347,7 @@ class ServerUI(QtWidgets.QDialog):
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         self.timer = False
+        self.msg = False
         self.ui.version.setText("<b>Version</b> %s" % VERSION )
         self.ui.currentpin.setText("<b>%s</b>" % self.factory.pincode  )
         self.ui.examlabeledit1.setText(self.factory.examid  )
@@ -386,9 +380,9 @@ class ServerUI(QtWidgets.QDialog):
     def _onSendPrintconf(self,who):
         """send the printer configuration to all clients"""
         self._workingIndicator(True, 500)
-        client_list = self.factory.client_list
+        server_to_client = self.factory.server_to_client
 
-        if not client_list.clients:
+        if not server_to_client.clients:
             self.log("no clients connected")
             return
 
@@ -412,14 +406,8 @@ class ServerUI(QtWidgets.QDialog):
 
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
-
-
         # send line and file to all clients
-        client_list.send_file(file_path, who, DataType.PRINTER.value)
-
-
-
-
+        server_to_client.send_file(file_path, who, DataType.PRINTER.value)
 
 
     def _onPrintconf(selfs):
@@ -434,12 +422,12 @@ class ServerUI(QtWidgets.QDialog):
         if self.factory.clientslocked:
             self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
             self.factory.clientslocked = False
-            if not self.factory.client_list.unlock_screens(who):
+            if not self.factory.server_to_client.unlock_screens(who):
                 self.log("no clients connected")
         else:
             self.ui.screenlock.setIcon(QIcon("pixmaps/unlock.png"))
             self.factory.clientslocked = True
-            if not self.factory.client_list.lock_screens(who):
+            if not self.factory.server_to_client.lock_screens(who):
                 self.log("no clients connected")
                 self.factory.clientslocked = False
                 self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
@@ -454,8 +442,13 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
 
     def closeEvent(self, evnt):
-        #self.showMinimized()  #shows a weird window in the last version #FIXME
         evnt.ignore()
+        print("close event triggered")
+        if not self.msg:
+            self._onAbbrechen()
+
+
+
 
     def _workingIndicator(self, action, duration):
         if self.timer and self.timer.isActive:  # indicator is shown a second time - stop old kill-timer
@@ -473,9 +466,9 @@ class ServerUI(QtWidgets.QDialog):
     def _onSendFile(self, who):
         """send a file to all clients"""
         self._workingIndicator(True, 500)
-        client_list = self.factory.client_list
+        server_to_client = self.factory.server_to_client
 
-        if not client_list.clients:
+        if not server_to_client.clients:
             self.log("no clients connected")
             return
 
@@ -483,7 +476,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if file_path:
             self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
-            success, filename, file_size, who = client_list.send_file(file_path, who, DataType.FILE.value)
+            success, filename, file_size, who = server_to_client.send_file(file_path, who, DataType.FILE.value)
 
             if success:
                 self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
@@ -501,7 +494,7 @@ class ServerUI(QtWidgets.QDialog):
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
         self._workingIndicator(True, 1000)
-        if not self.factory.client_list.request_screenshots(who):
+        if not self.factory.server_to_client.request_screenshots(who):
             self.log("no clients connected")
 
     def _onShowIP(self):
@@ -514,7 +507,7 @@ class ServerUI(QtWidgets.QDialog):
         self.log('<b>Requesting Client Folder SHARE </b>')
         itime = 2000 if who is 'all' else 1000
         self._workingIndicator(True, itime)
-        if not self.factory.client_list.request_abgabe(who):
+        if not self.factory.server_to_client.request_abgabe(who):
             self.log("no clients connected")
 
     def _on_start_exam(self, who):
@@ -525,8 +518,8 @@ class ServerUI(QtWidgets.QDialog):
 
         """
         self._workingIndicator(True, 500)
-        client_list = self.factory.client_list
-        if not client_list.clients:
+        server_to_client = self.factory.server_to_client
+        if not server_to_client.clients:
             self.log("no clients connected")
             return
 
@@ -553,7 +546,7 @@ class ServerUI(QtWidgets.QDialog):
 
 
         # send line and file to all clients
-        client_list.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe )
+        server_to_client.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe )
 
 
 
@@ -561,10 +554,10 @@ class ServerUI(QtWidgets.QDialog):
         self.log("<b>Finishing Exam </b>")
         self._workingIndicator(True, 2000)
         # first fetch abgabe
-        if not self.factory.client_list.request_abgabe(who):
+        if not self.factory.server_to_client.request_abgabe(who):
             self.log("no clients connected")
         # then send the exam exit signal
-        if not self.factory.client_list.exit_exam(who):
+        if not self.factory.server_to_client.exit_exam(who):
             self.log("no clients connected")
 
 
@@ -647,7 +640,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onRemoveClient(self, client_id):
         self._workingIndicator(True, 500)
-        client_name = self.factory.client_list.kick_client(client_id)
+        client_name = self.factory.server_to_client.kick_client(client_id)
         #if client_name:
         sip.delete(self.get_list_widget_by_client_id(client_id))   #remove client widget no matter if client still is connected or not
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
@@ -672,9 +665,23 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.logwidget.append(timestamp + " " + str(msg))
 
     def _onAbbrechen(self):  # Exit button
-        os.remove(SERVER_PIDFILE)
-        self.ui.close()
-        os._exit(0)  # otherwise only the gui is closed and connections are kept alive
+        
+        self.msg = QtWidgets.QMessageBox()
+        self.msg.setIcon(QtWidgets.QMessageBox.Information)
+        self.msg.setText("Wollen sie das Programm\nLiFE Exam Server \nbeenden?")
+      
+        self.msg.setWindowTitle("LiFE Exam")
+        self.msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        retval = self.msg.exec_()   # 16384 = yes, 65536 = no
+       
+        print(retval)
+        if str(retval) == "16384":
+            os.remove(SERVER_PIDFILE)
+            self.ui.close()
+            os._exit(0)  # otherwise only the gui is closed and connections are kept alive
+        else:
+            self.msg = False
+
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """generates new listitem that displays the clientscreenshot"""
