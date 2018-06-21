@@ -4,7 +4,7 @@ from enum import Enum
 
 class DataType(Enum):
     SCREENSHOT = "SS"
-    FOLDER = "FO"
+    #FOLDER = "FO"
     ABGABE = "AB"
     EXAM = "EX"
     FILE = "FI"

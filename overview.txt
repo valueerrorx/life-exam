@@ -4,6 +4,12 @@ server empfängt zwei signale:
 
 AUTH  (startet _checkclientAuth() - checkt pincode und name)
 FILETRANSFER (startet setRawMode() )
+FT kann den DataType 
+SCREENSHOT
+FOLDER
+ABGABE 
+haben
+
 
 
 server sendet viele verschiedene signale
@@ -34,7 +40,18 @@ da er nur 2 aktionen kennt
 
 Client  (examclient_plugin)   - twisted plugin
 
-emfängt mehrere signale und übergibt jede line dem student_line_dispatcher (line_dispatch_student.py)
+emfängt mehrere signale und übergibt jede "line" dem student_line_dispatcher (line_dispatch_student.py)
+
+ENDMSG
+REFUSED
+REMOVED
+FILETRANSFER
+LOCK
+UNLOCK
+EXITEXAM
 
 
-
+FT kann in diesem Fall vom Typ EXAM, FILE, PRINTER sein
+(EXAM empfängt die exam konfiguration und triggert den exam mode)
+(FILE ist vermutlich eine angabe oder irgendeine datei)
+(PRINTER ist die Netzwerkdrucker konfiguration)

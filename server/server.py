@@ -120,13 +120,13 @@ class MyServerProtocol(basic.LineReceiver):
                     fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
 
-                elif self.line_data_list[1] == DataType.FOLDER.value:
-                    extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
-                                                                                       :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
-                    with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)  
-                    os.unlink(file_path)  # delete zip file
-                    fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
+                #elif self.line_data_list[1] == DataType.FOLDER.value:
+                    #extract_dir = os.path.join(SERVERUNZIP_DIRECTORY, self.clientName, filename[
+                                                                                       #:-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    #with zipfile.ZipFile(file_path, "r") as zip_ref:
+                        #zip_ref.extractall(extract_dir)  
+                    #os.unlink(file_path)  # delete zip file
+                    #fixFilePermissions(SERVERUNZIP_DIRECTORY)  # fix filepermission of transferred file
 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
@@ -279,22 +279,22 @@ class ScreenshotWindow(QtWidgets.QDialog):
 
         button1 = QtWidgets.QPushButton('Screenshot archivieren', self)
         button1.move(1020, 580)
-        button1.resize(150,40)
+        button1.resize(160,40)
         button1.clicked.connect(self._archivescreenshot)
 
         button2 = QtWidgets.QPushButton('Abgabe holen', self)
         button2.move(1020, 480)
-        button2.resize(150,40)
+        button2.resize(160,40)
         button2.clicked.connect(lambda: serverui._onAbgabe(client_connection_id))
 
         button3 = QtWidgets.QPushButton('Screenshot updaten', self)
         button3.move(1020, 530)
-        button3.resize(150,40)
+        button3.resize(160,40)
         button3.clicked.connect(lambda: serverui._onScreenshots(client_connection_id))
 
         button4 = QtWidgets.QPushButton('Fenster schließen', self)
         button4.move(1020, 430)
-        button4.resize(150,40)
+        button4.resize(160,40)
         button4.clicked.connect(self._onClose)
 
 

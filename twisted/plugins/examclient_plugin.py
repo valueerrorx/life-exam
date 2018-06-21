@@ -99,8 +99,8 @@ class MyClientProtocol(basic.LineReceiver):
                 if self.line_data_list[2] == DataType.EXAM.value:  # initialize exam mode.. unzip and start exam
                     showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename, file_path, cleanup_abgabe)
+                    
                 elif self.line_data_list[2] == DataType.FILE.value:
-
                     if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
                         filename = "%s-%s" %(filename, datetime.datetime.now().strftime("%H-%M-%S")) #save with timecode
                         targetpath = os.path.join(SHARE_DIRECTORY, filename)
@@ -110,6 +110,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                     showDesktopMessage('File %s received!' %(filename))
                     fixFilePermissions(SHARE_DIRECTORY)
+                    
                 elif self.line_data_list[2] == DataType.PRINTER.value:
                     showDesktopMessage('Receiving Printer Configuration')
                     self._activatePrinterconfig(file_path)

@@ -11,6 +11,8 @@ class ClientList:
     def __init__(self):
         self.clients = dict()   # type: dict
 
+
+    ## client handling ##
     def get_client(self, key):
         client = self.clients.get(key, None)  # type: MyServerProtocol
         return client
@@ -21,6 +23,19 @@ class ClientList:
     def remove_client(self, client):
         del self.clients[client.clientConnectionID]
 
+    def kick_client(self, client_id):
+        client = self.get_client(client_id)
+        if client:
+            client.refused = True
+            client.sendEncodedLine("%s" % Command.REMOVED.value)
+            client.transport.loseConnection()
+            return client.clientName
+        return False
+    
+    
+    
+
+    ## client instructions ##
     def exit_exam(self, who):
         if not self.clients:
             return False
@@ -31,11 +46,7 @@ class ClientList:
             client = self.get_client(who)
             client.sendEncodedLine(line % client.clientConnectionID)    #replace %s in line with connectionID
         return True
-
-
-
-
-
+    
 
     def lock_screens(self, who):
         if not self.clients:
@@ -62,6 +73,9 @@ class ClientList:
         return True
 
 
+
+
+    ## client file requests (get from client) ##
     def request_screenshots(self, who):
         if not self.clients:
             return False
@@ -75,6 +89,7 @@ class ClientList:
 
         return True
 
+
     def request_abgabe(self, who):
         if not self.clients:
             return False
@@ -87,12 +102,16 @@ class ClientList:
         else:
             client = self.get_client(who)          
             client.sendEncodedLine(line % client.clientConnectionID) # filename still has an empty %s to fill with client id
-            
-           
 
         return True
 
 
+
+
+
+
+    
+    ## client file transfer (send to client)
     def send_file(self, file_path, who, datatype, cleanup_abgabe="none"):
         """
         Dispatches Method to prepare requested file transfer and sends file
@@ -137,6 +156,8 @@ class ClientList:
             client.setLineMode()
 
 
+
+    ## send bytes ##
     def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
         for b in read_bytes_from_file(file_path):
             client.transport.write(b)
@@ -144,11 +165,4 @@ class ClientList:
         client.transport.write(b'\r\n')
 
 
-    def kick_client(self, client_id):
-        client = self.get_client(client_id)
-        if client:
-            client.refused = True
-            client.sendEncodedLine("%s" % Command.REMOVED.value)
-            client.transport.loseConnection()
-            return client.clientName
-        return False
+

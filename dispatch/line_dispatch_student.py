@@ -182,19 +182,19 @@ def prepare_screenshot(client, filename, *args):
     return filename
 
 
-def prepare_folder(client, filename, *args):
-    """
-    Prepares requested folder to be sent as zip file
-    :param client: clientprotocol
-    :param filename: folder archive filename
-    :param args: (file_hash)
-    :return: filename
-    """
-    if filename in client.factory.files:
-        target_folder = client.factory.files[filename[0]]
-        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
-        shutil.make_archive(output_filename, 'zip', target_folder)
-        return "%s.zip" % filename
+#def prepare_folder(client, filename, *args):
+    #"""
+    #Prepares requested folder to be sent as zip file
+    #:param client: clientprotocol
+    #:param filename: folder archive filename
+    #:param args: (file_hash)
+    #:return: filename
+    #"""
+    #if filename in client.factory.files:
+        #target_folder = client.factory.files[filename[0]]
+        #output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
+        #shutil.make_archive(output_filename, 'zip', target_folder)
+        #return "%s.zip" % filename
 
 
 def prepare_abgabe(client, filename, *args):
@@ -245,6 +245,6 @@ Level 3 Dispatch
 """
 student_prepare_filetype_dispatcher = {
     DataType.SCREENSHOT.value: prepare_screenshot,
-    DataType.FOLDER.value: prepare_folder,
+    #DataType.FOLDER.value: prepare_folder,
     DataType.ABGABE.value: prepare_abgabe
 }

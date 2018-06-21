@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
+    <width>432</width>
     <height>251</height>
    </rect>
   </property>
@@ -37,7 +37,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>391</width>
+     <width>411</width>
      <height>231</height>
     </rect>
    </property>
@@ -70,10 +70,10 @@
     <widget class="QPushButton" name="start">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>150</y>
-       <width>91</width>
-       <height>31</height>
+       <x>120</x>
+       <y>140</y>
+       <width>100</width>
+       <height>40</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -87,10 +87,16 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>150</y>
-       <width>91</width>
-       <height>31</height>
+       <y>140</y>
+       <width>100</width>
+       <height>40</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="styleSheet">
       <string notr="true">padding:8px;</string>
@@ -102,7 +108,7 @@
     <widget class="QLineEdit" name="serverip">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>220</x>
        <y>30</y>
        <width>171</width>
        <height>31</height>
@@ -150,10 +156,10 @@
     <widget class="QLabel" name="serversearch">
      <property name="geometry">
       <rect>
-       <x>240</x>
-       <y>150</y>
+       <x>260</x>
+       <y>140</y>
        <width>131</width>
-       <height>31</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="layoutDirection">
@@ -166,10 +172,10 @@
     <widget class="QLabel" name="servercheck">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>150</y>
+       <x>220</x>
+       <y>140</y>
        <width>41</width>
-       <height>31</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -188,7 +194,7 @@
     <widget class="QLineEdit" name="pincode">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>220</x>
        <y>90</y>
        <width>171</width>
        <height>31</height>
@@ -201,7 +207,7 @@
     <widget class="QLabel" name="infoid_2">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>220</x>
        <y>70</y>
        <width>151</width>
        <height>18</height>
@@ -236,7 +242,7 @@
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>220</x>
        <y>10</y>
        <width>171</width>
        <height>20</height>
