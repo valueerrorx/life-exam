@@ -6,15 +6,10 @@
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-
 import os
 import sys
 
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
-
-sys.path.append(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 import shutil
 import zipfile
@@ -23,32 +18,27 @@ import datetime
 
 from twisted.internet import reactor, protocol, stdio, defer
 from twisted.protocols import basic
-from common import *
-from config import *
+from config.config import *
 from config.enums import DataType, Command
-from dispatch.line_dispatch_student import student_line_dispatcher
-import classes.system_commander as system_commander
-
 from twisted.application.internet import TCPClient
-# from twisted.application.service import Application
-
-
 from zope.interface import implementer
-
 
 from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 
+import classes.mutual_functions as mutual_functions
+import classes.system_commander as system_commander
+from classes.client2server import *
 
 class MyClientProtocol(basic.LineReceiver):
     def __init__(self, factory):
         self.factory = factory
-        #self.delimiter = '\n'
+        self.client_to_server = self.factory.client_to_server
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
-        prepareDirectories()  # cleans everything and copies script files 
+        mutual_functions.prepareDirectories()  # cleans everything and copies script files 
 
     # twisted
     def connectionMade(self):
@@ -59,7 +49,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.sendEncodedLine(line)
         
         print('Connected. Auth sent to the server')
-        showDesktopMessage('Connected. Auth sent to the server')
+        mutual_functions.showDesktopMessage('Connected. Auth sent to the server')
 
     # twisted
     def connectionLost(self, reason):
@@ -67,10 +57,10 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.line_data_list = ()
         print('Connection to the server has been lost')
-        showDesktopMessage('Connection to the server has been lost')
+        mutual_functions.showDesktopMessage('Connection to the server has been lost')
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "python3 client/student.py &"
+            command = "python3 client/client.py &"
             os.system(command)
             os._exit(1)
 
@@ -79,13 +69,11 @@ class MyClientProtocol(basic.LineReceiver):
         print(self.line_data_list)
         filename = self.line_data_list[3]
         cleanup_abgabe = self.line_data_list[5]
-        
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
-
 
         if data.endswith(b'\r\n'):
             data = data[:-2]
@@ -94,10 +82,10 @@ class MyClientProtocol(basic.LineReceiver):
             self.file_handler = None
             self.setLineMode()
 
-            if validate_file_md5_hash(file_path, self.line_data_list[4]):
+            if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[4]):
 
                 if self.line_data_list[2] == DataType.EXAM.value:  # initialize exam mode.. unzip and start exam
-                    showDesktopMessage('Initializing Exam Mode')
+                    mutual_functions.showDesktopMessage('Initializing Exam Mode')
                     self._startExam(filename, file_path, cleanup_abgabe)
                     
                 elif self.line_data_list[2] == DataType.FILE.value:
@@ -108,20 +96,18 @@ class MyClientProtocol(basic.LineReceiver):
                     else:
                         shutil.move(file_path, SHARE_DIRECTORY)
 
-                    showDesktopMessage('File %s received!' %(filename))
-                    fixFilePermissions(SHARE_DIRECTORY)
+                    mutual_functions.showDesktopMessage('File %s received!' %(filename))
+                    mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
                     
                 elif self.line_data_list[2] == DataType.PRINTER.value:
-                    showDesktopMessage('Receiving Printer Configuration')
+                    mutual_functions.showDesktopMessage('Receiving Printer Configuration')
                     self._activatePrinterconfig(file_path)
 
             else:
                 os.unlink(file_path)
                 print('File %s has been successfully transfered, but deleted due to invalid MD5 hash' % (filename))
-
         else:
             self.file_handler.write(data)
-
 
 
     def sendEncodedLine(self,line):
@@ -129,25 +115,51 @@ class MyClientProtocol(basic.LineReceiver):
         self.sendLine(line.encode() )
 
 
-
-
     # twisted
     def lineReceived(self, line):
-        """the only purpose of this function is to
-        trigger the line dispatcher which only exists to figure
-        out what the line tells the client to do..  (insteod of 
-        a simple if-else statement. 
-        
-        the dispatcher then triggers the correct function in in examclient_plugin.py
-        """
-        
+        """whenever the SERVER sent something """
         line = line.decode()   #decode the moment you recieve a line and encode it right before you send
-        print("DEBUG139: line received and decoded: %s" %line)
+        self.line_data_list = mutual_functions.clean_and_split_input(line)
+        print("\nDEBUG: line received and decoded:\n%s\n" % self.line_data_list)
+        self.line_dispatcher(line)
         
-        self.line_data_list = clean_and_split_input(line)
+
+
+    def line_dispatcher(self, line):
+        if len(self.line_data_list) == 0 or self.line_data_list == '':
+            return
+        """       
+        FILETRANSFER  (send oder get files)
+        command = self.line_data_list[0]    
+        task = self.line_data_list[1]     (SEND, GET)  (SCREENSHOT, ABGABE, EXAM, FILE, PRINTER)
+        filetype= self.line_data_list[2] 
+        filename = self.line_data_list[3] 
+        filehash = self.line_data_list[4] 
+        cleanup_abgabe = client.file_data[5]
+        """
+        command = {
+            Command.ENDMSG.value: self.client_to_server.end_msg,    
+            Command.REFUSED.value: self.client_to_server.connection_refused,  
+            Command.REMOVED.value: self.client_to_server.connection_removed, 
+            Command.FILETRANSFER.value: self.client_to_server.file_transfer_request,  
+            Command.LOCK.value: self.client_to_server.lock_screen,  
+            Command.UNLOCK.value: self.client_to_server.lock_screen, 
+            Command.EXITEXAM.value: self.client_to_server.exitExam, 
+        }
         
-        line_handler = student_line_dispatcher.get(self.line_data_list[0], None)
-        line_handler(self, line) if line_handler is not None else self.buffer.append(line)
+        line_handler = command.get(self.line_data_list[0], None)
+        line_handler(self) if line_handler is not None else self.buffer.append(line)  #attach "self" (client) # triggert entweder einen command oder (falls es einfach nur text ist) füllt einen buffer.. ENDMSG macht diesen dann als deskotp message sichtbar
+        
+        
+
+
+
+
+
+
+
+
+
 
 
     def _triggerAutosave(self):
@@ -193,7 +205,7 @@ class MyClientProtocol(basic.LineReceiver):
 
     def _sendFile(self, filename, filetype):
         """send a file to the server"""
-        self.factory.files = get_file_list(
+        self.factory.files = mutual_functions.get_file_list(
             self.factory.files_path)  # rebuild here just in case something changed (zip/screensho created )
 
         if not filename in self.factory.files:  # if folder exists
@@ -207,7 +219,7 @@ class MyClientProtocol(basic.LineReceiver):
             return  # TODO: inform that nothing has been done
         
         self.setRawMode()
-        for bytes in read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
+        for bytes in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
             self.transport.write(bytes)
 
         self.transport.write(b'\r\n')  # send this to inform the server that the datastream is finished
@@ -223,7 +235,7 @@ class MyClientProtocol(basic.LineReceiver):
         time.sleep(2)
 
         print("restarting cups service")
-        showDesktopMessage('Restarting Cups Printer Service')
+        mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
         command = "sudo systemctl restart cups.service &"
         os.system(command)
 
@@ -270,6 +282,8 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.files = None
         self.failcount = 0
         self.delay
+        self.client_to_server = ClientToServer() # type: ClientToServer
+        
         #self.factor = 1.8
 
     def clientConnectionFailed(self, connector, reason):
@@ -317,6 +331,7 @@ class MyServiceMaker(object):
     tapname = "examclient"
     description = "Exam Client"
     options = Options
+    print(EXAMCONFIG)
 
     def makeService(self, options):
         return TCPClient(options["host"],

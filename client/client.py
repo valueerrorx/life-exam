@@ -22,18 +22,16 @@ import os
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
 
-sys.path.append(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
-
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,application_path)
-
 #FIXME  need to add the application root to pythonpath for twisted plugin
 
 
+
+
 import qt5reactor
-from common import checkIP, prepareDirectories, clean_and_split_input
+import classes.mutual_functions as mutual_functions
 from config.config import *
 
 
@@ -45,10 +43,10 @@ class ClientDialog(QtWidgets.QDialog):
         self.completer = QtWidgets.QCompleter()
         self.completerlist = []
         self._initUi()
-        prepareDirectories()
+        mutual_functions.prepareDirectories()
 
     def _initUi(self):
-        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "student.ui"))
+        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "client.ui"))
         self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
@@ -80,7 +78,7 @@ class ClientDialog(QtWidgets.QDialog):
         ID = self.ui.studentid.text()
         PIN = self.ui.pincode.text()   #BUG FIXME - wenn pincode ein sonderzeichen beinhaltet crashed alles
         
-        if checkIP(SERVER_IP):
+        if mutual_functions.checkIP(SERVER_IP):
             if ID == "":
                 self._changePalette(self.ui.studentid, "warn")
             elif PIN == "":
@@ -146,7 +144,7 @@ class MulticastLifeClient(DatagramProtocol):
         
         if "SERVER" in datagram:
             self.server_ip = address[0]
-            self.info = clean_and_split_input(datagram)
+            self.info = mutual_functions.clean_and_split_input(datagram)
             
             dialog.disconnected_clients.update({ self.info[1] : self.info[2:] })   # { servername : ['clientname1','clientname2'] }
 

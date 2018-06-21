@@ -24,34 +24,6 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
-from client.lockscreen import ScreenlockWindow
-
-
-def lockScreen(client, line):
-    """opens lockscreen.py or kills it """
-    lines = clean_and_split_input(line)
-    # FIXME check if client.app already exists !!
-    if lines[0] == "LKS":
-        print("locking screen")
-
-        ##check if a serverprocess is running and do not lock screen if any (dirty hack to prevent locking yourself as a teacher when connected at the same time
-        #answer = subprocess.Popen(["ps aux|grep server.py|wc -l"],shell=True, stdout=subprocess.PIPE)
-        #answer = str(answer.communicate()[0])
-        #print answer
-        #if not answer == "0":
-            #return
-
-        command = "exec sudo -u %s -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true" %(USER)
-        os.system(command)
-
-        startcommand = "exec sudo -u %s -H python client/lockscreen.py &" %(USER) #kill it if it already exists
-        os.system(startcommand)
-
-    else:
-        print("closing lockscreen")
-        startcommand = "exec sudo pkill -9 -f lockscreen.py &"
-        os.system(startcommand)
-
 
 
 
