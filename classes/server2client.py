@@ -12,7 +12,6 @@ class ServerToClient:
     def __init__(self):
         self.clients = dict()   # type: dict
 
-
     ## client handling ##
     def get_client(self, key):
         client = self.clients.get(key, None)  # type: MyServerProtocol
@@ -167,50 +166,3 @@ class ServerToClient:
         
         
         
-        
-        
-    def checkclientAuth(self, line_data_list):
-        """
-        searches for the newID in factory.clients and rejects the connection if found or wrong pincode
-        :param newID: string
-        :param pincode: int
-        :return:
-        """
-        newID = line_data_list[1] 
-        pincode = line_data_list[2]
-        
-        
-        if newID in self.clients.keys():
-            print("this user already exists and is connected")   #TEST keys contains numbers - newID is a name .. how does this work?
-            self.refused = True
-            self.sendEncodedLine(Command.REFUSED.value)
-            self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
-            return
-        elif int(pincode) != self.factory.pincode:
-            print("wrong pincode")
-            self.refused = True
-            self.sendEncodedLine(Command.REFUSED.value)
-            self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID ))
-            return
-        else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
-            print("pincode ok")
-            clientName = newID
-            self.factory.window.log('New Connection from <b>%s </b>' % (newID) )
-            #transfer, send, screenshot, filename, hash, cleanabgabe
-            line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
-            self.sendEncodedLine(line)
-            return
-        
-        
-        
-    def get_file_request(self):
-        """
-        Puts server into raw mode to receive files
-        """
-        self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
-        client.setRawMode()
-
-
-

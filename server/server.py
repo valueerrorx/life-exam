@@ -693,7 +693,7 @@ class MyServerProtocol(basic.LineReceiver):
         line = line.decode()  # we get bytes but need strings
         self.line_data_list = mutual_functions.clean_and_split_input(line)
         print("\nDEBUG: line received and decoded:\n%s\n" % self.line_data_list)
-        self.line_dispatcher()
+        self.line_dispatcher()    #pass "self" as "client"
        
        
 
@@ -760,7 +760,7 @@ class MyServerProtocol(basic.LineReceiver):
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             print("pincode ok")
-            clientName = newID
+            self.clientName = newID
             self.factory.window.log('New Connection from <b>%s </b>' % (newID) )
             #transfer, send, screenshot, filename, hash, cleanabgabe
             line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])

@@ -6,6 +6,14 @@
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
+# for debugging run plugin from terminal 
+# twistd -n --pidfile client.pid examclient -p 5000 -h 10.2.1.251 -i testuser -c 1234
+
+
+
+
+
+
 import os
 import sys
 
