@@ -1,8 +1,0 @@
-EXAM_FIREWALL = "exam_firewall.sh"
-HOTSPOT = "gui-activate-lifehotspot.sh"
-GETIP = "gui-getmyip.sh"
-STARTEXAM = "startexam.sh"
-STOPEXAM = "stopexam.sh"
-TERMINATE_EXAM_PROCESS = "terminate-exam-process.sh"
-AUTO_SHOT = "auto-screenshot.sh"
-SHOT = "screenshot.sh"
