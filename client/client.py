@@ -18,15 +18,20 @@ from PyQt5.QtGui import QIcon, QColor, QRegExpValidator
 from PyQt5.QtCore import QRegExp
 import sys
 import os
+import subprocess
 
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
+print(sys.path)
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
+
 application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0,application_path)
-#FIXME  need to add the application root to pythonpath for twisted plugin
+sys.path.insert(0, application_path)
 
+print(sys.path)
+
+
+
+#FIXME  need to add the application root to pythonpath for twisted plugin
+os.environ['PYTHONPATH'] = application_path
 
 
 
@@ -88,9 +93,14 @@ class ClientDialog(QtWidgets.QDialog):
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 os.system("sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
 
+                from twisted.plugin import IPlugin, getPlugins
+                list(getPlugins(IPlugin))
+
                 command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s' &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
                 os.system(command)
+                
+                #subprocess.call(command, shell=True,env=dict(os.environ ))
                 # for non daemon mode manual to track bugs
                 #sudo twistd -n --pidfile /home/student/.life/EXAM/client.pid examclient -p 5000 -h 10.0.0.110 -i ich -c 2604
             
