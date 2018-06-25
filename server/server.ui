@@ -846,7 +846,7 @@
                <x>0</x>
                <y>0</y>
                <width>852</width>
-               <height>1014</height>
+               <height>996</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -1026,7 +1026,7 @@
                              <string>0 - Automatische Abgabe deaktiviert</string>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">margin:0px; padding:0px;margin-left:3px;</string>
+                             <string notr="true">padding:0px;</string>
                             </property>
                             <property name="wrapping">
                              <bool>false</bool>
