@@ -583,22 +583,22 @@ class ScreenshotWindow(QtWidgets.QDialog):
 
         button1 = QtWidgets.QPushButton('Screenshot archivieren', self)
         button1.move(1020, 580)
-        button1.resize(160,40)
+        button1.resize(180,40)
         button1.clicked.connect(self._archivescreenshot)
 
         button2 = QtWidgets.QPushButton('Abgabe holen', self)
         button2.move(1020, 480)
-        button2.resize(160,40)
+        button2.resize(180,40)
         button2.clicked.connect(lambda: serverui._onAbgabe(client_connection_id))
 
         button3 = QtWidgets.QPushButton('Screenshot updaten', self)
         button3.move(1020, 530)
-        button3.resize(160,40)
+        button3.resize(180,40)
         button3.clicked.connect(lambda: serverui._onScreenshots(client_connection_id))
 
         button4 = QtWidgets.QPushButton('Fenster schließen', self)
         button4.move(1020, 430)
-        button4.resize(160,40)
+        button4.resize(180,40)
         button4.clicked.connect(self._onClose)
 
 
@@ -642,6 +642,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.line_data_list = ()
         self.refused = False
         self.clientConnectionID = ""
+        self.filetransfer_fail_count = 0
 
     # twisted
     def connectionMade(self):
@@ -694,6 +695,7 @@ class MyServerProtocol(basic.LineReceiver):
 
             if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
+                self.filetransfer_fail_count = 0
                 
                 if self.line_data_list[1] == DataType.SCREENSHOT.value:  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
@@ -716,8 +718,14 @@ class MyServerProtocol(basic.LineReceiver):
                 os.unlink(file_path)
                 self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
                 self.transport.write(Command.ENDMSG.tobytes() + b'\r\n')
-                self.factory.window.log(
-                    'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
+                self.factory.window.log('File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
+                # request flie again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
+                if self.line_data_list[1] == DataType.ABGABE.value and self.filetransfer_fail_count <= 1:
+                    self.filetransfer_fail_count += 1
+                    self.factory.window.log('Failed transfers: %s' %self.filetransfer_fail_count)
+                    self.factory.window._onAbgabe(self.clientConnectionID)
+                else:
+                    self.filetransfer_fail_count = 0
 
         else:
             self.file_handler.write(data)

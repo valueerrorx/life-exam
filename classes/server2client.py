@@ -80,6 +80,7 @@ class ServerToClient:
         if not self.clients:
             return False
 
+        print(who)
         line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, "%s")
         if who is "all":
             self.broadcast_line(line)

@@ -325,7 +325,7 @@ class Options(usage.Options):
 @implementer(IServiceMaker, IPlugin)
 class MyServiceMaker(object):
     tapname = "examclient"
-    description = "LiFE-Exam Client"
+    description = "LiFE-Exam Clientt"
     options = Options
 
     def makeService(self, options):

@@ -6,12 +6,11 @@ __author__ = 'Thomas Michael Weissel'
 
 
 import sys
+import setuptools
 
-try:
-    import twisted
-except ImportError:
-    raise SystemExit("twisted not found.  Make sure you "
-                     "have installed the Twisted core package.")
+# removing this app:
+# sudo rm -r /usr/local/lib/python3.5/dist-packages/classes /usr/local/lib/python3.5/dist-packages/config /usr/local/lib/python3.5/dist-packages/twisted/plugins/examclient_plugin.py
+# sudo rm -r /usr/local/lib/python3.5/dist-packages/life_exam-1.99-py3.5.egg/ 
 
 from distutils.core import setup
 
@@ -31,6 +30,7 @@ if __name__ == '__main__':
         license="GPLv3",
         author_email="valueerror@gmail.com",
         url="http://life-edu.eu",
+        install_requires=['twisted>=18.4.0'],
         packages=[
             "config",
             "classes",
