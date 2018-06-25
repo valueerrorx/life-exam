@@ -184,7 +184,7 @@ class MyClientProtocol(basic.LineReceiver):
 
             else:  # make a list of the other running apps
                 command = "xdotool search --name %s &" % (app)
-                app_ids = subprocess.check_output(command, shell=True).rstrip()
+                app_ids = subprocess.check_output(command, shell=True).decode().rstrip()
                 if app_ids:
                     app_ids = app_ids.split('\n')
                     for app_id in app_ids:

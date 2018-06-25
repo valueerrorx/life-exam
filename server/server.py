@@ -102,6 +102,13 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
 
+        if self.factory.rawmode == True:
+            self.log("waiting for ongoing filetransfers to finish ..")
+            return
+        else:
+            self.factory.rawmode = True;   #LOCK all other fileoperations 
+
+
         if not server_to_client.clients:
             self.log("no clients connected")
             return
@@ -179,6 +186,12 @@ class ServerUI(QtWidgets.QDialog):
         """send a file to all clients"""
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
+        
+        if self.factory.rawmode == True:
+            self.log("waiting for ongoing filetransfers to finish ..")
+            return
+        else:
+            self.factory.rawmode = True;      #LOCK all other fileoperations 
 
         if not server_to_client.clients:
             self.log("no clients connected")
@@ -203,29 +216,50 @@ class ServerUI(QtWidgets.QDialog):
         file_path = file_path[0]
         return file_path
 
+
+
+
+
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
         self._workingIndicator(True, 1000)
         
-        print(self.factory.rawmode)
         if self.factory.rawmode == True:
-            self.log("waiting to finish ongoing filetransfers..")
+            self.log("waiting for ongoing filetransfers to finish ..")
             return
+        else:
+            self.factory.rawmode = True;   #LOCK all other fileoperations 
+    
         if not self.factory.server_to_client.request_screenshots(who):
             self.log("no clients connected")
+
+
 
     def _onShowIP(self):
         self._workingIndicator(True, 500)
         system_commander.show_ip()
 
+
+
     def _onAbgabe(self, who):
         self._workingIndicator(True, 500)
+        
+        if self.factory.rawmode == True:
+            self.log("waiting for ongoing filetransfers to finish ..")
+            return
+        else:
+            self.factory.rawmode = True;   #LOCK all other fileoperations 
+            
         """get SHARE folder"""
         self.log('<b>Requesting Client Folder SHARE </b>')
         itime = 2000 if who is 'all' else 1000
         self._workingIndicator(True, itime)
+
         if not self.factory.server_to_client.request_abgabe(who):
+            self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("no clients connected")
+
+
 
     def _on_start_exam(self, who):
         """
@@ -236,6 +270,13 @@ class ServerUI(QtWidgets.QDialog):
         """
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
+        
+        if self.factory.rawmode == True:
+            self.log("waiting for ongoing filetransfers to finish ..")
+            return
+        else:
+            self.factory.rawmode = True;
+        
         if not server_to_client.clients:
             self.log("no clients connected")
             return
@@ -322,18 +363,11 @@ class ServerUI(QtWidgets.QDialog):
                         i[0].setPalette(palettewarn)
 
             system_commander.dialog_popup("Die Firewall wird aktiviert!")
-
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
             startcommand = "exec %s start &" % (scriptfile)
             os.system(startcommand)
             self.ui.testfirewall.setText("Stoppe Firewall")
 
-    def _onLoadDefaults(self):
-        self._workingIndicator(True, 500)
-        mutual_functions.showDesktopMessage('Default Configuration for EXAM Desktop restored.')
-        self.log('Default Configuration for EXAM Desktop restored.')
-
-        system_commander.copy('./DATA/EXAMCONFIG', WORK_DIRECTORY)
 
     def _onAutoabgabe(self):
         self._workingIndicator(True, 500)
@@ -655,7 +689,8 @@ class MyServerProtocol(basic.LineReceiver):
             self.file_handler.close()
             self.file_handler = None
             self.setLineMode()
-            self.factory.rawmode = False;
+            self.factory.rawmode = False;  #filetransfer finished "UNLOCK" fileopertions
+          
 
             if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
@@ -736,7 +771,6 @@ class MyServerProtocol(basic.LineReceiver):
         Puts server into raw mode to receive files
         """
         self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
-        self.factory.rawmode = True;
         self.setRawMode()  # this is a file - set to raw mode
         
 
@@ -806,7 +840,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.disconnected_list = []
         self.files = None
         self.clientslocked = False
-        self.rawmode = False;
+        self.rawmode = False;  #this is set to True the moment the server sends examconfig, sends file, sends printconf, requests abgabe, requests screenshot
         self.pincode = mutual_functions.generatePin(4)
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI

@@ -134,6 +134,7 @@ class ServerToClient:
                 who = client.clientName
                 self.send_bytes(client, file_path)
                 client.setLineMode()
+                client.factory.rawmode = False  # UNLOCK all fileoperations 
 
             return [True, filename, file_size, who]
 
@@ -154,6 +155,7 @@ class ServerToClient:
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()
+            client.factory.rawmode = False  # UNLOCK all fileoperations 
 
 
 
