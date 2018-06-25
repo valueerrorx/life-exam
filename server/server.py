@@ -206,6 +206,11 @@ class ServerUI(QtWidgets.QDialog):
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
         self._workingIndicator(True, 1000)
+        
+        print(self.factory.rawmode)
+        if self.factory.rawmode == True:
+            self.log("waiting to finish ongoing filetransfers..")
+            return
         if not self.factory.server_to_client.request_screenshots(who):
             self.log("no clients connected")
 
@@ -650,6 +655,7 @@ class MyServerProtocol(basic.LineReceiver):
             self.file_handler.close()
             self.file_handler = None
             self.setLineMode()
+            self.factory.rawmode = False;
 
             if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):  # everything ok..  file received
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
@@ -730,7 +736,9 @@ class MyServerProtocol(basic.LineReceiver):
         Puts server into raw mode to receive files
         """
         self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
+        self.factory.rawmode = True;
         self.setRawMode()  # this is a file - set to raw mode
+        
 
 
 
@@ -798,6 +806,7 @@ class MyServerFactory(protocol.ServerFactory):
         self.disconnected_list = []
         self.files = None
         self.clientslocked = False
+        self.rawmode = False;
         self.pincode = mutual_functions.generatePin(4)
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
         self.window = ServerUI(self)                            # type: ServerUI
