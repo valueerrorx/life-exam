@@ -13,7 +13,14 @@ Tools needed in order to provide 100% functionality are:
 
 ![Image of life-exam](http://life-edu.eu/images/life-exam2.png)
 
+Run 
+`sudo python3 setup.py`
+in order to install the twisted plugin.
 
 
+`sudo python3 server/server.py`
+runs the server.
 
+`sudo python3 client/client.py`
+runs the client.
 
