@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>273</height>
+    <width>502</width>
+    <height>323</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,7 +36,7 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="font">
@@ -59,7 +59,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -78,9 +78,9 @@
       <widget class="QPushButton" name="start">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>20</x>
          <y>160</y>
-         <width>145</width>
+         <width>150</width>
          <height>36</height>
         </rect>
        </property>
@@ -95,38 +95,12 @@
          <normaloff>../pixmaps/connect.png</normaloff>../pixmaps/connect.png</iconset>
        </property>
       </widget>
-      <widget class="QPushButton" name="exit">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>160</y>
-         <width>145</width>
-         <height>36</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">padding:8px;</string>
-       </property>
-       <property name="text">
-        <string>Abbrechen</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../pixmaps/window-close.png</normaloff>../pixmaps/window-close.png</iconset>
-       </property>
-      </widget>
       <widget class="QLineEdit" name="serverip">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>190</x>
          <y>40</y>
-         <width>145</width>
+         <width>150</width>
          <height>36</height>
         </rect>
        </property>
@@ -145,7 +119,7 @@
         <rect>
          <x>20</x>
          <y>100</y>
-         <width>145</width>
+         <width>150</width>
          <height>36</height>
         </rect>
        </property>
@@ -172,7 +146,7 @@
       <widget class="QLabel" name="serversearch">
        <property name="geometry">
         <rect>
-         <x>360</x>
+         <x>220</x>
          <y>160</y>
          <width>151</width>
          <height>41</height>
@@ -191,7 +165,7 @@
       <widget class="QLabel" name="servercheck">
        <property name="geometry">
         <rect>
-         <x>330</x>
+         <x>190</x>
          <y>160</y>
          <width>31</width>
          <height>41</height>
@@ -216,9 +190,9 @@
       <widget class="QLineEdit" name="pincode">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>190</x>
          <y>100</y>
-         <width>145</width>
+         <width>150</width>
          <height>36</height>
         </rect>
        </property>
@@ -235,7 +209,7 @@
       <widget class="QLabel" name="infoid_2">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>190</x>
          <y>80</y>
          <width>151</width>
          <height>18</height>
@@ -253,7 +227,7 @@
         <rect>
          <x>20</x>
          <y>40</y>
-         <width>145</width>
+         <width>150</width>
          <height>36</height>
         </rect>
        </property>
@@ -261,7 +235,7 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true"/>
+        <string notr="true">text-align:center;</string>
        </property>
        <property name="frame">
         <bool>true</bool>
@@ -270,7 +244,7 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>190</x>
          <y>20</y>
          <width>171</width>
          <height>20</height>
@@ -302,10 +276,10 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>450</x>
+         <x>390</x>
          <y>20</y>
          <width>61</width>
-         <height>61</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="text">
@@ -328,10 +302,13 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>50</y>
-         <width>181</width>
-         <height>44</height>
+         <y>40</y>
+         <width>150</width>
+         <height>36</height>
         </rect>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
        </property>
        <property name="styleSheet">
         <string notr="true">padding:4px;</string>
@@ -353,10 +330,10 @@
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>450</x>
+         <x>390</x>
          <y>20</y>
          <width>61</width>
-         <height>61</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="text">
@@ -385,6 +362,69 @@
      </widget>
     </widget>
    </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">margin:0px;padding:0px;</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="exit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>145</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>145</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">padding:8px;margin:0px;</string>
+        </property>
+        <property name="text">
+         <string>Abbrechen</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../pixmaps/window-close.png</normaloff>../pixmaps/window-close.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -394,7 +434,6 @@
   <tabstop>studentid</tabstop>
   <tabstop>pincode</tabstop>
   <tabstop>start</tabstop>
-  <tabstop>exit</tabstop>
   <tabstop>offlineexam</tabstop>
  </tabstops>
  <resources/>

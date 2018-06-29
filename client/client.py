@@ -82,7 +82,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.msg = QtWidgets.QMessageBox()
         self.msg.setIcon(QtWidgets.QMessageBox.Information)
         self.msg.setText("Wollen sie in den abgesicherten Exam Modus wechseln?")
-        self.msg.setDetailedText("Automatische Abgabe, senden und empfangen von Dateien sind in diesem Modus nicht möglich.")
+        self.msg.setDetailedText("Die automatische Abgabe,\nScreenlock, senden und empfangen von Dateien\nund andere Funktionen sind in diesem Modus nicht verfügbar.")
         self.msg.setWindowTitle("LiFE Exam")
         self.msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         retval = self.msg.exec_()   # 16384 = yes, 65536 = no
