@@ -52,6 +52,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
+        self.ui.offlineexam.clicked.connect(self._on_offline_exam)
         self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)
         self.ui.serverdropdown.activated.connect(self._updateIP)
         self.ui.studentid.textChanged.connect(lambda: self._changePalette(self.ui.studentid, 'ok'))
@@ -74,6 +75,33 @@ class ClientDialog(QtWidgets.QDialog):
 
     def _onAbbrechen(self):  # Exit button
         self.ui.close()
+
+
+    def _on_offline_exam(self):
+        
+        self.msg = QtWidgets.QMessageBox()
+        self.msg.setIcon(QtWidgets.QMessageBox.Information)
+        self.msg.setText("Wollen sie in den abgesicherten Exam Modus wechseln?")
+        self.msg.setDetailedText("Automatische Abgabe, senden und empfangen von Dateien sind in diesem Modus nicht möglich.")
+        self.msg.setWindowTitle("LiFE Exam")
+        self.msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        retval = self.msg.exec_()   # 16384 = yes, 65536 = no
+       
+        if str(retval) == "16384":
+            command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
+            os.system(command)
+            time.sleep(2)
+            startcommand = "sudo %s/startexam.sh exam &" %(EXAMCONFIG_DIRECTORY) # start as user even if the twistd daemon is run by root
+            os.system(startcommand)  # start script
+        else:
+            self.msg = False
+        
+        
+        
+        
+       
+
+
 
     def _onStartExamClient(self):
         SERVER_IP = self.ui.serverip.text()

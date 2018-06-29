@@ -59,7 +59,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -324,7 +324,7 @@
       <attribute name="title">
        <string>Offline Exam</string>
       </attribute>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="offlineexam">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -395,7 +395,7 @@
   <tabstop>pincode</tabstop>
   <tabstop>start</tabstop>
   <tabstop>exit</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>offlineexam</tabstop>
  </tabstops>
  <resources/>
  <connections/>
