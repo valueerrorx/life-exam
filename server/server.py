@@ -102,16 +102,17 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
 
-        if self.factory.rawmode == True:
+        if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
             self.log("waiting for ongoing filetransfers to finish ..")
             return
         else:
-            self.factory.rawmode = True;   #LOCK all other fileoperations 
+            if not server_to_client.clients:        #check if there are clients connected
+                self.log("no clients connected")
+                return
+            self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
 
 
-        if not server_to_client.clients:
-            self.log("no clients connected")
-            return
+ 
 
         self._workingIndicator(True, 4000)
         self.log('<b>Sending Printer Configuration to All Clients </b>')
@@ -182,20 +183,20 @@ class ServerUI(QtWidgets.QDialog):
             self.workinganimation.stop()
             self.ui.working.hide()
 
+
     def _onSendFile(self, who):
         """send a file to all clients"""
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
         
-        if self.factory.rawmode == True:
+        if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
             self.log("waiting for ongoing filetransfers to finish ..")
             return
         else:
-            self.factory.rawmode = True;      #LOCK all other fileoperations 
-
-        if not server_to_client.clients:
-            self.log("no clients connected")
-            return
+            if not server_to_client.clients:        #check if there are clients connected
+                self.log("no clients connected")
+                return
+            self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
 
         file_path = self._showFilePicker(SHARE_DIRECTORY)
 
@@ -207,6 +208,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
             else:
                 self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+
 
     def _showFilePicker(self, directory):
         # show filepicker
@@ -231,6 +233,7 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.rawmode = True;   #LOCK all other fileoperations 
     
         if not self.factory.server_to_client.request_screenshots(who):
+            self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("no clients connected")
 
 
@@ -242,18 +245,17 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onAbgabe(self, who):
+        """get SHARE folder"""
         self._workingIndicator(True, 500)
-        
+        self.log('<b>Requesting Client Folder SHARE </b>')
+        itime = 2000 if who is 'all' else 1000
+        self._workingIndicator(True, itime)
+
         if self.factory.rawmode == True:
             self.log("waiting for ongoing filetransfers to finish ..")
             return
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
-            
-        """get SHARE folder"""
-        self.log('<b>Requesting Client Folder SHARE </b>')
-        itime = 2000 if who is 'all' else 1000
-        self._workingIndicator(True, itime)
 
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
@@ -271,16 +273,15 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
         
-        if self.factory.rawmode == True:
+        if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
             self.log("waiting for ongoing filetransfers to finish ..")
             return
         else:
-            self.factory.rawmode = True;
-        
-        if not server_to_client.clients:
-            self.log("no clients connected")
-            return
-
+            if not server_to_client.clients:        #check if there are clients connected
+                self.log("no clients connected")
+                return
+            self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
+    
         self._workingIndicator(True, 4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
 
@@ -539,8 +540,8 @@ class ServerUI(QtWidgets.QDialog):
         if not self.msg:
             self._onAbbrechen()
 
+
     def _onAbbrechen(self):  # Exit button
-        
         self.msg = QtWidgets.QMessageBox()
         self.msg.setIcon(QtWidgets.QMessageBox.Information)
         self.msg.setText("Wollen sie das Programm\nLiFE Exam Server \nbeenden?")
