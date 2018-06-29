@@ -20,18 +20,15 @@ import sys
 import os
 import subprocess
 
-print(sys.path)
-
 
 application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, application_path)
 
-print(sys.path)
 
-
-
-#FIXME  need to add the application root to pythonpath for twisted plugin
-os.environ['PYTHONPATH'] = application_path
+# FIXME  need to add the application root to pythonpath for twisted plugin
+# os.environ['PYTHONPATH'] = application_path
+# no need for that... setup.py will install the twisted plugin into the systemdirectory 
+# this is only needed for twisted 18.4.0 (probably a bug) because it ignores the app root directory 
 
 
 
@@ -52,7 +49,7 @@ class ClientDialog(QtWidgets.QDialog):
 
     def _initUi(self):
         self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "client.ui"))
-        self.ui.setWindowIcon(QIcon("pixmaps/security.png"))
+        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)

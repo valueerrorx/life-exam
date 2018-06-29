@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>251</height>
+    <width>552</width>
+    <height>273</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Exam Student</string>
+   <string>Exam Client</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../pixmaps/security-high.png</normaloff>../pixmaps/security-high.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -32,256 +36,366 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <widget class="QTabWidget" name="tabWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>411</width>
-     <height>231</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Ubuntu</family>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="whatsThis">
-    <string/>
-   </property>
-   <property name="accessibleName">
-    <string/>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">padding:0px;</string>
-   </property>
-   <property name="tabShape">
-    <enum>QTabWidget::Rounded</enum>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Verbindungseinstellungen</string>
-    </attribute>
-    <widget class="QPushButton" name="start">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>140</y>
-       <width>100</width>
-       <height>40</height>
-      </rect>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="font">
+      <font>
+       <family>Ubuntu</family>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
      </property>
-     <property name="styleSheet">
-      <string notr="true">padding:8px;</string>
-     </property>
-     <property name="text">
-      <string>Verbinden</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="exit">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>140</y>
-       <width>100</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">padding:8px;</string>
-     </property>
-     <property name="text">
-      <string>Abbrechen</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="serverip">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>30</y>
-       <width>171</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">padding:0px;</string>
-     </property>
-     <property name="text">
+     <property name="whatsThis">
       <string/>
      </property>
-     <property name="placeholderText">
-      <string>0.0.0.0</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="studentid">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>171</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">padding:0px;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="infoid">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>261</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Benutzerkennung</string>
-     </property>
-     <property name="indent">
-      <number>2</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="serversearch">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>140</y>
-       <width>131</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="text">
-      <string>Looking for Server...</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="servercheck">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>140</y>
-       <width>41</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">margin-top:2px;</string>
-     </property>
-     <property name="text">
+     <property name="accessibleName">
       <string/>
      </property>
-     <property name="pixmap">
-      <pixmap>../pixmaps/cloud-computing.png</pixmap>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="pincode">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>90</y>
-       <width>171</width>
-       <height>31</height>
-      </rect>
-     </property>
      <property name="styleSheet">
       <string notr="true">padding:0px;</string>
      </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset>
+        <normaloff>../pixmaps/network.png</normaloff>../pixmaps/network.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>LiFE Exam     </string>
+      </attribute>
+      <widget class="QPushButton" name="start">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>160</y>
+         <width>145</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:8px;</string>
+       </property>
+       <property name="text">
+        <string>Verbinden</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../pixmaps/connect.png</normaloff>../pixmaps/connect.png</iconset>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="exit">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>160</y>
+         <width>145</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:8px;</string>
+       </property>
+       <property name="text">
+        <string>Abbrechen</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../pixmaps/window-close.png</normaloff>../pixmaps/window-close.png</iconset>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="serverip">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>40</y>
+         <width>145</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:0px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>0.0.0.0</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="studentid">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>100</y>
+         <width>145</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:0px;</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="infoid">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>80</y>
+         <width>261</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Benutzerkennung</string>
+       </property>
+       <property name="indent">
+        <number>2</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="serversearch">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>160</y>
+         <width>151</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">margin-bottom:4px;</string>
+       </property>
+       <property name="text">
+        <string>Looking for Server...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="servercheck">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>160</y>
+         <width>31</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">margin:0px;margin-bottom:3px;padding:0px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>../pixmaps/cloud-computing.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="pincode">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>100</y>
+         <width>145</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:0px;</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="infoid_2">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>80</y>
+         <width>151</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pincode</string>
+       </property>
+       <property name="indent">
+        <number>2</number>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="serverdropdown">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>145</width>
+         <height>36</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>20</y>
+         <width>171</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>IP Adresse</string>
+       </property>
+       <property name="indent">
+        <number>2</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="infoid_3">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>151</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Prüfungsname</string>
+       </property>
+       <property name="indent">
+        <number>2</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>20</y>
+         <width>61</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>../pixmaps/shield.png</pixmap>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset>
+        <normaloff>../pixmaps/disconnect.png</normaloff>../pixmaps/disconnect.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Offline Exam</string>
+      </attribute>
+      <widget class="QPushButton" name="pushButton">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>50</y>
+         <width>181</width>
+         <height>44</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:4px;</string>
+       </property>
+       <property name="text">
+        <string>Starte Exam</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../pixmaps/document-edit.png</normaloff>../pixmaps/document-edit.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>20</y>
+         <width>61</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>../pixmaps/shield.png</pixmap>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>401</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LiFE Exam Offline - Session starten.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="indent">
+        <number>2</number>
+       </property>
+      </widget>
+     </widget>
     </widget>
-    <widget class="QLabel" name="infoid_2">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>70</y>
-       <width>151</width>
-       <height>18</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Pincode</string>
-     </property>
-     <property name="indent">
-      <number>2</number>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="serverdropdown">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>171</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="frame">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>10</y>
-       <width>171</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>IP Adresse</string>
-     </property>
-     <property name="indent">
-      <number>2</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="infoid_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>151</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Name der Prüfung</string>
-     </property>
-     <property name="indent">
-      <number>2</number>
-     </property>
-    </widget>
-   </widget>
-  </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
+  <tabstop>serverdropdown</tabstop>
+  <tabstop>serverip</tabstop>
   <tabstop>studentid</tabstop>
   <tabstop>pincode</tabstop>
   <tabstop>start</tabstop>
-  <tabstop>serverdropdown</tabstop>
-  <tabstop>serverip</tabstop>
   <tabstop>exit</tabstop>
+  <tabstop>pushButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
