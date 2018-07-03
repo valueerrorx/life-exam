@@ -846,7 +846,7 @@
                <x>0</x>
                <y>0</y>
                <width>852</width>
-               <height>1028</height>
+               <height>992</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -952,13 +952,13 @@
                            <widget class="QLabel" name="label_17">
                             <property name="minimumSize">
                              <size>
-                              <width>230</width>
+                              <width>240</width>
                               <height>0</height>
                              </size>
                             </property>
                             <property name="maximumSize">
                              <size>
-                              <width>130</width>
+                              <width>240</width>
                               <height>16777215</height>
                              </size>
                             </property>
@@ -967,6 +967,22 @@
                             </property>
                             <property name="text">
                              <string>Prüfungsname</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="cleanabgabe">
+                            <property name="focusPolicy">
+                             <enum>Qt::TabFocus</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px; margin-left:0px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Schülerordner 'share' bei Prüfungsbeginn löschen</string>
+                            </property>
+                            <property name="checked">
+                             <bool>false</bool>
                             </property>
                            </widget>
                           </item>
@@ -1057,13 +1073,13 @@
                            <widget class="QLabel" name="label_6">
                             <property name="minimumSize">
                              <size>
-                              <width>230</width>
+                              <width>240</width>
                               <height>0</height>
                              </size>
                             </property>
                             <property name="maximumSize">
                              <size>
-                              <width>130</width>
+                              <width>240</width>
                               <height>16777215</height>
                              </size>
                             </property>
@@ -1159,8 +1175,14 @@
                            <widget class="QLabel" name="label_25">
                             <property name="minimumSize">
                              <size>
-                              <width>230</width>
+                              <width>240</width>
                               <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>240</width>
+                              <height>16777215</height>
                              </size>
                             </property>
                             <property name="styleSheet">
@@ -1205,35 +1227,6 @@
                           <property name="bottomMargin">
                            <number>0</number>
                           </property>
-                          <item>
-                           <widget class="QCheckBox" name="cleanabgabe">
-                            <property name="focusPolicy">
-                             <enum>Qt::TabFocus</enum>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">margin:4px; padding:4px; margin-left:122px;</string>
-                            </property>
-                            <property name="text">
-                             <string>  Schülerordner 'share' bei Prüfungsbeginn löschen</string>
-                            </property>
-                            <property name="checked">
-                             <bool>false</bool>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <spacer name="horizontalSpacer_12">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
                          </layout>
                         </widget>
                        </item>
@@ -2501,7 +2494,6 @@
   <tabstop>examlabeledit1</tabstop>
   <tabstop>aintervall</tabstop>
   <tabstop>ssintervall</tabstop>
-  <tabstop>cleanabgabe</tabstop>
   <tabstop>applist</tabstop>
   <tabstop>showip</tabstop>
   <tabstop>starthotspot</tabstop>

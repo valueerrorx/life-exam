@@ -463,7 +463,7 @@ class ServerUI(QtWidgets.QDialog):
         widget.setLayout(grid)
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
-        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(item.pID, item.id, screenshot_file_path)
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(item.pID, item.id, screenshot_file_path, item.disabled)
 
         self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
@@ -490,7 +490,10 @@ class ServerUI(QtWidgets.QDialog):
             pass
 
 
-    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
+    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path, client_disabled):
+        if client_disabled:
+            print("item disabled")
+            return
         screenshotfilename = "%s.jpg" % client_connection_id
         self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
         self.screenshotwindow.exec_()
