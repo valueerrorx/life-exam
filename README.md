@@ -12,7 +12,7 @@ Tools needed in order to provide 100% functionality are:
 - python twisted 18.4.0 
 
 
-![Image of life-exam](http://life-edu.eu/images/life-exam2.png)
+![Image of life-exam](http://life-edu.eu/images/exam2.gif)
 
 Run 
 `sudo python3 setup.py`
