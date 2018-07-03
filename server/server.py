@@ -76,9 +76,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit1.textChanged.connect(self._updateExamName)
         self.ui.ssintervall.valueChanged.connect(self._changeAutoscreenshot)
-        
-     
-     
 
         num_regex=QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)

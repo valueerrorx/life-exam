@@ -93,7 +93,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
             
 
     activated_apps = get_activated_apps()
-        
+    print(activated_apps)
     #clear appview first
     thislayout = appview.layout()
     while thislayout.count():
@@ -161,7 +161,7 @@ def saveProfile(applistwidget, appview):
     #PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")   # (this should be the config file that is then transferred to the clients and used for the exam desktop)
     
     if Path(PLASMACONFIG).is_file():
-        config = ConfigObj(str(PLASMACONFIG))
+        config = ConfigObj(str(PLASMACONFIG),list_values=False)
         
         # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case) 
         taskmanagersections = []
@@ -189,7 +189,6 @@ def saveProfile(applistwidget, appview):
     #add checked items to apps_activated in order to save them to plasmaconf and make them visible in the UI
     for item in items:
         if item.checkbox.isChecked():
-            
             icon = item.icon.pixmap()
             iconwidget = QtWidgets.QLabel()
             iconwidget.setPixmap(QPixmap(icon))
@@ -197,33 +196,31 @@ def saveProfile(applistwidget, appview):
             apps_activated.append(item.desktop_filename)
             thislayout.addWidget(iconwidget)
             
- 
-            
-            
-            
-            
-            
-        
+            #FIXME  if nothing isChecked() here "geogebra" is still added to the config..  also add it to the UI or inform the user somehow that this is a BAD decision
+
     #generate appstring (value for the launchers section of the taskmanager applet)
     appstring = ""
-
 
     #prepare config section for the taskmanager applet
     for targetsection in taskmanagersections:
         launchers_section = "%s][Configuration][General" %(targetsection)
         
         try:
-            config[launchers_section]["launchers"] = []
+            config[launchers_section]["launchers"] = ''
         except KeyError:   #key does not exist..  no pinned applications yet
             config[launchers_section] = {}   
-            config[launchers_section]["launchers"] = []  #create section(key)
-            
+            config[launchers_section]["launchers"] = ''  #create section(key)
         
         if len(apps_activated) > 0:
             for app in apps_activated:
-                appstring="applications:%s" %(app)
-                config[launchers_section]["launchers"].append(appstring)
+                if appstring == "":
+                    appstring="applications:%s" %(app)
+                else:
+                    appstring="%s,applications:%s" %(appstring,app)
 
+            config[launchers_section]["launchers"]=appstring
+        else:  #prevent empty desktop - add geogebra
+            config[launchers_section]["launchers"]="applications:geogebra.desktop"
 
     # write new plasmaconfig
     config.filename = str(PLASMACONFIG)
@@ -235,11 +232,10 @@ def get_activated_apps():
     """
     reads plasmaconfig file and searches for pinned apps in the taskmanager
     """
-  
     activated_apps = []
     
     if Path(PLASMACONFIG).is_file():
-        config = ConfigObj(str(PLASMACONFIG))
+        config = ConfigObj(str(PLASMACONFIG),list_values=False)
         
         # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case) 
         taskmanagersections = []
@@ -258,18 +254,20 @@ def get_activated_apps():
                 activate_apps_string = config[launchers_section]["launchers"]
             except KeyError:   #key does not exist..  no pinned applications yet
                 config[launchers_section] = {}   
-                config[launchers_section]["launchers"] = []  #create section(key)
+                config[launchers_section]["launchers"] = ""  #create section(key)
                 
-                appstring="applications:GeoGebra"    #add at least one application to activated apps
-                config[launchers_section]["launchers"].append(appstring) #and prevent empty desktops
-        
-            for app in config[launchers_section]["launchers"]:
+                appstring="applications:geogebra.desktop"    #add at least one application to activated apps
+                config[launchers_section]["launchers"]=appstring #and prevent empty desktops
+                activate_apps_string = config[launchers_section]["launchers"]
+            
+            #make a list
+            if activate_apps_string == "," or activate_apps_string == "": # catch a corner case
+                activate_apps_list = ['applications:geogebra.desktop']
+            else:
+                activate_apps_list = activate_apps_string.split(",")
+
+            for app in activate_apps_list:  #empty string will work here too
                 app = app.split(":")
-                #print(app[1])
                 activated_apps.append(app[1])
-        
-        
-            
-            
+
     return activated_apps
-    
