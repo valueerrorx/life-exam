@@ -75,6 +75,10 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.examlabeledit1.setText(self.factory.examid  )
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit1.textChanged.connect(self._updateExamName)
+        self.ui.ssintervall.valueChanged.connect(self._changeAutoscreenshot)
+        
+     
+     
 
         num_regex=QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
@@ -95,6 +99,19 @@ class ServerUI(QtWidgets.QDialog):
         
         self.ui.show()
         
+
+        
+    def _changeAutoscreenshot(self):
+        self._workingIndicator(True, 200)
+        intervall = self.ui.ssintervall.value()
+      
+        if self.factory.lcs.running:
+            self.factory.lcs.stop()
+        if intervall is not 0:
+            self.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
+            self.factory.lcs.start(intervall)
+        else:
+            self.log("<b>Screenshot Intervall is set to 0 - Screenshotupdate deactivated</b>")
 
 
     def _onSendPrintconf(self,who):
@@ -662,6 +679,8 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.server_to_client.remove_client(self)
         self.file_handler = None
         self.line_data_list = ()
+        self.factory.rawmode = False;  # we deactivate the rawmode ft block here in case the disconnect interrupted an ongoing filetransfer which would never send \r\n and therefore never unblock (worst case scenario: an other ft could be started during an ongoing ft - because notblocked - and lead to a corrupted (and therefore removed) ft)
+        
         self.factory.window.log(
             'Connection from %s lost (%d clients left)' % (
             self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
@@ -855,7 +874,10 @@ class MyServerFactory(protocol.ServerFactory):
         self.window = ServerUI(self)                            # type: ServerUI
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
-        self.lcs.start(SCREENSHOTINTERVALL)   #TODO make this configurable over the UI
+        
+        intervall = self.window.ui.ssintervall.value()
+        self.lcs.start(intervall)
+        
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
 
         mutual_functions.checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
