@@ -142,10 +142,8 @@ class ServerToClient:
 
     def broadcast_line(self, line):
         for client in self.clients.values():
-
-            line = line % client.clientConnectionID    #substitue the last %s in line with clientConnectionID
-            client.sendEncodedLine(line)
-            #TODO: pass last substitute for %s in line (might be id, might be name ) as key for the ServerProtocol attribute dictionary
+            newline = line % client.clientConnectionID    #substitue the last %s in line with clientConnectionID (don't overwrite line)
+            client.sendEncodedLine(newline)
 
 
     def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe):
