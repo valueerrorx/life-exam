@@ -75,9 +75,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
                     thisapp[3] = fields[1]
 
         applist.append(thisapp)
-                    
-        
-    #print(final_applist)
     
     #sort applist and put most used apps on top  
     final_applist = []
@@ -93,7 +90,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
             
 
     activated_apps = get_activated_apps()
-    print(activated_apps)
+    
     #clear appview first
     thislayout = appview.layout()
     while thislayout.count():
@@ -102,7 +99,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
             child.widget().deleteLater()
         
     for APP in final_applist:   # most used app is on top of the list (listview is built from bottom therefore we reverse)
-        #print(APP)
         item = QtWidgets.QListWidgetItem()
         item.setSizeHint(QSize(40, 40));
         item.name = QtWidgets.QLabel()

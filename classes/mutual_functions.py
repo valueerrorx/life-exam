@@ -51,9 +51,7 @@ def checkIfFileExists(filename):
 
 def checkFirewall(firewall_ip_list):
     result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
-    #print(result)
     if result != "0":
-        print("stopping ip tables")
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
         startcommand = "exec %s stop &" % (scriptfile)
         os.system(startcommand)
@@ -190,7 +188,9 @@ def prepareDirectories():
         os.system(copycommand)
     else:
         # leave the EXAM-A-IPS.DB alone - it stores firewall information which must not be reset on every update
-        # leave lockdown folder as it is to preserve custom changes but always provide a new copy of startexam.sh (could be updated)
+        # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes 
+        # but always provide a new copy of startexam.sh (will be updated more frequently)
+        print("old examconfig found - keeping old config")  #friendly reminder to the devs ;-)
         copycommand2 = "cp -r ./DATA/EXAMCONFIG/startexam.sh %s" % (EXAMCONFIG_DIRECTORY)
         os.system(copycommand2)
 
@@ -204,7 +204,6 @@ def fixFilePermissions(folder):
     in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root"""
     if folder:
         if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
-            print("fixing file permissions")
             chowncommand = "sudo chown -R %s:%s %s" % (USER, USER, folder)
             os.system(chowncommand)
         else:
