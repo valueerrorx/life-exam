@@ -186,10 +186,12 @@ def saveProfile(applistwidget, appview):
         child = thislayout.takeAt(0)
         if child.widget():
             child.widget().deleteLater()
-        
+      
+    checked = False
     #add checked items to apps_activated in order to save them to plasmaconf and make them visible in the UI
     for item in items:
         if item.checkbox.isChecked():
+            checked = True
             icon = item.icon.pixmap()
             iconwidget = QtWidgets.QLabel()
             iconwidget.setPixmap(QPixmap(icon))
@@ -198,7 +200,12 @@ def saveProfile(applistwidget, appview):
             apps_activated.append(item.desktop_filename)
             thislayout.addWidget(iconwidget)
             
-            #FIXME  if nothing isChecked() here "geogebra" is still added to the config..  also add it to the UI or inform the user somehow that this is a BAD decision
+    
+    if not checked:   #no application launchers are visible
+        warninglabel = QtWidgets.QLabel()
+        warninglabel.setText('Achtung: Keine Programmstarter gewählt!')
+        thislayout.addWidget(warninglabel)
+        #FIXME  if nothing isChecked() here "geogebra" is still added to the config..  also add it to the UI or inform the user somehow that this is a BAD decision
 
     #generate appstring (value for the launchers section of the taskmanager applet)
     appstring = ""
