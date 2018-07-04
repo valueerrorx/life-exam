@@ -80,9 +80,8 @@ class ClientToServer:
             # check if a serverprocess is running and do not lock screen if any 
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
             answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"],shell=True, stdout=subprocess.PIPE)
-            answer = str(answer.communicate()[0])
-            print(answer)
-            if not answer == "0":
+            answer = answer.communicate()[0].strip().decode()
+            if not answer <= "1":
                 print("prevented locking of the teachers screen")
                 return
 
