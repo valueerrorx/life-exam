@@ -81,6 +81,7 @@ class ClientToServer:
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
             answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"],shell=True, stdout=subprocess.PIPE)
             answer = str(answer.communicate()[0])
+            print(answer)
             if not answer == "0":
                 print("prevented locking of the teachers screen")
                 return
