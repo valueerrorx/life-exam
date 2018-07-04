@@ -126,6 +126,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
                 item.checkbox.setChecked(True)
                 iconwidget = QtWidgets.QLabel()
                 iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
+                iconwidget.setToolTip(item.name.text())
                 thislayout.addWidget(iconwidget)
 
         item.checkbox.clicked.connect(lambda: saveProfile(applistwidget, appview))
@@ -192,6 +193,7 @@ def saveProfile(applistwidget, appview):
             icon = item.icon.pixmap()
             iconwidget = QtWidgets.QLabel()
             iconwidget.setPixmap(QPixmap(icon))
+            iconwidget.setToolTip(item.name.text())
             
             apps_activated.append(item.desktop_filename)
             thislayout.addWidget(iconwidget)
