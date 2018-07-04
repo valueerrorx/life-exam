@@ -84,32 +84,6 @@ location = 4
 plugin = org.kde.panel
 wallpaperplugin = org.kde.image
 
-[Containments][2][Applets][20]
-immutability = 1
-plugin = org.kde.plasma.icon
-
-[Containments][2][Applets][20][Configuration]
-localPath = /home/student/.local/share/plasma_icons/org.kde.kate.desktop
-url = file:///usr/share/applications/org.kde.kate.desktop
-
-
-[Containments][2][Applets][23]
-immutability = 1
-plugin = org.kde.plasma.icon
-
-[Containments][2][Applets][23][Configuration]
-localPath = /home/student/.local/share/plasma_icons/geogebra-classic.desktop
-url = file:///usr/share/applications/geogebra-classic.desktop
-
-[Containments][2][Applets][24]
-immutability = 1
-plugin = org.kde.plasma.icon
-
-[Containments][2][Applets][24][Configuration]
-localPath = /home/student/.local/share/plasma_icons/org.kde.kcalc.desktop
-url = file:///usr/share/applications/org.kde.kcalc.desktop
-
-
 [Containments][2][Applets][28]
 immutability = 1
 plugin = org.kde.plasma.lock_logout
@@ -160,5 +134,6 @@ knownItems = org.kde.plasma.battery, org.kde.plasma.notifications, org.kde.ktp-c
 
 [General]
 immutability = 2
+
 [Containments][2][Applets][5][Configuration][General]
 launchers = applications:geogebra-classic.desktop, applications:org.kde.kate.desktop, applications:libreoffice-calc.desktop, applications:org.kde.calligrawords.desktop
