@@ -880,7 +880,7 @@ class MyServerFactory(protocol.ServerFactory):
         
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
 
-        mutual_functions.checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
+        #mutual_functions.checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         #starting multicast server here in order to provide "factory" information via broadcast
         self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
 
