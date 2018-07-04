@@ -136,4 +136,4 @@ knownItems = org.kde.plasma.battery, org.kde.plasma.notifications, org.kde.ktp-c
 immutability = 2
 
 [Containments][2][Applets][5][Configuration][General]
-launchers = applications:geogebra-classic.desktop, applications:org.kde.kate.desktop, applications:libreoffice-calc.desktop, applications:org.kde.calligrawords.desktop
+launchers = applications:org.kde.kate.desktop,applications:org.kde.calligrawords.desktop,applications:libreoffice-calc.desktop
