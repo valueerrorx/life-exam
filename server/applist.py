@@ -205,8 +205,7 @@ def saveProfile(applistwidget, appview):
         warninglabel = QtWidgets.QLabel()
         warninglabel.setText('Achtung: Keine Programmstarter gewählt!')
         thislayout.addWidget(warninglabel)
-        #FIXME  if nothing isChecked() here "geogebra" is still added to the config..  also add it to the UI or inform the user somehow that this is a BAD decision
-
+      
     #generate appstring (value for the launchers section of the taskmanager applet)
     appstring = ""
 
