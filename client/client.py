@@ -29,6 +29,7 @@ sys.path.insert(0, application_path)
 # os.environ['PYTHONPATH'] = application_path
 # no need for that... setup.py will install the twisted plugin into the systemdirectory 
 # this is only needed for twisted 18.4.0 (probably a bug) because it ignores the app root directory 
+# as current workaround i created a file /usr/bin/pkxexec that does elevate permissions and sets the environment vars
 
 
 
