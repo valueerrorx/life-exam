@@ -88,7 +88,7 @@ class ClientToServer:
             command = "exec sudo -u %s -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true" %(USER)
             os.system(command)
 
-            startcommand = "exec sudo -u %s -H python client/lockscreen.py &" %(USER) #kill it if it already exists
+            startcommand = "exec sudo -u %s -H %s/client/lockscreen.py &" %(USER,APP_DIRECTORY) #kill it if it already exists
             os.system(startcommand)
 
         else:

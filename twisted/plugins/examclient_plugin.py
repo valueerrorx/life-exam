@@ -66,7 +66,7 @@ class MyClientProtocol(basic.LineReceiver):
         mutual_functions.showDesktopMessage('Connection to the server has been lost')
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "python3 client/client.py &"
+            command = "%s/client/client.py &" %(APP_DIRECTORY)
             os.system(command)
             os._exit(1)
 
@@ -286,7 +286,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.failcount += 1
 
         if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "python client/student.py &"
+            command = "%s/client/client.py &" %(APP_DIRECTORY)
             os.system(command)
             os._exit(1)
 
