@@ -45,8 +45,12 @@ class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
         self.factory = factory     # type: MyServerFactory
-        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.ui"))  # load UI
-        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
+   
+        uifile=os.path.join(APP_DIRECTORY,'server/server.ui')
+        winicon=os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')
+        self.ui = uic.loadUi(uifile)        # load UI
+        self.ui.setWindowIcon(QIcon(winicon))# definiere icon für taskleiste
+        
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
@@ -162,21 +166,24 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 1000)
 
         if self.factory.clientslocked:
-            self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
+            
+            os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')
+            
+            self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
             self.factory.clientslocked = False
             if not self.factory.server_to_client.unlock_screens(who):
                 self.log("no clients connected")
         else:
-            self.ui.screenlock.setIcon(QIcon("pixmaps/unlock.png"))
+            self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/unlock.png')))
             self.factory.clientslocked = True
             if not self.factory.server_to_client.lock_screens(who):
                 self.log("no clients connected")
                 self.factory.clientslocked = False
-                self.ui.screenlock.setIcon(QIcon("pixmaps/network-wired-symbolic.png"))
+                self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
 
 
     def _onOpenshare(self):
-        startcommand = "exec sudo -u %s -H /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
+        startcommand = "exec sudo -u %s /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
         os.system(startcommand)
 
     def _updateExamName(self):
@@ -389,12 +396,12 @@ class ServerUI(QtWidgets.QDialog):
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  # minuten nicht sekunden
         if self.factory.lc.running:
-            self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer-off.png"))
+            self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer-off.png')))
             self.factory.lc.stop()
             self.log("<b>Auto-Submission deactivated </b>")
             return
         if intervall is not 0:
-            self.ui.autoabgabe.setIcon(QIcon("pixmaps/chronometer.png"))
+            self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer.png')))
             self.log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
             self.factory.lc.start(minute_intervall)
         else:
@@ -413,7 +420,7 @@ class ServerUI(QtWidgets.QDialog):
         client_name = client.clientName
         client_id = client.clientConnectionID
         item = self.get_list_widget_by_client_id(client_id)
-        pixmap = QPixmap("pixmaps/nouserscreenshot.png")
+        pixmap = QPixmap(os.path.join(APP_DIRECTORY,'pixmaps/nouserscreenshot.png'))
         try:
             item.picture.setPixmap(pixmap)
             item.info.setText('%s \ndisconnected' % client_name)
@@ -584,7 +591,7 @@ class ServerUI(QtWidgets.QDialog):
 class ScreenshotWindow(QtWidgets.QDialog):
     def __init__(self, serverui, screenshot, clientname, screenshot_file_path, client_connection_id):
         QtWidgets.QDialog.__init__(self)
-        self.setWindowIcon(QIcon("pixmaps/windowicon.png"))  # definiere icon für taskleiste
+        self.setWindowIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')))  # definiere icon für taskleiste
         self.screenshot = screenshot
         self.serverui = serverui
         self.screenshot_file_path = screenshot_file_path

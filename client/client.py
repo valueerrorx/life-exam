@@ -49,9 +49,9 @@ class ClientDialog(QtWidgets.QDialog):
 
     def _initUi(self):
         self.scriptdir=os.path.dirname(os.path.abspath(__file__))
-        uifile=os.path.join(self.scriptdir,'client.ui')
+        uifile=os.path.join(APP_DIRECTORY,'client/client.ui')
         self.ui = uic.loadUi(uifile) 
-        winicon=os.path.join(self.scriptdir,'pixmaps/windowicon.png')
+        winicon=os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')
         self.ui.setWindowIcon(QIcon(winicon))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
@@ -197,7 +197,7 @@ class MulticastLifeClient(DatagramProtocol):
                 dialog._updateServerlist()      #update gui
 
             dialog.ui.serversearch.setText("Server Found!")
-            checkimage=os.path.join(application_path,'pixmaps/checked.png')
+            checkimage=os.path.join(APP_DIRECTORY,'pixmaps/checked.png')
             dialog.ui.servercheck.setPixmap(QPixmap(checkimage))
             print("Datagram %s received from %s" % (repr(datagram), repr(address)) )
 
