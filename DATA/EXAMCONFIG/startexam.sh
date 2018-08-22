@@ -29,7 +29,7 @@ MODE=$1
 
 if [[ ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
 then
-    kdialog  --msgbox 'Parameter is missing <exam> <permanent>' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Parameter is missing <exam> <permanent>' --title 'Starting Exam'
     exit 1
 fi
 
@@ -41,11 +41,11 @@ fi
 # Check if root and running exam #
 #--------------------------------#
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' 
     exit 1
 fi
 if [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --yesno "Already running exam! \nDo you want to reload the Exam-Desktop?"  --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --yesno "Already running exam! \nDo you want to reload the Exam-Desktop?"  --title 'Starting Exam'
     # this way we could restart the desktop in exam mode just in case plasma or kwin did not start properly
     if [ ! "$?" = 0 ]; then
         exit  0   #cancel
@@ -58,7 +58,7 @@ if [ -f "$EXAMLOCKFILE" ];then
 
 fi
 if [ -f "/etc/kde5rc" ];then
-    kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam'
     exit 1
 fi
 if [ ! -d "$BACKUPDIR" ];then
@@ -73,7 +73,7 @@ fi
 
 if [[ ( $MODE = "permanent" ) ]]
 then 
-    kdialog  --caption "LIFE" --title "LIFE" --yesno "Wollen sie diesen USB Stick dauerhaft in den Prüfungsmodus versetzen?
+    kdialog --title "LIFE" --yesno "Wollen sie diesen USB Stick dauerhaft in den Prüfungsmodus versetzen?
 
     Der fertige USB Stick nutzt die Konfigurationen des Programmes 'Exam Teacher'.
     Sie bekommen die Möglichkeit ein Root Passwort festzulegen.
@@ -389,24 +389,24 @@ then
     
     PW="empty"
     getROOT(){
-        PASSWD1=$(kdialog  --caption "LIFE" --title "LIFE" --inputbox "Geben sie bitte das gwünschte ROOT Passwort an!");
+        PASSWD1=$(kdialog --title "LIFE" --inputbox "Geben sie bitte das gwünschte ROOT Passwort an!");
         if [ "$?" = 0 ]; then
-            PASSWD2=$(kdialog  --caption "LIFE" --title "LIFE" --inputbox 'Geben sie bitte das gewünschte ROOT Passwort ein zweites mal an!');
+            PASSWD2=$(kdialog --title "LIFE" --inputbox 'Geben sie bitte das gewünschte ROOT Passwort ein zweites mal an!');
             if [ "$?" = 0 ]; then
             
                 if [ "$PASSWD2" = "$PASSWD1"  ]; then
-                    sudo -u ${USER} kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Passwort OK!" 3
+                    sudo -u ${USER} kdialog --title "LIFE" --passivepopup "Passwort OK!" 3
                     PW=$PASSWD1
                 else
-                    kdialog  --caption "LIFE" --title "LIFE" --error "Die Passwörter sind nicht ident!"
+                    kdialog --title "LIFE" --error "Die Passwörter sind nicht ident!"
                     getROOT 
                 fi
             else
-                kdialog  --caption "LIFE" --title "LIFE" --error "Kein Root Password gesetzt!"
+                kdialog --title "LIFE" --error "Kein Root Password gesetzt!"
                 sleep 0
             fi
         else
-            kdialog  --caption "LIFE" --title "LIFE" --error "Kein Root Password gesetzt!"
+            kdialog --title "LIFE" --error "Kein Root Password gesetzt!"
             sleep 0
         fi
     }
@@ -441,26 +441,28 @@ qdbus $progress close
     paplay /usr/share/sounds/KDE-Sys-Question.ogg
 
     #FIXME man könnte auch einfach ksmserver neustarten bzw. Xorg - dann würde kein programm überdauern (derzeit aber unpraktisch und etwas brachial)
-
-    pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
-    pkill -f google && killall google-chrome && killall google-chrome-stable
-    pkill -f firefox  && killall firefox
-    pkill -f writer && killall writer
-    pkill -f konsole && killall konsole
-    pkill -f geogebra && killall geogebra
-    pkill -f kate && killall kate
-    pkill -f systemsettings && killall systemsettings5
-    pkill -f nextcloud
-    pkill -f calligra
-
-    sudo -u ${USER} -H kquitapp5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kstart5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kwin --replace &
-    sleep 4
-    exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
+    pkill -f ksmserver
     
+    
+#     #pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
+#     pkill -f google && killall google-chrome && killall google-chrome-stable
+#     pkill -f firefox  && killall firefox
+#     pkill -f writer && killall writer
+#     pkill -f konsole && killall konsole
+#     pkill -f geogebra && killall geogebra
+#     pkill -f kate && killall kate
+#     pkill -f systemsettings && killall systemsettings5
+#     pkill -f nextcloud
+#     pkill -f calligra
+# 
+#     exec sudo -u ${USER} -H kquitapp5 plasmashell &
+#     sleep 2
+#     exec sudo -u ${USER} -H kstart5 plasmashell &   # funktioniert nicht mehr wenn das programm durch ein programm gestartet wird welches mit pkexec gestartet wurde
+#     sleep 2                                         # sudo -u bringt nichts und plasmashell wird als root gestartet !!???  daher kill ksmserver 
+#     exec sudo -u ${USER} -H kwin --replace &
+#     sleep 4
+#     exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
+#     
 
 
 

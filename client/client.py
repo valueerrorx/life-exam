@@ -48,8 +48,11 @@ class ClientDialog(QtWidgets.QDialog):
         mutual_functions.prepareDirectories()
 
     def _initUi(self):
-        self.ui = uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__)), "client.ui"))
-        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))
+        self.scriptdir=os.path.dirname(os.path.abspath(__file__))
+        uifile=os.path.join(self.scriptdir,'client.ui')
+        self.ui = uic.loadUi(uifile) 
+        winicon=os.path.join(self.scriptdir,'pixmaps/windowicon.png')
+        self.ui.setWindowIcon(QIcon(winicon))
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.offlineexam.clicked.connect(self._on_offline_exam)
@@ -121,7 +124,7 @@ class ClientDialog(QtWidgets.QDialog):
                 from twisted.plugin import IPlugin, getPlugins
                 list(getPlugins(IPlugin))
 
-                command = "kdesudo 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s' &" % (
+                command = "pkxexec 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s' &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
                 os.system(command)
                 
@@ -194,7 +197,8 @@ class MulticastLifeClient(DatagramProtocol):
                 dialog._updateServerlist()      #update gui
 
             dialog.ui.serversearch.setText("Server Found!")
-            dialog.ui.servercheck.setPixmap(QPixmap("pixmaps/checked.png"))
+            checkimage=os.path.join(application_path,'pixmaps/checked.png')
+            dialog.ui.servercheck.setPixmap(QPixmap(checkimage))
             print("Datagram %s received from %s" % (repr(datagram), repr(address)) )
 
     def _sendProbe(self):

@@ -179,19 +179,19 @@ def prepareDirectories():
 
     
 
-    copycommand = "cp -r ./DATA/scripts %s" % (WORK_DIRECTORY)
+    copycommand = "cp -r %s/DATA/scripts %s" % (APP_DIRECTORY, WORK_DIRECTORY)
     os.system(copycommand)
 
     if not os.path.exists(EXAMCONFIG_DIRECTORY):  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
         print("copying default examconfig to workdirectory")
-        copycommand = "cp -r ./DATA/EXAMCONFIG %s" % (WORK_DIRECTORY)
+        copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (APP_DIRECTORY, WORK_DIRECTORY)
         os.system(copycommand)
     else:
         # leave the EXAM-A-IPS.DB alone - it stores firewall information which must not be reset on every update
         # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes 
         # but always provide a new copy of startexam.sh (will be updated more frequently)
         print("old examconfig found - keeping old config")  #friendly reminder to the devs ;-)
-        copycommand2 = "cp -r ./DATA/EXAMCONFIG/startexam.sh %s" % (EXAMCONFIG_DIRECTORY)
+        copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (APP_DIRECTORY, EXAMCONFIG_DIRECTORY)
         os.system(copycommand2)
 
     fixFilePermissions(WORK_DIRECTORY)

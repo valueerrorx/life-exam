@@ -23,13 +23,13 @@ SHARE="${HOME}SHARE/"
 # Check if root and running exam #
 #--------------------------------#
 if ! [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
     sleep 2
     exit 0
 fi
 
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
     exit 0
 fi
 
@@ -61,7 +61,7 @@ stopIPtables(){
 #--------------------------------#
 
 
-    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM" --caption "EXAM";
+    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
     if [ "$?" = 0 ]; then
         sleep 0
     else
@@ -224,18 +224,21 @@ qdbus $progress close
     pactl set-sink-volume 0 90%
     paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
-    # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
-    pkill -f google && killall google-chrome && killall google-chrome-stable
-    pkill -f firefox  && killall firefox
-    pkill -f writer && killall writer
-    pkill -f konsole && killall konsole
-    pkill -f geogebra && killall geogebra
-
-    sudo -u ${USER} -H kquitapp5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kstart5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kwin --replace &
+    
+    pkill -f ksmserver
+    
+#     # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
+#     pkill -f google && killall google-chrome && killall google-chrome-stable
+#     pkill -f firefox  && killall firefox
+#     pkill -f writer && killall writer
+#     pkill -f konsole && killall konsole
+#     pkill -f geogebra && killall geogebra
+# 
+#     kquitapp5 plasmashell &
+#     sleep 2
+#     kstart5 plasmashell &
+#     sleep 2
+#     kwin --replace &
 
 
 

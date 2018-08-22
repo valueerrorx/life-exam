@@ -24,6 +24,7 @@ SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kat
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()
 USER_HOME_DIR = os.path.join("/home", str(USER))
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/EXAM")
+APP_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/applications/life-exam")
 
 # work directory sub-dirs
 #TODO wo werden diese gebraucht? es handelt sich ausserdem bei nachstehender liste nicht nur um subs sondern auch um subsubs - SHARE ist gar nicht dort
