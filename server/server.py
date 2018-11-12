@@ -229,6 +229,8 @@ class ServerUI(QtWidgets.QDialog):
                 self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
             else:
                 self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+        else:
+            self.factory.rawmode = False;
 
 
     def _showFilePicker(self, directory):
