@@ -36,10 +36,10 @@ class ServerToClient:
     
 
     ## client instructions ##
-    def exit_exam(self, who):
+    def exit_exam(self, who, onexit_cleanup_abgabe="none"):
         if not self.clients:
             return False
-        line = "%s %s" % (Command.EXITEXAM.value, "%s")
+        line = "%s %s %s" % (Command.EXITEXAM.value, onexit_cleanup_abgabe, "%s")
         if who is "all":
             self.broadcast_line(line)
         else:

@@ -104,6 +104,15 @@ class ClientToServer:
         :param client: ClientProtocol
         :return:
         """
+        exitcleanup_abgabe = client.line_data_list[2]
+        print(exitcleanup_abgabe)
+        
+        if exitcleanup_abgabe == "2":    #checkbox sends 0 for unchecked and 2 for checked
+            print("cleaning up abgabe")
+            system_commander.mountabgabe()
+            system_commander.cleanup(SHARE_DIRECTORY)
+        
+        
         print("stopping exam")
         startcommand = "sudo %s/scripts/stopexam.sh exam &" %(WORK_DIRECTORY) # start as user even if the twistd daemon is run by root
         os.system(startcommand)  # start script

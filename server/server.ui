@@ -844,9 +844,9 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-165</y>
+               <y>0</y>
                <width>852</width>
-               <height>1028</height>
+               <height>1004</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -943,7 +943,7 @@
                             <property name="maximumSize">
                              <size>
                               <width>150</width>
-                              <height>16777215</height>
+                              <height>46</height>
                              </size>
                             </property>
                            </widget>
@@ -971,29 +971,13 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QCheckBox" name="cleanabgabe">
-                            <property name="focusPolicy">
-                             <enum>Qt::TabFocus</enum>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">margin:0px; padding:0px; margin-left:0px;</string>
-                            </property>
-                            <property name="text">
-                             <string>Schülerordner 'share' bei Prüfungsbeginn löschen</string>
-                            </property>
-                            <property name="checked">
-                             <bool>false</bool>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
                            <spacer name="horizontalSpacer_9">
                             <property name="orientation">
                              <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeHint" stdset="0">
                              <size>
-                              <width>40</width>
+                              <width>20</width>
                               <height>20</height>
                              </size>
                             </property>
@@ -1008,7 +992,7 @@
                           <enum>Qt::LeftToRight</enum>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">margin-left:10px;margin-top:0;</string>
+                          <string notr="true">margin-left:10px;margin-bottom:0;</string>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_11">
                           <property name="spacing">
@@ -1092,6 +1076,28 @@
                            </widget>
                           </item>
                           <item>
+                           <widget class="QCheckBox" name="cleanabgabe">
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="focusPolicy">
+                             <enum>Qt::TabFocus</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px; margin-top:5px; margin-left:0px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Schülerordner 'share' bei Prüfungsbeginn löschen</string>
+                            </property>
+                            <property name="checked">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
                            <spacer name="horizontalSpacer_10">
                             <property name="orientation">
                              <enum>Qt::Horizontal</enum>
@@ -1110,7 +1116,7 @@
                        <item>
                         <widget class="QWidget" name="widget_2" native="true">
                          <property name="styleSheet">
-                          <string notr="true">margin-left:10px;margin-top:0;</string>
+                          <string notr="true">margin-left:10px;margin-bottom:0;</string>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_6">
                           <property name="spacing">
@@ -1194,6 +1200,19 @@
                            </widget>
                           </item>
                           <item>
+                           <widget class="QCheckBox" name="exitcleanabgabe">
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px;margin-top:5px; margin-left:0px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Schülerordner 'share' bei Prüfungsende löschen</string>
+                            </property>
+                            <property name="checked">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
                            <spacer name="horizontalSpacer_11">
                             <property name="orientation">
                              <enum>Qt::Horizontal</enum>
@@ -1209,27 +1228,6 @@
                          </layout>
                         </widget>
                        </item>
-                       <item>
-                        <widget class="QWidget" name="widget_14" native="true">
-                         <layout class="QHBoxLayout" name="horizontalLayout_27">
-                          <property name="spacing">
-                           <number>0</number>
-                          </property>
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
-                         </layout>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
                     </item>
@@ -1240,6 +1238,19 @@
                     </item>
                    </layout>
                   </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_12">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </widget>

@@ -226,7 +226,7 @@ class ServerUI(QtWidgets.QDialog):
             success, filename, file_size, who = server_to_client.send_file(file_path, who, DataType.FILE.value)
 
             if success:
-                self.log('<b>Sending file:</b> %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+                self.log('<b>Sending file:</b> %s (%d Byte) to <b> %s </b>' % (filename, file_size, who))
             else:
                 self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
         else:
@@ -333,12 +333,26 @@ class ServerUI(QtWidgets.QDialog):
     def _on_exit_exam(self,who):
         self.log("<b>Finishing Exam </b>")
         self._workingIndicator(True, 2000)
+      
+        self.factory.lcs.stop() #  disable autoscreenshot ??
+        self._onAutoabgabe()    #  disable autoabgabe ??
+        onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()
+        
         # first fetch abgabe
-        if not self.factory.server_to_client.request_abgabe(who):
+        if self.factory.rawmode == True:
+            self.log("waiting for ongoing filetransfers to finish ..")
+            return  #FIXME this could lead to some clients not exiting in very very rare cases where a BIG filetransfer is still on -- probably wait a second and try again ??
+        else:
+            self.factory.rawmode = True;   #LOCK all other fileoperations 
+
+        if not self.factory.server_to_client.request_abgabe(who, onexit_cleanup_abgabe):
+            self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("no clients connected")
+
         # then send the exam exit signal
         if not self.factory.server_to_client.exit_exam(who):
             self.log("no clients connected")
+
 
 
     def _onStartHotspot(self):
@@ -408,6 +422,7 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lc.start(minute_intervall)
         else:
             self.log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
+
 
     def _onRemoveClient(self, client_id):
         self._workingIndicator(True, 500)
@@ -885,7 +900,14 @@ class MyServerFactory(protocol.ServerFactory):
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
         
         intervall = self.window.ui.ssintervall.value()
-        self.lcs.start(intervall)
+
+        if intervall is not 0:
+            self.window.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
+            self.lcs.start(intervall)
+        else:
+            self.window.log("<b>Screenshot Intervall is set to 0 - Screenshotupdate deactivated</b>")
+        
+        
         
         # _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
 
