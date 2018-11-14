@@ -441,7 +441,7 @@ qdbus $progress close
     paplay /usr/share/sounds/KDE-Sys-Question.ogg
 
     #FIXME man könnte auch einfach ksmserver neustarten bzw. Xorg - dann würde kein programm überdauern (derzeit aber unpraktisch und etwas brachial)
-    pkill -f ksmserver
+   # pkill -f ksmserver
     
     
 #     #pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart

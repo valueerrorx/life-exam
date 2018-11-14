@@ -104,7 +104,7 @@ class ClientToServer:
         :param client: ClientProtocol
         :return:
         """
-        exitcleanup_abgabe = client.line_data_list[2]
+        exitcleanup_abgabe = client.line_data_list[1]
         print(exitcleanup_abgabe)
         
         if exitcleanup_abgabe == "2":    #checkbox sends 0 for unchecked and 2 for checked

@@ -335,7 +335,11 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 2000)
         if self.factory.lcs.running:
             self.factory.lcs.stop() #  disable autoscreenshot ??
-        self._onAutoabgabe()    #  disable autoabgabe ??
+
+        if self.factory.lc.running:  #  disable autoabgabe ??
+            self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer-off.png')))
+            self.factory.lc.stop()
+        
         onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()
         
         # first fetch abgabe
