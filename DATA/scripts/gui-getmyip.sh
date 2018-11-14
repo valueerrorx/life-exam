@@ -8,7 +8,7 @@
 #-----------------------------------------------------#
 #  Zeige deine IP 
 #-----------------------------------------------------#
-IP=$(ip route get 1 | awk '{print $NF;exit}')
+IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 IFACE=$(iwconfig 2>/dev/null |grep -o "^\w*")   #get wlan device name
 IPW=$(ip -4 address show dev ${IFACE} |grep inet | awk '{print $2}'|cut -d '/' -f 1)
 
