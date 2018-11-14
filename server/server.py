@@ -333,8 +333,8 @@ class ServerUI(QtWidgets.QDialog):
     def _on_exit_exam(self,who):
         self.log("<b>Finishing Exam </b>")
         self._workingIndicator(True, 2000)
-      
-        self.factory.lcs.stop() #  disable autoscreenshot ??
+        if self.factory.lcs.running:
+            self.factory.lcs.stop() #  disable autoscreenshot ??
         self._onAutoabgabe()    #  disable autoabgabe ??
         onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()
         
@@ -345,12 +345,12 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
 
-        if not self.factory.server_to_client.request_abgabe(who, onexit_cleanup_abgabe):
+        if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("no clients connected")
 
         # then send the exam exit signal
-        if not self.factory.server_to_client.exit_exam(who):
+        if not self.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe):
             self.log("no clients connected")
 
 
