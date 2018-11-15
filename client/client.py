@@ -121,10 +121,16 @@ class ClientDialog(QtWidgets.QDialog):
                 self.ui.close()
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 os.system("sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
-
+                
+                namefile = os.path.join(EXAMCONFIG_DIRECTORY, "myname.txt")
+                openednamefile = open(namefile, 'w+')  # erstelle die datei neu
+                openednamefile.write("%s" %(ID) )
+                
+                
                 from twisted.plugin import IPlugin, getPlugins
                 list(getPlugins(IPlugin))
 
+                #pkXexec is used here (a short "life" bashscript that uses pkexec but sets a lot of environment variables)
                 command = "pkxexec 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s' &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
                 os.system(command)
