@@ -48,38 +48,3 @@ clock.desktop=false
 
 
 
-[KDE URL Restrictions][$i]
-rule_count=20
-rule_1=open,,,,file,,,false
-rule_2=list,,,,file,,,false
-
-rule_3=open,,,,file,,/usr/share/applications/,true
-rule_4=list,,,,file,,/usr/share/applications/,true
-
-rule_5=open,,,,file,,$HOME/.local/share/applications/,true
-rule_6=list,,,,file,,$HOME/.local/share/applications/,true
-
-rule_7=open,,,,file,,$HOME/SHARE,true
-rule_8=list,,,,file,,$HOME/SHARE,true
-
-rule_9=open,,,,file,,$TMP,true
-rule_10=list,,,,file,,$TMP,true
-
-rule_11=open,,,,file,,$HOME/.life/,true
-rule_12=list,,,,file,,$HOME/.life/,true
-
-rule_13=open,,,,file,,$HOME/.local/share/plasma_icons/,true
-rule_14=list,,,,file,,$HOME/.local/share/plasma_icons/,true
-
-rule_15=open,,,,file,,/usr/share/,true
-rule_16=list,,,,file,,/usr/share/,true
-
-rule_17=open,,,,file,,/usr/share/geogebra-classic,true
-rule_18=list,,,,file,,/usr/share/geogebra-classic,true
-
-rule_19=open,,,,file,,$HOME/.life/wallpapers,true
-rule_20=list,,,,file,,$HOME/.life/wallpapers,true
-
-
-
-
