@@ -1,5 +1,5 @@
 #!/bin/bash
-# last updated: 13.02.2017
+# last updated: 16.11.2016
 # loads exam desktop configuration
 #
 # CLIENT FILE - START EXAM
@@ -18,10 +18,11 @@ CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
 BACKUPDIR="${HOME}.life/unlockedbackup/" #absolute path in order to be accessible from all script locations
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-SHARE="${HOME}SHARE/"
+SHARE="${HOME}SHARE/"     #don't remove trailing slash.. we are working with that one on folders
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 MODE=$1
+DELSHARE=$2
 
 
 
@@ -32,8 +33,6 @@ then
     kdialog  --msgbox 'Parameter is missing <exam> <permanent>' --title 'Starting Exam'
     exit 1
 fi
-
-
 
 
 
@@ -55,8 +54,19 @@ if [ -f "$EXAMLOCKFILE" ];then
     exec sudo -u ${USER} -H kwin --replace &
     exit 0
     fi
-
 fi
+
+
+
+
+
+
+
+
+
+
+
+
 if [ -f "/etc/kde5rc" ];then
     kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam'
     exit 1
@@ -210,7 +220,7 @@ sleep 0.5
     CURRENTUID=$(id -u ${USER})
     
     sudo mount -o umask=002,uid=${CURRENTUID},gid=${CURRENTUID} /dev/disk/by-label/SHARE $SHARE
-    sudo touch $SHARE   # update timestamp on live usb devices
+    sudo touch $SHARE   # update timestamp on live usb devices (this is a bugfix for unix behaviour - leave it there)
 
     if [[  ( $MODE = "permanent" ) ]]
     then 
@@ -220,7 +230,17 @@ sleep 0.5
     fi
     
 
-
+    if [ -f "$EXAMLOCKFILE" ];then
+        #do nothing yet
+    else
+        ## only if exam is not already running delete share folder (otherwise we could delete the students work)
+        if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
+        then
+            sudo rm -rf ${SHARE}*
+            sudo rm -rf ${SHARE}.* 
+        
+        fi
+    fi
 
 
     

@@ -1,11 +1,8 @@
 #!/bin/bash
-# last updated: 13.02.2017
+# last updated: 16.11.2018
 # unloads exam desktop
 #
 # CLIENT FILE - STOP EXAM
-#
-# dieses Skript erwartet einen Parameter:   <exam>  <config>  
-# es wird dadurch unterschieden ob man nur den konfigurations modus oder den exam modus beendet
 
 
 
@@ -17,6 +14,7 @@ LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 SHARE="${HOME}SHARE/"
 
 
+DELSHARE=$1
 
 
 #--------------------------------#
@@ -119,17 +117,27 @@ sleep 0.5
     sleep 0.5
 
 
-    
-    
+  
+  
+#---------------------------------#
+# CLEAN  SHARE                    #   
+#---------------------------------#
+
+if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
+then
+    sudo rm -rf ${SHARE}*
+    sudo rm -rf ${SHARE}.* 
+    fi
+fi 
     
 
+
 #---------------------------------#
-# UMOUNT SHARE                   #    SHARE is now permanently mounted on life sticks
+# UMOUNT SHARE                    #    SHARE is now permanently mounted on life sticks
 #---------------------------------#
 qdbus $progress Set "" value 2
 #qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
 sleep 0.5
-
    # sudo umount -l $SHARE
 
 
