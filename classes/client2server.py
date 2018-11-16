@@ -105,9 +105,9 @@ class ClientToServer:
         :return:
         """
         exitcleanup_abgabe = client.line_data_list[1]
-        
+        print(exitcleanup_abgabe)
         print("stopping exam")
-        startcommand = "sudo %s/scripts/stopexam.sh exam %s &" %(WORK_DIRECTORY, exitcleanup_abgabe) # start as user even if the twistd daemon is run by root
+        startcommand = "sudo %s/scripts/stopexam.sh %s &" %(WORK_DIRECTORY, exitcleanup_abgabe) # start as user even if the twistd daemon is run by root
         os.system(startcommand)  # start script
 
         return

@@ -164,13 +164,15 @@ class ServerUI(QtWidgets.QDialog):
         """locks the client screens"""
         self.log("<b>Locking Client Screens </b>")
         self._workingIndicator(True, 1000)
-
+        
         if self.factory.clientslocked:
-            
             os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')
-            
             self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
             self.factory.clientslocked = False
+            
+            if self.factory.rawmode == True:    #dirty hack - thx to nora - gives us at least one option to open filetransfers again if something wicked happens
+                self.factory.rawmode = False;
+            
             if not self.factory.server_to_client.unlock_screens(who):
                 self.log("no clients connected")
         else:
