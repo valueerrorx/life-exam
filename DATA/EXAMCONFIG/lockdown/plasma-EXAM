@@ -89,7 +89,7 @@ DialogHeight=540
 DialogWidth=720
 
 
-[Containments][195][Applets][200]
+[Containments][2][Applets][200]
 immutability=1
 plugin=org.kde.lifename
 
