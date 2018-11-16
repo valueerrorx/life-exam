@@ -127,7 +127,6 @@ if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for check
 then
     sudo rm -rf ${SHARE}*
     sudo rm -rf ${SHARE}.* 
-    fi
 fi 
     
 

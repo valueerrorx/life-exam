@@ -232,6 +232,7 @@ sleep 0.5
 
     if [ -f "$EXAMLOCKFILE" ];then
         #do nothing yet
+        echo "already running exam"
     else
         ## only if exam is not already running delete share folder (otherwise we could delete the students work)
         if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
