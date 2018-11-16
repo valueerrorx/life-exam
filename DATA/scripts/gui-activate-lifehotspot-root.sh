@@ -12,7 +12,7 @@ CONFFILE="/etc/NetworkManager/system-connections/lifespot"
 
 
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'LIFE' --caption "LIFE" > /dev/null
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'LIFE' > /dev/null
     exit 1
 fi
 
@@ -20,12 +20,16 @@ APAVAILABLE=$(iw list|grep AP |wc -l)
 
 if [[( $APAVAILABLE -eq 0   )]];
 then
-    kdialog  --msgbox 'Ihre wlan Karte unterstützt die Accesspoint-Funktion nicht!\nStoppe Programm' --title 'LIFE' --caption "LIFE" > /dev/null
+    kdialog  --msgbox 'Ihre wlan Karte unterstützt die Accesspoint-Funktion nicht!\nStoppe Programm' --title 'LIFE'> /dev/null
     exit 0
 else
-    kdialog  --msgbox 'Das LIFE EXAM Programm muss neugestartet werden!' --title 'LIFE' --caption "LIFE" > /dev/null
-    sudo pkill -f server.py
-    echo " "
+    kdialog --warningcontinuecancel "Das LIFE EXAM Programm muss für diese Aktion neugestartet werden!" --title "LIFE";
+    if [ "$?" = 0 ]; then
+        sudo pkill -f server.py
+        echo " "
+    else
+        exit 1 
+    fi;
 fi
 
 #just restart networkmanager (kills accesspoint) and exit
@@ -40,16 +44,16 @@ fi
 #---------------------------------------------------------------------#
 
 getSSID(){
-    SSID=$(kdialog  --caption "LIFE" --title "LIFE" --inputbox "Geben sie bitte die gewünschte SSID an!");
+    SSID=$(kdialog  --title "LIFE" --inputbox "Geben sie bitte die gewünschte SSID an!");
     if [ "$?" = 0 ]; then
-        PASSWD=$(kdialog  --caption "LIFE" --title "LIFE" --inputbox 'Geben sie bitte das gewünschte Passwort an! 
+        PASSWD=$(kdialog --title "LIFE" --inputbox 'Geben sie bitte das gewünschte Passwort an! 
 (mind. 8 Zeichen)');
         if [ "$?" = 0 ]; then
             SIZE=${#PASSWD}
             if [ "$SIZE" -gt 7 ]; then
-                sudo -u ${USER} kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Password ok!" 3
+                sudo -u ${USER} kdialog --title "LIFE" --passivepopup "Password ok!" 3
             else
-                kdialog  --caption "LIFE" --title "LIFE" --error "Das Passwort ist zu kurz!"
+                kdialog --title "LIFE" --error "Das Passwort ist zu kurz!"
                 getSSID 
             fi
         else
@@ -113,7 +117,7 @@ method=auto
 # neue config initialisieren und starten
 sudo systemctl restart network-manager.service 
 
-sudo -u ${USER} kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Accespoint wird aktiviert!" 3
+sudo -u ${USER} kdialog --title "LIFE" --passivepopup "Accespoint wird aktiviert!" 3
 sleep 3
 # verbindung aktivieren
 exec nmcli c up lifespot &
@@ -133,7 +137,7 @@ findIface(){
     if [ "$IP" = "" ]; then
         COUNTER=$(( $COUNTER + 1 ))
         if [[($COUNTER -gt 3    )]];then
-            kdialog  --msgbox "Keine Wlan IP gefunden. AP Aktivierung schlug fehl!" --title 'LIFE' --caption "LIFE" > /dev/null
+            kdialog  --msgbox "Keine Wlan IP gefunden. AP Aktivierung schlug fehl!" --title 'LIFE'> /dev/null
             exit 0
         else
             sleep 4   #wait for ap config to take place
@@ -149,7 +153,7 @@ findIface
 # if ip was found add route for multicast (exam-server) and show ip
 
 sudo route add -net 228.0.0.5 netmask 255.255.255.255 ${IFACE}
-kdialog  --msgbox "Deine wlan IP Adresse lautet:\n\n$IP" --title 'LIFE' --caption "LIFE" > /dev/null
+kdialog  --msgbox "Deine wlan IP Adresse lautet:\n\n$IP" --title 'LIFE' > /dev/null
             
 
             

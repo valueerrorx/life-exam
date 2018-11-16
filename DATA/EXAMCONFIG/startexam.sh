@@ -4,8 +4,8 @@
 #
 # CLIENT FILE - START EXAM
 #
-# dieses Skript erwartet einen Parameter:   <exam>  <config>  <permanent>
-# es wird dadurch unterschieden ob man den konfigurations modus oder den exam modus (oder permanent) startet
+# dieses Skript erwartet einen Parameter:   <exam>  <permanent>
+# es wird dadurch unterschieden ob man den  den exam modus (oder permanent) startet
 
 
 
@@ -22,32 +22,18 @@ SHARE="${HOME}SHARE/"
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 
 MODE=$1
-SUBJECT=$2
 
 
 
 
-if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
+
+if [[ ( $MODE != "exam" )  && ( $MODE != "permanent" )   ]]
 then
-    kdialog  --msgbox 'Parameter is missing <config> <exam> <permanent>' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Parameter is missing <exam> <permanent>' --title 'Starting Exam'
     exit 1
 fi
 
-if [[ ( $MODE = "config" ) ]]
-then
-    if [[ ( $SUBJECT = "math" ) ]]
-    then
-        DESKTOPNAME="Mathematik"
-    else
-        DESKTOPNAME="Sprachen/Deutsch"
-    fi
-    kdialog  --yesno "Wollen sie den Exam Desktop für $DESKTOPNAME manuell anpassen?" --title 'Starting Exam' --caption "Starting Exam"
-    if [ "$?" = 0 ]; then
-        sleep 0
-    else
-        exit 1
-    fi
-fi
+
 
 
 
@@ -55,11 +41,11 @@ fi
 # Check if root and running exam #
 #--------------------------------#
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' 
     exit 1
 fi
 if [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --yesno "Already running exam! \nDo you want to reload the Exam-Desktop?"  --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --yesno "Already running exam! \nDo you want to reload the Exam-Desktop?"  --title 'Starting Exam'
     # this way we could restart the desktop in exam mode just in case plasma or kwin did not start properly
     if [ ! "$?" = 0 ]; then
         exit  0   #cancel
@@ -72,7 +58,7 @@ if [ -f "$EXAMLOCKFILE" ];then
 
 fi
 if [ -f "/etc/kde5rc" ];then
-    kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Desktop is already locked - Stopping program' --title 'Starting Exam'
     exit 1
 fi
 if [ ! -d "$BACKUPDIR" ];then
@@ -87,7 +73,7 @@ fi
 
 if [[ ( $MODE = "permanent" ) ]]
 then 
-    kdialog  --caption "LIFE" --title "LIFE" --yesno "Wollen sie diesen USB Stick dauerhaft in den Prüfungsmodus versetzen?
+    kdialog --title "LIFE" --yesno "Wollen sie diesen USB Stick dauerhaft in den Prüfungsmodus versetzen?
 
     Der fertige USB Stick nutzt die Konfigurationen des Programmes 'Exam Teacher'.
     Sie bekommen die Möglichkeit ein Root Passwort festzulegen.
@@ -127,7 +113,7 @@ qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.5
 
     touch $EXAMLOCKFILE
-    echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
+    # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
     sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
 
 
@@ -177,12 +163,9 @@ sleep 0.5
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.5
-    if [[ ( $SUBJECT = "math" ) ]]
-    then
-        cp -a ${LOCKDOWNDIR}plasma-EXAM-M    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Mathematik
-    else
-        cp -a ${LOCKDOWNDIR}plasma-EXAM-L    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam Deutsch/Sprachen
-    fi
+   
+    cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
+  
 
     rm -rf ${HOME}.local/share/Trash > /dev/null 2>&1
 
@@ -236,11 +219,6 @@ sleep 0.5
         sudo cp "${SCRIPTDIR}USB-Kopie.desktop" $SHARE
     fi
     
-    if [[ ( $MODE = "config" ) ]]
-    then
-        sudo cp "${SCRIPTDIR}Speichere Prüfungsumgebung.desktop" $SHARE  # erstelle link um config zu speichern
-       
-    fi
 
 
 
@@ -411,24 +389,24 @@ then
     
     PW="empty"
     getROOT(){
-        PASSWD1=$(kdialog  --caption "LIFE" --title "LIFE" --inputbox "Geben sie bitte das gwünschte ROOT Passwort an!");
+        PASSWD1=$(kdialog --title "LIFE" --inputbox "Geben sie bitte das gwünschte ROOT Passwort an!");
         if [ "$?" = 0 ]; then
-            PASSWD2=$(kdialog  --caption "LIFE" --title "LIFE" --inputbox 'Geben sie bitte das gewünschte ROOT Passwort ein zweites mal an!');
+            PASSWD2=$(kdialog --title "LIFE" --inputbox 'Geben sie bitte das gewünschte ROOT Passwort ein zweites mal an!');
             if [ "$?" = 0 ]; then
             
                 if [ "$PASSWD2" = "$PASSWD1"  ]; then
-                    sudo -u ${USER} kdialog  --caption "LIFE" --title "LIFE" --passivepopup "Passwort OK!" 3
+                    sudo -u ${USER} kdialog --title "LIFE" --passivepopup "Passwort OK!" 3
                     PW=$PASSWD1
                 else
-                    kdialog  --caption "LIFE" --title "LIFE" --error "Die Passwörter sind nicht ident!"
+                    kdialog --title "LIFE" --error "Die Passwörter sind nicht ident!"
                     getROOT 
                 fi
             else
-                kdialog  --caption "LIFE" --title "LIFE" --error "Kein Root Password gesetzt!"
+                kdialog --title "LIFE" --error "Kein Root Password gesetzt!"
                 sleep 0
             fi
         else
-            kdialog  --caption "LIFE" --title "LIFE" --error "Kein Root Password gesetzt!"
+            kdialog --title "LIFE" --error "Kein Root Password gesetzt!"
             sleep 0
         fi
     }
@@ -463,26 +441,28 @@ qdbus $progress close
     paplay /usr/share/sounds/KDE-Sys-Question.ogg
 
     #FIXME man könnte auch einfach ksmserver neustarten bzw. Xorg - dann würde kein programm überdauern (derzeit aber unpraktisch und etwas brachial)
-
-    pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
-    pkill -f google && killall google-chrome && killall google-chrome-stable
-    pkill -f firefox  && killall firefox
-    pkill -f writer && killall writer
-    pkill -f konsole && killall konsole
-    pkill -f geogebra && killall geogebra
-    pkill -f kate && killall kate
-    pkill -f systemsettings && killall systemsettings5
-    pkill -f nextcloud
-    pkill -f calligra
-
-    sudo -u ${USER} -H kquitapp5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kstart5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kwin --replace &
-    sleep 4
-    exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
+    pkill -f ksmserver
     
+    
+#     #pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
+#     pkill -f google && killall google-chrome && killall google-chrome-stable
+#     pkill -f firefox  && killall firefox
+#     pkill -f writer && killall writer
+#     pkill -f konsole && killall konsole
+#     pkill -f geogebra && killall geogebra
+#     pkill -f kate && killall kate
+#     pkill -f systemsettings && killall systemsettings5
+#     pkill -f nextcloud
+#     pkill -f calligra
+# 
+#     exec sudo -u ${USER} -H kquitapp5 plasmashell &
+#     sleep 2
+#     exec sudo -u ${USER} -H kstart5 plasmashell &   # funktioniert nicht mehr wenn das programm durch ein programm gestartet wird welches mit pkexec gestartet wurde
+#     sleep 2                                         # sudo -u bringt nichts und plasmashell wird als root gestartet !!???  daher kill ksmserver 
+#     exec sudo -u ${USER} -H kwin --replace &
+#     sleep 4
+#     exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true   #block all global short cuts ( like alt+space for krunner)
+#     
 
 
 

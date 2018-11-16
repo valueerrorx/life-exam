@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>872</width>
-    <height>661</height>
+    <width>924</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,6 +58,12 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="startexam">
            <property name="sizePolicy">
@@ -839,8 +845,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>800</width>
-               <height>912</height>
+               <width>852</width>
+               <height>1004</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -917,35 +923,50 @@
                           <string notr="true">margin-left:10px;margin-bottom:0;</string>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_20">
-                          <item>
-                           <widget class="QLabel" name="label_17">
-                            <property name="minimumSize">
-                             <size>
-                              <width>130</width>
-                              <height>0</height>
-                             </size>
-                            </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>200</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">margin-left:10px;</string>
-                            </property>
-                            <property name="text">
-                             <string>Prüfungsname</string>
-                            </property>
-                           </widget>
-                          </item>
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item>
                            <widget class="QLineEdit" name="examlabeledit1">
                             <property name="maximumSize">
                              <size>
                               <width>150</width>
+                              <height>46</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_17">
+                            <property name="minimumSize">
+                             <size>
+                              <width>240</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>240</width>
                               <height>16777215</height>
                              </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin-left:1px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Prüfungsname</string>
                             </property>
                            </widget>
                           </item>
@@ -956,7 +977,7 @@
                             </property>
                             <property name="sizeHint" stdset="0">
                              <size>
-                              <width>40</width>
+                              <width>20</width>
                               <height>20</height>
                              </size>
                             </property>
@@ -971,53 +992,108 @@
                           <enum>Qt::LeftToRight</enum>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">margin-left:10px;margin-top:0;</string>
+                          <string notr="true">margin-left:10px;margin-bottom:0;</string>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_11">
-                          <item>
-                           <widget class="QLabel" name="label_6">
-                            <property name="minimumSize">
-                             <size>
-                              <width>130</width>
-                              <height>0</height>
-                             </size>
-                            </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>200</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">margin-left:10px;</string>
-                            </property>
-                            <property name="text">
-                             <string>Abgabeintervall</string>
-                            </property>
-                           </widget>
-                          </item>
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item>
                            <widget class="QSpinBox" name="aintervall">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
                             </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>150</width>
+                              <height>46</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>150</width>
+                              <height>46</height>
+                             </size>
+                            </property>
                             <property name="toolTip">
                              <string>0 - Automatische Abgabe deaktiviert</string>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true"/>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                             </property>
                             <property name="minimum">
                              <number>0</number>
                             </property>
                             <property name="maximum">
-                             <number>300</number>
+                             <number>30</number>
                             </property>
                             <property name="singleStep">
                              <number>1</number>
                             </property>
                             <property name="value">
-                             <number>4</number>
+                             <number>5</number>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_6">
+                            <property name="minimumSize">
+                             <size>
+                              <width>240</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>240</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin-left:1px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Abgabe Intervall (m)</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="cleanabgabe">
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="focusPolicy">
+                             <enum>Qt::TabFocus</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px; margin-top:5px; margin-left:0px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Schülerordner 'share' bei Prüfungsbeginn löschen</string>
+                            </property>
+                            <property name="checked">
+                             <bool>true</bool>
                             </property>
                            </widget>
                           </item>
@@ -1037,49 +1113,144 @@
                          </layout>
                         </widget>
                        </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QCheckBox" name="cleanabgabe">
-                      <property name="focusPolicy">
-                       <enum>Qt::TabFocus</enum>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">margin:4px; padding:4px; margin-left:142px;</string>
-                      </property>
-                      <property name="text">
-                       <string>Schülerordner 'share' bei Prüfungsbeginn löschen</string>
-                      </property>
-                      <property name="checked">
-                       <bool>false</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="widget_29" native="true">
-                      <layout class="QVBoxLayout" name="verticalLayout_25">
                        <item>
-                        <spacer name="verticalSpacer">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
+                        <widget class="QWidget" name="widget_2" native="true">
+                         <property name="styleSheet">
+                          <string notr="true">margin-left:10px;margin-bottom:0;</string>
                          </property>
-                         <property name="sizeType">
-                          <enum>QSizePolicy::MinimumExpanding</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
+                         <layout class="QHBoxLayout" name="horizontalLayout_6">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QSpinBox" name="ssintervall">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>150</width>
+                              <height>46</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>150</width>
+                              <height>46</height>
+                             </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>0 - Automatisches Screenshotupdate deaktiviert</string>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true"/>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="minimum">
+                             <number>0</number>
+                            </property>
+                            <property name="maximum">
+                             <number>360</number>
+                            </property>
+                            <property name="singleStep">
+                             <number>10</number>
+                            </property>
+                            <property name="value">
+                             <number>20</number>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_25">
+                            <property name="minimumSize">
+                             <size>
+                              <width>240</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>240</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin-left:1px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Screenshot Update Intervall (s)</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="exitcleanabgabe">
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px;margin-top:5px; margin-left:0px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Schülerordner 'share' bei Prüfungsende löschen</string>
+                            </property>
+                            <property name="checked">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_11">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </widget>
                        </item>
                       </layout>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QWidget" name="widget_29" native="true">
+                      <layout class="QVBoxLayout" name="verticalLayout_25"/>
+                     </widget>
+                    </item>
                    </layout>
                   </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_12">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </widget>
@@ -1091,6 +1262,12 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>310</height>
+                 </size>
                 </property>
                 <property name="styleSheet">
                  <string notr="true">margin-top:0px;</string>
@@ -1129,187 +1306,53 @@
                  </item>
                  <item>
                   <widget class="QWidget" name="widget_4" native="true">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true">margin:4px; padding:4px;margin-left:14px;</string>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_16">
                     <item>
-                     <widget class="QWidget" name="widget_27" native="true">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>136</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true"/>
-                      </property>
+                     <widget class="QWidget" name="widget_24" native="true">
                       <layout class="QVBoxLayout" name="verticalLayout_7">
                        <item>
-                        <widget class="QRadioButton" name="radiomath">
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>24</height>
-                          </size>
+                        <widget class="QListWidget" name="applist">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
                          </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">padding:0px;</string>
-                         </property>
-                         <property name="text">
-                          <string>&amp;Mathematik</string>
-                         </property>
-                         <property name="checked">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QRadioButton" name="radiolanguage">
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>32</height>
+                           <height>200</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
                            <width>16777215</width>
-                           <height>24</height>
+                           <height>200</height>
                           </size>
                          </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
                          <property name="styleSheet">
-                          <string notr="true">padding:0px;</string>
-                         </property>
-                         <property name="text">
-                          <string>&amp;Sprachen</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="widget_2" native="true">
-                      <property name="maximumSize">
-                       <size>
-                        <width>160</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">margin:4px;</string>
-                      </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_18">
-                       <item>
-                        <widget class="QPushButton" name="startconfig">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>140</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="toolTip">
-                          <string>Den Prüfungsdesktop im entsperrten Zustand laden&lt;br&gt; um Anpassungen vorzunehmen.</string>
-                         </property>
-                         <property name="layoutDirection">
-                          <enum>Qt::LeftToRight</enum>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">padding: 8px;</string>
-                         </property>
-                         <property name="text">
-                          <string>Anpassen</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../pixmaps/document-edit.png</normaloff>../pixmaps/document-edit.png</iconset>
-                         </property>
-                         <property name="autoDefault">
-                          <bool>false</bool>
-                         </property>
-                         <property name="flat">
-                          <bool>false</bool>
+                          <string notr="true">padding:0px;margin:0px;</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="loaddefaults">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>140</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="toolTip">
-                          <string>Standard Einstellungen für den Prüfungsdesktop wiederherstellen </string>
-                         </property>
-                         <property name="layoutDirection">
-                          <enum>Qt::LeftToRight</enum>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">padding: 8px;</string>
-                         </property>
-                         <property name="text">
-                          <string> Zurücksetzen</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../pixmaps/document-noedit.png</normaloff>../pixmaps/document-noedit.png</iconset>
-                         </property>
-                         <property name="autoDefault">
-                          <bool>false</bool>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="widget_24" native="true">
-                      <layout class="QHBoxLayout" name="horizontalLayout_10">
-                       <item>
-                        <spacer name="horizontalSpacer_3">
+                        <spacer name="verticalSpacer">
                          <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeType">
-                          <enum>QSizePolicy::Preferred</enum>
+                          <enum>Qt::Vertical</enum>
                          </property>
                          <property name="sizeHint" stdset="0">
                           <size>
-                           <width>561</width>
-                           <height>20</height>
+                           <width>20</width>
+                           <height>40</height>
                           </size>
                          </property>
                         </spacer>
@@ -1322,18 +1365,20 @@
                  </item>
                  <item>
                   <widget class="QWidget" name="widget_25" native="true">
-                   <layout class="QVBoxLayout" name="verticalLayout_23">
+                   <layout class="QHBoxLayout" name="horizontalLayout_26">
                     <item>
-                     <spacer name="verticalSpacer_4">
+                     <widget class="QWidget" name="appview" native="true">
+                      <layout class="QHBoxLayout" name="horizontalLayout_25"/>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_3">
                       <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::MinimumExpanding</enum>
+                       <enum>Qt::Horizontal</enum>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
-                        <width>20</width>
+                        <width>40</width>
                         <height>20</height>
                        </size>
                       </property>
@@ -2175,7 +2220,7 @@
                    <item>
                     <widget class="QLabel" name="label_20">
                      <property name="text">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Desktop&lt;/span&gt;&lt;br/&gt;Sie können den Prüfungsdesktop anpassen und festlegen welche Programme während der Prüfung &lt;br/&gt;schnell erreichbar sein sollen. Speichern Sie die Änderungen an der Prüfungsumgebung &lt;br/&gt;mit Hilfe des Programmes &amp;quot;Prüfungsumgebung speichern&amp;quot;.&lt;/p&gt;&lt;p&gt;Sie können im Anpassungsmodus auch ohne Anwendungsmenü jedes beliebige Programm ausführen&lt;br/&gt;in dem Sie das Tastatur-Kürzel &lt;span style=&quot; font-weight:600;&quot;&gt;Alt+Leertaste &lt;/span&gt;nutzen um das &amp;quot;run command&amp;quot; Interface sichtbar zu machen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Desktop&lt;/span&gt;&lt;br/&gt;Sie können den Prüfungsdesktop anpassen und festlegen welche Programme &lt;br/&gt;während der Prüfung schnell erreichbar sein sollen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                     </widget>
                    </item>
@@ -2217,7 +2262,7 @@
                 <item>
                  <widget class="QLabel" name="version">
                   <property name="text">
-                   <string>Version 1.1</string>
+                   <string>Version 1.2</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2360,6 +2405,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">margin:0px;padding:0px;</string>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="topMargin">
        <number>0</number>
@@ -2375,6 +2423,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true">margin:0px;padding:0px;</string>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <property name="spacing">
           <number>0</number>
@@ -2382,77 +2433,74 @@
          <property name="topMargin">
           <number>0</number>
          </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="widget_14" native="true">
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="working">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap>../pixmaps/working.gif</pixmap>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="exit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>88</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::TabFocus</enum>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">margin-bottom:4px;padding:8px;</string>
-              </property>
-              <property name="text">
-               <string>Programm Beenden</string>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>../pixmaps/window-close.png</normaloff>../pixmaps/window-close.png</iconset>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <widget class="QLabel" name="working">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap>../pixmaps/working.gif</pixmap>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>46</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>46</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">margin:0px;margin-bottom:4px;padding:8px;</string>
+           </property>
+           <property name="text">
+            <string>Programm Beenden</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../pixmaps/window-close.png</normaloff>../pixmaps/window-close.png</iconset>
+           </property>
           </widget>
          </item>
         </layout>
@@ -2479,11 +2527,8 @@
   <tabstop>scrollArea</tabstop>
   <tabstop>examlabeledit1</tabstop>
   <tabstop>aintervall</tabstop>
-  <tabstop>cleanabgabe</tabstop>
-  <tabstop>radiomath</tabstop>
-  <tabstop>radiolanguage</tabstop>
-  <tabstop>startconfig</tabstop>
-  <tabstop>loaddefaults</tabstop>
+  <tabstop>ssintervall</tabstop>
+  <tabstop>applist</tabstop>
   <tabstop>showip</tabstop>
   <tabstop>starthotspot</tabstop>
   <tabstop>printconf</tabstop>

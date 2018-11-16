@@ -16,25 +16,20 @@ BACKUPDIR="${HOME}.life/unlockedbackup/"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 SHARE="${HOME}SHARE/"
 
-MODE=$1
-if [[ ( $MODE != "config" ) && ( $MODE != "exam" )  ]]
-then
-    kdialog  --msgbox 'Parameter is missing <config> <exam> ' --title 'Stopping Exam' --caption "Stopping Exam"
-    exit 0
-fi
+
 
 
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
 if ! [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
     sleep 2
     exit 0
 fi
 
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam' --caption "Starting Exam"
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
     exit 0
 fi
 
@@ -65,68 +60,14 @@ stopIPtables(){
 # ASK FOR CONFIRMATION           #
 #--------------------------------#
 
-if [[ ( $MODE = "config" ) ]]
-then 
-    kdialog --yesnocancel "Die Anpassung des Prüfungsdesktops wird beendet.                                                \n\nBitte achten Sie darauf, dass ein Link zum Programm 'Stoppe Prüfungsumgebung' am Desktop erreichbar sein muss.\n\nWollen sie die Änderungen speichern?" --title "EXAM" --caption "EXAM";
-    answer="$?";
-    if [ "$answer" = 0 ]; then
-        #------------------------------------------------#
-        # SAVE CURRENT EXAM CONFIG FILES TO LOCKDOWNDIR  #
-        #------------------------------------------------#
-       
-        #quit plasmashell in order to make is store the configuration
-        
-        sudo -u ${USER} -H kquitapp5 plasmashell &
-        sleep 2
-        exec sudo -u ${USER} -H kwin --replace &
-       
 
-       #plasma
-       SUBJECT=$(cat $EXAMLOCKFILE)
-       if [[ ( $SUBJECT = "math" ) ]]
-       then
-            cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM-M
-       else
-            cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${LOCKDOWNDIR}plasma-EXAM-L
-       fi
-
-
-        #kwin
-        cp -a ${HOME}.config/kwinrc ${LOCKDOWNDIR}kwinrc-EXAM
-
-        #office
-        #cp -a ${HOME}.config/Kingsoft/Office.conf ${LOCKDOWNDIR}Office.conf-EXAM   # wps office
-        cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${LOCKDOWNDIR}registrymodifications.xcu-EXAM   # libre office
-        cp -a ${HOME}.config/calligra* ${LOCKDOWNDIR}  # calligra office (best with kde kiosk)
-
-
-        #filemanager
-        cp -a ${HOME}.local/share/user-places.xbel ${LOCKDOWNDIR}user-places.xbel-EXAM
-        cp -a ${HOME}.config/dolphinrc ${LOCKDOWNDIR}dolphinrc-EXAM
-        cp -a ${HOME}.config/user-dirs.dirs ${LOCKDOWNDIR}       #default directories for documents music etc.
-        cp -a ${HOME}.config/mimeapps.list ${LOCKDOWNDIR}mimeapps.list-EXAM
-        
-        sudo rm "${SHARE}Speichere Prüfungsumgebung.desktop"
-    elif [ "$answer" = 1 ]; then
-        #------------------------------------------------#
-        # CONTINUE WITHOUT SAVING                        #
-        #------------------------------------------------#
-        sudo rm "${SHARE}Speichere Prüfungsumgebung.desktop"
-    else
-        exit 1   #cancel
-    fi;
-
-fi
-
-if [[ ( $MODE = "exam" ) ]]
-then 
-    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM" --caption "EXAM";
+    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
     if [ "$?" = 0 ]; then
         sleep 0
     else
         exit 1   #cancel
     fi;
-fi   
+  
 
 
 
@@ -203,8 +144,7 @@ sleep 0.5
 qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Systemdateien werden entsperrt...."
 sleep 0.5
-    if [[ ( $MODE = "exam" ) ]]
-    then 
+
         sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
         sudo chmod 755 /media/ -R  # allow mounting again
         sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
@@ -212,7 +152,7 @@ sleep 0.5
         sudo chmod 755 /usr/bin/konsole
 
         sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
-    fi
+
 
     
     
@@ -256,11 +196,10 @@ sleep 0.5
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
     
-    if [[ ( $MODE = "exam" ) ]]
-    then 
+
         # falls ein rootpasswort vom lehrer gesetzt wurde (standalone-exam mode advanced)
         sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
-    fi
+
     
     
     
@@ -285,18 +224,21 @@ qdbus $progress close
     pactl set-sink-volume 0 90%
     paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
-    # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
-    pkill -f google && killall google-chrome && killall google-chrome-stable
-    pkill -f firefox  && killall firefox
-    pkill -f writer && killall writer
-    pkill -f konsole && killall konsole
-    pkill -f geogebra && killall geogebra
-
-    sudo -u ${USER} -H kquitapp5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kstart5 plasmashell &
-    sleep 2
-    exec sudo -u ${USER} -H kwin --replace &
+    
+    pkill -f ksmserver
+    
+#     # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
+#     pkill -f google && killall google-chrome && killall google-chrome-stable
+#     pkill -f firefox  && killall firefox
+#     pkill -f writer && killall writer
+#     pkill -f konsole && killall konsole
+#     pkill -f geogebra && killall geogebra
+# 
+#     kquitapp5 plasmashell &
+#     sleep 2
+#     kstart5 plasmashell &
+#     sleep 2
+#     kwin --replace &
 
 
 

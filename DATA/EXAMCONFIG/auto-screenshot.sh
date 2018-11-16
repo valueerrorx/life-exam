@@ -20,7 +20,8 @@ shoot(){
     then
         for (( c=1; c<=$LOOPS; c++ ))
         do
-            import -window root -resize 160x100! ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
+            #import -window root -resize 160x100! ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL; #why resize
+            import -window root ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
             cp ${SHARE}* ${MOUNTPOINT}
         done
     else

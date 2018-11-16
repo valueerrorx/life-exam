@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=LifeName
+Comment=Displays LiFE Exam Username
+Icon=lock
+Type=Service
+
+
+X-KDE-ParentApp=
+X-KDE-PluginInfo-Author=Weissel Thomas
+X-KDE-PluginInfo-Email=valueerror@gmail.com
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-Name=org.kde.lifename
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=life-edu.eu
+X-KDE-ServiceTypes=Plasma/Applet
+X-KDE-PluginInfo-Category=Windows and Tasks
+
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/main.qml
+X-Plasma-RemoteLocation=
+
