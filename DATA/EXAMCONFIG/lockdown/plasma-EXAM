@@ -148,15 +148,6 @@ PreloadWeight=0
 localPath=/home/student/.local/share/plasma_icons/Exam Student.desktop
 url=file:///home/student/.local/share/applications/Exam Student.desktop
 
-[Containments][21][Applets][41]
-immutability=1
-plugin=org.kde.plasma.icon
-
-[Containments][21][Applets][41][Configuration]
-PreloadWeight=0
-localPath=/home/student/.local/share/plasma_icons/Stoppe Prüfungsumgebung.desktop
-url=file:///home/student/.local/share/applications/Stoppe Prüfungsumgebung.desktop
-
 [Containments][21][ConfigDialog]
 DialogHeight=705
 DialogWidth=892
@@ -165,7 +156,7 @@ DialogWidth=892
 PreloadWeight=0
 
 [Containments][21][General]
-ItemsGeometries=Applet-23:16,16,544,320,0;Applet-31:16,368,144,80,0;Applet-41:16,496,144,80,0;
+ItemsGeometries=Applet-23:16,16,544,320,0;Applet-31:16,368,144,80,0;
 pressToMove=false
 showToolbox=false
 

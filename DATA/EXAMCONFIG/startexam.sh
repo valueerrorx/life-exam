@@ -115,17 +115,6 @@ fi
 progress=$(kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
 qdbus $progress Set "" maximum 8
 sleep 0.5
-#---------------------------------#
-# CREATE EXAM LOCK FILE           #
-#---------------------------------#
-qdbus $progress Set "" value 1
-qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
-sleep 0.5
-
-    touch $EXAMLOCKFILE
-    # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
-    sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
-
 
 
 
@@ -138,7 +127,7 @@ sleep 0.5
 #---------------------------------#
 # BACKUP CURRENT DESKTOP CONFIG   #
 #---------------------------------#
-qdbus $progress Set "" value 2
+qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.5
     #kde
@@ -170,7 +159,7 @@ sleep 0.5
 #-----------------------------------------------#
 #           LOAD EXAM CONFIG                    #
 #-----------------------------------------------#
-qdbus $progress Set "" value 3
+qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.5
    
@@ -210,7 +199,7 @@ fi
 #---------------------------------#
 # MOUNT SHARE                    #
 #---------------------------------#
-qdbus $progress Set "" value 4
+qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
 sleep 0.5
 
@@ -237,6 +226,9 @@ sleep 0.5
         ## only if exam is not already running delete share folder (otherwise we could delete the students work)
         if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
         then
+            qdbus $progress Set "" value 4
+            qdbus $progress setLabelText "Bereinige SHARE...."
+            sleep 0.5
             sudo rm -rf ${SHARE}*
             sudo rm -rf ${SHARE}.* 
         
@@ -244,7 +236,18 @@ sleep 0.5
     fi
 
 
-    
+#---------------------------------#
+# CREATE EXAM LOCK FILE           #
+#---------------------------------#
+qdbus $progress Set "" value 4
+qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
+sleep 0.5
+
+    touch $EXAMLOCKFILE
+    # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
+    sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
+
+
     
     
 

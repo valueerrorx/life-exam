@@ -57,6 +57,7 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.offlineexam.clicked.connect(self._on_offline_exam)
+        self.ui.offlineexamexit.clicked.connect(self._on_offline_exam_exit)
         self.ui.serverdropdown.currentIndexChanged.connect(self._updateIP)
         self.ui.serverdropdown.activated.connect(self._updateIP)
         self.ui.studentid.textChanged.connect(lambda: self._changePalette(self.ui.studentid, 'ok'))
@@ -101,8 +102,9 @@ class ClientDialog(QtWidgets.QDialog):
             self.msg = False
         
         
-        
-        
+    def _on_offline_exam_exit(self):  
+        startcommand = "sudo %s/stopexam.sh &" %(SCRIPTS_DIRECTORY) 
+        os.system(startcommand)  # start script
        
 
 
@@ -122,7 +124,7 @@ class ClientDialog(QtWidgets.QDialog):
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 os.system("sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
                 
-                namefile = os.path.join(EXAMCONFIG_DIRECTORY, "myname.txt")
+                namefile = os.path.join(WORK_DIRECTORY, "myname.txt")  # moved this to workdirector because configdirectory is overwritten on exam start
                 openednamefile = open(namefile, 'w+')  # erstelle die datei neu
                 openednamefile.write("%s" %(ID) )
                 

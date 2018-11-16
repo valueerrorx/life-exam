@@ -17,7 +17,7 @@ Item {
 
     function updateText() {
         var xhr = new XMLHttpRequest;
-        xhr.open("GET", "/home/student/.life/EXAM/EXAMCONFIG/myname.txt");
+        xhr.open("GET", "/home/student/.life/EXAM/myname.txt");  //i don't like that "student" is hardcoded here but there is no way (other than using C++) to get $home
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 var response = xhr.responseText;
@@ -48,6 +48,6 @@ Item {
             leftMargin: units.smallSpacing
             rightMargin: units.smallSpacing
         }
-        text: "User: " +   main.name 
+        text: "Exam: " +   main.name 
     }
 }
