@@ -17,7 +17,7 @@ Item {
 
     function updateText() {
         var xhr = new XMLHttpRequest;
-        xhr.open("GET", "/home/waldelf/.life/EXAM/EXAMCONFIG/myname.txt");
+        xhr.open("GET", "/home/student/.life/EXAM/EXAMCONFIG/myname.txt");
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 var response = xhr.responseText;
