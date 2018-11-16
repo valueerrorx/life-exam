@@ -35,14 +35,12 @@ Item {
 
     Text {
         id: sizehelper
-        
         font.capitalization: Font.AllUppercase
         font.pixelSize: vertical ? theme.mSize(theme.defaultFont).height * 2 : 1024 // random "big enough" size - this is used as a max pixelSize by the fontSizeMode
         minimumPixelSize: theme.mSize(theme.smallestFont).height
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         fontSizeMode: vertical ? Text.HorizontalFit : Text.VerticalFit
-       
         color: "#ffffff"
         wrapMode: Text.NoWrap
         anchors {
