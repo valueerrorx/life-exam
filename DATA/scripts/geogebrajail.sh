@@ -6,5 +6,5 @@ HOME="/home/${USER}/"
 
 
 sudo ip netns add jail
-sudo ip netns exec jail su ${USER} -c 'google-chrome --app=http://localhost/GeoGebra'
+sudo ip netns exec jail su ${USER} -c 'google-chrome --app=http://localhost/.GeoGebra'
 
