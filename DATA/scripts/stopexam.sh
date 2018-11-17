@@ -153,14 +153,32 @@ qdbus $progress setLabelText "Systemdateien werden entsperrt...."
 sleep 0.5
 
         sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
-        sudo chmod 755 /media/ -R  # allow mounting again
         sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
         sudo chmod 755 /usr/bin/xterm 
         sudo chmod 755 /usr/bin/konsole
-
         sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
 
+       
+        sudo umount /media/*
+        sudo umount /media/student/*
+        sudo umount -l /media/*
+        sudo umount -l /media/student/*
+        sleep 1
+        
+        
+        MOUNTED=$(df -h |grep media |wc -l)
+        if [[( $MOUNTED = "1" )]]
+        then
+            sleep 0 #do nothing - don't mess up rights of mounted partition there
+        else
+            # allow mounting again 
+            sudo chmod 755 /media/ -R  
+        fi
 
+        
+        
+     
+       
     
     
     

@@ -373,15 +373,22 @@ sleep 0.5
     then 
         sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
         
-        #make sure nothing is mounted in /media  !! IMPORTANT !! otherwise this will mess up the user rights on mounted partitions
-        
+        #make sure nothing is mounted in /media  
         sudo umount /media/*
         sudo umount /media/student/*
         sudo umount -l /media/*
         sudo umount -l /media/student/*
+        sleep 1
+         
+        MOUNTED=$(df -h |grep media |wc -l)
+        if [[( $MOUNTED = "1" )]]
+        then
+            #this should never happen .. but it did once ;-)
+            sleep 0 #do nothing - we do not mess with permissions of mounted partitions
+        else
+             sudo chmod 600 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin   !!! could be fatal if something is mounted there already  for examle "casper-rw" (this would immediately kill the flashdrive)
+        fi
         
-        sudo chmod 600 /media/ -R   # this makes it impossible to mount anything in kubuntu /dolphin   !!! could be fatal if something is mounted there already  for examle "casper-rw" (this would immediately kill the flashdrive)
-       
         sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  verbieten
         sudo chmod 644 /usr/bin/xterm
         sudo chmod 644 /usr/bin/konsole
