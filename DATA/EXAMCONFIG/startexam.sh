@@ -289,13 +289,11 @@ sleep 0.5
         #sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  # castrated VPS 
 
         #needed for multicast (twisted)  Multicast Address for Address Allocation for Private Internets
-        sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
-        sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
+        sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8006 -j ACCEPT
+        sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8006 -j ACCEPT
 
-        #needed for geogebra 6 in order to avoid a 2 minute timeout on this server (some service for mathematical calculations - google domain)
-        sudo iptables -A INPUT -p tcp -d 172.217.16.206 --dport 443 -j ACCEPT
-        sudo iptables -A OUTPUT -p tcp -d 172.217.16.206 --dport 443 -j ACCEPT
-
+        #needed for geogebra 6 - chrome-app
+        sudo iptables -I INPUT -p tcp -d 127.0.0.1 --dport 80 -j ACCEPT
 
         sleep 1
 
