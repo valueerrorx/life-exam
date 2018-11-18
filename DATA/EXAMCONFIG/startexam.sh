@@ -134,11 +134,8 @@ sleep 0.5
     cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUPDIR}   #main desktop applets config file
     cp -a ${HOME}.config/kwinrc ${BACKUPDIR}        # windowmanager configuration
     cp -a ${HOME}.config/kglobalshortcutsrc ${BACKUPDIR}   # keyboardshortcuts
-    
     #office
-    cp -a ${HOME}.config/libreoffice/4/user/registrymodifications.xcu ${BACKUPDIR}
     cp -a ${HOME}.config/calligra* ${BACKUPDIR}
-    
     #filemanagment
     cp -a ${HOME}.local/share/user-places.xbel ${BACKUPDIR}   # dolphin / filepicker places panel config
     cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
@@ -162,20 +159,15 @@ sleep 0.5
 qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.5
+    rm -rf ${HOME}.local/share/Trash > /dev/null 2>&1    #students hide things in trash ? 
    
     cp -a ${LOCKDOWNDIR}plasma-EXAM    ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc      #load minimal plasma config for exam 
-  
-
-    rm -rf ${HOME}.local/share/Trash > /dev/null 2>&1
-
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
-
-    cp -a ${LOCKDOWNDIR}registrymodifications.xcu-EXAM ${HOME}.config/libreoffice/4/user/registrymodifications.xcu
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
     cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
     cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list
+    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list   #dateitypen zuordnung zu programmen
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
 
