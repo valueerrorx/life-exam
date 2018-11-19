@@ -699,13 +699,15 @@ class MyServerProtocol(basic.LineReceiver):
         self.line_data_list = ()
         self.refused = False
         self.clientConnectionID = str(self.transport.client[1])
+        self.transport.setTcpKeepAlive(1)
         self.factory.window.log(
             'Connection from: %s (%d clients total)' % (
             self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
 
     # twisted
     def connectionLost(self, reason):
-        print(reason)
+        print("ConnectionLost")
+        print(reason)  # maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
         self.factory.server_to_client.remove_client(self)
         self.file_handler = None
         self.line_data_list = ()

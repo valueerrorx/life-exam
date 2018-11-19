@@ -10,7 +10,7 @@ import os
 import subprocess
 
 SERVER_IP = "localhost"
-SERVER_PORT = 5000
+SERVER_PORT = 11411   #according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
 
 VERSION = '2.0'
