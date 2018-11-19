@@ -91,7 +91,12 @@ stopIPtables(){
 if [ "$1" = "start" ]; then
     echo "starting firewall"
     stopIPtables
-    sleep 1
+    
+    #renew arp table before blocking everything
+    myip=$(hostname -I)
+    myiprange="${myip%.*}.0/24"
+    sudo nmap -sn ${myiprange}   #we only scan the last 256 addresses asuming the teacher is in the same subnet as the students
+
     setIPtables
 elif [ "$1" = "stop" ]; then
     echo "stopping firewall"

@@ -14,15 +14,16 @@ HOME="/home/${USER}/"
 MOUNTPOINT="${HOME}SHARE/.screenshots/"
 SHARE="${HOME}SHARE/"
 
+# make sure this is loaded on plasma start
+exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true
+
 
 shoot(){
     if [ -d $MOUNTPOINT ]
     then
         for (( c=1; c<=$LOOPS; c++ ))
         do
-            #import -window root -resize 160x100! ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL; #why resize
             import -window root ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
-            cp ${SHARE}* ${MOUNTPOINT}
         done
     else
         mkdir -p $MOUNTPOINT

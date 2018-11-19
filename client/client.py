@@ -96,7 +96,7 @@ class ClientDialog(QtWidgets.QDialog):
             command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo %s/startexam.sh exam &" %(EXAMCONFIG_DIRECTORY) # start as user even if the twistd daemon is run by root
+            startcommand = "sudo %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY) # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
             self.msg = False
