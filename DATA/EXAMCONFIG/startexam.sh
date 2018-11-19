@@ -308,9 +308,9 @@ sleep 0.5
     
     if [[ ( $MODE = "exam" ) || ( $MODE = "permanent" ) ]]
     then  
-        stopIPtables
+        sudo ${SCRIPTDIR}exam-firewall.sh stop
         sleep 2
-        setIPtables
+        sudo ${SCRIPTDIR}exam-firewall.sh start
 
     fi
     if [[  ( $MODE = "permanent" ) ]]

@@ -20,6 +20,11 @@ IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 setIPtables(){
         sudo iptables -I INPUT 1 -i lo -j ACCEPT        #allow loopback
         sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT     #allow DNS
+        ## allow ping (a lot of services need ping)
+        sudo iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+        sudo iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+        sudo iptables -A OUTPUT -p icmp --icmp-type echo-request -j ACCEPT
+        sudo iptables -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
 
         if [ -f $IPSFILE ]; then
             for IP in `cat $IPSFILE`; do        #allow input and output for ALLOWEDIP
@@ -57,9 +62,9 @@ setIPtables(){
   
         
         sleep 1
-
-        sudo iptables -P INPUT DROP          #drop the rest
-        sudo iptables -P OUTPUT DROP
+        #use reject (send errormsg) instead of drop to prevent timeouts of different programs that wait for an answer
+        sudo iptables -P INPUT REJECT          #drop the rest
+        sudo iptables -P OUTPUT REJECT
     }
 
 
