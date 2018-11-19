@@ -23,12 +23,6 @@ DELSHARE=$1
 
 
 
-if [[ ( $MODE != "exam" )  ]]
-then
-    kdialog  --msgbox 'Parameter is missing <exam>' --title 'Starting Exam'
-    exit 1
-fi
-
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
