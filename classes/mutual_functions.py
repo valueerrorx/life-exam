@@ -223,5 +223,5 @@ def writePidFile():
 def showDesktopMessage(msg):
     """uses a passivepopup to display messages from the daemon"""
     message = "Exam Server: %s " % (msg)
-    command = "kdialog --title 'EXAM' --passivepopup '%s' 5" % (message)
+    command = "runuser -u %s -- kdialog --title 'EXAM' --passivepopup '%s' 5 " % (USER, message)
     os.system(command)

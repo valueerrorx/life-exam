@@ -30,7 +30,7 @@ def dialog_popup(msg):
 def cleanup(folder):
     cleanupcommand = "rm -rf %s/* " % folder
     os.system(cleanupcommand)
-    cleanuphiddencommand = "sudo rm -rf %s/.* " % folder
+    cleanuphiddencommand = "rm -rf %s/.* " % folder
     os.system(cleanuphiddencommand)
 
 

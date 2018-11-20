@@ -186,9 +186,7 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onOpenshare(self):
-        
-        startcommand = "runuser -m -p -u %s --session-command /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
-        #startcommand = "exec sudo -u %s /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
+        startcommand = "runuser -u %s /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
         os.system(startcommand)
 
     def _updateExamName(self):
