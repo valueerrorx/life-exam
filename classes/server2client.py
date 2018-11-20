@@ -11,6 +11,7 @@ from config.enums import Command, DataType
 class ServerToClient:
     def __init__(self):
         self.clients = dict()   # type: dict
+        self.clientlifesigns = dict()   #type: dict       # we will store the time of the last (try) to connect with.. check it against the screenshot intervall (our heartbeat) and disconnect client if the timespan is twice the heartbeat intervall
 
     ## client handling ##
     def get_client(self, key):

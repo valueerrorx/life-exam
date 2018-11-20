@@ -162,10 +162,10 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onScreenlock(self,who):
         """locks the client screens"""
-        self.log("<b>Locking Client Screens </b>")
         self._workingIndicator(True, 1000)
         
         if self.factory.clientslocked:
+            self.log("<b>UNLocking Client Screens </b>")
             os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')
             self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
             self.factory.clientslocked = False
@@ -176,6 +176,7 @@ class ServerUI(QtWidgets.QDialog):
             if not self.factory.server_to_client.unlock_screens(who):
                 self.log("no clients connected")
         else:
+            self.log("<b>Locking Client Screens </b>")
             self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/unlock.png')))
             self.factory.clientslocked = True
             if not self.factory.server_to_client.lock_screens(who):
