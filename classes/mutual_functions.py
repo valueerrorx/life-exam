@@ -50,7 +50,7 @@ def checkIfFileExists(filename):
 
 
 def checkFirewall(firewall_ip_list):
-    result = subprocess.check_output("sudo iptables -L |grep DROP|wc -l", shell=True).rstrip()
+    result = subprocess.check_output("iptables -L |grep DROP|wc -l", shell=True).rstrip()
     if result != "0":
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
         startcommand = "exec %s stop &" % (scriptfile)
@@ -204,7 +204,7 @@ def fixFilePermissions(folder):
     in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root"""
     if folder:
         if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
-            chowncommand = "sudo chown -R %s:%s %s" % (USER, USER, folder)
+            chowncommand = "chown -R %s:%s %s" % (USER, USER, folder)
             os.system(chowncommand)
         else:
             print("exam folder location outside of /home/ is not allowed")
@@ -223,5 +223,5 @@ def writePidFile():
 def showDesktopMessage(msg):
     """uses a passivepopup to display messages from the daemon"""
     message = "Exam Server: %s " % (msg)
-    command = "sudo -u %s kdialog --title 'EXAM' --passivepopup '%s' 5" % (USER, message)
+    command = "kdialog --title 'EXAM' --passivepopup '%s' 5" % (message)
     os.system(command)

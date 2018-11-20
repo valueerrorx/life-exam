@@ -186,7 +186,9 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onOpenshare(self):
-        startcommand = "exec sudo -u %s /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
+        
+        startcommand = "runuser -m -p -u %s --session-command /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
+        #startcommand = "exec sudo -u %s /usr/bin/dolphin %s &" %(USER ,SHARE_DIRECTORY)
         os.system(startcommand)
 
     def _updateExamName(self):
@@ -970,7 +972,7 @@ class MultcastLifeServer(DatagramProtocol):
 if __name__ == '__main__':
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
     killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-    os.system("sudo %s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
+    os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
     # time.sleep(1)
     mutual_functions.writePidFile()
 

@@ -18,7 +18,7 @@ def start_hotspot():
 
 
 def copy(source, target):
-    copycommand = "sudo cp -r %s %s" % (source, target)
+    copycommand = "cp -r %s %s" % (source, target)
     os.system(copycommand)
 
 
@@ -28,12 +28,12 @@ def dialog_popup(msg):
 
 
 def cleanup(folder):
-    cleanupcommand = "sudo rm -rf %s/* " % folder
+    cleanupcommand = "rm -rf %s/* " % folder
     os.system(cleanupcommand)
     cleanuphiddencommand = "sudo rm -rf %s/.* " % folder
     os.system(cleanuphiddencommand)
 
 
 def mountabgabe():
-    mountcommand = "sudo mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/SHARE %s" % SHARE_DIRECTORY
+    mountcommand = "mount -o umask=002,uid=1000,gid=1000 /dev/disk/by-label/SHARE %s" % SHARE_DIRECTORY
     os.system(mountcommand)
