@@ -6,9 +6,9 @@
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-# for debugging run plugin from terminal 
+# for debugging run plugin from terminal - only if env_keep += PYTHONPATH is set in "sudoers" file
 # export PYTHONPATH="/home/student/.life/applications/life-exam"
-# twistd -n --pidfile client.pid examclient -p 5000 -h 10.2.1.251 -i testuser -c 1234
+# sudo twistd -n --pidfile client.pid examclient -p 11411 -h 10.2.1.251 -i testuser -c 1234
 
 
 import os
@@ -176,7 +176,7 @@ class MyClientProtocol(basic.LineReceiver):
                     pids = pids.split(' ')
                     print(pids)
                     for pid in pids:
-                        qdbuscommand = "sudo -u %s -H qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
+                        qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
                         print(qdbuscommand)
                         os.system(qdbuscommand)
                 except:
@@ -232,7 +232,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         print("restarting cups service")
         mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
-        command = "sudo systemctl restart cups.service &"
+        command = "systemctl restart cups.service &"
         os.system(command)
 
 
@@ -255,10 +255,10 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("\n")
             thisexamfile.write("%s:5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
 
-            command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
+            command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo %s/startexam.sh %s &" %(EXAMCONFIG_DIRECTORY, cleanup_abgabe) # start as user even if the twistd daemon is run by root
+            startcommand = "%s/startexam.sh %s &" %(EXAMCONFIG_DIRECTORY, cleanup_abgabe) # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original

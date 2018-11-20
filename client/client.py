@@ -25,12 +25,10 @@ application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, application_path)
 
 
-# FIXME  need to add the application root to pythonpath for twisted plugin
-# os.environ['PYTHONPATH'] = application_path
-# no need for that... setup.py will install the twisted plugin into the systemdirectory 
-# this is only needed for twisted 18.4.0 (probably a bug) because it ignores the app root directory 
-# as current workaround i created a file /usr/bin/pkxexec that does elevate permissions and sets the environment vars
-
+# ATTENTION
+# we can stick to sudo at the beginning (starting this script) and then default to start everything without sudo but we need to add
+# env_keep += PYTHONPATH  to sudoers file  (sudo visudo) otherwise twistd will not find the exam plugin
+# we need elevated rights for exam mode ! 
 
 
 import qt5reactor
@@ -93,17 +91,17 @@ class ClientDialog(QtWidgets.QDialog):
         retval = self.msg.exec_()   # 16384 = yes, 65536 = no
        
         if str(retval) == "16384":
-            command = "sudo chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
+            command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
             os.system(command)
             time.sleep(2)
-            startcommand = "sudo %s/startexam.sh &" %(EXAMCONFIG_DIRECTORY) # start as user even if the twistd daemon is run by root
+            startcommand = "%s/startexam.sh &" %(EXAMCONFIG_DIRECTORY) # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
             self.msg = False
         
         
     def _on_offline_exam_exit(self):  
-        startcommand = "sudo %s/stopexam.sh &" %(SCRIPTS_DIRECTORY) 
+        startcommand = "%s/stopexam.sh &" %(SCRIPTS_DIRECTORY) 
         os.system(startcommand)  # start script
        
 
@@ -122,7 +120,7 @@ class ClientDialog(QtWidgets.QDialog):
             else:
                 self.ui.close()
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-                os.system("sudo %s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
+                os.system("%s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
                 
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")  # moved this to workdirector because configdirectory is overwritten on exam start
                 openednamefile = open(namefile, 'w+')  # erstelle die datei neu
@@ -133,13 +131,13 @@ class ClientDialog(QtWidgets.QDialog):
                 list(getPlugins(IPlugin))
 
                 #pkXexec is used here (a short "life" bashscript that uses pkexec but sets a lot of environment variables)
-                command = "pkxexec 'twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s' &" % (
+                command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
                 os.system(command)
                 
                 #subprocess.call(command, shell=True,env=dict(os.environ ))
                 # for non daemon mode manual to track bugs
-                #sudo twistd -n --pidfile /home/student/.life/EXAM/client.pid examclient -p 5000 -h 10.0.0.110 -i ich -c 2604
+                #sudo twistd -n --pidfile /home/student/.life/EXAM/client.pid examclient -p 11411 -h 10.0.0.110 -i ich -c 2604
             
         else:
             self._changePalette(self.ui.serverip, "warn")
