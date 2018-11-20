@@ -176,7 +176,7 @@ class MyClientProtocol(basic.LineReceiver):
                     pids = pids.split(' ')
                     print(pids)
                     for pid in pids:
-                        qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
+                        qdbuscommand = "runuser -u %s -- qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
                         print(qdbuscommand)
                         os.system(qdbuscommand)
                 except:
