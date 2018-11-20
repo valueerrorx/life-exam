@@ -15,7 +15,6 @@ MOUNTPOINT="${HOME}SHARE/.screenshots/"
 SHARE="${HOME}SHARE/"
 
 # make sure this is loaded on plasma start
-exec sudo -u ${USER} -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true
 
 
 shoot(){
@@ -24,6 +23,8 @@ shoot(){
         for (( c=1; c<=$LOOPS; c++ ))
         do
             import -window root ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
+            #switching ttys (even if disabled) did reenable shortcuts in the past.. untested
+            qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true
         done
     else
         mkdir -p $MOUNTPOINT

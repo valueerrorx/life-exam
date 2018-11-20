@@ -84,16 +84,12 @@ class ClientToServer:
             if not answer <= "1":
                 print("prevented locking of the teachers screen")
                 return
-
-            command = "exec sudo -u %s -H qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true" %(USER)
-            os.system(command)
-
-            startcommand = "exec sudo -u %s -H %s/client/lockscreen.py &" %(USER,APP_DIRECTORY) #kill it if it already exists
+            
+            startcommand = "exec %s/client/lockscreen.py &" %(APP_DIRECTORY) #kill it if it already exists
             os.system(startcommand)
-
         else:
             print("closing lockscreen")
-            startcommand = "exec sudo pkill -9 -f lockscreen.py &"
+            startcommand = "exec pkill -9 -f lockscreen.py &"
             os.system(startcommand)
         return
 
@@ -107,7 +103,7 @@ class ClientToServer:
         exitcleanup_abgabe = client.line_data_list[1]
         print(exitcleanup_abgabe)
         print("stopping exam")
-        startcommand = "sudo %s/scripts/stopexam.sh %s &" %(WORK_DIRECTORY, exitcleanup_abgabe) # start as user even if the twistd daemon is run by root
+        startcommand = "%s/scripts/stopexam.sh %s &" %(WORK_DIRECTORY, exitcleanup_abgabe) # start as user even if the twistd daemon is run by root
         os.system(startcommand)  # start script
 
         return
