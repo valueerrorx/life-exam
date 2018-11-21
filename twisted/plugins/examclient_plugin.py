@@ -228,12 +228,13 @@ class MyClientProtocol(basic.LineReceiver):
         print("stopping cups service")
         command = "systemctl stop cups.service &"
         os.system(command)
+        time.sleep(3)
         
         print("extracting received printer config")
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
         os.unlink(file_path)  # delete zip file
-        time.sleep(2)
+        time.sleep(1)
 
         print("restarting cups service")
         mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
