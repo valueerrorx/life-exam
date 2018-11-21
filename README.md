@@ -29,11 +29,11 @@ runs the client.
 if your setup can't find the twisted plugin add the follwing lines to your "sudoers" file 
 `sudo visudo`
 
-  Defaults    env_reset
-  Defaults    env_keep =  "PYTHONPATH DISPLAY"
-  Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
+>  Defaults    env_reset
+>  Defaults    env_keep =  "PYTHONPATH DISPLAY"
+>  Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
 
 and PYTHONPATH to your /etc/environment
 
-   PYTHONPATH="/home/student/.life/applications/life-exam"
+>   PYTHONPATH="/home/student/.life/applications/life-exam"
 
