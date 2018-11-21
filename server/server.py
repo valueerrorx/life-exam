@@ -183,6 +183,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.log("no clients connected")
                 self.factory.clientslocked = False
                 self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
+        self._onScreenshots("all")   #update screenshots right after un/lock
 
 
     def _onOpenshare(self):
@@ -509,11 +510,13 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.disabled = False
 
         try:
-            self.screenshotwindow.oImage = QImage(screenshot_file_path)
-            self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
-            self.screenshotwindow.palette = QPalette()
-            self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
-            self.screenshotwindow.setPalette(self.screenshotwindow.palette)
+            if self.screenshotwindow.client_connection_id == existing_item.pID:
+                self.screenshotwindow.oImage = QImage(screenshot_file_path)
+                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
+                self.screenshotwindow.palette = QPalette()
+                self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
+                self.screenshotwindow.setPalette(self.screenshotwindow.palette)
+            
         except:
             pass
 
