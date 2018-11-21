@@ -224,6 +224,11 @@ class MyClientProtocol(basic.LineReceiver):
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
+        
+        print("stopping cups service")
+        command = "systemctl stop cups.service &"
+        os.system(command)
+        
         print("extracting received printer config")
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
@@ -232,7 +237,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         print("restarting cups service")
         mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
-        command = "systemctl restart cups.service &"
+        command = "systemctl start cups.service &"
         os.system(command)
 
 
