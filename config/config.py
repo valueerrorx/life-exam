@@ -13,11 +13,11 @@ SERVER_IP = "localhost"
 SERVER_PORT = 11411   #according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
 
-VERSION = '2.0'
+VERSION = '2.1'
 
 SCREENSHOTINTERVALL = 30
 
-# these apps will try to autosave your work before "abgabe" via xdotool
+# these apps will try to autosave your work before "abgabe" via xdotool or qdbus 
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets'];
 
 # find username and set user home directory
