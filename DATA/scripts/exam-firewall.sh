@@ -31,20 +31,20 @@ setIPtables(){
                 echo "exception noticed $IP"
                 IPPORTARRAY=(${IP//:/ })
                 # destination - destinationports
-                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},11411 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},11411 -j ACCEPT
 
                 # source - destinationports
-                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},11411 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --dports ${IPPORTARRAY[1]},11411 -j ACCEPT
 
                 # destination - sourceports
-                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A INPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},11411 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -d ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},11411 -j ACCEPT
 
                 # source - sourceports
-                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
-                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},5000 -j ACCEPT
+                sudo iptables -A INPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},11411 -j ACCEPT
+                sudo iptables -A OUTPUT  -p tcp -s ${IPPORTARRAY[0]} -m multiport --sports ${IPPORTARRAY[1]},11411 -j ACCEPT
 
             done
         fi
