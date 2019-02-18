@@ -19,6 +19,9 @@ IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 
 setIPtables(){
         sudo iptables -I INPUT 1 -i lo -j ACCEPT        #allow loopback
+        sudo iptables -A INPUT -i lo -j ACCEPT 
+        sudo iptables -A OUTPUT -o lo -j ACCEPT
+        
         sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT     #allow DNS
         ## allow ping (a lot of services need ping)
         sudo iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
@@ -55,7 +58,7 @@ setIPtables(){
         #needed for multicast (twisted)  Multicast Address for Address Allocation for Private Internets
         sudo iptables -A INPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
         sudo iptables -A OUTPUT -p udp -d 228.0.0.5/4 --dport 8005 -j ACCEPT
-
+      
         #rules needed for geogebra 6 - chrome-app and geogebra-classic 
             # forget it - use geogebrajail.sh - as long as geogebra believes it has 
             # an internet connection it will try to connect to hundreds of google services and then timeout
@@ -63,8 +66,14 @@ setIPtables(){
         
         sleep 1
         #use reject (send errormsg) instead of drop to prevent timeouts of different programs that wait for an answer
-        sudo iptables -P INPUT REJECT          #drop the rest
-        sudo iptables -P OUTPUT REJECT
+#         sudo iptables -P INPUT DROP         #drop the rest
+#         sudo iptables -P OUTPUT DROP
+            
+        sudo iptables -A INPUT -p udp  -j REJECT
+        sudo iptables -A OUTPUT -p udp -j REJECT
+        sudo iptables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
+        sudo iptables -A OUTPUT -p tcp -j REJECT --reject-with tcp-reset
+
     }
 
 

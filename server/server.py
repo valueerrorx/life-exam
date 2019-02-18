@@ -374,7 +374,7 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 1000)
         ipfields = self.get_firewall_adress_list()
 
-        if self.ui.testfirewall.text() == "Stoppe &Firewall":    #really don't know why qt sometimes adds these & signs to the ui
+        if self.ui.testfirewall.text() == "Stoppe Firewall":    #really don't know why qt sometimes adds these & signs to the ui
             system_commander.dialog_popup('Die Firewall wird gestoppt!')
 
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
@@ -387,7 +387,7 @@ class ServerUI(QtWidgets.QDialog):
                 palettedefault.setColor(QPalette.Active, QPalette.Base, QColor(255, 255, 255))
                 i[0].setPalette(palettedefault)
 
-        elif self.ui.testfirewall.text() == "&Firewall testen":
+        elif self.ui.testfirewall.text() == "Firewall testen":
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             openedexamfile = open(ipstore, 'w+')  # erstelle die datei neu
 
