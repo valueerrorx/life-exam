@@ -212,11 +212,10 @@ def fixFilePermissions(folder):
         print("no folder given")
 
 def fixPrinterFilePermissions(folder):
-    """ FIXME ?? both scripts are running as root 
-    in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root"""
     if folder:
-        if folder.startswith('/etc/'):  # don't EVER change permissions outside of /home/
+        if folder.startswith('/etc/'):  # don't EVER change permissions outside of /etc/
             chowncommand = "chmod +r %s -R" % (folder)
+            print(chowncommand)
             os.system(chowncommand)
         else:
             print("folder location outside of /etc/ is not allowed")

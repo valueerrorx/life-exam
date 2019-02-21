@@ -233,7 +233,8 @@ class MyClientProtocol(basic.LineReceiver):
         print("extracting received printer config")
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
-            
+        
+        print("fixing printer files permissions")
         mutual_functions.fixPrinterFilePermissions(PRINTERCONFIG_DIRECTORY)
         os.unlink(file_path)  # delete zip file
         time.sleep(1)
