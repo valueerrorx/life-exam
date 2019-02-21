@@ -234,14 +234,17 @@ class MyClientProtocol(basic.LineReceiver):
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(PRINTERCONFIG_DIRECTORY)
         
-        print("fixing printer files permissions")
-        mutual_functions.fixPrinterFilePermissions(PRINTERCONFIG_DIRECTORY)
+
         os.unlink(file_path)  # delete zip file
         time.sleep(1)
 
         print("restarting cups service")
         mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
         command = "systemctl start cups.service &"
+        os.system(command)
+        
+        print("fixing printer files permissions")
+        command = "chmod +r /etc/cups -R &"
         os.system(command)
 
 

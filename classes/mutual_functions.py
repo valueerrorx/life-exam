@@ -211,17 +211,6 @@ def fixFilePermissions(folder):
     else:
         print("no folder given")
 
-def fixPrinterFilePermissions(folder):
-    if folder:
-        if folder.startswith('/etc/'):  # don't EVER change permissions outside of /etc/
-            chowncommand = "chmod +r %s -R" % (folder)
-            print(chowncommand)
-            os.system(chowncommand)
-        else:
-            print("folder location outside of /etc/ is not allowed")
-    else:
-        print("no folder given")
-
 def writePidFile():
     pid = str(os.getpid())
 
