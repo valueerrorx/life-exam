@@ -244,7 +244,7 @@ class MyClientProtocol(basic.LineReceiver):
         os.system(command)
         
         print("fixing printer files permissions")
-        command = "chmod +r /etc/cups -R &"
+        command = "chmod 775 /etc/cups -R &"
         os.system(command)
 
 
