@@ -98,10 +98,11 @@ class ServerUI(QtWidgets.QDialog):
 
         findApps(self.ui.applist, self.ui.appview)
         
+        self.ui.keyPressEvent = self.newOnkeyPressEvent
+        
         self.ui.show()
-        
 
-        
+
     def _changeAutoscreenshot(self):
         self._workingIndicator(True, 200)
         intervall = self.ui.ssintervall.value()
@@ -583,7 +584,11 @@ class ServerUI(QtWidgets.QDialog):
     def get_existing_or_skeleton_list_widget(self, client_name):
         pass
     
-    
+            
+    def newOnkeyPressEvent(self,e):
+        if e.key() == QtCore.Qt.Key_Escape:
+            print("close event triggered")
+            self._onAbbrechen()
 
     def closeEvent(self, evnt):
         evnt.ignore()

@@ -15,7 +15,7 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 
 from PyQt5.QtGui import QIcon, QColor, QRegExpValidator
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, Qt
 import sys
 import os
 import subprocess
@@ -64,6 +64,8 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
         self.ui.pincode.textChanged.connect(lambda: self._changePalette(self.ui.pincode,'ok'))
 
+        self.ui.keyPressEvent = self.newOnkeyPressEvent
+
         char_regex=QRegExp("[a-z-A-Z\-_]+")   # only allow specif characters in textfields
         char_validator = QRegExpValidator(char_regex)
         self.ui.studentid.setValidator(char_validator)
@@ -75,6 +77,10 @@ class ClientDialog(QtWidgets.QDialog):
         ip_regex=QRegExp("[0-9\._]+")
         ip_validator = QRegExpValidator(ip_regex)
         self.ui.serverip.setValidator(ip_validator)
+
+    def newOnkeyPressEvent(self,e):
+        if e.key() == Qt.Key_Escape:
+            print("close event triggered")
 
 
     def _onAbbrechen(self):  # Exit button
