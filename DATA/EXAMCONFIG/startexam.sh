@@ -70,13 +70,24 @@ sleep 0.5
 
 
 
+#---------------------------------#
+# INITIALIZE FIREWALL             #
+#---------------------------------#
+qdbus $progress Set "" value 1
+qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
+sleep 0.5
+
+    sudo ${SCRIPTDIR}exam-firewall.sh start &
+
+    
+    
 
 
 
 #---------------------------------#
 # BACKUP CURRENT DESKTOP CONFIG   #
 #---------------------------------#
-qdbus $progress Set "" value 1
+qdbus $progress Set "" value 2
 qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.5
     #kde
@@ -102,7 +113,7 @@ sleep 0.5
 #-----------------------------------------------#
 #           LOAD EXAM CONFIG                    #
 #-----------------------------------------------#
-qdbus $progress Set "" value 2
+qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.5
     rm -rf ${HOME}.local/share/Trash > /dev/null 2>&1    #students hide things in trash ? 
@@ -120,8 +131,8 @@ sleep 0.5
     #LOCK DOWN
     sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
     sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
-    sudo chown -R ${USER}:${USER} ${HOME}.config/     # twistd runs as root - fix ownership
-    sudo chown -R ${USER}:${USER} ${HOME}.local/
+    sudo chown -R ${USER}:${USER} ${HOME}.config/ &    # twistd runs as root - fix ownership
+    sudo chown -R ${USER}:${USER} ${HOME}.local/ &
 
 
 
@@ -134,9 +145,9 @@ sleep 0.5
 
 
 #---------------------------------#
-# MOUNT SHARE                    #
+# MOUNT SHARE                     #
 #---------------------------------#
-qdbus $progress Set "" value 3
+qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
 sleep 0.5
 
@@ -170,33 +181,14 @@ sleep 0.5
 #---------------------------------#
 # CREATE EXAM LOCK FILE           #
 #---------------------------------#
-qdbus $progress Set "" value 4
+qdbus $progress Set "" value 5
 qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.5
 
     touch $EXAMLOCKFILE
     # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
     sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
-
-
-    
-    
-
-#---------------------------------#
-# INITIALIZE FIREWALL             #
-#---------------------------------#
-qdbus $progress Set "" value 5
-qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
-sleep 0.5
-
-    sudo ${SCRIPTDIR}exam-firewall.sh start
-
-    
-    
-    
-    
-    
-    
+   
     
     
     
@@ -206,6 +198,7 @@ sleep 0.5
 
 qdbus $progress Set "" value 6
 qdbus $progress setLabelText "Starte automatische Screenshots...."
+sleep 0.5
 
     cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
     sudo chown -R ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
@@ -227,9 +220,7 @@ qdbus $progress setLabelText "Starte automatische Screenshots...."
 #--------------------------------------------------------#
 qdbus $progress Set "" value 7
 qdbus $progress setLabelText "Sperre Systemdateien...."
-sleep 0.5
-
-    sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
+   
     
     #make sure nothing is mounted in /media  
     sudo umount /media/*
@@ -259,8 +250,8 @@ sleep 0.5
     sudo systemctl stop getty@tty6.service
     
 
- 
-   
+    sleep 2  # make sure iptables and arp renewal finished - wait a little bit longer
+    sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
    
    
    
@@ -272,12 +263,13 @@ sleep 0.5
 qdbus $progress Set "" value 8
 qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...  
 Starte Desktop neu!"
-sleep 4
-qdbus $progress close
 
     amixer -D pulse sset Master 90% > /dev/null 2>&1
     pactl set-sink-volume 0 90%
     paplay /usr/share/sounds/KDE-Sys-Question.ogg
+
+sleep 1
+qdbus $progress close
 
     #FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - kde devs haben das bis jetzt noch nicht implementiert
     pkill -f ksmserver
