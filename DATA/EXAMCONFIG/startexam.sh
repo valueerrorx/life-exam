@@ -250,9 +250,9 @@ qdbus $progress setLabelText "Sperre Systemdateien...."
     sudo systemctl stop getty@tty6.service
     
 
-    sleep 2  # make sure iptables and arp renewal finished - wait a little bit longer
-    sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)
-   
+    
+#     sleep 2  # make sure iptables and arp renewal finished - wait a little bit longer
+#     sudo chmod 644 /sbin/iptables   #make it even harder to unlock networking (+x in stopexam !!)  
    
    
    

@@ -152,7 +152,7 @@ qdbus $progress Set "" value 3
 qdbus $progress setLabelText "Systemdateien werden entsperrt...."
 sleep 0.5
 
-        sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
+#         sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
         sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
         sudo chmod 755 /usr/bin/xterm 
         sudo chmod 755 /usr/bin/konsole
