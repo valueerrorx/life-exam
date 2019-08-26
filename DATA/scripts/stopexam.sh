@@ -90,6 +90,8 @@ qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
 sleep 0.5
 
+    sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
+
     cp -a ${BACKUPDIR}plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
     cp -a ${BACKUPDIR}kwinrc ${HOME}.config/
 
@@ -156,8 +158,7 @@ sleep 0.5
         sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
         sudo chmod 755 /usr/bin/xterm 
         sudo chmod 755 /usr/bin/konsole
-        sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
-
+      
        
         sudo umount /media/*
         sudo umount /media/student/*
@@ -193,8 +194,8 @@ qdbus $progress setLabelText "Stoppe automatische Screenshots...."
     sudo killall auto-screenshot.sh && sudo pkill -f auto-screenshot
 
     # entferne firewall einträge (standalone-exam mode advanced)
-    echo "#!/bin/sh -e" > /etc/rc.local
-    echo "exit 0" >> /etc/rc.local
+    #echo "#!/bin/sh -e" > /etc/rc.local
+    #echo "exit 0" >> /etc/rc.local
 
 
     
@@ -219,11 +220,11 @@ sleep 0.5
 # REMOVE ROOT PASSWORD            #
 #---------------------------------#
 qdbus $progress Set "" value 6
-qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
+#qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
     
 
         # falls ein rootpasswort vom lehrer gesetzt wurde (standalone-exam mode advanced)
-        sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
+        #sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
 
     
     
