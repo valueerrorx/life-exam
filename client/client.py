@@ -61,9 +61,9 @@ class ClientDialog(QtWidgets.QDialog):
         self.ui.serverdropdown.activated.connect(self._updateIP)
         self.ui.studentid.textChanged.connect(lambda: self._changePalette(self.ui.studentid, 'ok'))
         self.ui.studentid.setFocus()
-        self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
+        #self.ui.serverip.textChanged.connect(lambda: self._changePalette(self.ui.serverip,'ok'))
         self.ui.pincode.textChanged.connect(lambda: self._changePalette(self.ui.pincode,'ok'))
-
+        self.ui.serverip.hide()
         self.ui.keyPressEvent = self.newOnkeyPressEvent
 
         char_regex=QRegExp("[a-z-A-Z\-_]+")   # only allow specif characters in textfields
@@ -76,7 +76,7 @@ class ClientDialog(QtWidgets.QDialog):
 
         ip_regex=QRegExp("[0-9\._]+")
         ip_validator = QRegExpValidator(ip_regex)
-        self.ui.serverip.setValidator(ip_validator)
+        #self.ui.serverip.setValidator(ip_validator)
 
     def newOnkeyPressEvent(self,e):
         if e.key() == Qt.Key_Escape:
@@ -140,6 +140,7 @@ class ClientDialog(QtWidgets.QDialog):
                 #pkXexec is used here (a short "life" bashscript that uses pkexec but sets a lot of environment variables)
                 command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
+                print(command)
                 os.system(command)
                 
                 #subprocess.call(command, shell=True,env=dict(os.environ ))

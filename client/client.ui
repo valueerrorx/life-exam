@@ -98,8 +98,8 @@
       <widget class="QLineEdit" name="serverip">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>40</y>
+         <x>20</x>
+         <y>100</y>
          <width>150</width>
          <height>36</height>
         </rect>
@@ -117,7 +117,7 @@
       <widget class="QLineEdit" name="studentid">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>190</x>
          <y>100</y>
          <width>150</width>
          <height>36</height>
@@ -130,14 +130,14 @@
       <widget class="QLabel" name="infoid">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>190</x>
          <y>80</y>
-         <width>261</width>
+         <width>141</width>
          <height>20</height>
         </rect>
        </property>
        <property name="text">
-        <string>Benutzerkennung</string>
+        <string>Benutzername</string>
        </property>
        <property name="indent">
         <number>2</number>
@@ -191,7 +191,7 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>100</y>
+         <y>40</y>
          <width>150</width>
          <height>36</height>
         </rect>
@@ -210,7 +210,7 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>80</y>
+         <y>20</y>
          <width>151</width>
          <height>18</height>
         </rect>
@@ -235,26 +235,10 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">text-align:center;</string>
+        <string notr="true">text-align:center;padding-left:4px;</string>
        </property>
        <property name="frame">
         <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>20</y>
-         <width>171</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>IP Adresse</string>
-       </property>
-       <property name="indent">
-        <number>2</number>
        </property>
       </widget>
       <widget class="QLabel" name="infoid_3">
@@ -475,11 +459,11 @@
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>serverdropdown</tabstop>
-  <tabstop>serverip</tabstop>
-  <tabstop>studentid</tabstop>
   <tabstop>pincode</tabstop>
+  <tabstop>studentid</tabstop>
   <tabstop>start</tabstop>
-  <tabstop>offlineexam</tabstop>
+  <tabstop>exit</tabstop>
+  <tabstop>serverip</tabstop>
  </tabstops>
  <resources/>
  <connections/>
