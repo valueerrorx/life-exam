@@ -107,7 +107,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         item.desktop_filename = APP[1]
         
         item.hint = QtWidgets.QLabel()
-        item.hint.setText("sichbar")
+        item.hint.setText("sichtbar")
         
         icon = QIcon.fromTheme(APP[3])
         item.icon = QtWidgets.QLabel()
