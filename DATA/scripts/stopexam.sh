@@ -251,7 +251,7 @@ qdbus $progress close
     paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
     
-    pkill -f ksmserver
+    pkill -f Xorg
     
 #     # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
 #     pkill -f google && killall google-chrome && killall google-chrome-stable
