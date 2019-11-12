@@ -37,9 +37,9 @@ if [ -f "$EXAMLOCKFILE" ];then
     if [ ! "$?" = 0 ]; then
         exit  0   #cancel
     else
-    sudo -u ${USER} -H kquitapp5 plasmashell & sleep 2
-    exec sudo -u ${USER} -H kstart5 plasmashell &
-    exec sudo -u ${USER} -H kwin --replace &
+    sudo -u student -H kquitapp5 plasmashell & sleep 2
+    exec sudo -u student -H kstart5 plasmashell
+    exec sudo -u student -H kwin --replace &
     exit 0
     fi
 fi
@@ -272,7 +272,7 @@ sleep 1
 qdbus $progress close
 
     #FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - kde devs haben das bis jetzt noch nicht implementiert
-    pkill -f ksmserver
+    pkill -f Xorg
     
     
 
