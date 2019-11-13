@@ -10,7 +10,7 @@ action/home=false
 action/file_new=false
 action/editfiletype=false
 action/openwith=false
-
+action/show_dot=false
 
 
 action/switch_user=false
@@ -24,6 +24,9 @@ action/show_places_panel=false
 action/show_information_panel=false
 action/show_folders_panel=false
 action/lock_panels=false
+action/show_terminal_panel=false
+
+
 
 plasma/plasmashell/unlockedDesktop=false
 plasma/allow_configure_when_locked=false
@@ -36,7 +39,7 @@ movable_toolbars=false
 run_command=false  
 switch_user=false
 start_new_session=false
-shell_access=false
+#shell_access=false
 
 
 [KDE Control Module Restrictions]
