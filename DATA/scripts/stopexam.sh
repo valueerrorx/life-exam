@@ -103,6 +103,8 @@ sleep 0.5
     cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
+    cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
+    
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 
     qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)

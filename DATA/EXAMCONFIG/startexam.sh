@@ -101,6 +101,8 @@ sleep 0.5
     cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
     cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
     cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
+    #chrome
+    cp -a ${HOME}.config/google-chrome/Default/Preferences ${BACKUPDIR}
     
     sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership
 
@@ -126,6 +128,8 @@ sleep 0.5
     cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list   #dateitypen zuordnung zu programmen
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
+    cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
+    
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
 
     #LOCK DOWN
