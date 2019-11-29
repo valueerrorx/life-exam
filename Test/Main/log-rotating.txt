@@ -1,0 +1,20 @@
+ERROR:root:This goes to stderr, log.txt, and the rotating log
+ERROR:root:This goes to stderr, log.txt, and the rotating log
+ERROR:root:This goes to stderr, log.txt, and the rotating log
+INFO:root:__main__
+INFO:root:Started
+INFO:root:Finished
+WARNING:root:Watch out!
+INFO:root:I told you so
+WARNING:root:Watch out!
+INFO:root:I told you so
+WARNING:root:Watch out!
+INFO:root:I told you so
+WARNING:root:Watch out!
+INFO:root:I told you so
+WARNING:root:Watch out!
+INFO:root:I told you so
+WARNING:root:Watch out!
+INFO:root:I told you so
+WARNING:root:Watch out!
+INFO:root:I told you so
