@@ -15,6 +15,8 @@ import subprocess
 import shutil
 import zipfile
 
+# add application root to python path for imports at position 0 
+sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
 from config.shell_scripts import SHOT
 import classes.mutual_functions as mutual_functions

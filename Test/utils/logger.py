@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#see https://stackoverflow.com/questions/20246064/use-python-logging-with-twisted
 import logging
 import logging.handlers
 from logging.config import dictConfig
@@ -27,13 +26,11 @@ def failure_to_exc_info(failure):
 
 def configure_logging(logfile_path):
     """
-    Initialize logging defaults for Project.
-
-    :param logfile_path: logfile used to the logfile
+    Initialize logging defaults, also for a twisted server
+    :param logfile_path: rotated logfile used for logging
     :type logfile_path: string
 
     This function does:
-
     - Assign INFO and DEBUG level to logger file handler and console handler
     - Route warnings and twisted logging through Python standard logging
 
@@ -43,9 +40,10 @@ def configure_logging(logfile_path):
 
     dictConfig(DEFAULT_LOGGING)
 
+    #format, dateformat
     default_formatter = logging.Formatter(
-        "[%(asctime)s] [%(levelname)s] [%(name)s] [%(funcName)s():%(lineno)s] [PID:%(process)d TID:%(thread)d] %(message)s",
-        "%d/%m/%Y %H:%M:%S")
+        "[%(asctime)s] [%(levelname)s,%(funcName)s():%(lineno)s] %(message)s",
+        "%H:%M:%S")
 
     file_handler = logging.handlers.RotatingFileHandler(logfile_path, maxBytes=10485760,backupCount=300, encoding='utf-8')
     file_handler.setLevel(logging.INFO)

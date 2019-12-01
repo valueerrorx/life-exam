@@ -8,9 +8,13 @@
 
 import os
 import subprocess
+from pathlib import Path
+
 
 SERVER_IP = "localhost"
 SERVER_PORT = 11411   #according to wikipedia and IANA no other service uses this port.. so this is ours ;)
+
+LOG_FILE = "life_exam_server.log" 
 
 
 VERSION = '2.1'

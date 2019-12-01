@@ -10,10 +10,14 @@
 
 import os
 import sys
+from pathlib import Path
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
+# add application root to python path for imports at position 0 
+sys.path.insert(0, Path(__file__).parent.parent.as_posix())
+#print(sys.path)
 
-
+#Logging System
+from classes.loggerConfig import configure_logging
 
 import qt5reactor
 import ipaddress
@@ -39,6 +43,7 @@ from classes.server2client import *
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtCore import QRegExp
+
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -976,6 +981,10 @@ class MultcastLifeServer(DatagramProtocol):
 
 
 if __name__ == '__main__':
+    #Set the Logging
+    rootdir = Path(__file__).parent.parent.as_posix()
+    configure_logging('%s/%s' % (rootdir, LOG_FILE))
+        
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
     killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
     os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
@@ -988,8 +997,7 @@ if __name__ == '__main__':
     from twisted.internet import reactor
 
     reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor ))  # start the server on SERVER_PORT
-    # moved multicastserver starting sequence to factory
-    #reactor.listenMulticast(8005, MultcastLifeServer(), listenMultiple=True)
-
+    
     print ('Listening on port %d' % (SERVER_PORT))
+    
     reactor.run()
