@@ -3,7 +3,7 @@
 
 import os
 import yaml
-from pathlib import Path 
+from pathlib import Path
 
 import logging
 import logging.handlers
