@@ -10,6 +10,7 @@
 
 import os
 import sys
+import logging
 from pathlib import Path
 
 # add application root to python path for imports at position 0 
@@ -17,7 +18,7 @@ sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 #print(sys.path)
 
 #Logging System
-from classes.loggerConfig import configure_logging
+from config.logger import configure_logging
 
 import qt5reactor
 import ipaddress
@@ -49,13 +50,17 @@ from PyQt5.QtCore import QRegExp
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
+        
+        uic.uiparser.logger.setLevel(logging.INFO)
+        uic.properties.logger.setLevel(logging.INFO)
+        
         self.factory = factory     # type: MyServerFactory
    
         uifile=os.path.join(APP_DIRECTORY,'server/server.ui')
         winicon=os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')
         self.ui = uic.loadUi(uifile)        # load UI
         self.ui.setWindowIcon(QIcon(winicon))# definiere icon für taskleiste
-        
+                
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
@@ -983,7 +988,7 @@ class MultcastLifeServer(DatagramProtocol):
 if __name__ == '__main__':
     #Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
-    configure_logging('%s/%s' % (rootdir, LOG_FILE))
+    configure_logging('%s' % (rootdir))
         
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
     killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")

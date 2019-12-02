@@ -1,0 +1,118 @@
+[30/11/2019 18:35:43] [WARNING] [root] [main():46] [PID:6603 TID:140442835126080] Watch out!
+[30/11/2019 18:35:43] [INFO] [root] [main():47] [PID:6603 TID:140442835126080] I told you so
+[30/11/2019 18:37:43] [WARNING] [root] [main():46] [PID:6656 TID:140289243346752] Watch out!
+[30/11/2019 18:37:43] [INFO] [root] [main():47] [PID:6656 TID:140289243346752] I told you so
+[18:43:57] [WARNING(),main():46] Watch out!
+[18:43:57] [INFO(),main():47] I told you so
+[18:46:31] [WARNING,main():46] Watch out!
+[18:46:31] [INFO,main():47] I told you so
+[18:49:20] [WARNING,main():46] Watch out!
+[18:49:20] [INFO,main():47] I told you so
+[18:51:35] [WARNING,main():38] Watch out!
+[18:51:35] [INFO,main():39] I told you so
+[18:52:03] [WARNING,main():38] Watch out!
+[18:52:03] [INFO,main():39] I told you so
+[10:46:30] [CRITICAL,publishToNewObserver():154] Unhandled Error
+Traceback (most recent call last):
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/main.py", line 21, in main
+    start_server()
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twigServer.py", line 21, in start_server
+    reactor.run()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1283, in run
+    self.mainLoop()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1292, in mainLoop
+    self.runUntilCurrent()
+--- <exception caught here> ---
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 886, in runUntilCurrent
+    f(*a, **kw)
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twigServer.py", line 12, in hook_observer
+    observer = log.PythonLoggingObserver()
+builtins.NameError: name 'log' is not defined
+
+[10:48:42] [WARNING,main():22] Watch out!
+[10:48:42] [INFO,main():23] I told you so
+[10:48:47] [CRITICAL,publishToNewObserver():154] Unhandled Error
+Traceback (most recent call last):
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/main.py", line 21, in main
+    start_server()
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twigServer.py", line 21, in start_server
+    reactor.run()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1283, in run
+    self.mainLoop()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1292, in mainLoop
+    self.runUntilCurrent()
+--- <exception caught here> ---
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 886, in runUntilCurrent
+    f(*a, **kw)
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twigServer.py", line 12, in hook_observer
+    observer = log.PythonLoggingObserver()
+builtins.NameError: name 'log' is not defined
+
+[10:56:11] [CRITICAL,publishToNewObserver():154] Unhandled Error
+Traceback (most recent call last):
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/main.py", line 21, in main
+    start_server()
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 21, in start_server
+    reactor.run()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1283, in run
+    self.mainLoop()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1292, in mainLoop
+    self.runUntilCurrent()
+--- <exception caught here> ---
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 886, in runUntilCurrent
+    f(*a, **kw)
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 12, in hook_observer
+    observer = log.PythonLoggingObserver()
+builtins.NameError: name 'log' is not defined
+
+[10:56:43] [CRITICAL,publishToNewObserver():154] Unhandled Error
+Traceback (most recent call last):
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/main.py", line 21, in main
+    start_server()
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 22, in start_server
+    reactor.run()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1283, in run
+    self.mainLoop()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1292, in mainLoop
+    self.runUntilCurrent()
+--- <exception caught here> ---
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 886, in runUntilCurrent
+    f(*a, **kw)
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 14, in hook_observer
+    observer = logging.PythonLoggingObserver()
+builtins.AttributeError: module 'logging' has no attribute 'PythonLoggingObserver'
+
+[10:57:47] [CRITICAL,publishToNewObserver():154] Unhandled Error
+Traceback (most recent call last):
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/main.py", line 21, in main
+    start_server()
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 22, in start_server
+    reactor.run()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1283, in run
+    self.mainLoop()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1292, in mainLoop
+    self.runUntilCurrent()
+--- <exception caught here> ---
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 886, in runUntilCurrent
+    f(*a, **kw)
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 16, in hook_observer
+    log.msg("PythonLoggingObserver hooked up", logLevel=logging.DEBUG)
+builtins.NameError: name 'logging' is not defined
+
+[10:57:47] [CRITICAL,publishToNewObserver():154] Unhandled Error
+Traceback (most recent call last):
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/main.py", line 21, in main
+    start_server()
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 22, in start_server
+    reactor.run()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1283, in run
+    self.mainLoop()
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 1292, in mainLoop
+    self.runUntilCurrent()
+--- <exception caught here> ---
+  File "/home/student/.local/lib/python3.6/site-packages/twisted/internet/base.py", line 886, in runUntilCurrent
+    f(*a, **kw)
+  File "/home/student/Downloads/LIFE-Dev/life-exam/Test/twistedServer.py", line 16, in hook_observer
+    log.msg("PythonLoggingObserver hooked up", logLevel=logging.DEBUG)
+builtins.NameError: name 'logging' is not defined
+
