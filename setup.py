@@ -30,7 +30,11 @@ if __name__ == '__main__':
         license="GPLv3",
         author_email="valueerror@gmail.com",
         url="http://life-edu.eu",
-        install_requires=['twisted>=18.4.0'],
+        install_requires=[
+            'twisted>=18.4.0',
+            'PyYAML>=15.1.2',
+            'regex=>2019.11.1',
+        ],
         packages=[
             "config",
             "classes",
@@ -39,6 +43,6 @@ if __name__ == '__main__':
         package_data={
             'twisted': ['plugins/examclient_plugin.py'],
         }
-        )
+    )
     
     refresh_plugin_cache()
