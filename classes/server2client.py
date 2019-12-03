@@ -13,7 +13,6 @@ import ntpath
 import os
 
 import classes.mutual_functions as mutual_functions
-from server.server import MyServerProtocol
 from config.enums import Command, DataType
 
 

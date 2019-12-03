@@ -201,7 +201,8 @@ def prepareDirectories():
 
 def fixFilePermissions(folder):
     """ FIXME ?? both scripts are running as root 
-    in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root"""
+    in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root
+    """
     if folder:
         if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
             chowncommand = "chown -R %s:%s %s" % (USER, USER, folder)
