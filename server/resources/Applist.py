@@ -10,6 +10,12 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QSize
 
+import re 
+import yaml
+from collections import OrderedDict
+
+path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
+
 
 def findApps(applistwidget, appview):
     """
@@ -18,7 +24,6 @@ def findApps(applistwidget, appview):
     apps = subprocess.check_output("kbuildsycoca5 --menutest", stderr=subprocess.DEVNULL, shell=True)
     apps = apps.decode()
     desktop_files_list=[]
-    
     
     for line in apps.split('\n'):
         if line == "\n":
@@ -44,7 +49,63 @@ def findApps(applistwidget, appview):
     listInstalledApplications(applistwidget, desktop_files_list, appview)
 
 
+def load_yml():
+    """
+    Load the yaml file config/appranking.yaml 
+    """
+    with open(path_to_yml, 'rt') as f:
+        yml = yaml.safe_load(f.read())
+    return yml['apps']
 
+def create_pattern(data):
+    """
+    Creates a Regex Pattern from array
+    """
+    erg = ".*("
+    for i in data:
+        erg += i + "|"
+    #delete last |
+    erg = erg[:-1]
+    erg += ").*"
+    return erg
+
+def remove_duplicates(other_applist):
+    """
+    find and remove Duplicates in this AppArray
+    """
+    seen = set()
+    newlist = []
+    for item in other_applist:
+        t = tuple(item)
+        if t not in seen:
+            newlist.append(item)
+            seen.add(t)
+    return newlist
+    
+
+def create_app_ranking(applist):
+    """
+    Important Apps moving to the top
+    """
+    final_applist = []
+    other_applist = []
+    yml = load_yml()
+    index = 0
+    
+    for key in yml:
+        pattern = create_pattern(yml[key])
+        for app in applist:       
+            match = re.search(pattern, app[2], re.IGNORECASE)
+            if match:
+                final_applist.insert(index, app)
+                index += 1
+            else:
+                other_applist.append(app)
+    other_applist = remove_duplicates(other_applist)
+    #other_applist sortieren
+    other_applist.sort()                
+                
+    return final_applist + other_applist
 
 
 def listInstalledApplications(applistwidget, desktop_files_list, appview):
@@ -53,7 +114,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     populates a QListWidgetItem with list entries
     """
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
-        
         
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
@@ -77,18 +137,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         applist.append(thisapp)
     
     #sort applist and put most used apps on top  
-    final_applist = []
-    for app in applist:
-        if app[2] == "GeoGebra" or app[2] == "Kate" or app[2] == "GeoGebra Classic":
-            final_applist.insert(0, app)
-        elif app[2] == "KCalc"  or app[2] == "Calligra Words"  or app[2] == "LibreOffice Calc"  or app[2] == "LibreOffice Writer"  :
-            final_applist.insert(1, app)
-        elif app[2] == "Musescore"  or app[2] == "Audacity":
-            final_applist.insert(2, app)
-        else:
-            final_applist.append(app)
-            
-
+    final_applist = create_app_ranking(applist)
     activated_apps = get_activated_apps()
     
     #clear appview first
@@ -140,11 +189,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         widget.setLayout(grid)
         applistwidget.addItem(item) 
         applistwidget.setItemWidget(item, widget)
-        
-
-
-
-    
 
 
 def saveProfile(applistwidget, appview):

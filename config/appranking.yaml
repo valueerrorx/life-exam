@@ -1,0 +1,14 @@
+version: 1
+
+apps:
+   '1':
+      - geogebra
+      - kate
+   '2':
+      - kcalc
+      - calligra words
+      - libreOffice calc
+      - libreOffice writer
+   '3':
+      - musescore
+      - audacity
