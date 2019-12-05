@@ -19,7 +19,9 @@ handlers:
     class: logging.handlers.RotatingFileHandler
     level: INFO
     formatter: default
-    filename: life_exam_server.log
+    filename: 
+       client: life_exam_client.log
+       server: life_exam_server.log
     maxBytes: 1048576 # 1MB
     backupCount: 2
     encoding: utf8
@@ -28,7 +30,9 @@ handlers:
     class: logging.handlers.RotatingFileHandler
     level: ERROR
     formatter: default
-    filename: life_exam_server_errors.log
+    filename: 
+       client: life_exam_client_errors.log
+       server: life_exam_server_errors.log
     maxBytes: 1048576 # 1MB
     backupCount: 2
     encoding: utf8

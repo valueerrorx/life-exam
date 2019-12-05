@@ -505,7 +505,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path, client_disabled):
         if client_disabled:
-            print("item disabled")
+            logger.info("Item disabled")
             return
         screenshotfilename = "%s.jpg" % client_connection_id
         self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
@@ -551,14 +551,14 @@ class ServerUI(QtWidgets.QDialog):
     def get_list_widget_by_client_id(self, client_id):
         for widget in self.get_list_widget_items():
             if client_id == widget.pID:
-                print("Found existing list widget for client connectionId %s" % client_id )
+                logger.info("Found existing list widget for client connectionId %s" % client_id )
                 return widget
         return False
 
     def get_list_widget_by_client_name(self, client_name):
         for widget in self.get_list_widget_items():
             if client_name == widget.id:
-                print("Found existing list widget for client name %s" % client_name )
+                logger.info("Found existing list widget for client name %s" % client_name )
                 return widget
         return False
 
@@ -568,12 +568,12 @@ class ServerUI(QtWidgets.QDialog):
             
     def newOnkeyPressEvent(self,e):
         if e.key() == QtCore.Qt.Key_Escape:
-            print("close event triggered")
+            logger.info("Close-Event triggered")
             self._onAbbrechen()
 
     def closeEvent(self, evnt):
         evnt.ignore()
-        print("close event triggered")
+        logger.info("Close-Event triggered")
         if not self.msg:
             self._onAbbrechen()
 

@@ -39,15 +39,10 @@ from server.resources.MyServerFactory import *
 from server.resources.ScreenshotWindow import *
 from server.resources.Applist import * 
 
-#from PyQt5 import uic, QtWidgets, QtCore
-#from PyQt5.QtGui import *
-#from PyQt5.QtCore import QRegExp
-
-
 if __name__ == '__main__':
     #Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
-    configure_logging('%s' % (rootdir))
+    configure_logging('%s' % (rootdir), True)       #True is Server
         
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
     killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
