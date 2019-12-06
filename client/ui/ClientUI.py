@@ -1,10 +1,11 @@
- #! /usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os
 import logging
 import datetime
 import re
+import sys
 
 from config.config import *
 import classes.mutual_functions as mutual_functions
@@ -69,7 +70,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
     def newOnkeyPressEvent(self,e):
         if e.key() == Qt.Key_Escape:
-            logger.info("Close-Event triggered")
+            self.logger.info("Close-Event triggered")
 
 
     def _onAbbrechen(self):  # Exit button
@@ -126,6 +127,10 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         ID = self.ui.studentid.text()
         PIN = self.ui.pincode.text()
         
+        #Debugging
+        ID = "DebugUser"
+        PIN="6285"
+        
         if mutual_functions.checkIP(SERVER_IP):
             if ID == "":
                 self._changePalette(self.ui.studentid, "warn")
@@ -142,12 +147,15 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 
                 
                 from twisted.plugin import IPlugin, getPlugins
-                list(getPlugins(IPlugin))
+                plgs = list(getPlugins(IPlugin))
+                
+                for item in plgs:
+                    print(item)    
+                print(sys.path)           
 
-                #pkXexec is used here (a short "life" bashscript that uses pkexec but sets a lot of environment variables)
                 command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
-                logger.info(command)
+                self.logger.info(command)
                 os.system(command)
                 
                 #subprocess.call(command, shell=True,env=dict(os.environ ))
