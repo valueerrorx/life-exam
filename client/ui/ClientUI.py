@@ -136,7 +136,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 os.system("%s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
                 
-                namefile = os.path.join(WORK_DIRECTORY, "myname.txt")  # moved this to workdirector because configdirectory is overwritten on exam start
+                namefile = os.path.join(WORK_DIRECTORY, "myname.txt")  # moved this to workdirectory because configdirectory is overwritten on exam start
                 openednamefile = open(namefile, 'w+')  # erstelle die datei neu
                 openednamefile.write("%s" %(ID) )
                 

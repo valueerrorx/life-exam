@@ -9,6 +9,9 @@
 import hashlib
 import os
 import subprocess
+import logging
+
+logger = logging.getLogger(__name__)
 
 import ipaddress
 import shutil
@@ -24,11 +27,6 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
-
-
-
-
-
 def generatePin(n):
     """generates a random number in the given length n """
     range_start = 10**(n-1)
@@ -38,7 +36,7 @@ def generatePin(n):
 
 def checkIfFileExists(filename):
     if os.path.isfile(filename):
-        print("file with the same name found")   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
+        logger.info("file with the same name found")   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
         newname = "%s-%s" %(filename, generatePin(6))
         if os.path.isfile(newname):
             checkIfFileExists(newname)
@@ -124,8 +122,8 @@ def clean_and_split_input(input):
 
 def get_file_list(folder):
     """ Returns a list of the files in the specified directory as a dictionary:
-            dict['file name'] = (file path, file size, file md5 hash)
-        """
+        dict['file name'] = (file path, file size, file md5 hash)
+    """
     # what if filename or foldername exists twice in tree ??  FIXME => http://stackoverflow.com/a/10665285
     file_list = {}
     for root, subdirs, files in os.walk(folder):
@@ -150,7 +148,7 @@ def deleteFolderContent(folder):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
 
 def prepareDirectories():
@@ -183,14 +181,14 @@ def prepareDirectories():
     os.system(copycommand)
 
     if not os.path.exists(EXAMCONFIG_DIRECTORY):  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
-        print("copying default examconfig to workdirectory")
+        logger.info("Copying default examconfig to workdirectory")
         copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (APP_DIRECTORY, WORK_DIRECTORY)
         os.system(copycommand)
     else:
         # leave the EXAM-A-IPS.DB alone - it stores firewall information which must not be reset on every update
         # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes 
         # but always provide a new copy of startexam.sh (will be updated more frequently)
-        print("old examconfig found - keeping old config")  #friendly reminder to the devs ;-)
+        logger.info("Old examconfig found - keeping old config")  #friendly reminder to the devs ;-)
         copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (APP_DIRECTORY, EXAMCONFIG_DIRECTORY)
         os.system(copycommand2)
 
@@ -205,12 +203,14 @@ def fixFilePermissions(folder):
     """
     if folder:
         if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
-            chowncommand = "chown -R %s:%s %s" % (USER, USER, folder)
+            
+            #chowncommand = "chown -R %s:%s %s" % (USER, USER, folder)
+            chowncommand = "find %s ! -name \"server.pid\" | xargs -I {} chown %s:%s {}" % (folder, USER, USER)
             os.system(chowncommand)
         else:
-            print("exam folder location outside of /home/ is not allowed")
+            logger.error("Exam folder location outside of /home/ is not allowed")
     else:
-        print("no folder given")
+        logger.error("no folder given")
 
 def writePidFile():
     pid = str(os.getpid())
