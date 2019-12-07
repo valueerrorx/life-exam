@@ -8,8 +8,8 @@
 #
 # sudo -H pip3 install twisted  # we need twisted for python3
 
-import os
 import sys
+import os
 import logging
 from pathlib import Path
 
@@ -21,23 +21,11 @@ sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 from config.logger import configure_logging
 
 import qt5reactor
-import ipaddress
-import datetime
-import time
-import sip
-import zipfile
-import ntpath
-import shutil
 
-from config.config import *
-from config.enums import *
-
+from config.config import SCRIPTS_DIRECTORY, SERVER_PORT, SERVERFILES_DIRECTORY
 import classes.mutual_functions as mutual_functions
-import classes.system_commander as system_commander
-
-from server.resources.MyServerFactory import *
-from server.resources.ScreenshotWindow import *
-from server.resources.Applist import * 
+from server.resources.MyServerFactory import MyServerFactory
+from PyQt5 import QtWidgets
 
 if __name__ == '__main__':
     #Set the Logging
@@ -50,7 +38,7 @@ if __name__ == '__main__':
     # time.sleep(1)
     mutual_functions.writePidFile()
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)  
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor
@@ -60,4 +48,4 @@ if __name__ == '__main__':
     logger = logging.getLogger('server')
     logger.info ('Listening on port %d' % (SERVER_PORT))
     
-    reactor.run()
+    reactor.run()  

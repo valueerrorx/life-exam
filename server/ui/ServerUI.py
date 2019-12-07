@@ -1,17 +1,29 @@
- #! /usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import logging
 import datetime
-import re
+import os
+import shutil
 
-from config.config import *
-from server.resources.Applist import *
+from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
+    SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
+    SCRIPTS_DIRECTORY, SERVER_PIDFILE
+from config.enums import DataType
+from server.resources.Applist import findApps
+from classes.system_commander import dialog_popup, show_ip, start_hotspot
 
-from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtGui import *
+from classes.mutual_functions import get_file_list, checkIP
+
+from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QRegExp
+from PyQt5.Qt import QRegExpValidator
+from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush
+import re
+from server.resources import ScreenshotWindow
+
+
+
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -76,7 +88,6 @@ class ServerUI(QtWidgets.QDialog):
         findApps(self.ui.applist, self.ui.appview)
         
         self.ui.keyPressEvent = self.newOnkeyPressEvent
-        
         self.ui.show()
 
 
@@ -112,7 +123,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self._workingIndicator(True, 4000)
         self.log('<b>Sending Printer Configuration to All Clients </b>')
-        system_commander.dialog_popup('Sending Printer Configuration to All Clients')
+        dialog_popup('Sending Printer Configuration to All Clients')
 
         # create zip file of /etc/cups
         target_folder = PRINTERCONFIG_DIRECTORY
@@ -123,7 +134,7 @@ class ServerUI(QtWidgets.QDialog):
         file_path = os.path.join(SERVERZIP_DIRECTORY, filename)  # now with .zip extension
 
         # regenerate filelist and check for zip file
-        self.factory.files = mutual_functions.get_file_list(self.factory.files_path)
+        self.factory.files = get_file_list(self.factory.files_path)
         if filename not in self.factory.files:
             self.log('filename not found in directory')
             return
@@ -134,7 +145,7 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client.send_file(file_path, who, DataType.PRINTER.value)
 
 
-    def _onPrintconf(selfs):
+    def _onPrintconf(self):
         command = "kcmshell5 kcm_printer_manager &"
         os.system(command)
 
@@ -245,7 +256,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onShowIP(self):
         self._workingIndicator(True, 500)
-        system_commander.show_ip()
+        show_ip()
 
 
 
@@ -300,7 +311,7 @@ class ServerUI(QtWidgets.QDialog):
         file_path = os.path.join(SERVERZIP_DIRECTORY, filename)  #now with .zip extension
 
         #regenerate filelist and check for zip file
-        self.factory.files = mutual_functions.get_file_list(self.factory.files_path)
+        self.factory.files = get_file_list(self.factory.files_path)
         if filename not in self.factory.files:
             self.log('filename not found in directory')
             return
@@ -343,7 +354,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onStartHotspot(self):
         self._workingIndicator(True, 500)
-        system_commander.start_hotspot()
+        start_hotspot()
 
     def get_firewall_adress_list(self):
         return [[self.ui.firewall1,self.ui.port1],[self.ui.firewall2,self.ui.port2],[self.ui.firewall3,self.ui.port3],[self.ui.firewall4,self.ui.port4]]
@@ -353,7 +364,7 @@ class ServerUI(QtWidgets.QDialog):
         ipfields = self.get_firewall_adress_list()
 
         if self.ui.testfirewall.text() == "Stoppe Firewall":    #really don't know why qt sometimes adds these & signs to the ui
-            system_commander.dialog_popup('Die Firewall wird gestoppt!')
+            dialog_popup('Die Firewall wird gestoppt!')
 
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
             startcommand = "exec %s stop &" % (scriptfile)
@@ -367,13 +378,13 @@ class ServerUI(QtWidgets.QDialog):
 
         elif self.ui.testfirewall.text() == "Firewall testen":
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
-            openedexamfile = open(ipstore, 'w+')  # erstelle die datei neu
+            open(ipstore, 'w+')  # erstelle die datei neu
 
             number = 0
             for i in ipfields:
                 ip = i[0].text()
                 port = i[1].text()
-                if mutual_functions.checkIP(ip):
+                if checkIP(ip):
                     thisexamfile = open(ipstore, 'a+')  # anhängen
                     number += 1
                     if number is not 1:  # zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
@@ -386,7 +397,7 @@ class ServerUI(QtWidgets.QDialog):
                         # palettewarn.setColor(QPalette.Active, QPalette.Base, QColor(200, 80, 80))
                         i[0].setPalette(palettewarn)
 
-            system_commander.dialog_popup("Die Firewall wird aktiviert!")
+            dialog_popup("Die Firewall wird aktiviert!")
             scriptfile = os.path.join(SCRIPTS_DIRECTORY, "exam-firewall.sh")
             startcommand = "exec %s start &" % (scriptfile)
             os.system(startcommand)
@@ -505,7 +516,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path, client_disabled):
         if client_disabled:
-            logger.info("Item disabled")
+            self.logger.info("Item disabled")
             return
         screenshotfilename = "%s.jpg" % client_connection_id
         self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
@@ -551,14 +562,14 @@ class ServerUI(QtWidgets.QDialog):
     def get_list_widget_by_client_id(self, client_id):
         for widget in self.get_list_widget_items():
             if client_id == widget.pID:
-                logger.info("Found existing list widget for client connectionId %s" % client_id )
+                self.logger.info("Found existing list widget for client connectionId %s" % client_id )
                 return widget
         return False
 
     def get_list_widget_by_client_name(self, client_name):
         for widget in self.get_list_widget_items():
             if client_name == widget.id:
-                logger.info("Found existing list widget for client name %s" % client_name )
+                self.logger.info("Found existing list widget for client name %s" % client_name )
                 return widget
         return False
 
@@ -568,12 +579,12 @@ class ServerUI(QtWidgets.QDialog):
             
     def newOnkeyPressEvent(self,e):
         if e.key() == QtCore.Qt.Key_Escape:
-            logger.info("Close-Event triggered")
+            self.logger.info("Close-Event triggered")
             self._onAbbrechen()
 
     def closeEvent(self, evnt):
         evnt.ignore()
-        logger.info("Close-Event triggered")
+        self.logger.info("Close-Event triggered")
         if not self.msg:
             self._onAbbrechen()
 

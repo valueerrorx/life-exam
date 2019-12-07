@@ -1,9 +1,13 @@
- #! /usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtCore import QRegExp
+import os
+import shutil
+from config.config import APP_DIRECTORY, SHARE_DIRECTORY
+
+from PyQt5 import QtWidgets
+from PyQt5.QtGui import QIcon, QImage, QPalette, QBrush
+from PyQt5.QtCore import QSize
 
 class ScreenshotWindow(QtWidgets.QDialog):
     def __init__(self, serverui, screenshot, clientname, screenshot_file_path, client_connection_id):
@@ -18,7 +22,7 @@ class ScreenshotWindow(QtWidgets.QDialog):
         self.setGeometry(100,100,1200,675)
         self.setFixedSize(1200, 675)
         oImage = QImage(screenshot_file_path)
-        sImage = oImage.scaled(QtCore.QSize(1200,675))                   # resize Image to widgets size
+        sImage = oImage.scaled(QSize(1200,675))                   # resize Image to widgets size
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)

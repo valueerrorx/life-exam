@@ -1,20 +1,21 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import logging
-import datetime
-import re
 import sys
+import logging
+import os
+import time
 
-from config.config import *
-import classes.mutual_functions as mutual_functions
-from client.resources.MulticastLifeClient import *
 from client.resources.Observers import Observers
+from config.config import APP_DIRECTORY, EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
+    WORK_DIRECTORY, SERVER_PORT
+from classes.mutual_functions import checkIP, prepareDirectories
 
-from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, Qt
+from PyQt5 import QtWidgets, uic
+
+from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
+
 
 class ClientDialog(QtWidgets.QDialog, Observers):
     
@@ -30,7 +31,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.completer = QtWidgets.QCompleter()
         self.completerlist = []
         self._initUi()
-        mutual_functions.prepareDirectories()
+        prepareDirectories()
 
     def _initUi(self):
         #Register self to Global Observer List Object 
@@ -129,9 +130,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         
         #Debugging
         ID = "DebugUser"
-        PIN="6285"
+        PIN="9308"
         
-        if mutual_functions.checkIP(SERVER_IP):
+        if checkIP(SERVER_IP):
             if ID == "":
                 self._changePalette(self.ui.studentid, "warn")
             elif PIN == "":

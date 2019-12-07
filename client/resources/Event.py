@@ -1,4 +1,4 @@
- #! /usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Inherit Observer in a class and afterwards use observe(event_name, callback_fn) to listen for a specific event. 

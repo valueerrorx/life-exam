@@ -9,11 +9,11 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 
-import sys, os, subprocess
+import sys, os
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPixmap, QIcon, QKeySequence
-from PyQt5.QtCore import Qt
-from subprocess import Popen, PIPE, STDOUT
+#from PyQt5.QtGui import QPixmap, QIcon, QKeySequence
+#from PyQt5.QtCore import Qt
+#from subprocess import Popen, PIPE, STDOUT
 
 
 application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -75,7 +75,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)  # @UndefinedVariable
     myapp = ScreenlockWindow()
     myapp.setGeometry(app.desktop().screenGeometry())
     myapp.setFixedSize(6000, 6000)
