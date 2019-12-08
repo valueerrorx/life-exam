@@ -5,6 +5,7 @@ import logging
 import datetime
 import os
 import shutil
+import re
 
 from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -19,10 +20,7 @@ from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QRegExp
 from PyQt5.Qt import QRegExpValidator
 from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush
-import re
 from server.resources import ScreenshotWindow
-
-
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -425,7 +423,15 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 500)
         client_name = self.factory.server_to_client.kick_client(client_id)
         #if client_name:
-        sip.delete(self.get_list_widget_by_client_id(client_id))   #remove client widget no matter if client still is connected or not
+        #SIP C++ Module für Python
+        #sip.delete(self.get_list_widget_by_client_id(client_id))
+        
+        item = self.get_list_widget_by_client_id(client_id) 
+        
+        self.ui.listWidget.removeItemWidget(item)
+        
+          
+            #remove client widget no matter if client still is connected or not            
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
         self.log('Connection to client <b> %s </b> has been <b>removed</b>.' % client_name)
 
@@ -567,7 +573,7 @@ class ServerUI(QtWidgets.QDialog):
         return False
 
     def get_list_widget_by_client_name(self, client_name):
-        for widget in self.get_list_widget_items():
+        for widget in self.get_list_widdget_items():
             if client_name == widget.id:
                 self.logger.info("Found existing list widget for client name %s" % client_name )
                 return widget

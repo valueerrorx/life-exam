@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import logging
 
 import classes.mutual_functions as mutual_functions
+from twisted.protocols import basic
+from config.enums import DataType, Command
+from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY
+import zipfile
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -21,7 +24,6 @@ class MyServerProtocol(basic.LineReceiver):
         
         self.logger = logging.getLogger(__name__)
 
-    # twisted
     def connectionMade(self):
         self.factory.server_to_client.add_client(self)
         self.file_handler = None
@@ -33,7 +35,6 @@ class MyServerProtocol(basic.LineReceiver):
             'Connection from: %s (%d clients total)' % (
             self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
 
-    # twisted
     def connectionLost(self, reason):
         self.logger.warning("ConnectionLost")
         self.logger.warning(reason)  # maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
@@ -56,7 +57,6 @@ class MyServerProtocol(basic.LineReceiver):
             except:
                 return
             
-    # twisted
     def rawDataReceived(self, data):
         """ handle incoming byte data """
         filename = self.line_data_list[2]
@@ -79,29 +79,40 @@ class MyServerProtocol(basic.LineReceiver):
                 self.factory.window.log('File %s has been successfully transferred' % (filename))
                 self.filetransfer_fail_count = 0
                 
+                """
+                Client is connecting
+                """
                 if self.line_data_list[1] == DataType.SCREENSHOT.value:  # screenshot is received on initial connection
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
                     mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
-
+                
                 elif self.line_data_list[1] == DataType.ABGABE.value:
-                    extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[
-                                                                                  :-4])  # extract to unzipDIR / clientName / foldername without .zip (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')   #python3 only but twisted RPC is not ported to python3 yet
+                    """
+                    End of Exam
+                    """
+                    #extract to unzipDIR / clientName / foldername without .zip (cut last four letters 
+                    #shutil.unpack_archive(file_path, extract_dir, 'tar')   
+                    #python3 only but twisted RPC is not ported to python3 yet
+                    extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])  
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
-                    mutual_functions.checkIfFileExists(user_dir)  ## checks if filename is taken and renames this file in order to make room for the userfolder
+                    #checks if filename is taken and renames this file in order to make room for the userfolder
+                    mutual_functions.checkIfFileExists(user_dir)  
 
                     with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir) 
-                    os.unlink(file_path)  # delete zip file
-                    mutual_functions.fixFilePermissions(SHARE_DIRECTORY)  # fix filepermission of transferred file
+                        zip_ref.extractall(extract_dir)
+                    #delete zip file 
+                    os.unlink(file_path)  
+                    #fix filepermission of transferred file
+                    mutual_functions.fixFilePermissions(SHARE_DIRECTORY)  
 
             else:  # wrong file hash
                 os.unlink(file_path)
                 self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
                 self.transport.write(Command.ENDMSG.tobytes() + b'\r\n')
                 self.factory.window.log('File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
-                # request flie again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
+                # request file again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
                 if self.line_data_list[1] == DataType.ABGABE.value and self.filetransfer_fail_count <= 1:
                     self.filetransfer_fail_count += 1
                     self.factory.window.log('Failed transfers: %s' %self.filetransfer_fail_count)
@@ -117,16 +128,12 @@ class MyServerProtocol(basic.LineReceiver):
         # twisted
         self.sendLine(line.encode() )
 
-
-    # twisted
     def lineReceived(self, line):
         """whenever the CLIENT sent something """
         line = line.decode()  # we get bytes but need strings
         self.line_data_list = mutual_functions.clean_and_split_input(line)
         self.logger.debug("line received and decoded:\n%s\n" % self.line_data_list)
         self.line_dispatcher()    #pass "self" as "client"
-       
-       
 
 
     def line_dispatcher(self):
@@ -154,16 +161,12 @@ class MyServerProtocol(basic.LineReceiver):
         line_handler()
 
 
-
-
     def _get_file_request(self):
         """
         Puts server into raw mode to receive files
         """
         self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
         self.setRawMode()  # this is a file - set to raw mode
-        
-
 
 
     def _checkclientAuth(self):
@@ -198,6 +201,3 @@ class MyServerProtocol(basic.LineReceiver):
             line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
             self.sendEncodedLine(line)
             return
-
-
-

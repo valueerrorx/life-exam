@@ -13,28 +13,33 @@
 
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 import shutil
-import zipfile
+import subprocess
 import time
+import zipfile
 import datetime
 
-from twisted.internet import reactor, protocol, stdio, defer
+from classes import mutual_functions
+from config.config import APP_DIRECTORY, SHARE_DIRECTORY, SAVEAPPS, USER,\
+    PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY,\
+    CLIENTFILES_DIRECTORY
+from config.enums import Command, DataType
+
+
+from classes.client2server import ClientToServer
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
+
+from twisted.internet import protocol, defer
 from twisted.protocols import basic
-from twisted.application.internet import TCPClient
 from zope.interface import implementer
+from twisted.application import internet
 
 from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 
 # local imports
-import classes.mutual_functions as mutual_functions
-import classes.system_commander as system_commander
-from classes.client2server import *
-from config.config import *
-from config.enums import DataType, Command
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -159,8 +164,9 @@ class MyClientProtocol(basic.LineReceiver):
 
 
     def _triggerAutosave(self):
-        """this function uses xdotool to find windows and trigger ctrl+s shortcut on them
-            which will show the save dialog the first time and silently save the document the next time
+        """
+        this function uses xdotool to find windows and trigger ctrl+s shortcut on them
+        which will show the save dialog the first time and silently save the document the next time
         """ 
         app_id_list = []
         for app in SAVEAPPS:
@@ -336,7 +342,7 @@ class MyServiceMaker(object):
     options = Options
 
     def makeService(self, options):
-        return TCPClient(options["host"],
+        return internet.TCPClient(options["host"],
                          int(options["port"]),
                          MyClientFactory(CLIENTFILES_DIRECTORY, options))
 

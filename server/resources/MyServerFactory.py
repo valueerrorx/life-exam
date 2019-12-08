@@ -1,23 +1,28 @@
- #! /usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from twisted.internet import protocol
-from twisted.internet.protocol import DatagramProtocol
-from twisted.protocols import basic
 from twisted.internet.task import LoopingCall
 
-from classes.server2client import *
+import sys
+import logging
+from pathlib import Path
 
-from server.resources.MultcastLifeServer import *
-from server.ui.ServerUI import *
+# add application root to python path for imports at position 0 
+sys.path.insert(0, Path(__file__).parent.parent.parent.as_posix())
 
-from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtCore import QRegExp
+from server.resources.MultcastLifeServer import MultcastLifeServer
+from server.ui.ServerUI import ServerUI
+
+from config.config import DEBUG_PIN
+from classes.server2client import ServerToClient
+from classes import mutual_functions
+
+from server.resources import MyServerProtocol
 
 class MyServerFactory(protocol.ServerFactory):
-
     def __init__(self, files_path, reactor):
+        self.logger = logging.getLogger(__name__)
         self.files_path = files_path
         self.reactor = reactor
         self.server_to_client = ServerToClient() # type: ServerToClient
@@ -26,8 +31,15 @@ class MyServerFactory(protocol.ServerFactory):
         self.clientslocked = False
         self.rawmode = False;  #this is set to True the moment the server sends examconfig, sends file, sends printconf, requests abgabe, requests screenshot
         self.pincode = mutual_functions.generatePin(4)
+        
+        #only debug if DEBUG_PIN is not ""
+        if DEBUG_PIN !="":
+            self.pincode = DEBUG_PIN
+            self.logger.info("DEBUGGING Mode")
+        
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
-        self.window = ServerUI(self)                            # type: ServerUI
+        #type: ServerUI
+        self.window = ServerUI(self)                            
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
         

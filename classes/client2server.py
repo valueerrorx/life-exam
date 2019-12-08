@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Thomas Michael Weissel
 #
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 import time
-import os
-import subprocess
 import shutil
-import zipfile
 import sys
 from pathlib import Path
-
-
+import subprocess
+import os
+from config.config import APP_DIRECTORY, WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
+    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
 
 # add application root to python path for imports at position 0 
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -25,9 +21,6 @@ sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 from config.shell_scripts import SHOT
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
-from config.config import *
-import classes.system_commander as system_commander
-
 
 
 class ClientToServer:
@@ -35,7 +28,6 @@ class ClientToServer:
     Contains functions for Lines sent from the server to the client. 
     call the proper function for the client to react to the servers orders.
     """
-
     
     def __init__(self):
         self.client = ""
@@ -176,6 +168,3 @@ class ClientToServer:
         output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
         shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
         return "%s.zip" % filename  # this is the filename of the zip file
-
-
-

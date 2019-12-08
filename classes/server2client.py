@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Thomas Michael Weissel
 #
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import datetime
 import ntpath

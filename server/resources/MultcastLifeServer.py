@@ -1,4 +1,4 @@
- #! /usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import logging
@@ -7,16 +7,15 @@ from twisted.internet.protocol import DatagramProtocol
 class MultcastLifeServer(DatagramProtocol):
     
     def __init__(self, factory):
-         self.factory = factory
-         self.logger = logging.getLogger(__name__)
+        self.factory = factory
+        self.logger = logging.getLogger(__name__)
 
     def startProtocol(self):
         """Called after protocol has started listening. """
         self.transport.setTTL(5)     # Set the TTL>1 so multicast will cross router hops:
         self.transport.joinGroup("228.0.0.5")   # Join a specific multicast group:
 
-    def datagramReceived(self, datagram, address):
-       
+    def datagramReceived(self, datagram, address):       
         datagram = datagram.decode()
         
         if "CLIENT" in datagram:

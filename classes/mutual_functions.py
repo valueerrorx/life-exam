@@ -7,25 +7,23 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 import hashlib
+import logging
 import os
 import subprocess
-import logging
+from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
+    WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
+    CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
+    SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
+    SHARE_DIRECTORY, APP_DIRECTORY, SERVER_PIDFILE, USER
 
 logger = logging.getLogger(__name__)
 
 import ipaddress
 import shutil
 
-from config.config import *
 from random import randint
 
-import datetime
 import time
-
-import sys, os, subprocess
-from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
 
 def generatePin(n):
     """generates a random number in the given length n """

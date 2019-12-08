@@ -8,7 +8,7 @@ import time
 
 from client.resources.Observers import Observers
 from config.config import APP_DIRECTORY, EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
-    WORK_DIRECTORY, SERVER_PORT
+    WORK_DIRECTORY, SERVER_PORT, DEBUG_PIN, DEBUG_ID
 from classes.mutual_functions import checkIP, prepareDirectories
 
 from PyQt5.QtCore import QRegExp, Qt
@@ -97,6 +97,14 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.ui.serversearch.setText("Server Found!")
         checkimage=os.path.join(APP_DIRECTORY,'pixmaps/checked.png')
         self.ui.servercheck.setPixmap(QPixmap(checkimage))
+        
+        #only debug if DEBUG_PIN is not ""
+        if DEBUG_PIN !="":
+            ID = DEBUG_ID
+            PIN = DEBUG_PIN
+            self.ui.studentid.setText(ID)
+            self.ui.pincode.setText(PIN)
+            self.logger.info("DEBUGGING Mode")
 
 
     def _on_offline_exam(self):     
@@ -127,10 +135,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         SERVER_IP = self.ui.serverip.text()
         ID = self.ui.studentid.text()
         PIN = self.ui.pincode.text()
-        
-        #Debugging
-        ID = "DebugUser"
-        PIN="9308"
         
         if checkIP(SERVER_IP):
             if ID == "":

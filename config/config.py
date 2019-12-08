@@ -15,6 +15,11 @@ SERVER_PORT = 11411   #according to wikipedia and IANA no other service uses thi
 
 VERSION = '2.1'
 
+#Debugging Stuff, set Name of Client and a fix Pin Code
+#if empty, then we are NOT debugging
+DEBUG_ID="TestUser"
+DEBUG_PIN="1234"
+
 SCREENSHOTINTERVALL = 30
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus 
