@@ -11,3 +11,4 @@ commit.sh
 .spyproject
 .project
 .pydevproject
+plantuml.jar
