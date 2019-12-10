@@ -8,6 +8,11 @@ group twisted daemon examclient_plugin
 	Client -> Server: "connectionMade(): AUTH"
 	note right: "On every data received\ncheck AUTH from Client\nMyServerProtocol:lineReceived()"
 	Server -> Server: MyServerProtocol: rawDataReceived(DataType.SCREENSHOT)\nServerUI: createOrUpdateListItem()
+	
+	note over Server: EXIT EXAM
+	Server -> Server: ServerUI: _on_exit_exam(who)
+	Server -> Client: server2client: request_abgabe(who)\nFILETRANSFER:SEND
+	
 end
 
 @enduml 

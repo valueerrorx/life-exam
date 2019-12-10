@@ -5,7 +5,7 @@ Inherit Observer in a class and afterwards use observe(event_name, callback_fn) 
 Whenever that specific event is fired anywhere in the code (ie. Event('USB connected')), 
 the corresponding callback will fire.
 """
-from client.resources.Observers import Observers
+from classes.Observers import Observers
 
 class Event():
     def __init__(self, event_name, *callback_args):

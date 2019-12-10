@@ -5,6 +5,8 @@ import logging
 import datetime
 import os
 import shutil
+import sip
+from time import sleep
 
 from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -21,8 +23,7 @@ from PyQt5.Qt import QRegExpValidator
 from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from server.resources import ScreenshotWindow
 from classes.HTMLTextExtractor import html_to_text
-from sip import delete
-import sip
+
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -69,7 +70,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
         self.ui.examlabeledit1.textChanged.connect(self._updateExamName)
         self.ui.ssintervall.valueChanged.connect(self._changeAutoscreenshot)
-
+        self.ui.label_clients.setText(self.createClientsLabel())
+        
         num_regex=QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
         ip_regex=QRegExp("[0-9\._]+")
@@ -87,8 +89,16 @@ class ServerUI(QtWidgets.QDialog):
 
         findApps(self.ui.applist, self.ui.appview)
         
+        # Stylesheet Rahmen für Client Items
+        self.ui.listWidget.setStyleSheet("QListWidget::item{ border-width: 1px; border-style: solid; border-color: #AAA;}")
+        
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
+        
+    def createClientsLabel(self):
+        """ Erzeugt den Text für Clients: <Anzahl> """
+        count = self.ui.listWidget.count()
+        return ("Clients: <b>%s</b>" % self.ui.listWidget.count()) 
 
 
     def _changeAutoscreenshot(self):
@@ -110,11 +120,11 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client = self.factory.server_to_client
 
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
-            self.log("waiting for ongoing filetransfers to finish ..")
+            self.log("Waiting for ongoing filetransfers to finish ...")
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
-                self.logger.info("No clients connected")
+                self.log("No clients connected")
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
 
@@ -122,7 +132,7 @@ class ServerUI(QtWidgets.QDialog):
  
 
         self._workingIndicator(True, 4000)
-        self.logger.info('<b>Sending Printer Configuration to All Clients </b>')
+        self.log('<b>Sending Printer Configuration to All Clients </b>')
         dialog_popup('Sending Printer Configuration to All Clients')
 
         # create zip file of /etc/cups
@@ -139,7 +149,7 @@ class ServerUI(QtWidgets.QDialog):
             self.logger.error('filename not found in directory')
             return
 
-        self.logger.info('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
+        self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
         # send line and file to all clients
         server_to_client.send_file(file_path, who, DataType.PRINTER.value)
@@ -163,13 +173,13 @@ class ServerUI(QtWidgets.QDialog):
                 self.factory.rawmode = False;
             
             if not self.factory.server_to_client.unlock_screens(who):
-                self.logger.info("No clients connected")
+                self.log("No clients connected")
         else:
             self.log("<b>Locking Client Screens </b>")
             self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/unlock.png')))
             self.factory.clientslocked = True
             if not self.factory.server_to_client.lock_screens(who):
-                self.logger.info("No clients connected")
+                self.log("No clients connected")
                 self.factory.clientslocked = False
                 self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
         self._onScreenshots("all")   #update screenshots right after un/lock
@@ -204,11 +214,11 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client = self.factory.server_to_client
         
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
-            self.log("waiting for ongoing filetransfers to finish ..")
+            self.log("Waiting for ongoing filetransfers to finish ...")
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
-                self.logger.info("No clients connected")
+                self.log("No clients connected")
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
 
@@ -243,14 +253,14 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 1000)
         
         if self.factory.rawmode == True:
-            self.log("waiting for ongoing filetransfers to finish ..")
+            self.log("Waiting for ongoing filetransfers to finish ...")
             return
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
     
         if not self.factory.server_to_client.request_screenshots(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
-            self.logger.info("No clients connected")
+            self.log("No clients connected")
 
 
 
@@ -261,21 +271,21 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onAbgabe(self, who):
-        """get SHARE folder"""
+        """get SHARE folder from client"""
         self._workingIndicator(True, 500)
         self.log('<b>Requesting Client Folder SHARE </b>')
         itime = 2000 if who is 'all' else 1000
         self._workingIndicator(True, itime)
 
         if self.factory.rawmode == True:
-            self.log("waiting for ongoing filetransfers to finish ..")
+            self.log("Waiting for ongoing filetransfers to finish ...")
             return
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
 
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
-            self.logger.info("No clients connected")
+            self.log("No clients connected")
 
 
 
@@ -290,11 +300,11 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client = self.factory.server_to_client
         
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
-            self.log("waiting for ongoing filetransfers to finish ..")
+            self.log("Waiting for ongoing filetransfers to finish ...")
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
-                self.logger.info("No clients connected")
+                self.log("No clients connected")
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
     
@@ -324,31 +334,37 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _on_exit_exam(self,who):
-        self.log("<b>Finishing Exam </b>")
+        """
+        Ends the Exammode from a Client, who=all or name
+        """
+        self.log("<b>Finishing Exam</b>")
         self._workingIndicator(True, 2000)
         if self.factory.lcs.running:
-            self.factory.lcs.stop() #  disable autoscreenshot ??
+            # disable autoscreenshot, lcs = Loopingcall
+            self.factory.lcs.stop() 
 
-        if self.factory.lc.running:  #  disable autoabgabe ??
+        if self.factory.lc.running:  
             self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer-off.png')))
+            #  disable autoabgabe, lc = Loopingcall
             self.factory.lc.stop()
         
         onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()
         
-        # first fetch abgabe
+        # first fetch Abgabe
         if self.factory.rawmode == True:
-            self.log("waiting for ongoing filetransfers to finish ..")
+            self.log("Waiting for ongoing file-transfers to finish ...")
+            sleep(0.05) #sec
             return  #FIXME this could lead to some clients not exiting in very very rare cases where a BIG filetransfer is still on -- probably wait a second and try again ??
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
 
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
-            self.logger.info("No clients connected")
+            self.log("No clients connected")
 
         # then send the exam exit signal
         if not self.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe):
-            self.logger.info("No clients connected")
+            self.log("No clients connected")
 
 
 
@@ -434,7 +450,9 @@ class ServerUI(QtWidgets.QDialog):
             #remove client widget no matter if client still is connected or not
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
             msg='Connection to client <b> %s </b> has been <b>removed</b>.' % (client_name)
-            self.logger.info(html_to_text(msg))
+            self.log(html_to_text(msg))
+            #UI Label Update
+            self.ui.label_clients.setText(self.createClientsLabel())
 
     def _disableClientScreenshot(self, client):
         self._workingIndicator(True, 500)
@@ -453,7 +471,7 @@ class ServerUI(QtWidgets.QDialog):
     def log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
-        self.logger.info(html_to_text(msg))
+        self.log(html_to_text(msg))
 
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
@@ -466,6 +484,8 @@ class ServerUI(QtWidgets.QDialog):
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
         else:
             self._addNewListItem(client, screenshot_file_path)
+            #Update Label
+            self.ui.label_clients.setText(self.createClientsLabel())
 
 
     def _addNewListItem(self, client, screenshot_file_path):
@@ -499,6 +519,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
+
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         try:
             self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
@@ -525,7 +546,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path, client_disabled):
         if client_disabled:
-            self.logger.info("Item disabled")
+            self.log("Item disabled")
             return
         screenshotfilename = "%s.jpg" % client_connection_id
         self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
@@ -571,14 +592,14 @@ class ServerUI(QtWidgets.QDialog):
     def get_list_widget_by_client_id(self, client_id):
         for widget in self.get_list_widget_items():
             if client_id == widget.pID:
-                self.logger.info("Found existing list widget for client connectionId %s" % client_id )
+                self.log("Found existing list widget for client connectionId %s" % client_id )
                 return widget
         return False
 
     def get_list_widget_by_client_name(self, client_name):
         for widget in self.get_list_widget_items():
             if client_name == widget.id:
-                self.logger.info("Found existing list widget for client name %s" % client_name )
+                self.log("Found existing list widget for client name %s" % client_name )
                 return widget
         return False
 
@@ -588,12 +609,12 @@ class ServerUI(QtWidgets.QDialog):
             
     def newOnkeyPressEvent(self,e):
         if e.key() == QtCore.Qt.Key_Escape:
-            self.logger.info("Close-Event triggered")
+            self.log("Close-Event triggered")
             self._onAbbrechen()
 
     def closeEvent(self, evnt):
         evnt.ignore()
-        self.logger.info("Close-Event triggered")
+        self.log("Close-Event triggered")
         if not self.msg:
             self._onAbbrechen()
 
@@ -601,7 +622,7 @@ class ServerUI(QtWidgets.QDialog):
     def _onAbbrechen(self):  # Exit button
         self.msg = QtWidgets.QMessageBox()
         self.msg.setIcon(QtWidgets.QMessageBox.Information)
-        self.msg.setText("Wollen sie das Programm\nLiFE Exam Server \nbeenden?")
+        self.msg.setText("Wollen sie das Programm\nLIFE Exam Server \nbeenden?")
       
         self.msg.setWindowTitle("LiFE Exam")
         self.msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)

@@ -28,7 +28,11 @@ class MyServerFactory(protocol.ServerFactory):
         self.disconnected_list = []
         self.files = None
         self.clientslocked = False
-        self.rawmode = False;  #this is set to True the moment the server sends examconfig, sends file, sends printconf, requests abgabe, requests screenshot
+        '''
+        this is set to True the moment the server sends examconfig, 
+        sends file, sends printconf, requests abgabe, requests screenshot
+        '''
+        self.rawmode = False;  
         self.pincode = mutual_functions.generatePin(4)
         
         #only debug if DEBUG_PIN is not ""

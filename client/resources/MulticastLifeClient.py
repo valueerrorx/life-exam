@@ -6,7 +6,7 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 
 import classes.mutual_functions as mutual_functions
-from client.resources.Event import Event
+from classes.Event import Event
 
 class MulticastLifeClient(DatagramProtocol):
     def __init__(self):

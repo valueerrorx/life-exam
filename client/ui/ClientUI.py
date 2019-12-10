@@ -5,7 +5,7 @@ import logging
 import os
 import time
 
-from client.resources.Observers import Observers
+from classes.Observers import Observers
 from config.config import APP_DIRECTORY, EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
     WORK_DIRECTORY, SERVER_PORT, DEBUG_PIN, DEBUG_ID
 from classes.mutual_functions import checkIP, prepareDirectories

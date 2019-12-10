@@ -37,6 +37,7 @@ if __name__ == '__main__':
     mutual_functions.writePidFile()
 
     app = QtWidgets.QApplication(sys.argv)  
+    
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor
