@@ -7,6 +7,7 @@ from twisted.internet.task import LoopingCall
 import sys
 import logging
 from pathlib import Path
+from server.resources.MyServerProtocol import MyServerProtocol
 
 # add application root to python path for imports at position 0 
 sys.path.insert(0, Path(__file__).parent.parent.parent.as_posix())
@@ -17,8 +18,6 @@ from server.ui.ServerUI import ServerUI
 from config.config import DEBUG_PIN
 from classes.server2client import ServerToClient
 from classes import mutual_functions
-
-from server.resources import MyServerProtocol
 
 class MyServerFactory(protocol.ServerFactory):
     def __init__(self, files_path, reactor):
@@ -64,5 +63,5 @@ class MyServerFactory(protocol.ServerFactory):
     def buildProtocol(self, addr):
         return MyServerProtocol(self)
         """
-        wird bei einer eingehenden client connection aufgerufen - erstellt ein object der klasse MyServerProtocol für jede connection und übergibt self (die factory)
+        wird bei einer eingehenden client connection aufgerufen - erstellt ein object der Klasse MyServerProtocol für jede connection und übergibt self (die factory)
         """

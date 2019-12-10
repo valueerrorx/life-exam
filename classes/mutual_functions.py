@@ -67,7 +67,6 @@ def checkFirewall(firewall_ip_list):
         count += 1
 
 
-
 def checkIP(iptest):
     try:
         ip = ipaddress.ip_address(iptest)
@@ -171,9 +170,6 @@ def prepareDirectories():
     else:
         settime = time.time()  # zip does not support filetimes before 1980 .. WTF ??
         os.utime(SHARE_DIRECTORY, (settime,settime))
-        
-
-    
 
     copycommand = "cp -r %s/DATA/scripts %s" % (APP_DIRECTORY, WORK_DIRECTORY)
     os.system(copycommand)

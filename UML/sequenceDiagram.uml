@@ -1,7 +1,13 @@
 @startuml
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+Client -> Server: "Multicast Call"
+Server --> Client: "Multicast Response"
+note right: "Awaiting Connection\nfrom Client"
+Client->Client: starts twisted daemon in background
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+group twisted daemon examclient_plugin
+	Client -> Server: "connectionMade(): AUTH"
+	note right: "On every data received\ncheck AUTH from Client\nMyServerProtocol:lineReceived()"
+	Server -> Server: MyServerProtocol: rawDataReceived(DataType.SCREENSHOT)\nServerUI: createOrUpdateListItem()
+end
+
 @enduml 

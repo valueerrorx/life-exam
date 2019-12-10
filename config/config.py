@@ -19,6 +19,7 @@ VERSION = '2.1'
 #if empty, then we are NOT debugging
 DEBUG_ID="TestUser"
 DEBUG_PIN="1234"
+DEBUG_SHOW_NETWORKTRAFFIC=True
 
 SCREENSHOTINTERVALL = 30
 

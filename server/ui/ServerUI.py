@@ -5,7 +5,6 @@ import logging
 import datetime
 import os
 import shutil
-import re
 
 from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -19,8 +18,11 @@ from classes.mutual_functions import get_file_list, checkIP
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QRegExp
 from PyQt5.Qt import QRegExpValidator
-from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush
+from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from server.resources import ScreenshotWindow
+from classes.HTMLTextExtractor import html_to_text
+from sip import delete
+import sip
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -112,7 +114,7 @@ class ServerUI(QtWidgets.QDialog):
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
-                self.log("no clients connected")
+                self.logger.info("No clients connected")
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
 
@@ -120,7 +122,7 @@ class ServerUI(QtWidgets.QDialog):
  
 
         self._workingIndicator(True, 4000)
-        self.log('<b>Sending Printer Configuration to All Clients </b>')
+        self.logger.info('<b>Sending Printer Configuration to All Clients </b>')
         dialog_popup('Sending Printer Configuration to All Clients')
 
         # create zip file of /etc/cups
@@ -134,10 +136,10 @@ class ServerUI(QtWidgets.QDialog):
         # regenerate filelist and check for zip file
         self.factory.files = get_file_list(self.factory.files_path)
         if filename not in self.factory.files:
-            self.log('filename not found in directory')
+            self.logger.error('filename not found in directory')
             return
 
-        self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
+        self.logger.info('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
         # send line and file to all clients
         server_to_client.send_file(file_path, who, DataType.PRINTER.value)
@@ -152,7 +154,7 @@ class ServerUI(QtWidgets.QDialog):
         self._workingIndicator(True, 1000)
         
         if self.factory.clientslocked:
-            self.log("<b>UNLocking Client Screens </b>")
+            self.log("<b>UnLocking Client Screens </b>")
             os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')
             self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
             self.factory.clientslocked = False
@@ -161,13 +163,13 @@ class ServerUI(QtWidgets.QDialog):
                 self.factory.rawmode = False;
             
             if not self.factory.server_to_client.unlock_screens(who):
-                self.log("no clients connected")
+                self.logger.info("No clients connected")
         else:
             self.log("<b>Locking Client Screens </b>")
             self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/unlock.png')))
             self.factory.clientslocked = True
             if not self.factory.server_to_client.lock_screens(who):
-                self.log("no clients connected")
+                self.logger.info("No clients connected")
                 self.factory.clientslocked = False
                 self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
         self._onScreenshots("all")   #update screenshots right after un/lock
@@ -206,7 +208,7 @@ class ServerUI(QtWidgets.QDialog):
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
-                self.log("no clients connected")
+                self.logger.info("No clients connected")
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
 
@@ -248,7 +250,7 @@ class ServerUI(QtWidgets.QDialog):
     
         if not self.factory.server_to_client.request_screenshots(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
-            self.log("no clients connected")
+            self.logger.info("No clients connected")
 
 
 
@@ -273,7 +275,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
-            self.log("no clients connected")
+            self.logger.info("No clients connected")
 
 
 
@@ -292,7 +294,7 @@ class ServerUI(QtWidgets.QDialog):
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
-                self.log("no clients connected")
+                self.logger.info("No clients connected")
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
     
@@ -342,11 +344,11 @@ class ServerUI(QtWidgets.QDialog):
 
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
-            self.log("no clients connected")
+            self.logger.info("No clients connected")
 
         # then send the exam exit signal
         if not self.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe):
-            self.log("no clients connected")
+            self.logger.info("No clients connected")
 
 
 
@@ -420,20 +422,19 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onRemoveClient(self, client_id):
+        """
+        Entfernt einen Client aus dem Widget
+        """
         self._workingIndicator(True, 500)
         client_name = self.factory.server_to_client.kick_client(client_id)
-        #if client_name:
-        #SIP C++ Module für Python
-        #sip.delete(self.get_list_widget_by_client_id(client_id))
         
-        item = self.get_list_widget_by_client_id(client_id) 
-        
-        self.ui.listWidget.removeItemWidget(item)
-        
-          
-            #remove client widget no matter if client still is connected or not            
+        if client_name:
+            #SIP C++ Module deletes the Item from ListWidget
+            sip.delete(self.get_list_widget_by_client_id(client_id))
+            #remove client widget no matter if client still is connected or not
             # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
-        self.log('Connection to client <b> %s </b> has been <b>removed</b>.' % client_name)
+            msg='Connection to client <b> %s </b> has been <b>removed</b>.' % (client_name)
+            self.logger.info(html_to_text(msg))
 
     def _disableClientScreenshot(self, client):
         self._workingIndicator(True, 500)
@@ -452,13 +453,13 @@ class ServerUI(QtWidgets.QDialog):
     def log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
-        #Logging System
-        #get rid of html tags
-        msg = re.sub('<[^<]+?>', '', msg)
-        self.logger.info(msg)
+        self.logger.info(html_to_text(msg))
+
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
-        """generates new listitem that displays the clientscreenshot"""
+        """
+        generates new List Item that displays the client screenshot
+        """
         existing_item = self.get_list_widget_by_client_name(client.clientName)
 
         if existing_item:  # just update screenshot
@@ -466,8 +467,10 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self._addNewListItem(client, screenshot_file_path)
 
+
     def _addNewListItem(self, client, screenshot_file_path):
         item = QtWidgets.QListWidgetItem()
+                   
         item.setSizeHint(QtCore.QSize(140, 100));
         item.id = client.clientName  # store clientName as itemID for later use (delete event)
         item.pID = client.clientConnectionID
@@ -481,7 +484,7 @@ class ServerUI(QtWidgets.QDialog):
         item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
         item.info = QtWidgets.QLabel('%s' % (client.clientName))
         item.info.setAlignment(QtCore.Qt.AlignCenter)
-
+        
         grid = QtWidgets.QGridLayout()
         grid.setSpacing(1)
         grid.addWidget(item.picture, 1, 0)
@@ -573,7 +576,7 @@ class ServerUI(QtWidgets.QDialog):
         return False
 
     def get_list_widget_by_client_name(self, client_name):
-        for widget in self.get_list_widdget_items():
+        for widget in self.get_list_widget_items():
             if client_name == widget.id:
                 self.logger.info("Found existing list widget for client name %s" % client_name )
                 return widget

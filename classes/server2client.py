@@ -17,8 +17,10 @@ from config.enums import Command, DataType
 
 class ServerToClient:
     def __init__(self):
-        self.clients = dict()   # type: dict
-        self.clientlifesigns = dict()   #type: dict       # we will store the time of the last (try) to connect with.. check it against the screenshot intervall (our heartbeat) and disconnect client if the timespan is twice the heartbeat intervall
+        self.clients = dict()           # type: dict
+        # we will store the time of the last (try) to connect with.. check it against the screenshot 
+        # intervall (our heartbeat) and disconnect client if the timespan is twice the heartbeat intervall
+        self.clientlifesigns = dict()   #type: dict       
 
     ## client handling ##
     def get_client(self, key):
@@ -26,6 +28,9 @@ class ServerToClient:
         return client
 
     def add_client(self, client):
+        """
+        Client has made a connection
+        """
         self.clients.update({str(client.transport.client[1]): client})
 
     def remove_client(self, client):

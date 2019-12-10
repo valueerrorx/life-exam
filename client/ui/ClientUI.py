@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
 import logging
 import os
 import time
@@ -144,7 +143,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             else:
                 self.ui.close()
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-                os.system("%s %s" % (clientkillscript, 'client'))  # make sure only one client instance is running per client
+                # make sure only one client instance is running per client
+                os.system("bash %s %s" % (clientkillscript, 'client'))
+                self.logger.info("Terminated old running twisted Client")  
                 
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")  # moved this to workdirectory because configdirectory is overwritten on exam start
                 openednamefile = open(namefile, 'w+')  # erstelle die datei neu
@@ -152,11 +153,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 
                 
                 from twisted.plugin import IPlugin, getPlugins
-                plgs = list(getPlugins(IPlugin))
+                #plgs = 
+                list(getPlugins(IPlugin))
                 
-                for item in plgs:
-                    print(item)    
-                print(sys.path)           
+                #for item in plgs:
+                #    print(item)    
+                #print(sys.path)           
 
                 command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)

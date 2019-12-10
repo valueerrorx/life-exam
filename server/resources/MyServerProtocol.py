@@ -7,8 +7,10 @@ import logging
 import classes.mutual_functions as mutual_functions
 from twisted.protocols import basic
 from config.enums import DataType, Command
-from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY
+from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
+    DEBUG_SHOW_NETWORKTRAFFIC
 import zipfile
+from classes.HTMLTextExtractor import html_to_text
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -24,6 +26,7 @@ class MyServerProtocol(basic.LineReceiver):
         
         self.logger = logging.getLogger(__name__)
 
+    # twisted-Event: A Connection is made
     def connectionMade(self):
         self.factory.server_to_client.add_client(self)
         self.file_handler = None
@@ -35,6 +38,7 @@ class MyServerProtocol(basic.LineReceiver):
             'Connection from: %s (%d clients total)' % (
             self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
 
+    # twisted-Event: A Connection is lost
     def connectionLost(self, reason):
         self.logger.warning("ConnectionLost")
         self.logger.warning(reason)  # maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
@@ -56,7 +60,8 @@ class MyServerProtocol(basic.LineReceiver):
                 self.factory.disconnected_list.remove(self.clientName)   # this one is not coming back
             except:
                 return
-            
+       
+    # twisted-Event: Data Received     
     def rawDataReceived(self, data):
         """ handle incoming byte data """
         filename = self.line_data_list[2]
@@ -75,18 +80,25 @@ class MyServerProtocol(basic.LineReceiver):
             self.factory.rawmode = False;  #filetransfer finished "UNLOCK" fileopertions
           
 
-            if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):  # everything ok..  file received
-                self.factory.window.log('File %s has been successfully transferred' % (filename))
+            # everything ok..  file received
+            if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):
+                msg = 'File %s has been successfully transferred' % (filename)  
+                self.factory.window.log(msg)
+                self.logger.info(msg)
                 self.filetransfer_fail_count = 0
                 
                 """
                 Client is connecting
                 """
-                if self.line_data_list[1] == DataType.SCREENSHOT.value:  # screenshot is received on initial connection
+                if self.line_data_list[1] == DataType.SCREENSHOT.value:
+                    # screenshot is received on initial connection  
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
-                    os.rename(file_path, screenshot_file_path)  # move image to screenshot folder
-                    mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  # fix filepermission of transferred file
-                    self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  # make the clientscreenshot visible in the listWidget
+                    # move image to screenshot folder
+                    os.rename(file_path, screenshot_file_path)  
+                    # fix filepermission of transferred file
+                    mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  
+                    # make the clientscreenshot visible in the listWidget
+                    self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  
                 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
                     """
@@ -111,11 +123,16 @@ class MyServerProtocol(basic.LineReceiver):
                 os.unlink(file_path)
                 self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
                 self.transport.write(Command.ENDMSG.tobytes() + b'\r\n')
-                self.factory.window.log('File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename))
+                msg='File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename)
+                self.factory.window.log(msg)
+                self.logger.error(msg)
+                
                 # request file again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
                 if self.line_data_list[1] == DataType.ABGABE.value and self.filetransfer_fail_count <= 1:
                     self.filetransfer_fail_count += 1
-                    self.factory.window.log('Failed transfers: %s' %self.filetransfer_fail_count)
+                    msg='Failed transfers: %s' % (self.filetransfer_fail_count)
+                    self.factory.window.log(msg)
+                    self.logger.info(msg)
                     self.factory.window._onAbgabe(self.clientConnectionID)
                 else:
                     self.filetransfer_fail_count = 0
@@ -128,11 +145,14 @@ class MyServerProtocol(basic.LineReceiver):
         # twisted
         self.sendLine(line.encode() )
 
+    # twisted-Event: Line Received
     def lineReceived(self, line):
         """whenever the CLIENT sent something """
         line = line.decode()  # we get bytes but need strings
         self.line_data_list = mutual_functions.clean_and_split_input(line)
-        self.logger.debug("line received and decoded:\n%s\n" % self.line_data_list)
+        if DEBUG_SHOW_NETWORKTRAFFIC:
+            self.logger.debug("line received and decoded:\n%s\n" % self.line_data_list)
+            
         self.line_dispatcher()    #pass "self" as "client"
 
 
@@ -165,7 +185,9 @@ class MyServerProtocol(basic.LineReceiver):
         """
         Puts server into raw mode to receive files
         """
-        self.factory.window.log('Incoming File Transfer from Client <b>%s </b>' % (self.clientName))
+        msg='Incoming File Transfer from Client <b>%s</b>' % (self.clientName)
+        self.factory.window.log(msg)
+        self.logger.info(html_to_text(msg))
         self.setRawMode()  # this is a file - set to raw mode
 
 
@@ -180,24 +202,28 @@ class MyServerProtocol(basic.LineReceiver):
         pincode = self.line_data_list[2]
         
         if newID in self.factory.server_to_client.clients.keys():
-            self.logger.info("this user already exists and is connected")   #TEST keys contains numbers - newID is a name .. how does this work?
+            #TEST keys contains numbers - newID is a name .. how does this work?
             self.refused = True
             self.sendEncodedLine(Command.REFUSED.value)
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. User already exists' % (newID))
+            msg = 'Client Connection from %s has been refused. User already exists' % (newID)
+            self.factory.window.log(msg)
+            self.logger.error(msg)  
             return
-        elif int(pincode) != self.factory.pincode:
-            self.logger.info("wrong pincode")
+        elif int(pincode) != int(self.factory.pincode):
             self.refused = True
             self.sendEncodedLine(Command.REFUSED.value)
             self.transport.loseConnection()
-            self.factory.window.log('Client Connection from %s has been refused. Wrong pincode given' % (newID ))
+            msg='Client Connection from %s has been refused. Wrong pincode given' % (newID )
+            self.factory.window.log(msg)
+            self.logger.error(msg)
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
-            self.logger.info("pincode ok")
             self.clientName = newID
-            self.factory.window.log('New Connection from <b>%s </b>' % (newID) )
-            #transfer, send, screenshot, filename, hash, cleanabgabe
+            msg='New Connection from <b>%s </b>' % (newID)
+            self.factory.window.log(msg)
+            self.logger.info(html_to_text(msg))
+            #transfer, send, screenshot, filename, hash, clean abgabe
             line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
             self.sendEncodedLine(line)
             return

@@ -49,7 +49,7 @@ class ClientToServer:
 
     def connection_refused(self, client):
         """
-        Shoes Desktopmessage for connection refused
+        Shows Desktopmessage for connection refused
         :param client: clientprotocol
         :return:
         """
@@ -59,7 +59,7 @@ class ClientToServer:
 
     def connection_removed(self,client):
         """
-        Shoes Desktopmessage for connection refused
+        Shows Desktopmessage for connection refused
         :param client: clientprotocol
         :return:
         """

@@ -5,11 +5,8 @@ import os
 import yaml
 from pathlib import Path
 
-import logging
-import logging.handlers
 import logging.config
 
-from twisted.python.failure import Failure
 from twisted.python import log as twisted_log
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.as_posix(), 'logger.yaml')

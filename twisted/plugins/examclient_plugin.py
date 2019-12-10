@@ -10,13 +10,13 @@
 # export PYTHONPATH="/home/student/.life/applications/life-exam"
 # sudo twistd -n --pidfile client.pid examclient -p 11411 -h 10.2.1.251 -i testuser -c 1234
 
+# Log messages only with print(), they are Handles by twisted
 
 import os
 import sys
 
 import shutil
 import subprocess
-import time
 import zipfile
 import datetime
 
@@ -28,6 +28,7 @@ from config.enums import Command, DataType
 
 
 from classes.client2server import ClientToServer
+import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 from twisted.internet import protocol, defer
@@ -49,20 +50,24 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
-        mutual_functions.prepareDirectories()  # cleans everything and copies script files 
+        # cleans everything and copies script files
+        mutual_functions.prepareDirectories()  
+    
 
-    # twisted
+    # twisted-Event: Client connects to server
     def connectionMade(self):
         self.buffer = []
         self.file_handler = None
         self.line_data_list = ()
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'],  self.factory.options['pincode'])
         self.sendEncodedLine(line)
+        print(line)
         
-        print('Connected. Auth sent to the server')
-        mutual_functions.showDesktopMessage('Connected. Auth sent to the server')
+        msg = 'Auth sent to the server'
+        print(msg)
+        mutual_functions.showDesktopMessage(msg)
 
-    # twisted
+    # twisted-Event:
     def connectionLost(self, reason):
         self.factory.failcount += 1
         self.file_handler = None
@@ -75,7 +80,7 @@ class MyClientProtocol(basic.LineReceiver):
             os.system(command)
             os._exit(1)
 
-    # twisted
+    # twisted-Event:
     def rawDataReceived(self, data):
         print(self.line_data_list)
         filename = self.line_data_list[3]
@@ -122,16 +127,16 @@ class MyClientProtocol(basic.LineReceiver):
 
 
     def sendEncodedLine(self,line):
-        # twisted
+        # twisted-Event:
         self.sendLine(line.encode() )
 
 
-    # twisted
+    # twisted-Event:
     def lineReceived(self, line):
         """whenever the SERVER sent something """
         line = line.decode()   #decode the moment you recieve a line and encode it right before you send
         self.line_data_list = mutual_functions.clean_and_split_input(line)
-        print("\nDEBUG: line received and decoded:\n%s\n" % self.line_data_list)
+        print("DEBUG: line received and decoded: %s" % self.line_data_list)
         self.line_dispatcher(line)
         
 
@@ -295,6 +300,8 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         
         #self.factor = 1.8
 
+    
+    # twisted-Event: Called when a connection has failed to connect
     def clientConnectionFailed(self, connector, reason):
         self.failcount += 1
 
@@ -316,9 +323,7 @@ muss die ClientFactory im Service (MyServiceMaker) gestartet werden
 tapname ist der name des services 
 damit twistd dieses überallfindet sollte das stammverzeichnis im pythonpath eingetragen werden
 
-export PYTHONPATH="/pathto/life-exam-controlcenter:$PYTHONPATH"
-
-
+export PYTHONPATH=".:/pathto/life-exam-controlcenter:$PYTHONPATH"
 """
 
 
