@@ -10,9 +10,8 @@ def thread_wait_for_all_clients(clients):
     """
     on exit Exam, this thread waits for all Clients to send their files
     """
-    logging.info("Thread %s: starting", name)
-    time.sleep(2)
-    logging.info("Thread %s: finishing", name)
+    Get Event from MyServerProtocol
+    return 0
     # then send the exam exit signal
-    if not self.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe):
-        self.log("No clients connected")
+    #if not self.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe):
+    #    self.log("No clients connected")

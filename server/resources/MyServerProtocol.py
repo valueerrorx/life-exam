@@ -88,6 +88,7 @@ class MyServerProtocol(basic.LineReceiver):
                 self.logger.info(msg)
                 self.filetransfer_fail_count = 0
                 
+                Send Event to Wait Thread
                 self.logger.info(self.line_data_list)
                 
                 """

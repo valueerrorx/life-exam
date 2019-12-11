@@ -6,7 +6,6 @@ import datetime
 import os
 import shutil
 import sip
-from time import sleep
 
 from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -16,6 +15,7 @@ from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot
 
 from classes.mutual_functions import get_file_list, checkIP
+from server.ui.Thread_Wait import thread_wait_for_all_clients
 
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QRegExp

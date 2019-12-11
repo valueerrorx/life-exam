@@ -10,8 +10,8 @@ from config.config import APP_DIRECTORY, EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY
     WORK_DIRECTORY, SERVER_PORT, DEBUG_PIN, DEBUG_ID
 from classes.mutual_functions import checkIP, prepareDirectories
 
-from PyQt5.QtCore import QRegExp, Qt
-from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import QRegExp
+from PyQt5 import QtWidgets, uic, Qt
 
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
