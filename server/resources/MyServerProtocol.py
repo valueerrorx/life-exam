@@ -88,7 +88,14 @@ class MyServerProtocol(basic.LineReceiver):
                 self.logger.info(msg)
                 self.filetransfer_fail_count = 0
                 
-                Send Event to Wait Thread
+                #Send Event to Wait Thread with Client Name
+                #maybe use a Queue for param
+                ui = self.factory.window
+                if ui.exit_exam_wait_thread:
+                    ui.event_abgabe_transfered.param =self.line_data_list[4]
+                    ui.event_abgabe_transfered.set()
+                
+                #self.event_abgabe_transfered
                 self.logger.info(self.line_data_list)
                 
                 """

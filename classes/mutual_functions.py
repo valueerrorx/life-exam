@@ -188,6 +188,7 @@ def prepareDirectories():
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)
+    logger.info('done')
 
 
 
@@ -197,9 +198,12 @@ def fixFilePermissions(folder):
     """
     if folder:
         if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
+            if folder == WORK_DIRECTORY:
+                chowncommand = "find %s ! -name \"server.pid\" | xargs -I {} chown %s:%s {}" % (folder, USER, USER)
+            else:
+                chowncommand = "chown -R %s:%s %s" % (USER, USER, folder)
             
-            #chowncommand = "chown -R %s:%s %s" % (USER, USER, folder)
-            chowncommand = "find %s ! -name \"server.pid\" | xargs -I {} chown %s:%s {}" % (folder, USER, USER)
+            logger.info(chowncommand)
             os.system(chowncommand)
         else:
             logger.error("Exam folder location outside of /home/ is not allowed")

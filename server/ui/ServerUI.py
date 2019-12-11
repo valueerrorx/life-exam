@@ -92,13 +92,17 @@ class ServerUI(QtWidgets.QDialog):
         
         # Stylesheet Rahmen für Client Items
         self.ui.listWidget.setStyleSheet("QListWidget::item{ border-width: 1px; border-style: solid; border-color: #AAA;}")
+        #Events & Threads
+        #this thread wait for all clients to send their abgabe files
+        self.exit_exam_wait_thread = None
+        #at exit-exam, a client sends event that all files are transferred
+        self.event_abgabe_transfered = None
         
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
         
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
-        count = self.ui.listWidget.count()
         return ("Clients: <b>%s</b>" % self.ui.listWidget.count()) 
 
 
@@ -364,9 +368,16 @@ class ServerUI(QtWidgets.QDialog):
 
         # Wait for Abgabe from all Clients are made
         clients = self.get_list_widget_items()
-        t = threading.Thread(target=thread_wait_for_all_clients, args=(clients,))
+        self.event_abgabe_transfered = threading.Event()
+        
+        # This thread dies when main thread (only non-daemon thread) exits
+        self.exit_exam_wait_thread = threading.Thread(
+            name='Exit-Exam-Wait-Thread', 
+            target=thread_wait_for_all_clients, 
+            daemon=True, 
+            args=(clients, self.event_abgabe_transfered, self.factory, onexit_cleanup_abgabe))
         self.log("Waiting for all Clients to send their Abgabe-Files")
-        t.start()
+        self.exit_exam_wait_thread.start()
         
         
         
