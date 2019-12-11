@@ -1,12 +1,10 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 # TEACHER - SERVER #
 #
 # Copyright (C) 2017 Thomas Michael Weissel
 #
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
-#
-# sudo -H pip3 install twisted  # we need twisted for python3
 
 import sys
 import os

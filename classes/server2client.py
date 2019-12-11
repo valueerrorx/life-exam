@@ -117,11 +117,6 @@ class ServerToClient:
 
         return True
 
-
-
-
-
-
     
     ## client file transfer (send to client)
     def send_file(self, file_path, who, datatype, cleanup_abgabe="none"):
@@ -175,6 +170,4 @@ class ServerToClient:
             client.transport.write(b)
 
         client.transport.write(b'\r\n')
-        
-        
-        
+    

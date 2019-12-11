@@ -67,7 +67,7 @@ class MyServerProtocol(basic.LineReceiver):
         filename = self.line_data_list[2]
         file_path = os.path.join(self.factory.files_path, filename)
         # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
-
+        
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
 
@@ -77,7 +77,8 @@ class MyServerProtocol(basic.LineReceiver):
             self.file_handler.close()
             self.file_handler = None
             self.setLineMode()
-            self.factory.rawmode = False;  #filetransfer finished "UNLOCK" fileopertions
+            #filetransfer finished "UNLOCK" fileopertions
+            self.factory.rawmode = False;  
           
 
             # everything ok..  file received
@@ -86,6 +87,8 @@ class MyServerProtocol(basic.LineReceiver):
                 self.factory.window.log(msg)
                 self.logger.info(msg)
                 self.filetransfer_fail_count = 0
+                
+                self.logger.info(self.line_data_list)
                 
                 """
                 Client is connecting
@@ -122,7 +125,11 @@ class MyServerProtocol(basic.LineReceiver):
             else:  # wrong file hash
                 os.unlink(file_path)
                 self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
-                self.transport.write(Command.ENDMSG.tobytes() + b'\r\n')
+                
+                #string.encode()
+                #return an encoded version of the string as a bytes object
+                msg = Command.ENDMSG+"\r\n"
+                self.transport.write(msg.encode())
                 msg='File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename)
                 self.factory.window.log(msg)
                 self.logger.error(msg)

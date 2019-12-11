@@ -23,6 +23,7 @@ from PyQt5.Qt import QRegExpValidator
 from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from server.resources import ScreenshotWindow
 from classes.HTMLTextExtractor import html_to_text
+import threading
 
 
 
@@ -353,8 +354,7 @@ class ServerUI(QtWidgets.QDialog):
         # first fetch Abgabe
         if self.factory.rawmode == True:
             self.log("Waiting for ongoing file-transfers to finish ...")
-            sleep(0.05) #sec
-            return  #FIXME this could lead to some clients not exiting in very very rare cases where a BIG filetransfer is still on -- probably wait a second and try again ??
+            return  
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
 
@@ -362,9 +362,14 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("No clients connected")
 
-        # then send the exam exit signal
-        if not self.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe):
-            self.log("No clients connected")
+        # Wait for Abgabe from all Clients are made
+        clients = self.get_list_widget_items()
+        t = threading.Thread(target=thread_wait_for_all_clients, args=(clients,))
+        self.log("Waiting for all Clients to send their Abgabe-Files")
+        t.start()
+        
+        
+        
 
 
 
@@ -471,7 +476,7 @@ class ServerUI(QtWidgets.QDialog):
     def log(self, msg):
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
-        self.log(html_to_text(msg))
+        self.logger.info(html_to_text(msg))
 
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
@@ -577,8 +582,7 @@ class ServerUI(QtWidgets.QDialog):
         cursor = QCursor()
         menu.exec_(cursor.pos())
         return
-
-
+    
     def get_list_widget_items(self):
         """
         Creates an iterable list of all widget elements aka student screenshots

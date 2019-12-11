@@ -100,7 +100,7 @@ class ClientToServer:
         """
         exitcleanup_abgabe = client.line_data_list[1]
         print(exitcleanup_abgabe)
-        print("stopping exam")
+        print("Stopping EXAM")
         startcommand = "%s/scripts/stopexam.sh %s &" %(WORK_DIRECTORY, exitcleanup_abgabe) # start as user even if the twistd daemon is run by root
         os.system(startcommand)  # start script
 
@@ -131,10 +131,6 @@ class ClientToServer:
             client._sendFile(finalfilename, filetype)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
-            
-            
-        
-
 
 
     """
@@ -154,6 +150,7 @@ class ClientToServer:
         os.system(command)
         return filename
 
+
     def prepare_abgabe(self, client, filename):
         """
         Prepares Abgabe to be sent as zip archive
@@ -161,7 +158,7 @@ class ClientToServer:
         :param filename: filename of abgabe archive
         :return: filename
         """
-        print("ABGABE IS PREPARED")
+        print("Abgabe IS Prepared ...")
         client._triggerAutosave()
         time.sleep(2)  # TODO: make autosave return that it is finished!
         target_folder = SHARE_DIRECTORY

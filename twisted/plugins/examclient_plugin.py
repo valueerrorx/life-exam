@@ -207,20 +207,21 @@ class MyClientProtocol(basic.LineReceiver):
             print("ctrl+s sent to %s" % (application_id) )
 
         # try the current active window too in order to catch other applications not in config.py
-        #command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to whatch with konsole
+        #command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to watch with console
         #os.system(command)
 
     def _sendFile(self, filename, filetype):
         """send a file to the server"""
         self.factory.files = mutual_functions.get_file_list(
-            self.factory.files_path)  # rebuild here just in case something changed (zip/screensho created )
+            self.factory.files_path)  # rebuild here just in case something changed (zip/screenshot created )
 
         if not filename in self.factory.files:  # if folder exists
             self.sendLine(b'filename not found in client directory')
             return
         
         if filetype in DataType.list():
-            line = '%s %s %s %s' % (Command.FILETRANSFER.value, filetype, filename, self.factory.files[filename][2])  # command type filename filehash
+            # command type filename filehash
+            line = '%s %s %s %s %s' % (Command.FILETRANSFER.value, filetype, filename, self.factory.files[filename][2], self.factory.options['id'])  
             self.sendEncodedLine(line)
         else:
             return  # TODO: inform that nothing has been done
@@ -229,9 +230,11 @@ class MyClientProtocol(basic.LineReceiver):
         for bytes in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
             self.transport.write(bytes)
 
-        self.transport.write(b'\r\n')  # send this to inform the server that the datastream is finished
-        self.setLineMode()  # When the transfer is finished, we go back to the line mode 
-        print("DEBUG201: Filetransfer finished, back to linemode")
+        # send this to inform the server that the datastream is finished
+        self.transport.write(b'\r\n')
+        # When the transfer is finished, we go back to the line mode  
+        self.setLineMode()   
+        print("Filetransfer finished, switched back to LineMode")
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
