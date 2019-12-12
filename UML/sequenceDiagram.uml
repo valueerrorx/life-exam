@@ -23,6 +23,9 @@ group twisted daemon examclient_plugin runs on client
 	Thread -> Client: server2client: exit_exam\nEXITEXAM
 	deactivate Thread
 	
+	note over Client: START EXAM
+	Client -> Client: rawDataReceived():_startExam()
+	
 	
 end
 

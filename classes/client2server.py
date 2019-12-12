@@ -126,9 +126,16 @@ class ClientToServer:
         if task == Command.SEND.value:
             if filetype == DataType.SCREENSHOT.value:
                 finalfilename = self.prepare_screenshot(client, filename)
+                client._sendFile(finalfilename, filetype)
+                
             elif filetype == DataType.ABGABE.value:
-                finalfilename = self.prepare_abgabe(client, filename)
-            client._sendFile(finalfilename, filetype)
+                #Abgabe nur senden, wenn ein EXAM gestartet wurde
+                #teste ob lock file exists
+                if mutual_functions.lockFileExists():
+                    finalfilename = self.prepare_abgabe(client, filename, True)                    
+                else:
+                    finalfilename = self.prepare_abgabe(client, filename, False)
+                client._sendFile(finalfilename, filetype)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
 
@@ -151,17 +158,23 @@ class ClientToServer:
         return filename
 
 
-    def prepare_abgabe(self, client, filename):
+    def prepare_abgabe(self, client, filename, fake):
         """
         Prepares Abgabe to be sent as zip archive
         :param client: clientprotocol
         :param filename: filename of abgabe archive
+        :param fake: if no EXAM Mode was started, then create dummy zip File
         :return: filename
         """
-        print("Abgabe IS Prepared ...")
-        client._triggerAutosave()
-        time.sleep(2)  # TODO: make autosave return that it is finished!
-        target_folder = SHARE_DIRECTORY
-        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
-        shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
+        if fake==False:
+            print("Abgabe IS Prepared ...")
+            client._triggerAutosave()
+            time.sleep(2)  # TODO: make autosave return that it is finished!
+            target_folder = SHARE_DIRECTORY
+            output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
+            shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
+        else:
+            print("No EXAM, Fake Abgabe IS Prepared ...")
+            filename = mutual_functions.createFakeZipFile()
+            
         return "%s.zip" % filename  # this is the filename of the zip file

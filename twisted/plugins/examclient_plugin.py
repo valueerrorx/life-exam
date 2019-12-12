@@ -80,7 +80,7 @@ class MyClientProtocol(basic.LineReceiver):
             os.system(command)
             os._exit(1)
 
-    # twisted-Event:
+    # twisted-Event: Data received > what schould i do?
     def rawDataReceived(self, data):
         print(self.line_data_list)
         filename = self.line_data_list[3]
@@ -100,8 +100,11 @@ class MyClientProtocol(basic.LineReceiver):
 
             if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[4]):
 
-                if self.line_data_list[2] == DataType.EXAM.value:  # initialize exam mode.. unzip and start exam
-                    mutual_functions.showDesktopMessage('Initializing Exam Mode')
+                # initialize exam mode.. unzip and start exam
+                if self.line_data_list[2] == DataType.EXAM.value:
+                    msg = 'Initializing Exam Mode'  
+                    mutual_functions.showDesktopMessage(msg)
+                    print(msg)
                     self._startExam(filename, file_path, cleanup_abgabe)
                     
                 elif self.line_data_list[2] == DataType.FILE.value:
@@ -112,7 +115,9 @@ class MyClientProtocol(basic.LineReceiver):
                     else:
                         shutil.move(file_path, SHARE_DIRECTORY)
 
-                    mutual_functions.showDesktopMessage('File %s received!' %(filename))
+                    msg = 'File %s received!' %(filename)
+                    mutual_functions.showDesktopMessage(msg)
+                    print(msg)
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
                     
                 elif self.line_data_list[2] == DataType.PRINTER.value:
@@ -131,14 +136,14 @@ class MyClientProtocol(basic.LineReceiver):
         self.sendLine(line.encode() )
 
 
-    # twisted-Event:
+    # twisted-Event: A data line has been received
     def lineReceived(self, line):
         """whenever the SERVER sent something """
-        line = line.decode()   #decode the moment you recieve a line and encode it right before you send
+        #decode the moment you recieve a line and encode it right before you send
+        line = line.decode()   
         self.line_data_list = mutual_functions.clean_and_split_input(line)
         print("DEBUG: line received and decoded: %s" % self.line_data_list)
-        self.line_dispatcher(line)
-        
+        self.line_dispatcher(line)       
 
 
     def line_dispatcher(self, line):
@@ -210,6 +215,7 @@ class MyClientProtocol(basic.LineReceiver):
         #command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to watch with console
         #os.system(command)
 
+
     def _sendFile(self, filename, filetype):
         """send a file to the server"""
         self.factory.files = mutual_functions.get_file_list(
@@ -235,6 +241,7 @@ class MyClientProtocol(basic.LineReceiver):
         # When the transfer is finished, we go back to the line mode  
         self.setLineMode()   
         print("Filetransfer finished, switched back to LineMode")
+
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""
@@ -263,9 +270,16 @@ class MyClientProtocol(basic.LineReceiver):
 
 
     def _startExam(self, filename, file_path, cleanup_abgabe ):
-        """extracts the config folder and starts the startexam.sh script"""
+        """
+        extracts the config folder and starts the startexam.sh script
+        also sets a lock File to indicate that the EXAM started
+        """
 
-        if self.factory.options['host'] != "127.0.0.1":  # testClient running on the same machine
+        # testClient running on the same machine
+        if self.factory.options['host'] != "127.0.0.1":
+            #create lock File
+            mutual_functions.writeLockFile(WORK_DIRECTORY)
+              
             # extract to unzipDIR / clientID / foldername without .zip
             # (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')
             # python3 only but twisted RPC is not ported to python3 yet

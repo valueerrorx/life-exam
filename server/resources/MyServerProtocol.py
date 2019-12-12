@@ -85,15 +85,13 @@ class MyServerProtocol(basic.LineReceiver):
             if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):
                 msg = 'File %s has been successfully transferred' % (filename)  
                 self.factory.window.log(msg)
-                self.logger.info(msg)
                 self.filetransfer_fail_count = 0
                 
                 #Send Event to Wait Thread with Client Name
                 #maybe use a Queue for param
                 ui = self.factory.window
-                if ui.exit_exam_wait_thread:
-                    ui.event_abgabe_transfered.param =self.line_data_list[4]
-                    ui.event_abgabe_transfered.set()
+                if ui.waiting_thread:
+                    ui.waiting_thread.fireEvent(self.line_data_list[4])
                 
                 #self.event_abgabe_transfered
                 self.logger.info(self.line_data_list)
@@ -202,7 +200,6 @@ class MyServerProtocol(basic.LineReceiver):
         """
         msg='Incoming File Transfer from Client <b>%s</b>' % (self.clientName)
         self.factory.window.log(msg)
-        self.logger.info(html_to_text(msg))
         self.setRawMode()  # this is a file - set to raw mode
 
 

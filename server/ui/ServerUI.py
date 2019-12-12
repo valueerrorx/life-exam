@@ -9,13 +9,12 @@ import sip
 
 from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, SERVER_PIDFILE
+    SCRIPTS_DIRECTORY
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot
 
 from classes.mutual_functions import get_file_list, checkIP
-from server.ui.Thread_Wait import thread_wait_for_all_clients
 
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QRegExp
@@ -23,8 +22,9 @@ from PyQt5.Qt import QRegExpValidator
 from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from server.resources import ScreenshotWindow
 from classes.HTMLTextExtractor import html_to_text
-import threading
 
+from classes import mutual_functions
+from server.ui import Thread_Wait
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -92,12 +92,10 @@ class ServerUI(QtWidgets.QDialog):
         
         # Stylesheet Rahmen für Client Items
         self.ui.listWidget.setStyleSheet("QListWidget::item{ border-width: 1px; border-style: solid; border-color: #AAA;}")
-        #Events & Threads
-        #this thread wait for all clients to send their abgabe files
-        self.exit_exam_wait_thread = None
-        #at exit-exam, a client sends event that all files are transferred
-        self.event_abgabe_transfered = None
         
+        #Waiting Thread
+        self.ui.waiting_thread = Thread_Wait()
+                
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
         
@@ -368,18 +366,27 @@ class ServerUI(QtWidgets.QDialog):
 
         # Wait for Abgabe from all Clients are made
         clients = self.get_list_widget_items()
-        self.event_abgabe_transfered = threading.Event()
         
         # This thread dies when main thread (only non-daemon thread) exits
-        self.exit_exam_wait_thread = threading.Thread(
-            name='Exit-Exam-Wait-Thread', 
-            target=thread_wait_for_all_clients, 
-            daemon=True, 
-            args=(clients, self.event_abgabe_transfered, self.factory, onexit_cleanup_abgabe))
+        #self.exit_exam_wait_thread = threading.Thread(
+        #    name='Exit-Exam-Wait-Thread', 
+        #    target=thread_wait_for_all_clients, 
+        #    daemon=True, 
+        #    args=(clients, self.event_abgabe_transfered, self.factory, onexit_cleanup_abgabe))
+        
+        #start Thread 
+        
+        #
+        
+        self.waiting_thread.doneEvent.connect(self.client_abgabe_done)
+        self.waiting_thread.start()
+        
         self.log("Waiting for all Clients to send their Abgabe-Files")
         self.exit_exam_wait_thread.start()
         
-        
+    def client_abgabe_done(self):
+        # gets executed on my_signal
+        pass
         
 
 
@@ -644,7 +651,7 @@ class ServerUI(QtWidgets.QDialog):
         retval = self.msg.exec_()   # 16384 = yes, 65536 = no
        
         if str(retval) == "16384":
-            os.remove(SERVER_PIDFILE)
+            mutual_functions.deletePidFile()
             self.ui.close()
             os._exit(0)  # otherwise only the gui is closed and connections are kept alive
         else:

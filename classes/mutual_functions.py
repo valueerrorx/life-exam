@@ -14,7 +14,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, APP_DIRECTORY, SERVER_PIDFILE, USER
+    SHARE_DIRECTORY, APP_DIRECTORY, USER
 
 logger = logging.getLogger(__name__)
 
@@ -211,11 +211,39 @@ def fixFilePermissions(folder):
         logger.error("no folder given")
 
 def writePidFile():
+    file = os.path.join(WORK_DIRECTORY,'server.pid')
     pid = str(os.getpid())
 
-    f = open(SERVER_PIDFILE, 'w+')
+    f = open(file, 'w+')
     f.write(pid)
     f.close()
+    
+def deletePidFile():
+    file = os.path.join(WORK_DIRECTORY,'server.pid')
+    os.remove(file)
+
+
+def writeLockFile():
+    """ lock File indicates that client has started EXAM Mode """
+    file = os.path.join(WORK_DIRECTORY,'client.lock')
+
+    f = open(file, 'w+')
+    f.write("Client has started EXAM Mode")
+    f.close()
+
+def lockFileExists():
+    file = os.path.join(WORK_DIRECTORY,'client.lock')
+    return checkIfFileExists(file)
+
+def createFakeZipFile():
+    """ Create an empty zip File, its a dummy """
+    file = os.path.join(CLIENTZIP_DIRECTORY,'dummy.zip')
+
+    f = open(file, 'w+')
+    f.write("dummy")
+    f.close()
+    return file
+
 
 
 def showDesktopMessage(msg):
