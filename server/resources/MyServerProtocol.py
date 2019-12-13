@@ -94,7 +94,8 @@ class MyServerProtocol(basic.LineReceiver):
                     ui.waiting_thread.fireEvent(self.line_data_list[4])
                 
                 #self.event_abgabe_transfered
-                self.logger.info(self.line_data_list)
+                if DEBUG_SHOW_NETWORKTRAFFIC:
+                    self.logger.info(self.line_data_list)
                 
                 """
                 Client is connecting

@@ -24,7 +24,7 @@ from server.resources import ScreenshotWindow
 from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
-from server.ui import Thread_Wait
+from server.ui.Thread_Wait import Thread_Wait
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -94,7 +94,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.setStyleSheet("QListWidget::item{ border-width: 1px; border-style: solid; border-color: #AAA;}")
         
         #Waiting Thread
-        self.ui.waiting_thread = Thread_Wait()
+        self.waiting_thread = Thread_Wait()
                 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -351,8 +351,6 @@ class ServerUI(QtWidgets.QDialog):
             #  disable autoabgabe, lc = Loopingcall
             self.factory.lc.stop()
         
-        onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()
-        
         # first fetch Abgabe
         if self.factory.rawmode == True:
             self.log("Waiting for ongoing file-transfers to finish ...")
@@ -363,32 +361,24 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("No clients connected")
-
-        # Wait for Abgabe from all Clients are made
-        clients = self.get_list_widget_items()
-        
-        # This thread dies when main thread (only non-daemon thread) exits
-        #self.exit_exam_wait_thread = threading.Thread(
-        #    name='Exit-Exam-Wait-Thread', 
-        #    target=thread_wait_for_all_clients, 
-        #    daemon=True, 
-        #    args=(clients, self.event_abgabe_transfered, self.factory, onexit_cleanup_abgabe))
         
         #start Thread 
-        
-        #
-        
-        self.waiting_thread.doneEvent.connect(self.client_abgabe_done)
+        self.log("Waiting for all Clients to send their Abgabe-Files")
+        #on Event call        
+        self.waiting_thread.client_finished.connect(self.client_abgabe_done)
         self.waiting_thread.start()
         
-        self.log("Waiting for all Clients to send their Abgabe-Files")
-        self.exit_exam_wait_thread.start()
         
-    def client_abgabe_done(self):
-        # gets executed on my_signal
-        pass
+    def client_abgabe_done(self, who):
+        """ will fired when Client has sent his Abgabe File """
         
-
+        self.log("Client %s has finished sending Abgabe-File, now exiting ..." % who)
+        onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()   
+        #get from who the connectionID        
+        item = self.get_list_widget_by_client_name(who)
+        # then send the exam exit signal
+        if not self.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe):
+            pass
 
 
     def _onStartHotspot(self):
@@ -491,10 +481,12 @@ class ServerUI(QtWidgets.QDialog):
             #item not found because first connection attempt
             return
 
-    def log(self, msg):
+    def log(self, msg, onlyinGUI=True):
+        """ creates an log entry inside GUI LOG Textfield """
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
-        self.logger.info(html_to_text(msg))
+        if onlyinGUI==False:
+            self.logger.info(html_to_text(msg))
 
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
@@ -624,6 +616,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.log("Found existing list widget for client name %s" % client_name )
                 return widget
         return False
+    
 
     def get_existing_or_skeleton_list_widget(self, client_name):
         pass
