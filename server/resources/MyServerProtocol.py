@@ -88,7 +88,6 @@ class MyServerProtocol(basic.LineReceiver):
                 self.filetransfer_fail_count = 0
                 
                 #Send Event to Wait Thread with Client Name
-                #maybe use a Queue for param
                 ui = self.factory.window
                 if ui.waiting_thread:
                     ui.waiting_thread.fireEvent(self.line_data_list[4])
@@ -119,6 +118,12 @@ class MyServerProtocol(basic.LineReceiver):
                     #python3 only but twisted RPC is not ported to python3 yet
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])  
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
+                    
+                    #check if only a fake Abgabe-File was sent, that happens if no EXAM Mode
+                    #was starte on the client. in this case u get an empty zip file
+                    #that holds the network traffic small (dummy.zip)
+                    
+                    
                     #checks if filename is taken and renames this file in order to make room for the userfolder
                     mutual_functions.checkIfFileExists(user_dir)  
 
@@ -191,6 +196,7 @@ class MyServerProtocol(basic.LineReceiver):
             Command.AUTH.value: self._checkclientAuth, 
             Command.FILETRANSFER.value: self._get_file_request,
         }
+        self.logger.debug(self.line_data_list)
         line_handler = command.get(self.line_data_list[0], None)
         line_handler()
 

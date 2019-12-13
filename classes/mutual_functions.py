@@ -10,6 +10,7 @@ import hashlib
 import logging
 import os
 import subprocess
+from pathlib import Path
 from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
@@ -230,18 +231,25 @@ def writeLockFile():
     f.close()
 
 def lockFileExists():
-    file = os.path.join(WORK_DIRECTORY,'client.lock')
-    return checkIfFileExists(file)
+    my_file = Path(WORK_DIRECTORY).joinpath('client.lock')
+    if my_file.is_file():
+        # file exists
+        return True 
+    else:
+        return False
 
 def createFakeZipFile():
     """ Create an empty zip File, its a dummy """
-    file = os.path.join(CLIENTZIP_DIRECTORY,'dummy.zip')
-
-    f = open(file, 'w+')
-    f.write("dummy")
-    f.close()
-    return file
-
+    my_file = Path(CLIENTZIP_DIRECTORY).joinpath('dummy')
+    #create dummy dir to zip
+    my_path = Path(CLIENTZIP_DIRECTORY).joinpath('dummydir')
+    my_path.mkdir()
+    
+    print(my_file)
+    
+    shutil.make_archive(my_file, 'zip', my_path)
+    my_path.rmdir()
+    
 
 
 def showDesktopMessage(msg):

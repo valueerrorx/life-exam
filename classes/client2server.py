@@ -129,12 +129,12 @@ class ClientToServer:
                 client._sendFile(finalfilename, filetype)
                 
             elif filetype == DataType.ABGABE.value:
-                #Abgabe nur senden, wenn ein EXAM gestartet wurde
+                #Abgabe nur senden, wenn ein EXAM gestartet wurde ansonsten Fake.zip File
                 #teste ob lock file exists
-                if mutual_functions.lockFileExists():
-                    finalfilename = self.prepare_abgabe(client, filename, True)                    
-                else:
-                    finalfilename = self.prepare_abgabe(client, filename, False)
+                    
+                fakeit = not mutual_functions.lockFileExists()
+                finalfilename = self.prepare_abgabe(client, filename, fakeit)
+                print("Abgabe-File: %s" % finalfilename)            
                 client._sendFile(finalfilename, filetype)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
@@ -175,6 +175,7 @@ class ClientToServer:
             shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
         else:
             print("No EXAM, Fake Abgabe IS Prepared ...")
-            filename = mutual_functions.createFakeZipFile()
+            mutual_functions.createFakeZipFile()
+            filename = "dummy.zip"
             
         return "%s.zip" % filename  # this is the filename of the zip file
