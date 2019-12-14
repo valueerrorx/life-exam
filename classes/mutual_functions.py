@@ -10,6 +10,8 @@ import hashlib
 import logging
 import os
 import subprocess
+import webbrowser
+
 from pathlib import Path
 from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
@@ -244,16 +246,15 @@ def createFakeZipFile():
     #create dummy dir to zip
     my_path = Path(CLIENTZIP_DIRECTORY).joinpath('dummydir')
     my_path.mkdir()
-    
-    print(my_file)
-    
     shutil.make_archive(my_file, 'zip', my_path)
-    my_path.rmdir()
-    
-
+      
 
 def showDesktopMessage(msg):
     """uses a passivepopup to display messages from the daemon"""
     message = "Exam Server: %s " % (msg)
     command = "runuser -u %s -- kdialog --title 'EXAM' --passivepopup '%s' 5 " % (USER, message)
     os.system(command)
+    
+def openFileManager(path):
+    """ cross OS """
+    webbrowser.open('file:///' + path)

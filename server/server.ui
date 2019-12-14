@@ -2440,6 +2440,23 @@
           <number>0</number>
          </property>
          <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap>../pixmaps/working.gif</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="working">
            <property name="text">
             <string/>

@@ -16,7 +16,7 @@ Tools needed in order to provide 100% functionality are:
 
 Run 
 `sudo python3 setup.py`
-in order to install the twisted plugin.
+in order to install the twisted plugin and other Python Modules.
 
 
 `sudo python3 server/server.py`
@@ -35,5 +35,5 @@ if your setup can't find the twisted plugin add the follwing lines to your "sudo
 
 and PYTHONPATH to your /etc/environment
 
->   PYTHONPATH="/home/student/.life/applications/life-exam"
+>   PYTHONPATH=".:/home/student/.life/applications/life-exam"
 

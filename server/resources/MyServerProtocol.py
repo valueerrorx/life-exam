@@ -119,20 +119,18 @@ class MyServerProtocol(basic.LineReceiver):
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])  
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
                     
-                    #check if only a fake Abgabe-File was sent, that happens if no EXAM Mode
-                    #was starte on the client. in this case u get an empty zip file
-                    #that holds the network traffic small (dummy.zip)
+                    #was there an exam? if not, we will receive this dummy.zip file
+                    if self.line_data_list[2] != "dummy.zip":
+                        #checks if filename is taken and renames this file in order to make room for the userfolder
+                        mutual_functions.checkIfFileExists(user_dir)  
+    
+                        with zipfile.ZipFile(file_path, "r") as zip_ref:
+                            zip_ref.extractall(extract_dir)
+                        #fix filepermission of transferred file
+                        mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
                     
-                    
-                    #checks if filename is taken and renames this file in order to make room for the userfolder
-                    mutual_functions.checkIfFileExists(user_dir)  
-
-                    with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)
                     #delete zip file 
                     os.unlink(file_path)  
-                    #fix filepermission of transferred file
-                    mutual_functions.fixFilePermissions(SHARE_DIRECTORY)  
 
             else:  # wrong file hash
                 os.unlink(file_path)
@@ -196,7 +194,8 @@ class MyServerProtocol(basic.LineReceiver):
             Command.AUTH.value: self._checkclientAuth, 
             Command.FILETRANSFER.value: self._get_file_request,
         }
-        self.logger.debug(self.line_data_list)
+        if DEBUG_SHOW_NETWORKTRAFFIC:
+            self.logger.debug(self.line_data_list)
         line_handler = command.get(self.line_data_list[0], None)
         line_handler()
 

@@ -240,7 +240,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.transport.write(b'\r\n')
         # When the transfer is finished, we go back to the line mode  
         self.setLineMode()   
-        print("Filetransfer finished, switched back to LineMode")
+        #print("Filetransfer finished, switched back to LineMode")
 
 
     def _activatePrinterconfig(self, file_path):

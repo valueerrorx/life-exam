@@ -13,7 +13,7 @@ import subprocess
 SERVER_IP = "localhost"
 SERVER_PORT = 11411   #according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
-VERSION = '2.1'
+VERSION = '3.1'
 
 #Debugging Stuff, set Name of Client and a fix Pin Code
 #if empty, then we are NOT debugging

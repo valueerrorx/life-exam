@@ -176,6 +176,6 @@ class ClientToServer:
         else:
             print("No EXAM, Fake Abgabe IS Prepared ...")
             mutual_functions.createFakeZipFile()
-            filename = "dummy.zip"
+            filename = "dummy"
             
         return "%s.zip" % filename  # this is the filename of the zip file

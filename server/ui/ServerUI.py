@@ -6,6 +6,7 @@ import datetime
 import os
 import shutil
 import sip
+from pathlib import Path
 
 from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -14,12 +15,12 @@ from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot
 
-from classes.mutual_functions import get_file_list, checkIP
+from classes.mutual_functions import get_file_list, checkIP, openFileManager
 
-from PyQt5 import uic, QtCore, QtWidgets
+from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
 from PyQt5.Qt import QRegExpValidator
-from PyQt5.QtGui import QIcon, QMovie, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
+from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from server.resources import ScreenshotWindow
 from classes.HTMLTextExtractor import html_to_text
 
@@ -27,10 +28,10 @@ from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
 
 
+
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
-        
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
@@ -38,9 +39,8 @@ class ServerUI(QtWidgets.QDialog):
         self.factory = factory     # type: MyServerFactory
    
         uifile=os.path.join(APP_DIRECTORY,'server/server.ui')
-        winicon=os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')
         self.ui = uic.loadUi(uifile)        # load UI
-        self.ui.setWindowIcon(QIcon(winicon))# definiere icon für taskleiste
+        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))# definiere icon für taskleiste
                 
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
@@ -59,10 +59,14 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.printconf.clicked.connect(self._onPrintconf)
         self.ui.printer.clicked.connect(lambda: self._onSendPrintconf("all"))
 
-        self.workinganimation = QMovie("pixmaps/working.gif", QtCore.QByteArray(), self)
-        self.workinganimation.setCacheMode(QMovie.CacheAll)
+
+        
+        loading_gif = self.scriptDir.joinpath("pixmaps/working.gif").as_posix()
+        self.workinganimation = QtGui.QMovie(loading_gif, QtCore.QByteArray(), self) 
+        self.workinganimation.setCacheMode(QtGui.QMovie.CacheAll)
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
+        
         self.timer = False
         self.msg = False
         self.ui.version.setText("<b>Version</b> %s" % VERSION )
@@ -99,6 +103,17 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
         
+            
+    def testImage(self, filename):
+        """ test if image is valid """
+        pixmap = QtGui.QPixmap(filename)
+        if pixmap.isNull():
+            self.logger.error('No icon with filename %s found' % filename)
+            return False
+        else:
+            return True
+
+        
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
         return ("Clients: <b>%s</b>" % self.ui.listWidget.count()) 
@@ -123,7 +138,7 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client = self.factory.server_to_client
 
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
-            self.log("Waiting for ongoing filetransfers to finish ...")
+            self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
@@ -217,7 +232,7 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client = self.factory.server_to_client
         
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
-            self.log("Waiting for ongoing filetransfers to finish ...")
+            self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
@@ -248,15 +263,12 @@ class ServerUI(QtWidgets.QDialog):
         return file_path
 
 
-
-
-
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
         self._workingIndicator(True, 1000)
         
         if self.factory.rawmode == True:
-            self.log("Waiting for ongoing filetransfers to finish ...")
+            self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
@@ -264,7 +276,6 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.server_to_client.request_screenshots(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("No clients connected")
-
 
 
     def _onShowIP(self):
@@ -276,12 +287,12 @@ class ServerUI(QtWidgets.QDialog):
     def _onAbgabe(self, who):
         """get SHARE folder from client"""
         self._workingIndicator(True, 500)
-        self.log('<b>Requesting Client Folder SHARE </b>')
+        self.log('Requesting Folder SHARE from <b>%s</b>' % who)
         itime = 2000 if who is 'all' else 1000
         self._workingIndicator(True, itime)
 
         if self.factory.rawmode == True:
-            self.log("Waiting for ongoing filetransfers to finish ...")
+            self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
             self.factory.rawmode = True;   #LOCK all other fileoperations 
@@ -289,7 +300,19 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("No clients connected")
-
+        
+        #start Thread 
+        self.log("Waiting for Client to send his Abgabe-Files")
+        #on Event call        
+        self.waiting_thread.client_finished.connect(self.client_abgabe_done_exit_exam)
+        self.waiting_thread.start()
+        
+        
+    def client_abgabe_done_exit_exam(self, who):
+        """ will fired when Client has sent his Abgabe File """
+        self.log("Client %s has finished sending Abgabe-File ..." % who)
+        #anzeigen im Dateimanager
+        openFileManager(os.path.join(SHARE_DIRECTORY, who))
 
 
     def _on_start_exam(self, who):
@@ -303,7 +326,7 @@ class ServerUI(QtWidgets.QDialog):
         server_to_client = self.factory.server_to_client
         
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
-            self.log("Waiting for ongoing filetransfers to finish ...")
+            self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
             if not server_to_client.clients:        #check if there are clients connected
@@ -367,6 +390,7 @@ class ServerUI(QtWidgets.QDialog):
         #on Event call        
         self.waiting_thread.client_finished.connect(self.client_abgabe_done)
         self.waiting_thread.start()
+        mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner/SHARE")
         
         
     def client_abgabe_done(self, who):
