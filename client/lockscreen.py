@@ -10,28 +10,32 @@
 
 
 import sys, os
-from PyQt5 import QtWidgets
-#from PyQt5.QtGui import QPixmap, QIcon, QKeySequence
-#from PyQt5.QtCore import Qt
-#from subprocess import Popen, PIPE, STDOUT
-
-
-application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, application_path)
+from PyQt5 import QtWidgets, Qt
+from PyQt5.Qt import QIcon, QPixmap
+from pathlib import Path
+from PyQt4.Qt import QKeySequence
 
 
 
-from config.config import *
+# add application root to python path for imports at position 0 
+sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
 class ScreenlockWindow(QtWidgets.QMainWindow):
     def __init__(self):
         #super(ScreenlockWindow, self).__init__(parent)
         QtWidgets.QMainWindow.__init__(self)
-        self.setWindowIcon(QIcon("pixmaps/windowicon.png"))
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent
+        
+        icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
+        self.setWindowIcon(QIcon(icon))
+        
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint )
         self.setStyleSheet("ScreenlockWindow {background-color: black;}")
         self.label = QtWidgets.QLabel("")
-        self.pixmap = QPixmap( os.path.join(APP_DIRECTORY, "pixmaps/windowicon.png"))
+        
+        icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
+        self.pixmap = QPixmap(icon)
         self.label.setPixmap(self.pixmap)
         self.label.setAlignment(Qt.AlignCenter)
         self.layout().addWidget(self.label)
@@ -71,14 +75,10 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         pass
 
 
-
-
 if __name__ == "__main__":
-    
     app = QtWidgets.QApplication(sys.argv)  # @UndefinedVariable
     myapp = ScreenlockWindow()
     myapp.setGeometry(app.desktop().screenGeometry())
     myapp.setFixedSize(6000, 6000)
     myapp.show()
     sys.exit(app.exec_())
-

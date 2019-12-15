@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 import subprocess
 import os
-from config.config import APP_DIRECTORY, WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
+from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
 
 # add application root to python path for imports at position 0 
@@ -31,6 +31,8 @@ class ClientToServer:
     
     def __init__(self):
         self.client = ""
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent
 
     """
     student actions
@@ -83,7 +85,7 @@ class ClientToServer:
                 print("prevented locking of the teachers screen")
                 return
             
-            startcommand = "exec %s/client/lockscreen.py &" %(APP_DIRECTORY) #kill it if it already exists
+            startcommand = "exec %s/client/lockscreen.py &" %(self.rootDir) #kill it if it already exists
             os.system(startcommand)
         else:
             print("closing lockscreen")

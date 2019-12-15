@@ -17,7 +17,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, APP_DIRECTORY, USER
+    SHARE_DIRECTORY, USER
 
 logger = logging.getLogger(__name__)
 
@@ -152,6 +152,9 @@ def deleteFolderContent(folder):
 
 
 def prepareDirectories():
+    #rootDir of Application
+    rootDir = Path(__file__).parent.parent
+        
     if not os.path.exists(WORK_DIRECTORY):  # scripts just need to be on a specific location for plasma configfiles
         os.makedirs(WORK_DIRECTORY)
         os.makedirs(CLIENTFILES_DIRECTORY)
@@ -174,19 +177,19 @@ def prepareDirectories():
         settime = time.time()  # zip does not support filetimes before 1980 .. WTF ??
         os.utime(SHARE_DIRECTORY, (settime,settime))
 
-    copycommand = "cp -r %s/DATA/scripts %s" % (APP_DIRECTORY, WORK_DIRECTORY)
+    copycommand = "cp -r %s/DATA/scripts %s" % (rootDir, WORK_DIRECTORY)
     os.system(copycommand)
 
     if not os.path.exists(EXAMCONFIG_DIRECTORY):  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
         logger.info("Copying default examconfig to workdirectory")
-        copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (APP_DIRECTORY, WORK_DIRECTORY)
+        copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (rootDir, WORK_DIRECTORY)
         os.system(copycommand)
     else:
         # leave the EXAM-A-IPS.DB alone - it stores firewall information which must not be reset on every update
         # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes 
         # but always provide a new copy of startexam.sh (will be updated more frequently)
         logger.info("Old examconfig found - keeping old config")  #friendly reminder to the devs ;-)
-        copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (APP_DIRECTORY, EXAMCONFIG_DIRECTORY)
+        copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (rootDir, EXAMCONFIG_DIRECTORY)
         os.system(copycommand2)
 
     fixFilePermissions(WORK_DIRECTORY)

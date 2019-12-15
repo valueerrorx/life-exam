@@ -3,7 +3,8 @@
 
 import os
 import shutil
-from config.config import APP_DIRECTORY, SHARE_DIRECTORY
+from config.config import SHARE_DIRECTORY
+from pathlib import Path
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QImage, QPalette, QBrush
@@ -12,7 +13,13 @@ from PyQt5.QtCore import QSize
 class ScreenshotWindow(QtWidgets.QDialog):
     def __init__(self, serverui, screenshot, clientname, screenshot_file_path, client_connection_id):
         QtWidgets.QDialog.__init__(self)
-        self.setWindowIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')))  # definiere icon für taskleiste
+        
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent.parent
+        
+        icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
+        self.setWindowIcon(QIcon(icon))  # definiere icon für taskleiste
+        
         self.screenshot = screenshot
         self.serverui = serverui
         self.screenshot_file_path = screenshot_file_path

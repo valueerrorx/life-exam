@@ -21,7 +21,7 @@ import zipfile
 import datetime
 
 from classes import mutual_functions
-from config.config import APP_DIRECTORY, SHARE_DIRECTORY, SAVEAPPS, USER,\
+from config.config import SHARE_DIRECTORY, SAVEAPPS, USER,\
     PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     CLIENTFILES_DIRECTORY
 from config.enums import Command, DataType
@@ -313,8 +313,8 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.files = None
         self.failcount = 0
         self.delay
-        self.client_to_server = ClientToServer() # type: ClientToServer
-        
+        self.client_to_server = ClientToServer() # type: ClientToServer        
+        self.rootDir = self.options["appdirectory"]
         #self.factor = 1.8
 
     
@@ -323,7 +323,8 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.failcount += 1
 
         if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "%s/client/client.py &" %(APP_DIRECTORY)
+            command = "%s/client/client.py &" %(self.rootDir)
+            print(command)
             os.system(command)
             os._exit(1)
 
@@ -352,7 +353,8 @@ class Options(usage.Options):
     optParameters = [["port", "p", 5000, "The port number to connect to."],
                      ["host", "h", '127.0.0.1', "The host machine to connect to."],
                      ["id", "i", 'unnamed', "A custom unique Client id."],
-                     ["pincode", "c", '12345', "The pincode needed for authorization"]
+                     ["pincode", "c", '12345', "The pincode needed for authorization"],
+                     ["appdirectory", "d", '/home/student/.life/applications/life-exam/', "Directory of the Application itself"],
                      ]
 
 

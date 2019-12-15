@@ -8,7 +8,7 @@ import shutil
 import sip
 from pathlib import Path
 
-from config.config import APP_DIRECTORY, VERSION, PRINTERCONFIG_DIRECTORY,\
+from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
     SCRIPTS_DIRECTORY
 from config.enums import DataType
@@ -27,8 +27,6 @@ from classes.HTMLTextExtractor import html_to_text
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
 
-
-
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
         QtWidgets.QDialog.__init__(self)
@@ -37,10 +35,14 @@ class ServerUI(QtWidgets.QDialog):
         uic.properties.logger.setLevel(logging.INFO)
         
         self.factory = factory     # type: MyServerFactory
-   
-        uifile=os.path.join(APP_DIRECTORY,'server/server.ui')
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent.parent
+        
+        uifile=self.rootDir.joinpath('server/server.ui')
         self.ui = uic.loadUi(uifile)        # load UI
-        self.ui.setWindowIcon(QIcon("pixmaps/windowicon.png"))# definiere icon für taskleiste
+        
+        iconfile=self.rootDir.joinpath('pixmaps/windowicon.png').as_posix()
+        self.ui.setWindowIcon(QIcon(iconfile))  # definiere icon für taskleiste
                 
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
@@ -58,10 +60,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
         self.ui.printconf.clicked.connect(self._onPrintconf)
         self.ui.printer.clicked.connect(lambda: self._onSendPrintconf("all"))
-
-
         
-        loading_gif = self.scriptDir.joinpath("pixmaps/working.gif").as_posix()
+        loading_gif = self.rootDir.joinpath("pixmaps/working.gif").as_posix()
         self.workinganimation = QtGui.QMovie(loading_gif, QtCore.QByteArray(), self) 
         self.workinganimation.setCacheMode(QtGui.QMovie.CacheAll)
         self.workinganimation.setSpeed(100)
@@ -183,8 +183,8 @@ class ServerUI(QtWidgets.QDialog):
         
         if self.factory.clientslocked:
             self.log("<b>UnLocking Client Screens </b>")
-            os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')
-            self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
+            icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png").as_posix()
+            self.ui.screenlock.setIcon(QIcon(icon))
             self.factory.clientslocked = False
             
             if self.factory.rawmode == True:    #dirty hack - thx to nora - gives us at least one option to open filetransfers again if something wicked happens
@@ -194,12 +194,14 @@ class ServerUI(QtWidgets.QDialog):
                 self.log("No clients connected")
         else:
             self.log("<b>Locking Client Screens </b>")
-            self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/unlock.png')))
+            icon = self.rootDir.joinpath("pixmaps/unlock.png").as_posix()
+            self.ui.screenlock.setIcon(QIcon(icon))
             self.factory.clientslocked = True
             if not self.factory.server_to_client.lock_screens(who):
                 self.log("No clients connected")
                 self.factory.clientslocked = False
-                self.ui.screenlock.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/network-wired-symbolic.png')))
+                icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png.png").as_posix()
+                self.ui.screenlock.setIcon(QIcon(icon))
         self._onScreenshots("all")   #update screenshots right after un/lock
 
 
@@ -370,7 +372,8 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lcs.stop() 
 
         if self.factory.lc.running:  
-            self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer-off.png')))
+            icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()
+            self.ui.autoabgabe.setIcon(QIcon(icon))
             #  disable autoabgabe, lc = Loopingcall
             self.factory.lc.stop()
         
@@ -462,12 +465,14 @@ class ServerUI(QtWidgets.QDialog):
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  # minuten nicht sekunden
         if self.factory.lc.running:
-            self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer-off.png')))
+            icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()
+            self.ui.autoabgabe.setIcon(QIcon(icon))
             self.factory.lc.stop()
             self.log("<b>Auto-Submission deactivated </b>")
             return
         if intervall is not 0:
-            self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer.png')))
+            icon = self.rootDir.joinpath("pixmaps/chronometer.png").as_posix()
+            self.ui.autoabgabe.setIcon(QIcon(icon))
             self.log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
             self.factory.lc.start(minute_intervall)
         else:
@@ -496,7 +501,8 @@ class ServerUI(QtWidgets.QDialog):
         client_name = client.clientName
         client_id = client.clientConnectionID
         item = self.get_list_widget_by_client_id(client_id)
-        pixmap = QPixmap(os.path.join(APP_DIRECTORY,'pixmaps/nouserscreenshot.png'))
+        icon = self.rootDir.joinpath("pixmaps/nouserscreenshot.png").as_posix()
+        pixmap = QPixmap(icon)
         try:
             item.picture.setPixmap(pixmap)
             item.info.setText('%s \ndisconnected' % client_name)

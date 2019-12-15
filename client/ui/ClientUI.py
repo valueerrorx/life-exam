@@ -5,8 +5,10 @@ import logging
 import os
 import time
 
+from pathlib import Path
+
 from classes.Observers import Observers
-from config.config import APP_DIRECTORY, EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
+from config.config import EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
     WORK_DIRECTORY, SERVER_PORT, DEBUG_PIN, DEBUG_ID
 from classes.mutual_functions import checkIP, prepareDirectories
 
@@ -25,6 +27,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
         
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent.parent
+        
         self.examserver = dict()
         self.disconnected_clients = dict()
         self.completer = QtWidgets.QCompleter()
@@ -39,10 +44,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.observe('updateGUI',  self.updateGUI)
         
         self.scriptdir=os.path.dirname(os.path.abspath(__file__))
-        uifile=os.path.join(APP_DIRECTORY,'client/client.ui')
-        self.ui = uic.loadUi(uifile) 
-        winicon=os.path.join(APP_DIRECTORY,'pixmaps/windowicon.png')
-        self.ui.setWindowIcon(QIcon(winicon))
+        uifile=self.rootDir.joinpath('client/client.ui')
+        self.ui = uic.loadUi(uifile)
+         
+        iconfile=self.rootDir.joinpath('pixmaps/windowicon.png').as_posix()
+        self.ui.setWindowIcon(QIcon(iconfile))
+        
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.offlineexam.clicked.connect(self._on_offline_exam)
@@ -94,8 +101,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             self._updateServerlist()                                #update gui
 
         self.ui.serversearch.setText("Server Found!")
-        checkimage=os.path.join(APP_DIRECTORY,'pixmaps/checked.png')
-        self.ui.servercheck.setPixmap(QPixmap(checkimage))
+        icon = self.rootDir.joinpath("pixmaps/checked.png").as_posix()
+        self.ui.servercheck.setPixmap(QPixmap(icon))
         
         #only debug if DEBUG_PIN is not ""
         if DEBUG_PIN !="":
@@ -160,8 +167,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 #    print(item)    
                 #print(sys.path)           
 
-                command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
-                    WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
+                #port, host, id, pincode, application_dir
+                command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 self.logger.info(command)
                 os.system(command)
                 
