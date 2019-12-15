@@ -2,7 +2,7 @@
 *.kate-swp
 *.cache
 *.pid
-*.log
+*.log*
 .idea
 
 push.sh
