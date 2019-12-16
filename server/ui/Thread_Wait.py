@@ -11,6 +11,7 @@ from PyQt5.QtCore import pyqtSignal
 class Thread_Wait(QtCore.QThread):
     
     client_finished = pyqtSignal(str)
+    client_recieved_file = pyqtSignal(str)
     
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)

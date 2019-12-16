@@ -15,7 +15,7 @@ from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot
 
-from classes.mutual_functions import get_file_list, checkIP, openFileManager
+from classes.mutual_functions import get_file_list, checkIP
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
@@ -26,6 +26,7 @@ from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
+from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_recieved_file_done
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -99,6 +100,9 @@ class ServerUI(QtWidgets.QDialog):
         
         #Waiting Thread
         self.waiting_thread = Thread_Wait()
+        #connect Events        
+        self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
+        self.waiting_thread.client_recieved_file.connect(client_recieved_file_done)
                 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -229,23 +233,42 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onSendFile(self, who):
-        """send a file to all clients"""
+        """
+        send a file to single or all clients
+        who = connection ID or 'all'
+        """
         self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
         
-        if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
+        #check if server is already in rawmode (ongoing filetransfer)
+        if self.factory.rawmode == True:   
             self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
-            if not server_to_client.clients:        #check if there are clients connected
+            #check if there are clients connected
+            if not server_to_client.clients:        
                 self.log("No clients connected")
                 return
-            self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
+            #ready for filetransfer - LOCK all other fileoperations
+            self.factory.rawmode = True;    
 
         file_path = self._showFilePicker(SHARE_DIRECTORY)
 
         if file_path:
-            self._workingIndicator(True, 2000) # TODO: change working indicator to choose its own time depending on actions requiring all clients or only one client
+            # TODO: change working indicator to choose its own time depending on actions 
+            # requiring all clients or only one client
+            self._workingIndicator(True, 2000)
+            
+            #start Thread 
+            self.log("Waiting for Client to send his Abgabe-Files")
+            #on Event call        
+            
+            
+            #läuft der Thread ist er beendet?
+            if self.waiting_thread.isRunning():
+                self.waiting_thread.start()
+            
+             
             success, filename, file_size, who = server_to_client.send_file(file_path, who, DataType.FILE.value)
 
             if success:
@@ -254,6 +277,8 @@ class ServerUI(QtWidgets.QDialog):
                 self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
         else:
             self.factory.rawmode = False;
+            
+    
 
 
     def _showFilePicker(self, directory):
@@ -305,17 +330,8 @@ class ServerUI(QtWidgets.QDialog):
         
         #start Thread 
         self.log("Waiting for Client to send his Abgabe-Files")
-        #on Event call        
-        self.waiting_thread.client_finished.connect(self.client_abgabe_done_exit_exam)
         self.waiting_thread.start()
-        
-        
-    def client_abgabe_done_exit_exam(self, who):
-        """ will fired when Client has sent his Abgabe File """
-        self.log("Client %s has finished sending Abgabe-File ..." % who)
-        #anzeigen im Dateimanager
-        openFileManager(os.path.join(SHARE_DIRECTORY, who))
-
+    
 
     def _on_start_exam(self, who):
         """
