@@ -119,8 +119,10 @@ class MyClientProtocol(basic.LineReceiver):
                     mutual_functions.showDesktopMessage(msg)
                     print(msg)
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
-                    #Meldung an Server File Reveived
-                    FILE_OK
+
+                    line = '%s %s' % (Command.FILE_OK.value, self.factory.options['id'])
+                    print("Sending File OK: %s" % line)
+                    self.sendEncodedLine(line)
                     
                 elif self.line_data_list[2] == DataType.PRINTER.value:
                     mutual_functions.showDesktopMessage('Receiving Printer Configuration')

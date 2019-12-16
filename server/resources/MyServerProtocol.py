@@ -63,6 +63,11 @@ class MyServerProtocol(basic.LineReceiver):
        
     # twisted-Event: Data Received     
     def rawDataReceived(self, data):
+        #File_OK Signal?
+        if self.line_data_list[0]==Command.FILE_OK.value:
+            test=1
+        
+        
         """ handle incoming byte data """
         filename = self.line_data_list[2]
         file_path = os.path.join(self.factory.files_path, filename)
@@ -193,13 +198,19 @@ class MyServerProtocol(basic.LineReceiver):
         id = self.line_data_list[1] 
         pincode = self.line_data_list[2] 
         
+        FILE_OK
+        command = self.line_data_list[0]
+        clientName = self.line_data_list[1]
+        
         """
         command = {
             Command.AUTH.value: self._checkclientAuth, 
             Command.FILETRANSFER.value: self._get_file_request,
+            Command.FILE_OK.value: self._get_file_request,
         }
         if DEBUG_SHOW_NETWORKTRAFFIC:
             self.logger.debug(self.line_data_list)
+            
         line_handler = command.get(self.line_data_list[0], None)
         line_handler()
 

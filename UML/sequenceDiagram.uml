@@ -26,6 +26,7 @@ group twisted daemon examclient_plugin runs on client
 	note over Server: Datei senden
 	Server -> Server: ServerUI: _onSendFile()
 	Server -> Client: server_to_client.send_file()
+	Client -> Server: examclient_plugin:\nrawDataReceived[DataType.FILE]: Command.FILE_OK
 	
 	note over Client: START EXAM
 	Client -> Client: rawDataReceived():_startExam()

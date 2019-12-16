@@ -269,7 +269,7 @@ class ServerUI(QtWidgets.QDialog):
             
             msg = "Sending File %s to %s" % (filename, who) 
             self.log(msg)
-            self.logger.info(msg)
+
             #läuft der Thread ist er beendet?
             #if self.waiting_thread.isRunning():
             #    self.waiting_thread.start()

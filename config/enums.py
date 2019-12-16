@@ -7,7 +7,6 @@ class DataType(Enum):
     EXAM = "EX"
     FILE = "FI"
     PRINTER = "PR"
-    FILE_OK = "FO"
     
     def tobytes(self):
         return bytes(self.value,'utf-8')
@@ -28,6 +27,7 @@ class Command(Enum):
     LOCK = "LKS"
     UNLOCK = "ULKS"
     EXITEXAM = "EXIT"
+    FILE_OK = "FO"
     
     def tobytes(self):
         return bytes(self.value,'utf-8')
