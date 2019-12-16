@@ -1,3 +1,4 @@
+
 [DockWidget sharedtooldocker]
 TabbedMode=false
 
@@ -5,47 +6,47 @@ TabbedMode=false
 OpenDocument=/home/student/SHARE
 SaveDocument=/home/student/SHARE
 
+[Grid]
+Color=192,192,192
+SpacingX=14.1732529
+SpacingY=14.1732529
+
 [Interface]
 ResolutionX=14.1732529
 ResolutionY=14.1732529
 Rulers=false
-ShowDockerTitleBars=false
 StatusBarShowLineNumber=true
 StatusBarShowModified=true
 StatusBarShowMouse=false
 StatusBarShowPage=true
 StatusBarShowPageSize=false
 StatusBarShowPageStyle=true
-StatusBarShowWordCount=false
+StatusBarShowWordCount=true
 StatusBarShowZoom=true
 ViewFieldShadings=true
 ViewFormattingChars=false
 ViewFrameBorders=true
 ViewSectionBounds=false
 ViewTableBorders=true
-Zoom=114
-ZoomMode=1
-
-[KFileDialog Settings]
-Recent URLs[$e]=file:$HOME/SHARE/
+Zoom=100
+ZoomMode=0
 
 [MainWindow]
 Window-Maximized 768x1366=true
-ko_geometry=AdnQywACAAAAAAAAAAAAAAAABVUAAALdAAAA5AAAAHoAAARxAAACYQAAAAACAAAABVY=
-ko_windowstate=AAAA/wAAAAD9AAAAAQAAAAEAAAVWAAACZ/wCAAAAB/sAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAAWgAAAFQAAABUAQAAA/sAAAAgAFMAaABhAHAAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAARAAAAD0AAAAEAQAAA/sAAAAUAFMAdABhAHQAaQBzAHQAaQBjAHMAAAAAAP////8AAADmAQAAA/sAAAAqAFMAaABhAHAAZQBDAG8AbABsAGUAYwB0AGkAbwBuAEQAbwBjAGsAZQByAQAAAFoAAAA+AAAANwAIAAP7AAAAKABTAG4AYQBwAEcAdQBpAGQAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAAAEAQAAA/sAAAAUAE4AYQB2AGkAZwBhAHQAaQBvAG4AAAAAAP////8AAABaAQAAA/sAAAAOAE0AbwBkAGUAQgBvAHgBAAAAmQAAAigAAACRAAgAAwAAAAAAAAJnAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAA
+ko_geometry=AdnQywADAAAAAAAAAAAAAAAABVUAAALbAAAA5AAAAHoAAARxAAACYQAAAAACAAAABVYAAAAAAAAAGwAABVUAAALb
+ko_windowstate=AAAA/wAAAAD9AAAAAQAAAAEAAAVWAAACffwCAAAACPsAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAARAAAAGwAAABsAQAAA/sAAAAqAFMAaABhAHAAZQBDAG8AbABsAGUAYwB0AGkAbwBuAEQAbwBjAGsAZQByAAAAAEQAAACuAAAAHAAAABz7AAAAFABTAHQAYQB0AGkAcwB0AGkAYwBzAAAAAAD/////AAAA/gEAAAP7AAAAKABTAG4AYQBwAEcAdQBpAGQAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAAAcAQAAA/sAAAAgAFMAaABhAHAAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAAAcAQAAA/sAAAAKAEQAZQBiAHUAZwAAAAAA/////wAAAHoBAAAD+wAAABQATgBhAHYAaQBnAGEAdABpAG8AbgAAAAAA/////wAAAHIBAAAD+wAAAA4ATQBvAGQAZQBCAG8AeAEAAABEAAACfQAAAKkACAAbAAAAAAAAAlYAAAAEAAAABAAAAAgAAAAI/AAAAAEAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
 
 [Misc]
-Units=cm
+CopyOffset=9.921277029999999
+Units=pt
 
 [Recent Dirs]
 OpenDialog[$e]=$HOME/SHARE
 
-[RecentFiles]
-File1[$e]=$HOME/SHARE/test.odt
-Name1[$e]=test.odt
+
 
 [Spelling]
-autoSpellCheck=false
+autoSpellCheck[$i]=false
 
 [Statistics]
 CharnospacesVisible=true
@@ -59,7 +60,7 @@ WordsVisible=true
 
 [TemplateChooserDialog]
 AlwaysUseTemplate=/usr/share/calligrawords/templates/Normal/.source/A4.odt
-DetailsPaneSplitterSizes=229,344
+DetailsPaneSplitterSizes=685,411
 FullTemplateName[$e]=/usr/share/calligrawords/templates/Normal/.source/A4.odt
 LastReturnType=Template
 
@@ -68,21 +69,27 @@ DevicePlugins=spacenavigator
 DevicePluginsDisabled=
 DockerPlugins=calligradockers,calligra_docker_stencils
 DockerPluginsDisabled=
-ModeBoxHorizontalTabsSide=0
-ShapePlugins=artistictextshape,chartshape,formulashape,musicshape,pathshapes,pictureshape,pluginshape,spreadsheetshape,textshape,vectorshape,videoshape
-TextEditingPlugins=autocorrect,changecase,spellcheck
+ModeBoxHorizontalTabsSide=1
+ShapePlugins=artistictextshape,chartshape,formulashape,musicshape,pathshapes,pictureshape,pluginshape,spreadsheetshape,textshape,threedshape,vectorshape,videoshape
+TextEditingPlugins[$i]=
+TextEditingPluginsDisabled[$i]=autocorrect,changecase,spellcheck,thesaurustool
 TextInlinePlugins=textvariables
-ToolPlugins=basicflakesplugin,defaulttools
+ToolPlugins=basicflakesplugin,defaulttools,karbontools
 ToolPluginsDisabled=
 
 [calligrawords]
-State=AAAA/wAAAAD9AAAAAQAAAAEAAAGdAAACQPwCAAAAB/sAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAAWgAAAFQAAABUAQAAA/sAAAAgAFMAaABhAHAAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAARAAAAD0AAAAEAQAAA/sAAAAUAFMAdABhAHQAaQBzAHQAaQBjAHMAAAAAAP////8AAADmAQAAA/sAAAAqAFMAaABhAHAAZQBDAG8AbABsAGUAYwB0AGkAbwBuAEQAbwBjAGsAZQByAQAAAFoAAAA+AAAANwAIAAP7AAAAKABTAG4AYQBwAEcAdQBpAGQAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAABQAQAAA/sAAAAUAE4AYQB2AGkAZwBhAHQAaQBvAG4AAAAAAP////8AAABaAQAAA/sAAAAOAE0AbwBkAGUAQgBvAHgBAAAAmQAAAgEAAACRAAgAAwAAA7gAAAJAAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAIAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAAAAAAGABlAGQAaQB0AF8AdABvAG8AbABiAGEAcgEAAAGL/////wAAAAAAAAAA
+State=AAAA/wAAAAD9AAAAAQAAAAEAAAGfAAACVvwCAAAACPsAAAAgAHMAaABhAHIAZQBkAHQAbwBvAGwAZABvAGMAawBlAHIAAAAARAAAAGwAAABsAQAAA/sAAAAqAFMAaABhAHAAZQBDAG8AbABsAGUAYwB0AGkAbwBuAEQAbwBjAGsAZQByAAAAAEQAAACuAAAAHAAAABz7AAAAFABTAHQAYQB0AGkAcwB0AGkAYwBzAAAAAAD/////AAAA/gEAAAP7AAAAKABTAG4AYQBwAEcAdQBpAGQAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAABoAQAAA/sAAAAgAFMAaABhAHAAZQAgAFAAcgBvAHAAZQByAHQAaQBlAHMAAAAAAP////8AAAAcAQAAA/sAAAAKAEQAZQBiAHUAZwAAAAAA/////wAAAHoBAAAD+wAAABQATgBhAHYAaQBnAGEAdABpAG8AbgAAAAAA/////wAAAHIBAAAD+wAAAA4ATQBvAGQAZQBCAG8AeAEAAABEAAACVgAAAKkACAAbAAADtgAAAlYAAAAEAAAABAAAAAgAAAAI/AAAAAEAAAACAAAAAgAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAAAAAAYAGUAZABpAHQAXwB0AG8AbwBsAGIAYQByAQAAAjf/////AAAAAAAAAAA=
 ToolBarsMovable=Disabled
+
+[calligrawords][DockWidget Debug]
+Collapsed=false
+DockArea=2
+Locked=false
 
 [calligrawords][DockWidget ModeBox]
 Collapsed=false
 DockArea=2
-Locked=false
+Locked=true
 
 [calligrawords][DockWidget Navigation]
 Collapsed=false
@@ -113,9 +120,3 @@ Locked=false
 Collapsed=false
 DockArea=2
 Locked=false
-
-[calligrawords][Toolbar edit_toolbar]
-ToolButtonStyle=TextUnderIcon
-
-[calligrawords][Toolbar mainToolBar]
-ToolButtonStyle=TextUnderIcon
