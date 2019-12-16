@@ -4,14 +4,18 @@
 
 import os
 from config.config import SHARE_DIRECTORY
+import classes.mutual_functions as mutual_functions
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def client_abgabe_done_exit_exam(serverui, who):
+def client_abgabe_done_exit_exam(who):
     """ will fired when Client has sent his Abgabe File """
     #event fired in MyServerProtocol
-    serverui.log("Client %s has finished sending Abgabe-File ..." % who)
+    logger.info("Client %s has finished sending Abgabe-File ..." % who)
     #anzeigen im Dateimanager
-    openFileManager(os.path.join(SHARE_DIRECTORY, who))
+    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, who))
         
-def client_recieved_file_done(self):
+def client_recieved_file_done(self, who):
     """ will be fired, if a client has received a file that was sent by server """    

@@ -87,11 +87,6 @@ class MyServerProtocol(basic.LineReceiver):
                 self.factory.window.log(msg)
                 self.filetransfer_fail_count = 0
                 
-                #Send Event to Wait Thread with Client Name
-                ui = self.factory.window
-                if ui.waiting_thread:
-                    ui.waiting_thread.fireEvent(self.line_data_list[4])
-                
                 #self.event_abgabe_transfered
                 if DEBUG_SHOW_NETWORKTRAFFIC:
                     self.logger.info(self.line_data_list)
@@ -99,6 +94,9 @@ class MyServerProtocol(basic.LineReceiver):
                 """
                 Client is connecting
                 """
+                #????? date wurde gesendet
+                    
+                    
                 if self.line_data_list[1] == DataType.SCREENSHOT.value:
                     # screenshot is received on initial connection  
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
@@ -128,10 +126,16 @@ class MyServerProtocol(basic.LineReceiver):
                             zip_ref.extractall(extract_dir)
                         #fix filepermission of transferred file
                         mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
+                        
+                        #delete zip file 
+                        os.unlink(file_path)
+                        
+                        #Send Event to Wait Thread with Client Name
+                        ui = self.factory.window
+                        if ui.waiting_thread:
+                            ui.waiting_thread.fireEvent_Abgabe_finished(self.line_data_list[4])  
                     
-                    #delete zip file 
-                    os.unlink(file_path)  
-
+                    
             else:  # wrong file hash
                 os.unlink(file_path)
                 self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')

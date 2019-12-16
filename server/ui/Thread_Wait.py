@@ -19,7 +19,7 @@ class Thread_Wait(QtCore.QThread):
     def __del__(self):
         self.wait()
         
-    def fireEvent(self, who):
+    def fireEvent_Abgabe_finished(self, who):
         self.client_finished.emit(who)
      
     def run(self):    

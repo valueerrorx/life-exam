@@ -165,9 +165,8 @@ class ServerToClient:
 
 
     ## send bytes ##
-    def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
+    def send_bytes(self, client, file_path): 
         for b in mutual_functions.read_bytes_from_file(file_path):
             client.transport.write(b)
-
         client.transport.write(b'\r\n')
     

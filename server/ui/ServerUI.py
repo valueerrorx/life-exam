@@ -259,22 +259,28 @@ class ServerUI(QtWidgets.QDialog):
             # requiring all clients or only one client
             self._workingIndicator(True, 2000)
             
-            #start Thread 
-            self.log("Waiting for Client to send his Abgabe-Files")
-            #on Event call        
             
             
-            #läuft der Thread ist er beendet?
-            if self.waiting_thread.isRunning():
-                self.waiting_thread.start()
+            
             
              
             success, filename, file_size, who = server_to_client.send_file(file_path, who, DataType.FILE.value)
+            
+            
+            msg = "Sending File %s to %s" % (filename, who) 
+            self.log(msg)
+            self.logger.info(msg)
+            #läuft der Thread ist er beendet?
+            #if self.waiting_thread.isRunning():
+            #    self.waiting_thread.start()
 
             if success:
-                self.log('<b>Sending file:</b> %s (%d Byte) to <b> %s </b>' % (filename, file_size, who))
+                msg = '<b>Sending file:</b> %s (%d Byte) to <b> %s </b>' % (filename, file_size, who)
+                self.log(msg)
             else:
-                self.log('<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who))
+                msg = '<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who) 
+                self.log(msg)
+            self.logger.info(html_to_text(msg))
         else:
             self.factory.rawmode = False;
             
