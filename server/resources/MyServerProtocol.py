@@ -41,7 +41,7 @@ class MyServerProtocol(basic.LineReceiver):
     # twisted-Event: A Connection is lost
     def connectionLost(self, reason):
         self.logger.warning("ConnectionLost")
-        self.logger.warning(reason)  # maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
+        #self.logger.warning(reason)  # maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
         
         self.factory.server_to_client.remove_client(self)
         self.file_handler = None
@@ -93,10 +93,6 @@ class MyServerProtocol(basic.LineReceiver):
                     msg = 'File %s has been successfully transferred' % (filename)  
                     self.factory.window.log(msg)
                     self.filetransfer_fail_count = 0
-                    
-                    #self.event_abgabe_transfered
-                    if DEBUG_SHOW_NETWORKTRAFFIC:
-                        self.logger.info(self.line_data_list)
                     
                     """
                     Client is connecting
@@ -176,7 +172,7 @@ class MyServerProtocol(basic.LineReceiver):
         line = line.decode()  # we get bytes but need strings
         self.line_data_list = mutual_functions.clean_and_split_input(line)
         if DEBUG_SHOW_NETWORKTRAFFIC:
-            self.logger.debug("line received and decoded:\n%s\n" % self.line_data_list)
+            self.logger.debug(self.line_data_list)
             
         self.line_dispatcher()    #pass "self" as "client"
 
@@ -207,8 +203,6 @@ class MyServerProtocol(basic.LineReceiver):
             Command.FILETRANSFER.value: self._get_file_request,
             Command.FILE_OK.value: self._get_file_request,
         }
-        if DEBUG_SHOW_NETWORKTRAFFIC:
-            self.logger.debug(self.line_data_list)
             
         line_handler = command.get(self.line_data_list[0], None)
         line_handler()
