@@ -11,16 +11,35 @@ from PyQt5.QtCore import pyqtSignal
 class Thread_Wait(QtCore.QThread):
     
     client_finished = pyqtSignal(str)
-    client_recieved_file = pyqtSignal(str)
+    client_received_file = pyqtSignal(str)
+    running = False
     
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
+        self.running = False
         
     def __del__(self):
         self.wait()
         
     def fireEvent_Abgabe_finished(self, who):
         self.client_finished.emit(who)
+    
+    def fireEvent_File_received(self, who):
+        self.client_received_file.emit(who)
+        
+    def isAlive(self):
+        if self.running:
+            return True
+        else:
+            return False
+        
+    def stop(self):
+        self.running = False
+        self.quit()
+    
+    def setClients(self, clients):
+        """ a list within all clients to actually work with """
+        self.clients = clients
      
     def run(self):    
         """

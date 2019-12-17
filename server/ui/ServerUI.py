@@ -26,7 +26,7 @@ from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
-from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_recieved_file_done
+from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -68,6 +68,9 @@ class ServerUI(QtWidgets.QDialog):
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         
+        #is the working indicator actual visible?
+        self.indicator_active = False
+        
         self.timer = False
         self.msg = False
         self.ui.version.setText("<b>Version</b> %s" % VERSION )
@@ -102,7 +105,7 @@ class ServerUI(QtWidgets.QDialog):
         self.waiting_thread = Thread_Wait()
         #connect Events        
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
-        self.waiting_thread.client_recieved_file.connect(client_recieved_file_done)
+        self.waiting_thread.client_received_file.connect(client_received_file_done)
                 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -124,7 +127,7 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _changeAutoscreenshot(self):
-        self._workingIndicator(True, 200)
+        self._showworkingIndicator(200)
         intervall = self.ui.ssintervall.value()
       
         if self.factory.lcs.running:
@@ -138,7 +141,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onSendPrintconf(self,who):
         """send the printer configuration to all clients"""
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         server_to_client = self.factory.server_to_client
 
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
@@ -153,7 +156,7 @@ class ServerUI(QtWidgets.QDialog):
 
  
 
-        self._workingIndicator(True, 4000)
+        self._showworkingIndicator(4000)
         self.log('<b>Sending Printer Configuration to All Clients </b>')
         dialog_popup('Sending Printer Configuration to All Clients')
 
@@ -183,7 +186,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onScreenlock(self,who):
         """locks the client screens"""
-        self._workingIndicator(True, 1000)
+        self._showworkingIndicator(1000)
         
         if self.factory.clientslocked:
             self.log("<b>UnLocking Client Screens </b>")
@@ -216,20 +219,34 @@ class ServerUI(QtWidgets.QDialog):
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit1.text()
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid  )
-
-
-    def _workingIndicator(self, action, duration):
-        if self.timer and self.timer.isActive:  # indicator is shown a second time - stop old kill-timer
-            self.timer.stop()
-        if action is True:  # show working animation and start killtimer
+        
+    def _startWorkingIndicator(self):
+        """ display and start the indicator, no timeout """
+        if self.indicator_active == False:
+            self.indicator_active = True
             self.workinganimation.start()
             self.ui.working.show()
-            self.timer = QtCore.QTimer()
-            self.timer.timeout.connect(lambda: self._workingIndicator(False, 0))
-            self.timer.start(duration)
-        else:
-            self.workinganimation.stop()
-            self.ui.working.hide()
+        
+    def _stopWorkingIndicator(self):
+        """ stop and hide the working indicator """
+        self.workinganimation.stop()
+        self.ui.working.hide()
+        self.indicator_active = False
+        
+    def stopWorkingIndicatorTimer(self):
+        self.workinganimation.stop()
+        self.ui.working.hide()
+
+    def _showworkingIndicator(self, duration):
+        if self.timer and self.timer.isActive:  # indicator is shown a second time - stop old kill-timer
+            self.timer.stop()
+
+        self.workinganimation.start()
+        self.ui.working.show()
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.stopWorkingIndicatorTimer)
+        self.timer.start(duration)
+                
 
 
     def _onSendFile(self, who):
@@ -237,7 +254,6 @@ class ServerUI(QtWidgets.QDialog):
         send a file to single or all clients
         who = connection ID or 'all'
         """
-        self._workingIndicator(True, 500)
         server_to_client = self.factory.server_to_client
         
         #check if server is already in rawmode (ongoing filetransfer)
@@ -255,24 +271,26 @@ class ServerUI(QtWidgets.QDialog):
         file_path = self._showFilePicker(SHARE_DIRECTORY)
 
         if file_path:
-            # TODO: change working indicator to choose its own time depending on actions 
-            # requiring all clients or only one client
-            self._workingIndicator(True, 2000)
-            
-            
-            
-            
-            
+            self._startWorkingIndicator()
              
             success, filename, file_size, who = server_to_client.send_file(file_path, who, DataType.FILE.value)
             
             
+            #give a list to waiting thread, to regonize if filetransfer is ok
+            if who=="all":
+                clients = self.get_list_widget_items()
+            else:
+                clients = self.get_list_widget_by_client_name(who)
+            
+            #läuft der Thread ist er beendet?
+            if self.waiting_thread.isAlive():
+                self.waiting_thread.stop()
+            self.waiting_thread.setClients(clients)
+            self.waiting_thread.start()
+            
+            
             msg = "Sending File %s to %s" % (filename, who) 
             self.log(msg)
-
-            #läuft der Thread ist er beendet?
-            #if self.waiting_thread.isRunning():
-            #    self.waiting_thread.start()
 
             if success:
                 msg = '<b>Sending file:</b> %s (%d Byte) to <b> %s </b>' % (filename, file_size, who)
@@ -298,7 +316,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onScreenshots(self, who):
         self.log("<b>Requesting Screenshot Update </b>")
-        self._workingIndicator(True, 1000)
+        self._showworkingIndicator(1000)
         
         if self.factory.rawmode == True:
             self.log("Waiting for ongoing file-transfers to finish ...")
@@ -312,17 +330,17 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onShowIP(self):
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         show_ip()
 
 
 
     def _onAbgabe(self, who):
         """get SHARE folder from client"""
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
         itime = 2000 if who is 'all' else 1000
-        self._workingIndicator(True, itime)
+        self._showworkingIndicator(itime)
 
         if self.factory.rawmode == True:
             self.log("Waiting for ongoing file-transfers to finish ...")
@@ -346,7 +364,7 @@ class ServerUI(QtWidgets.QDialog):
         invoke startexam.sh file on clients
 
         """
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         server_to_client = self.factory.server_to_client
         
         if self.factory.rawmode == True:   #check if server is already in rawmode (ongoing filetransfer)
@@ -358,7 +376,7 @@ class ServerUI(QtWidgets.QDialog):
                 return
             self.factory.rawmode = True;   #ready for filetransfer - LOCK all other fileoperations 
     
-        self._workingIndicator(True, 4000)
+        self._showworkingIndicator(4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
 
         cleanup_abgabe = self.ui.cleanabgabe.checkState()
@@ -388,7 +406,7 @@ class ServerUI(QtWidgets.QDialog):
         Ends the Exammode from a Client, who=all or name
         """
         self.log("<b>Finishing Exam</b>")
-        self._workingIndicator(True, 2000)
+        self._showworkingIndicator(2000)
         if self.factory.lcs.running:
             # disable autoscreenshot, lcs = Loopingcall
             self.factory.lcs.stop() 
@@ -431,14 +449,14 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onStartHotspot(self):
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         start_hotspot()
 
     def get_firewall_adress_list(self):
         return [[self.ui.firewall1,self.ui.port1],[self.ui.firewall2,self.ui.port2],[self.ui.firewall3,self.ui.port3],[self.ui.firewall4,self.ui.port4]]
 
     def _onTestFirewall(self):
-        self._workingIndicator(True, 1000)
+        self._showworkingIndicator(1000)
         ipfields = self.get_firewall_adress_list()
 
         if self.ui.testfirewall.text() == "Stoppe Firewall":    #really don't know why qt sometimes adds these & signs to the ui
@@ -483,7 +501,7 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onAutoabgabe(self):
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         intervall = self.ui.aintervall.value()
         minute_intervall = intervall * 60  # minuten nicht sekunden
         if self.factory.lc.running:
@@ -505,7 +523,7 @@ class ServerUI(QtWidgets.QDialog):
         """
         Entfernt einen Client aus dem Widget
         """
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         client_name = self.factory.server_to_client.kick_client(client_id)
         
         if client_name:
@@ -519,7 +537,7 @@ class ServerUI(QtWidgets.QDialog):
             self.ui.label_clients.setText(self.createClientsLabel())
 
     def _disableClientScreenshot(self, client):
-        self._workingIndicator(True, 500)
+        self._showworkingIndicator(500)
         client_name = client.clientName
         client_id = client.clientConnectionID
         item = self.get_list_widget_by_client_id(client_id)
