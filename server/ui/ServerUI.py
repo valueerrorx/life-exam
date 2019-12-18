@@ -286,12 +286,9 @@ class ServerUI(QtWidgets.QDialog):
              
             success, filename, file_size, client_id = server_to_client.send_file(file_path, client_id, DataType.FILE.value)
             
-            #läuft der Thread ist er beendet?
-            if self.waiting_thread:
-                self.waiting_thread.stop()
             #Waiting Thread
             self.waiting_thread.setClients(clients)
-            self.waiting_thread.start()            
+           
             
             msg = "Sending File %s to %s" % (os.path.basename(file_path), receiver)
             self.log(msg)

@@ -13,6 +13,7 @@ class Thread_Wait(QtCore.QThread):
     client_finished = pyqtSignal(str)
     client_received_file = pyqtSignal(str)
     running = False
+    clients = []
     
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
@@ -24,7 +25,21 @@ class Thread_Wait(QtCore.QThread):
     def fireEvent_Abgabe_finished(self, who):
         self.client_finished.emit(who)
     
+
+    def deleteItemFromList(self, who):
+        """ delete an Item from the client list """
+        for x in range(len(self.clients)):
+            if self.clients[x] == who:
+                index = x
+                break
+        #remove Element
+        self.clients = self.clients[:index] + self.clients[index+1 :]
+        
+    
+    
     def fireEvent_File_received(self, who):
+        #delte client from list
+        self.deleteItemFromList(who)
         self.client_received_file.emit(who)
         
     def isAlive(self):

@@ -1,18 +1,17 @@
- #! /usr/bin/env python3
+ #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from configobj import ConfigObj
-import subprocess
 from pathlib import Path
-from config.config import *
 
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import QSize
 
 import re 
 import yaml
-from collections import OrderedDict
+import subprocess
+from config.config import USER_HOME_DIR, PLASMACONFIG
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 

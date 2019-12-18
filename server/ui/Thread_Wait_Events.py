@@ -16,6 +16,7 @@ def client_abgabe_done_exit_exam(who):
     logger.info("Client %s has finished sending Abgabe-File ..." % who)
     #anzeigen im Dateimanager
     mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, who))
+
         
 def client_received_file_done(who):
     """ will be fired, if a client has received a file that was sent by server """
