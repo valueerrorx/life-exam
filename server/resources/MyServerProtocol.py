@@ -69,6 +69,8 @@ class MyServerProtocol(basic.LineReceiver):
             #fire Event to Thread
             ui = self.factory.window
             ui.waiting_thread.fireEvent_File_received(self.line_data_list[1])
+            #filetransfer finished "UNLOCK" fileopertions
+            self.factory.rawmode = False; 
 
         else:
             """ handle incoming byte data """

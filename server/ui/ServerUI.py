@@ -27,6 +27,7 @@ from classes.HTMLTextExtractor import html_to_text
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
 from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done
+import time
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -78,6 +79,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.examlabeledit1.textChanged.connect(self._updateExamName)
         self.ui.ssintervall.valueChanged.connect(self._changeAutoscreenshot)
         self.ui.label_clients.setText(self.createClientsLabel())
+        
+        self.filedialog = QtWidgets.QFileDialog()
         
         num_regex=QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
@@ -182,6 +185,7 @@ class ServerUI(QtWidgets.QDialog):
         command = "kcmshell5 kcm_printer_manager &"
         os.system(command)
 
+
     def _onScreenlock(self,who):
         """locks the client screens"""
         self._show_workingIndicator(1000, "Locke die Screens")
@@ -224,7 +228,8 @@ class ServerUI(QtWidgets.QDialog):
             self.timer.stop()
         
         self.workinganimation.stop() 
-        self.ui.info_label.setText("%s ..." % info)       
+        self.ui.info_label.setText("%s ..." % info) 
+        time.sleep(0.1)    
         self.workinganimation.start()
         self.ui.working.show()
         
@@ -250,6 +255,7 @@ class ServerUI(QtWidgets.QDialog):
         self.timer.timeout.connect(self.stopWorkingIndicatorTimer)
         self.timer.start(duration)
 
+
     def _onSendFile(self, client_id):
         """
         send a file to single or all clients
@@ -259,12 +265,12 @@ class ServerUI(QtWidgets.QDialog):
         
         #check if server is already in rawmode (ongoing filetransfer)
         if self.factory.rawmode == True:   
-            self.log("Waiting for ongoing file-transfers to finish ...")
+            self.logger.info("Waiting for ongoing file-transfers to finish ...")
             return
         else:
             #check if there are clients connected
             if not server_to_client.clients:        
-                self.log("No clients connected")
+                self.logger.info("No clients connected")
                 return
             #ready for filetransfer - LOCK all other fileoperations
             self.factory.rawmode = True;    
@@ -297,7 +303,7 @@ class ServerUI(QtWidgets.QDialog):
                 msg = '<b>Sending file:</b> %s (%d Byte) to <b> %s </b>' % (filename, file_size, receiver)
                 self.log(msg)
             else:
-                msg = '<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, who) 
+                msg = '<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, receiver) 
                 self.log(msg)
             self.logger.info(html_to_text(msg))
         else:
@@ -308,9 +314,8 @@ class ServerUI(QtWidgets.QDialog):
 
     def _showFilePicker(self, directory):
         # show filepicker
-        filedialog = QtWidgets.QFileDialog()
-        filedialog.setDirectory(directory)  # set default directory
-        file_path = filedialog.getOpenFileName()  # get filename
+        self.filedialog.setDirectory(directory)  # set default directory
+        file_path = self.filedialog.getOpenFileName()  # get filename
         file_path = file_path[0]
         return file_path
 

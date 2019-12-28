@@ -28,19 +28,23 @@ class Thread_Wait(QtCore.QThread):
 
     def deleteItemFromList(self, who):
         """ delete an Item from the client list """
+        index=-1
         for x in range(len(self.clients)):
-            if self.clients[x] == who:
+            if self.clients[x].id == who:
                 index = x
                 break
         #remove Element
-        self.clients = self.clients[:index] + self.clients[index+1 :]
+        #time critical only if you find an index
+        if index!=-1:
+            self.clients = self.clients[:index] + self.clients[index+1 :]
         
     
     
     def fireEvent_File_received(self, who):
-        #delte client from list
-        self.deleteItemFromList(who)
-        self.client_received_file.emit(who)
+        #delete client from list
+        if len(self.clients)>0:
+            self.deleteItemFromList(who)
+            self.client_received_file.emit(who)
         
     def isAlive(self):
         if self.running:
