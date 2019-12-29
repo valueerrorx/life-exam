@@ -28,6 +28,7 @@ from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
 from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done
 import time
+from server.resources.MyCustomWidget import MyCustomWidget
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -582,10 +583,12 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _addNewListItem(self, client, screenshot_file_path):
+        """
         item = QtWidgets.QListWidgetItem()
                    
         item.setSizeHint(QtCore.QSize(140, 100));
-        item.id = client.clientName  # store clientName as itemID for later use (delete event)
+        # store clientName as itemID for later use (delete event)
+        item.id = client.clientName  
         item.pID = client.clientConnectionID
         item.disabled = False
 
@@ -594,7 +597,7 @@ class ServerUI(QtWidgets.QDialog):
         item.picture = QtWidgets.QLabel()
         item.picture.setPixmap(pixmap)
         item.picture.setAlignment(QtCore.Qt.AlignCenter)
-        item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
+        #item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
         item.info = QtWidgets.QLabel('%s' % (client.clientName))
         item.info.setAlignment(QtCore.Qt.AlignCenter)
         
@@ -602,15 +605,26 @@ class ServerUI(QtWidgets.QDialog):
         grid.setSpacing(1)
         grid.addWidget(item.picture, 1, 0)
         grid.addWidget(item.info, 2, 0)
+        """
+        
+        itemN = QtWidgets.QListWidgetItem()
+        # Create widget
+        item = MyCustomWidget(client, screenshot_file_path)
+        #important
+        test = item.sizeHint()
+        itemN.setSizeHint(item.sizeHint())
 
-        widget = QtWidgets.QWidget()
-        widget.setLayout(grid)
-        widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
-        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(item.pID, item.id, screenshot_file_path, item.disabled)
+        
+        #widget = QtWidgets.QWidget()
+        #widget.setLayout(grid)
+        #widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        #widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
+        #widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(item.pID, item.id, screenshot_file_path, item.disabled)
 
-        self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
-        self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
+        
+        
+        self.ui.listWidget.addItem(itemN)  # add the listitem to the listwidget
+        self.ui.listWidget.setItemWidget(itemN, item)  # set the widget as the listitem's widget
 
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
