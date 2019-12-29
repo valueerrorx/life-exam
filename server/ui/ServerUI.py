@@ -6,6 +6,7 @@ import datetime
 import os
 import shutil
 import sip
+import time
 from pathlib import Path
 
 from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
@@ -27,7 +28,7 @@ from classes.HTMLTextExtractor import html_to_text
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
 from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done
-import time
+
 from server.resources.MyCustomWidget import MyCustomWidget
 
 class ServerUI(QtWidgets.QDialog):
@@ -608,23 +609,25 @@ class ServerUI(QtWidgets.QDialog):
         """
         
         itemN = QtWidgets.QListWidgetItem()
+
         # Create widget
-        item = MyCustomWidget(client, screenshot_file_path)
+        widget = MyCustomWidget(client, screenshot_file_path)
+        #widget = QtGui.QWidget()
+        #widget.setLayout(item)
+        widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientConnectionID, False))
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path, False)
+
+        
         #important
-        test = item.sizeHint()
-        itemN.setSizeHint(item.sizeHint())
-
+        itemN.setSizeHint(widget.sizeHint())
         
-        #widget = QtWidgets.QWidget()
-        #widget.setLayout(grid)
-        #widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        #widget.customContextMenuRequested.connect(lambda: self._on_context_menu(item.pID, item.disabled))
-        #widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(item.pID, item.id, screenshot_file_path, item.disabled)
-
-        
-        
+        #Add widget to QListWidget
         self.ui.listWidget.addItem(itemN)  # add the listitem to the listwidget
-        self.ui.listWidget.setItemWidget(itemN, item)  # set the widget as the listitem's widget
+        self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
+        
+        #self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
+        #self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
 
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
