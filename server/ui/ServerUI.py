@@ -101,9 +101,6 @@ class ServerUI(QtWidgets.QDialog):
 
         findApps(self.ui.applist, self.ui.appview)
         
-        # Stylesheet Rahmen für Client Items
-        self.ui.listWidget.setStyleSheet("QListWidget::item{ border-width: 1px; border-style: solid; border-color: #AAA;}")
-        
         #Waiting Thread
         self.waiting_thread = Thread_Wait()
         #connect Events        

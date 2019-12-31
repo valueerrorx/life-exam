@@ -11,9 +11,11 @@ from PyQt5.QtCore import QSize
 Creates a Item for the Client
 """
 class MyCustomWidget (QtWidgets.QWidget):
+    #from UI Designer
     width=140
-    height=100
-    
+    height=93
+    statusIcons=[]
+        
     def __init__(self, client, screenshot_file_path):
         super(MyCustomWidget, self).__init__()
         
@@ -32,6 +34,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         
         self.set_ui()
         self.setText('%s' % (client.clientName))
+        self.clearStatusIcons()
         self.show()
     
     def sizeHint(self, *args, **kwargs):
@@ -45,11 +48,22 @@ class MyCustomWidget (QtWidgets.QWidget):
         designed wit QT Designer, convertet with pyuic5
         dropped self.gridLayoutWidget 
         """
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setSpacing(0)
-        self.gridLayout.setObjectName("gridLayout")
+        self.setGeometry(QtCore.QRect(70, 10, 145, 94))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(sizePolicy)
+        self.setStyleSheet("border-width: 1px; border-style: solid; border-color: #AAA; margin-top: 4px; margin-left:4px;")
+        self.setObjectName("MyCustomWidget")
+                
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName("verticalLayout")
         
         self.image = QtWidgets.QLabel()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -57,41 +71,57 @@ class MyCustomWidget (QtWidgets.QWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.image.sizePolicy().hasHeightForWidth())
         self.image.setSizePolicy(sizePolicy)
+        self.image.setStyleSheet("padding:0;margin:0;border:0;")
         self.image.setText("")
-        
         icon = self.rootDir.joinpath("pixmaps/Test.jpg").as_posix()
         self.image.setPixmap(QtGui.QPixmap(icon))
-        self.image.setAlignment(QtCore.Qt.AlignCenter)
+        self.image.setScaledContents(False)
+        self.image.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.image.setObjectName("image")
-        self.gridLayout.addWidget(self.image, 0, 0, 1, 1)
+        self.verticalLayout.addWidget(self.image)
         
         self.info = QtWidgets.QLabel()
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.info.sizePolicy().hasHeightForWidth())
+        self.info.setSizePolicy(sizePolicy)
+        self.info.setMinimumSize(QtCore.QSize(122, 18))
+        self.info.setMaximumSize(QtCore.QSize(122, 18))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.info.setFont(font)
+        self.info.setStyleSheet("padding:0;margin:0;border:0;")
         self.info.setAlignment(QtCore.Qt.AlignCenter)
         self.info.setObjectName("info")
-        self.gridLayout.addWidget(self.info, 1, 0, 1, 1)
+        self.verticalLayout.addWidget(self.info)
+        self.horizontalLayout.addLayout(self.verticalLayout)
         
-        self.status = QtWidgets.QLabel()
+        self.gridLayout_icons = QtWidgets.QGridLayout()
+        self.gridLayout_icons.setHorizontalSpacing(0)
+        self.gridLayout_icons.setVerticalSpacing(1)
+        self.gridLayout_icons.setObjectName("gridLayout_icons")
+        
+        #5 status icons
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.status.sizePolicy().hasHeightForWidth())
-        self.status.setSizePolicy(sizePolicy)
-        self.status.setText("")
-        icon = self.rootDir.joinpath("pixmaps/fileok.png").as_posix()
-        self.status.setPixmap(QtGui.QPixmap(icon))
-        self.status.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
-        self.status.setObjectName("status")
-        self.gridLayout.addWidget(self.status, 0, 1, 1, 1)
+        for x in range(1, 6):
+            status_icon = QtWidgets.QLabel()
+            sizePolicy.setHeightForWidth(status_icon.sizePolicy().hasHeightForWidth())
+            status_icon.setSizePolicy(sizePolicy)
+            status_icon.setStyleSheet("padding:0;margin:0;border:0;")
+            status_icon.setText("")
+            icon = self.rootDir.joinpath("pixmaps/fileok.png").as_posix()
+            status_icon.setPixmap(QtGui.QPixmap(icon))
+            status_icon.setAlignment(QtCore.Qt.AlignCenter)
+            status_icon.setObjectName("status_icon_%s" % x)
+            #int r, int c, int rowspan, int columnspan
+            self.gridLayout_icons.addWidget(status_icon, x, 0, 1, 1)
+            self.statusIcons.append(status_icon)
         
-        
-        
-        #self.project_title = QtWidgets.QLabel("Learn Python")
-        #self.task_title = QtWidgets.QLabel("Learn more about forms, models and include")
-        #self.gridLayout.addWidget(self.project_title, 0, 0)
-        #self.gridLayout.addWidget(self.task_title, 1, 0)
-        self.setStyleSheet("background-color: red;")
-
-        self.setLayout(self.gridLayout)
+        self.horizontalLayout.addLayout(self.gridLayout_icons)
+        self.setLayout(self.horizontalLayout)
         
         
        
@@ -99,8 +129,19 @@ class MyCustomWidget (QtWidgets.QWidget):
         """
         set the text at bottom of Item
         """
-        pass
-        #self.status.setText(text)
+        self.info.setText(text)
+
+        
+    def clearStatusIcons(self):
+        """
+        replace all status icons with empty dummy
+        """
+        for status_icon in self.statusIcons:
+            icon = self.rootDir.joinpath("pixmaps/dummy.png").as_posix()
+            status_icon.setPixmap(QtGui.QPixmap(icon))
+            
+        
+        
 
     def setIcon (self, imagePath):
         self.iconQLabel.setPixmap(QtGui.QPixmap(imagePath))
