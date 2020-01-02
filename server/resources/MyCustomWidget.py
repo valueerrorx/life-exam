@@ -14,7 +14,14 @@ class MyCustomWidget (QtWidgets.QWidget):
     #from UI Designer
     width=140
     height=93
+    img_width=120
+    img_height=67
+    
+    #Status Icons
+    max_status_icons=5
     statusIcons=[]
+    #stores Image Name/False if Icon is set/not
+    statusIcons_on=[False,False,False,False,False]
         
     def __init__(self, client, screenshot_file_path):
         super(MyCustomWidget, self).__init__()
@@ -124,7 +131,34 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.setLayout(self.horizontalLayout)
         
         
-       
+    def setImage (self, screenshot_file_path):
+        """
+        sets the screenshot image
+        screenshot_file_path ... path to jpg file
+        """   
+        icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
+        pixmap = QtGui.QPixmap(icon)
+        pixmap = pixmap.scaled(QtCore.QSize(self.img_width, self.img_height))
+        self.image.setPixmap(pixmap)
+        
+    def getID(self):
+        """ return the ID of the Client """
+        return self.pID
+    
+    def setID(self,the_id):
+        self.pID = the_id
+        
+    def setDisabled(self):
+        """ Client is disabled """
+        self.disabled = True
+        
+    def setEnabled(self):
+        """ Client is enabled """
+        self.disabled = False
+        
+    def isEnabled(self):
+        return not self.disabled
+        
     def setText (self, text):
         """
         set the text at bottom of Item
@@ -140,12 +174,54 @@ class MyCustomWidget (QtWidgets.QWidget):
             icon = self.rootDir.joinpath("pixmaps/dummy.png").as_posix()
             status_icon.setPixmap(QtGui.QPixmap(icon))
             
+        for x in range(0, self.max_status_icons-1):
+            self.statusIcons_on[x] = False
         
-        
-
-    def setIcon (self, imagePath):
-        self.iconQLabel.setPixmap(QtGui.QPixmap(imagePath))
-        
+       
     def setStatusIcon (self, imagePath):
-        self.iconQLabel.setPixmap(QtGui.QPixmap(imagePath))
+        """
+        sets a status icon in one of the 5 places
+        """
+        #choose next free slot
+        index=0
+        for isON in self.statusIcons_on:
+            #there are 
+            if isON == False and index < self.max_status_icons:
+                #get the slot
+                status_icon = self.statusIcons[index]
+                icon = self.rootDir.joinpath(imagePath).as_posix()                
+                status_icon.setPixmap(QtGui.QPixmap(icon))
+                self.statusIcons_on[index]=imagePath
+            else:
+                index += 1
+                
+                
+    def removeStatusIcon (self, imagePath):
+        """
+        search for the correct icon an remove it
+        """
+        for x in range(0, self.max_status_icons):
+            #if icon is set, then its a string
+            stored_img = self.statusIcons_on[x]
+            if type(stored_img) == str:
+                if stored_img == imagePath:
+                    #Icon found delete
+                    icon = self.rootDir.joinpath("pixmaps/dummy.png").as_posix()
+                    self.statusIcons[x].setPixmap(QtGui.QPixmap(icon))
+                    self.statusIcons_on[x]=False
+            else:
+                #Status Icons are a stack, firts False means, there are no more Icons
+                return False
+        
+        
+    def setExamIconON(self):
+        """ set all Status Exam Icons to on """
+        self.removeStatusIcon("pixmaps/exam_off.png")
+        self.setStatusIcon("pixmaps/exam_on.png")
+        
+    def setExamIconOFF(self):
+        """ set all Status Exam Icons to off """
+        self.removeStatusIcon("pixmaps/exam_on.png")
+        self.setStatusIcon("pixmaps/exam_off.png")
+        
         

@@ -106,10 +106,23 @@ class ServerUI(QtWidgets.QDialog):
         #connect Events        
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
         self.waiting_thread.client_received_file.connect(client_received_file_done)
+        
+        #Test
+        self.ui.pushButton.clicked.connect(lambda: self.iconplus())
+        self.ui.pushButton_2.clicked.connect(lambda: self.iconminus())
                 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
     
+    def iconplus(self):
+        client = self.get_list_widget_by_client_name("TestUser")
+        client.setExamIconON()
+        pass
+    
+    def iconminus(self):
+        client = self.get_list_widget_by_client_name("TestUser")
+        client.setExamIconOFF()
+        pass
             
     def testImage(self, filename):
         """ test if image is valid """
@@ -119,7 +132,6 @@ class ServerUI(QtWidgets.QDialog):
             return False
         else:
             return True
-
         
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -535,13 +547,20 @@ class ServerUI(QtWidgets.QDialog):
         
         if client_name:
             #SIP C++ Module deletes the Item from ListWidget
-            sip.delete(self.get_list_widget_by_client_id(client_id))
-            #remove client widget no matter if client still is connected or not
-            # delete all ocurrances of this screenshotitem (the whole item with the according widget and its labels)
-            msg='Connection to client <b> %s </b> has been <b>removed</b>.' % (client_name)
-            self.log(html_to_text(msg))
-            #UI Label Update
-            self.ui.label_clients.setText(self.createClientsLabel())
+            
+            item = self.get_list_widget_by_client_id(client_id)            
+            if item:
+                item = self.get_QListWidgetItem_by_client_id(client_id)
+                sip.delete(item)
+                #remove client widget no matter if client still is connected or not
+                msg='Connection to client <b> %s </b> has been <b>removed</b>.' % (client_name)
+                self.log(html_to_text(msg))
+                #remove from Listwidget the QListWidgetItem
+                #dfsgfg
+                #UI Label Update count clients
+                self.ui.label_clients.setText(self.createClientsLabel())
+            else:
+                self.logger.error("Cant delete client %s" % client_name)
 
     def _disableClientScreenshot(self, client):
         self._show_workingIndicator(500, "Client Screenshot ausgeschaltet")
@@ -581,50 +600,26 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _addNewListItem(self, client, screenshot_file_path):
-        """
-        item = QtWidgets.QListWidgetItem()
-                   
-        item.setSizeHint(QtCore.QSize(140, 100));
-        # store clientName as itemID for later use (delete event)
-        item.id = client.clientName  
-        item.pID = client.clientConnectionID
-        item.disabled = False
-
-        pixmap = QPixmap(screenshot_file_path)
-        pixmap = pixmap.scaled(QtCore.QSize(120,67))
-        item.picture = QtWidgets.QLabel()
-        item.picture.setPixmap(pixmap)
-        item.picture.setAlignment(QtCore.Qt.AlignCenter)
-        #item.info = QtWidgets.QLabel('%s \n%s' % (client.clientName, client.clientConnectionID))
-        item.info = QtWidgets.QLabel('%s' % (client.clientName))
-        item.info.setAlignment(QtCore.Qt.AlignCenter)
-        
-        grid = QtWidgets.QGridLayout()
-        grid.setSpacing(1)
-        grid.addWidget(item.picture, 1, 0)
-        grid.addWidget(item.info, 2, 0)
-        """
-        
         itemN = QtWidgets.QListWidgetItem()
 
         # Create widget
         widget = MyCustomWidget(client, screenshot_file_path)
-        #widget = QtGui.QWidget()
-        #widget.setLayout(item)
+        widget.setText('%s' % (client.clientName))
+        widget.setImage(screenshot_file_path)
+        widget.setExamIconOFF()
+        
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientConnectionID, False))
         widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path, False)
-
         
-        #important
+        #important!
         itemN.setSizeHint(widget.sizeHint())
+        #link Object to item
+        itemN.setData (QtCore.Qt.UserRole, widget)
         
         #Add widget to QListWidget
-        self.ui.listWidget.addItem(itemN)  # add the listitem to the listwidget
-        self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
-        
-        #self.ui.listWidget.addItem(item)  # add the listitem to the listwidget
-        #self.ui.listWidget.setItemWidget(item, widget)  # set the widget as the listitem's widget
+        self.ui.listWidget.addItem(itemN)               # add the listitem to the listwidget
+        self.ui.listWidget.setItemWidget(itemN, widget) # set the widget as the listitem's widget
 
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
@@ -632,12 +627,12 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
         except:
             pass            #changed return to pass otherwise the screenshot is not updated
-        pixmap = QPixmap(screenshot_file_path)
-        pixmap = pixmap.scaled(QtCore.QSize(120, 67))
-        existing_item.picture.setPixmap(pixmap)
-        existing_item.info.setText('%s' % (client.clientName))
-        existing_item.pID = client.clientConnectionID  # in case this is a reconnect - update clientConnectionID in order to address the correct connection
-        existing_item.disabled = False
+        
+        existing_item.setImage(screenshot_file_path)
+        existing_item.setText('%s' % (client.clientName))
+        # in case this is a reconnect - update clientConnectionID in order to address the correct connection
+        existing_item.setID(client.clientConnectionID)  
+        existing_item.setDisabled()
 
         try:
             if self.screenshotwindow.client_connection_id == existing_item.pID:
@@ -692,17 +687,37 @@ class ServerUI(QtWidgets.QDialog):
         """
         items = []
         for index in range(self.ui.listWidget.count()):
-            items.append(self.ui.listWidget.item(index))
+            item = self.ui.listWidget.item(index)
+            #get the linked object back
+            mycustomwidget = item.data(QtCore.Qt.UserRole)
+            items.append(mycustomwidget)
         return items
 
+
     def get_list_widget_by_client_id(self, client_id):
+        """ returns the widget from a client """
         for widget in self.get_list_widget_items():
-            if client_id == widget.pID:
+            if client_id == widget.getID():
                 self.log("Found existing list widget for client connectionId %s" % client_id )
                 return widget
         return False
-
+    
+    def get_QListWidgetItem_by_client_id(self, client_id):
+        """ 
+        returns the QListWidgetItem from a client
+        the widget itself is connected to that Item 
+        """
+        for index in range(self.ui.listWidget.count()):
+            item = self.ui.listWidget.item(index)
+            #get the linked object back
+            mycustomwidget = item.data(QtCore.Qt.UserRole)
+            if client_id == mycustomwidget.getID():
+                self.log("Found existing list widget for client connectionId %s" % client_id )
+                return item
+        return False
+    
     def get_list_widget_by_client_name(self, client_name):
+        """ returns the widget from a client """
         for widget in self.get_list_widget_items():
             if client_name == widget.id:
                 self.log("Found existing list widget for client name %s" % client_name )

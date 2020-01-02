@@ -19,6 +19,7 @@ import shutil
 import subprocess
 import zipfile
 import datetime
+from pathlib import Path
 
 from classes import mutual_functions
 from config.config import SHARE_DIRECTORY, SAVEAPPS, USER,\
@@ -40,7 +41,6 @@ from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 
-# local imports
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -51,7 +51,9 @@ class MyClientProtocol(basic.LineReceiver):
         self.buffer = []
         self.line_data_list = ()
         # cleans everything and copies script files
-        mutual_functions.prepareDirectories()  
+        mutual_functions.prepareDirectories()
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent  
     
 
     # twisted-Event: Client connects to server
@@ -76,7 +78,7 @@ class MyClientProtocol(basic.LineReceiver):
         mutual_functions.showDesktopMessage('Connection to the server has been lost')
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "%s/client/client.py &" %(APP_DIRECTORY)
+            command = "%s/client/client.py &" %(self.rootDir)
             os.system(command)
             os._exit(1)
 
