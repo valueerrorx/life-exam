@@ -107,6 +107,18 @@ class ServerUI(QtWidgets.QDialog):
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
         self.waiting_thread.client_received_file.connect(client_received_file_done)
         
+        #CSS Styling
+        self.ui.listWidget.setStyleSheet( """QListWidget::item
+                {
+                    background: rgb(255,255,255); 
+                }
+                QListWidget::item:selected
+                {
+                    background: rgb(255,227,245);
+                }
+                """
+                )
+        
         #Test
         self.ui.pushButton.clicked.connect(lambda: self.iconplus())
         self.ui.pushButton_2.clicked.connect(lambda: self.iconminus())
@@ -694,11 +706,11 @@ class ServerUI(QtWidgets.QDialog):
         return items
 
 
-    def get_list_widget_by_client_id(self, client_id):
+    def get_list_widget_by_client_id(self, client_connection_id):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
-            if client_id == widget.getID():
-                self.log("Found existing list widget for client connectionId %s" % client_id )
+            if client_connection_id == widget.getConnectionID():
+                self.log("Found existing list widget for client connectionId %s" % client_connection_id )
                 return widget
         return False
     
@@ -719,7 +731,7 @@ class ServerUI(QtWidgets.QDialog):
     def get_list_widget_by_client_name(self, client_name):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
-            if client_name == widget.id:
+            if client_name == widget.getName():
                 self.log("Found existing list widget for client name %s" % client_name )
                 return widget
         return False

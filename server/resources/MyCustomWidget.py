@@ -141,12 +141,20 @@ class MyCustomWidget (QtWidgets.QWidget):
         pixmap = pixmap.scaled(QtCore.QSize(self.img_width, self.img_height))
         self.image.setPixmap(pixmap)
         
-    def getID(self):
+    def getConnectionID(self):
         """ return the ID of the Client """
         return self.pID
     
     def setID(self,the_id):
         self.pID = the_id
+        
+    def getID(self):
+        """ return the ID of the Client """
+        return self.getName()
+            
+    def getName(self):
+        """ return the ID of the Client """
+        return self.id
         
     def setDisabled(self):
         """ Client is disabled """
@@ -223,5 +231,15 @@ class MyCustomWidget (QtWidgets.QWidget):
         """ set all Status Exam Icons to off """
         self.removeStatusIcon("pixmaps/exam_on.png")
         self.setStatusIcon("pixmaps/exam_off.png")
+        
+    def setFileReceivedOK(self):
+        """ set all File received Icon """
+        self.removeStatusIcon("pixmaps/file_cancel.png")
+        self.setStatusIcon("pixmaps/file_ok.png")
+        
+    def setFileReceivedERROR(self):
+        """ set all File NOT Received icon """
+        self.removeStatusIcon("pixmaps/file_ok.png")
+        self.setStatusIcon("pixmaps/file_cancel.png")
         
         

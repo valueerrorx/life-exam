@@ -68,7 +68,10 @@ class MyServerProtocol(basic.LineReceiver):
             #a File was sent to the Client, Client says ok i have it
             #fire Event to Thread
             ui = self.factory.window
-            ui.waiting_thread.fireEvent_File_received(self.line_data_list[1])
+            #get the client item from QListWidget
+            clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
+                        
+            ui.waiting_thread.fireEvent_File_received(clientWidget)
             #filetransfer finished "UNLOCK" fileopertions
             self.factory.rawmode = False; 
 

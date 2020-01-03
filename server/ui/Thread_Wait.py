@@ -6,12 +6,13 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
+from server.resources.MyCustomWidget import MyCustomWidget
 
 
 class Thread_Wait(QtCore.QThread):
     
     client_finished = pyqtSignal(str)
-    client_received_file = pyqtSignal(str)
+    client_received_file = pyqtSignal(MyCustomWidget)
     running = False
     clients = []
     
@@ -40,11 +41,12 @@ class Thread_Wait(QtCore.QThread):
         
     
     
-    def fireEvent_File_received(self, who):
+    def fireEvent_File_received(self, clientWidget):
+        """ client has received a file """
         #delete client from list
         if len(self.clients)>0:
-            self.deleteItemFromList(who)
-            self.client_received_file.emit(who)
+            self.deleteItemFromList(clientWidget.getName())
+            self.client_received_file.emit(clientWidget)
         
     def isAlive(self):
         if self.running:
