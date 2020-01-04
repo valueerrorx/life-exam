@@ -63,8 +63,8 @@ def checkFirewall(firewall_ip_list):
     for i in firewall_ip_list:
         try:
             lineslist = [x.strip() for x in lines[count].split(':')]
-            ip = i[0].setText(lineslist[0])
-            port = i[1].setText(lineslist[1])
+            i[0].setText(lineslist[0])
+            i[1].setText(lineslist[1])
         except IndexError:
             continue
         count += 1
@@ -72,7 +72,7 @@ def checkFirewall(firewall_ip_list):
 
 def checkIP(iptest):
     try:
-        ip = ipaddress.ip_address(iptest)
+        ipaddress.ip_address(iptest)
         return True
     except ValueError:
         return False
@@ -94,8 +94,8 @@ def get_file_md5_hash(file):
     """ Returns file MD5 hash"""
 
     md5_hash = hashlib.md5()
-    for bytes in read_bytes_from_file(file):
-        md5_hash.update(bytes)
+    for b in read_bytes_from_file(file):
+        md5_hash.update(b)
 
     return md5_hash.hexdigest()
 
@@ -112,10 +112,10 @@ def read_bytes_from_file(file, chunk_size=8100):
                 break
 
 
-def clean_and_split_input(input):
+def clean_and_split_input(input_str):
     """ Removes carriage return and line feed characters and splits input on a single whitespace. """
-    input = input.strip()
-    input = input.split()
+    input_str = input_str.strip()
+    input_str = input_str.split()
 
     return input
 

@@ -86,10 +86,8 @@ class ServerToClient:
         return True
 
 
-
-
-    ## client file requests (get from client) ##
     def request_screenshots(self, who):
+        """ client file requests (get from client) """
         if not self.clients:
             return False
 

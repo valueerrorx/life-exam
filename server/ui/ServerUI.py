@@ -22,7 +22,6 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
 from PyQt5.Qt import QRegExpValidator
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
-from server.resources import ScreenshotWindow
 from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
@@ -30,6 +29,7 @@ from server.ui.Thread_Wait import Thread_Wait
 from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done
 
 from server.resources.MyCustomWidget import MyCustomWidget
+from server.resources.ScreenshotWindow import ScreenshotWindow
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -118,23 +118,9 @@ class ServerUI(QtWidgets.QDialog):
                 }
                 """
                 )
-        
-        #Test
-        self.ui.pushButton.clicked.connect(lambda: self.iconplus())
-        self.ui.pushButton_2.clicked.connect(lambda: self.iconminus())
                 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
-    
-    def iconplus(self):
-        client = self.get_list_widget_by_client_name("TestUser")
-        client.setExamIconON()
-        pass
-    
-    def iconminus(self):
-        client = self.get_list_widget_by_client_name("TestUser")
-        client.setExamIconOFF()
-        pass
             
     def testImage(self, filename):
         """ test if image is valid """
@@ -344,7 +330,9 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onScreenshots(self, who):
-        self.log("<b>Requesting Screenshot Update </b>")
+        msg = "<b>Requesting Screenshot Update </b>"
+        self.log(msg)
+        self.log(html_to_text(msg))
         self._show_workingIndicator(1000, "Screenhot Update")
         
         if self.factory.rawmode == True:
@@ -622,7 +610,7 @@ class ServerUI(QtWidgets.QDialog):
         
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientConnectionID, False))
-        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path, False)
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
         
         #important!
         itemN.setSizeHint(widget.sizeHint())
@@ -658,11 +646,9 @@ class ServerUI(QtWidgets.QDialog):
             pass
 
 
-    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path, client_disabled):
-        if client_disabled:
-            self.log("Item disabled")
-            return
+    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         screenshotfilename = "%s.jpg" % client_connection_id
+        
         self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
         self.screenshotwindow.exec_()
 

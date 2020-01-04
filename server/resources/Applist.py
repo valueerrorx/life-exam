@@ -137,6 +137,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     
     #sort applist and put most used apps on top  
     final_applist = create_app_ranking(applist)
+    #what apps are activated and stored in OLD Config?
     activated_apps = get_activated_apps()
     
     #clear appview first
@@ -146,7 +147,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         if child.widget():
             child.widget().deleteLater()
         
-    for APP in final_applist:   # most used app is on top of the list (listview is built from bottom therefore we reverse)
+    for APP in final_applist:   
         item = QtWidgets.QListWidgetItem()
         item.setSizeHint(QSize(40, 40));
         item.name = QtWidgets.QLabel()
@@ -166,7 +167,21 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
 
         #turn on already activated apps  - add icons to appview widget in UI
         for activated_app in activated_apps:
-            if activated_app in APP[1]:    
+            testApp = APP[1]
+            app1 = activated_app[:-len(".desktop")]
+            
+            #maybe there are copies of the stored app?
+            #org.kde.kate.desktop <> org.kde.kate-2.desktop
+            pattern = "-\d{1,2}\.desktop"
+            match = re.search(pattern, testApp, re.IGNORECASE)
+            if match:
+                #there is one, delete the .desktop from apps
+                m = match.group(0)
+                app2 = testApp[:-len(m)]
+            else:
+                app2 = testApp[:-len(".desktop")]
+            
+            if app1 == app2:    
                 item.checkbox.setChecked(True)
                 iconwidget = QtWidgets.QLabel()
                 iconwidget.setPixmap(QPixmap(item.icon.pixmap()))

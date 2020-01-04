@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import shutil
 from config.config import SHARE_DIRECTORY
 from pathlib import Path
@@ -11,8 +10,10 @@ from PyQt5.QtGui import QIcon, QImage, QPalette, QBrush
 from PyQt5.QtCore import QSize
 
 class ScreenshotWindow(QtWidgets.QDialog):
+    
     def __init__(self, serverui, screenshot, clientname, screenshot_file_path, client_connection_id):
-        QtWidgets.QDialog.__init__(self)
+        #QtWidgets.QDialog.__init__(self)
+        super(ScreenshotWindow, self).__init__()
         
         #rootDir of Application
         self.rootDir = Path(__file__).parent.parent.parent
