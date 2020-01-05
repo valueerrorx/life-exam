@@ -85,6 +85,7 @@ def remove_duplicates(other_applist):
 def create_app_ranking(applist):
     """
     Important Apps moving to the top
+    delete Kate new Window App
     """
     final_applist = []
     other_applist = []
@@ -93,13 +94,14 @@ def create_app_ranking(applist):
     
     for key in yml:
         pattern = create_pattern(yml[key])
-        for app in applist:       
-            match = re.search(pattern, app[2], re.IGNORECASE)
-            if match:
-                final_applist.insert(index, app)
-                index += 1
-            else:
-                other_applist.append(app)
+        for app in applist:  
+            if app[1] != "org.kde.kate-2.desktop":     
+                match = re.search(pattern, app[2], re.IGNORECASE)
+                if match:
+                    final_applist.insert(index, app)
+                    index += 1
+                else:
+                    other_applist.append(app)
     other_applist = remove_duplicates(other_applist)
     #other_applist sortieren
     other_applist.sort()                
@@ -147,6 +149,8 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         if child.widget():
             child.widget().deleteLater()
         
+    #what apps allready added as selectet
+    apps_added=[]
     for APP in final_applist:   
         item = QtWidgets.QListWidgetItem()
         item.setSizeHint(QSize(40, 40));
@@ -167,29 +171,26 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
 
         #turn on already activated apps  - add icons to appview widget in UI
         for activated_app in activated_apps:
-            testApp = APP[1]
-            app1 = activated_app[:-len(".desktop")]
+            app1 = activated_app
+            app2 = APP[1]
             
-            #maybe there are copies of the stored app?
-            #org.kde.kate.desktop <> org.kde.kate-2.desktop
-            pattern = "-\d{1,2}\.desktop"
-            match = re.search(pattern, testApp, re.IGNORECASE)
-            if match:
-                #there is one, delete the .desktop from apps
-                m = match.group(0)
-                app2 = testApp[:-len(m)]
-            else:
-                app2 = testApp[:-len(".desktop")]
-            
-            if app1 == app2:    
-                item.checkbox.setChecked(True)
-                iconwidget = QtWidgets.QLabel()
-                iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
-                iconwidget.setToolTip(item.name.text())
-                thislayout.addWidget(iconwidget)
+            if app1 == app2:
+                #is this app allready added?
+                found=False
+                for added_app in apps_added:
+                    if added_app == app1:
+                        found=True
+                        break
+                if found==False:
+                    print(activated_app) 
+                    item.checkbox.setChecked(True)
+                    iconwidget = QtWidgets.QLabel()
+                    iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
+                    iconwidget.setToolTip(item.name.text())
+                    thislayout.addWidget(iconwidget)
+                    apps_added.append(app1)
 
         item.checkbox.clicked.connect(lambda: saveProfile(applistwidget, appview))
-        
         verticalSpacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Expanding)
 
         grid = QtWidgets.QGridLayout()

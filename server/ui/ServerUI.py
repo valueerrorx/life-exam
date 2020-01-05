@@ -30,6 +30,7 @@ from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_re
 
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
+from PyQt5.QtWidgets import QToolTip
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -115,10 +116,14 @@ class ServerUI(QtWidgets.QDialog):
                 QListWidget::item:selected
                 {
                     background: rgb(255,227,245);
-                }
-                """
-                )
-                
+                }""")
+        self.ui.setStyleSheet("""QToolTip
+               { 
+                   background: #ffff96; 
+                   color: #000000; 
+                   border: 1px solid #666666;
+               }""")
+    
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
             

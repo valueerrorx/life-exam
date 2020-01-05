@@ -2,13 +2,14 @@ version: 1
 
 apps:
    '1':
+      - wxmaxima
       - geogebra
-      - kate
    '2':
+      - libreOffice writer
+      - libreOffice calc
+   '3':
+      - kate
       - kcalc
       - calligra words
-      - libreOffice calc
-      - libreOffice writer
-   '3':
       - musescore
       - audacity
