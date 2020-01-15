@@ -115,9 +115,7 @@ def read_bytes_from_file(file, chunk_size=8100):
 def clean_and_split_input(input_str):
     """ Removes carriage return and line feed characters and splits input on a single whitespace. """
     input_str = input_str.strip()
-    input_str = input_str.split()
-
-    return input
+    return input_str.split()
 
 
 def get_file_list(folder):

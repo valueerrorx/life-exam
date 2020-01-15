@@ -31,10 +31,6 @@ class MulticastLifeClient(DatagramProtocol):
             #fire Event to Dialog
             Event('updateGUI',self.info, self.server_ip)
             self.logger.info("Datagram %s received from %s" % (repr(datagram), repr(address)) )
-            
-            #Stop Listening?
-            #self.loopObj.stop()
-            #self.logger.info("STOP" )
     
 
     def _sendProbe(self):

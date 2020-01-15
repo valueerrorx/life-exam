@@ -182,7 +182,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
                         found=True
                         break
                 if found==False:
-                    print(activated_app) 
                     item.checkbox.setChecked(True)
                     iconwidget = QtWidgets.QLabel()
                     iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
