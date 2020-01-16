@@ -111,8 +111,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         
         #reduce Multicast Period from 2 to 5sec
         multicast_client.loopObj.stop()
-        #multicast_client.loopObj = LoopingCall(self._sendProbe)
-        multicast_client.loopObj.start(5, now=False)             # wait 2 sec between calls, False start after first wait time
+        multicast_client.loopObj.start(5, now=False)
         
         
         #only debug if DEBUG_PIN is not ""
