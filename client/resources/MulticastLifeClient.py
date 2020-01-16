@@ -29,7 +29,7 @@ class MulticastLifeClient(DatagramProtocol):
             self.info = mutual_functions.clean_and_split_input(datagram)
             
             #fire Event to Dialog
-            Event('updateGUI',self.info, self.server_ip)
+            Event('updateGUI',self)
             self.logger.info("Datagram %s received from %s" % (repr(datagram), repr(address)) )
     
 

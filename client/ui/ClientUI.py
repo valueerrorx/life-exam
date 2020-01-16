@@ -83,17 +83,21 @@ class ClientDialog(QtWidgets.QDialog, Observers):
     def _onAbbrechen(self):  # Exit button
         self.ui.close()
             
-    def updateGUI(self, data, server_ip):
+    def updateGUI(self, multicast_client):
         """
         Event Update from Observeable MultiCastClient
         """
+        
+        data = multicast_client.info
+        server_ip = multicast_client.server_ip
+                
         # { servername : ['clientname1','clientname2'] }
         self.disconnected_clients.update({ data[1] : data[2:] })
         #if this is a new server name 
         if data[1] not in self.examserver:   
             for key in self.examserver:
                 ip = self.examserver.get(key)
-                if ip == self.server_ip:          #check if the same ip is already there (server just got renamed)
+                if ip == server_ip:          #check if the same ip is already there (server just got renamed)
                     self.examserver.pop(key)      #remove old entry
                     break
 
@@ -104,13 +108,17 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         icon = self.rootDir.joinpath("pixmaps/checked.png").as_posix()
         self.ui.servercheck.setPixmap(QPixmap(icon))
         
+        #reduce Multicast Period from 2 to 5sec
+        multicast_client.loopObj.stop()
+        self.loopObj.start(5, now=False)             # wait 2 sec between calls, False start after first wait time
+        
+        
         #only debug if DEBUG_PIN is not ""
         if DEBUG_PIN !="":
             ID = DEBUG_ID
             PIN = DEBUG_PIN
             self.ui.studentid.setText(ID)
             self.ui.pincode.setText(PIN)
-            self.logger.info("DEBUGGING Mode")
 
 
     def _on_offline_exam(self):     
