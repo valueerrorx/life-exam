@@ -9,11 +9,12 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 
-import sys, os
-from PyQt5 import QtWidgets, Qt
-from PyQt5.Qt import QIcon, QPixmap
+import sys
+
+from PyQt5.QtCore import Qt
 from pathlib import Path
-from PyQt4.Qt import QKeySequence
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtGui import QIcon, QPixmap
 
 
 
@@ -29,7 +30,6 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         
         icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
         self.setWindowIcon(QIcon(icon))
-        
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint )
         self.setStyleSheet("ScreenlockWindow {background-color: black;}")
         self.label = QtWidgets.QLabel("")
@@ -42,8 +42,15 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.label.move(QtWidgets.QApplication.desktop().screen().rect().center()- self.rect().center())
         self.grabMouse()
         self.grabKeyboard()
-        self.grabShortcut(QKeySequence(Qt.AltModifier))
+        self.grabShortcut(QtGui.QKeySequence(Qt.AltModifier))
         self.setWindowModality(Qt.NonModal)
+        
+         
+        #set Fullscreen
+        geometry = app.desktop().availableGeometry()
+        geometry.setHeight(geometry.height() - (2))
+
+        self.setGeometry(geometry)
 
     def clickedEvent(self,event):
         event.ignore()
@@ -73,6 +80,11 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.move(0,0)
         event.ignore()
         pass
+    
+    def closeEvent(self, event):
+        ''' window tries to close '''
+        #now stay active unless client kills the process
+        event.ignore()
 
 
 if __name__ == "__main__":

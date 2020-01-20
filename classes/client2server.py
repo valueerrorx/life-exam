@@ -85,7 +85,7 @@ class ClientToServer:
                 print("prevented locking of the teachers screen")
                 return
             
-            startcommand = "exec %s/client/lockscreen.py &" %(self.rootDir) #kill it if it already exists
+            startcommand = "exec %s/client/resources/lockscreen.py &" %(self.rootDir) #kill it if it already exists
             os.system(startcommand)
         else:
             print("closing lockscreen")

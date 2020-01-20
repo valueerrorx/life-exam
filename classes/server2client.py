@@ -66,7 +66,9 @@ class ServerToClient:
             return False
         line = "%s %s" % (Command.LOCK.value, "%s")
         if who is "all":
-            self.broadcast_line(line)
+            for clientid in self.clients:
+                client = self.get_client(clientid)
+                client.sendEncodedLine(line % client.clientConnectionID)
         else:
             client = self.get_client(who)
             client.sendEncodedLine(line % client.clientConnectionID)
@@ -78,7 +80,9 @@ class ServerToClient:
             return False
         line = "%s %s" % (Command.UNLOCK.value, "%s")
         if who is "all":
-            self.broadcast_line(line)
+            for clientid in self.clients:
+                client = self.get_client(clientid)
+                client.sendEncodedLine(line % client.clientConnectionID)
         else:
             client = self.get_client(who)
             client.sendEncodedLine(line % client.clientConnectionID)
