@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt
 from pathlib import Path
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.Qt import QStyle, QStyleOptionTitleBar
 
 
 
@@ -44,13 +45,6 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.grabKeyboard()
         self.grabShortcut(QtGui.QKeySequence(Qt.AltModifier))
         self.setWindowModality(Qt.NonModal)
-        
-         
-        #set Fullscreen
-        geometry = app.desktop().availableGeometry()
-        geometry.setHeight(geometry.height() - (2))
-
-        self.setGeometry(geometry)
 
     def clickedEvent(self,event):
         event.ignore()
@@ -84,13 +78,13 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         ''' window tries to close '''
         #now stay active unless client kills the process
-        event.ignore()
+        #event.ignore()
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # @UndefinedVariable
     myapp = ScreenlockWindow()
     myapp.setGeometry(app.desktop().screenGeometry())
-    myapp.setFixedSize(6000, 6000)
+    myapp.setFixedSize(6000, 6000)    
     myapp.show()
     sys.exit(app.exec_())
