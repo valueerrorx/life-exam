@@ -9,8 +9,6 @@ CONFDIR="/etc/NetworkManager/system-connections/"
 CONFFILE="/etc/NetworkManager/system-connections/lifespot"
 
 
-
-
 if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'LIFE' > /dev/null
     exit 1

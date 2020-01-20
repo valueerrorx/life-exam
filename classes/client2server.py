@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Thomas Michael Weissel
 #
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 import time
-import os
-import subprocess
 import shutil
-import zipfile
+import sys
+from pathlib import Path
+import subprocess
+import os
+from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
+    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
 
+# add application root to python path for imports at position 0 
+sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
 from config.shell_scripts import SHOT
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
-from config.config import *
-import classes.system_commander as system_commander
-
 
 
 class ClientToServer:
@@ -29,10 +28,11 @@ class ClientToServer:
     Contains functions for Lines sent from the server to the client. 
     call the proper function for the client to react to the servers orders.
     """
-
     
     def __init__(self):
         self.client = ""
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent
 
     """
     student actions
@@ -51,7 +51,7 @@ class ClientToServer:
 
     def connection_refused(self, client):
         """
-        Shoes Desktopmessage for connection refused
+        Shows Desktopmessage for connection refused
         :param client: clientprotocol
         :return:
         """
@@ -61,7 +61,7 @@ class ClientToServer:
 
     def connection_removed(self,client):
         """
-        Shoes Desktopmessage for connection refused
+        Shows Desktopmessage for connection refused
         :param client: clientprotocol
         :return:
         """
@@ -85,7 +85,7 @@ class ClientToServer:
                 print("prevented locking of the teachers screen")
                 return
             
-            startcommand = "exec %s/client/lockscreen.py &" %(APP_DIRECTORY) #kill it if it already exists
+            startcommand = "exec %s/client/resources/lockscreen.py &" %(self.rootDir) #kill it if it already exists
             os.system(startcommand)
         else:
             print("closing lockscreen")
@@ -102,7 +102,7 @@ class ClientToServer:
         """
         exitcleanup_abgabe = client.line_data_list[1]
         print(exitcleanup_abgabe)
-        print("stopping exam")
+        print("Stopping EXAM")
         startcommand = "%s/scripts/stopexam.sh %s &" %(WORK_DIRECTORY, exitcleanup_abgabe) # start as user even if the twistd daemon is run by root
         os.system(startcommand)  # start script
 
@@ -128,15 +128,18 @@ class ClientToServer:
         if task == Command.SEND.value:
             if filetype == DataType.SCREENSHOT.value:
                 finalfilename = self.prepare_screenshot(client, filename)
+                client._sendFile(finalfilename, filetype)
+                
             elif filetype == DataType.ABGABE.value:
-                finalfilename = self.prepare_abgabe(client, filename)
-            client._sendFile(finalfilename, filetype)
+                #Abgabe nur senden, wenn ein EXAM gestartet wurde ansonsten Fake.zip File
+                #teste ob lock file exists
+                    
+                fakeit = not mutual_functions.lockFileExists()
+                finalfilename = self.prepare_abgabe(client, filename, fakeit)
+                print("Abgabe-File: %s" % finalfilename)            
+                client._sendFile(finalfilename, filetype)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
-            
-            
-        
-
 
 
     """
@@ -156,20 +159,25 @@ class ClientToServer:
         os.system(command)
         return filename
 
-    def prepare_abgabe(self, client, filename):
+
+    def prepare_abgabe(self, client, filename, fake):
         """
         Prepares Abgabe to be sent as zip archive
         :param client: clientprotocol
         :param filename: filename of abgabe archive
+        :param fake: if no EXAM Mode was started, then create dummy zip File
         :return: filename
         """
-        print("ABGABE IS PREPARED")
-        client._triggerAutosave()
-        time.sleep(2)  # TODO: make autosave return that it is finished!
-        target_folder = SHARE_DIRECTORY
-        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
-        shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
+        if fake==False:
+            print("Abgabe IS Prepared ...")
+            client._triggerAutosave()
+            time.sleep(2)  # TODO: make autosave return that it is finished!
+            target_folder = SHARE_DIRECTORY
+            output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename )
+            shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
+        else:
+            print("No EXAM, Fake Abgabe IS Prepared ...")
+            mutual_functions.createFakeZipFile()
+            filename = "dummy"
+            
         return "%s.zip" % filename  # this is the filename of the zip file
-
-
-

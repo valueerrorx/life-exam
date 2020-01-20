@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 from enum import Enum
 
-
 class DataType(Enum):
     SCREENSHOT = "SS"
     ABGABE = "AB"
@@ -28,6 +27,7 @@ class Command(Enum):
     LOCK = "LKS"
     UNLOCK = "ULKS"
     EXITEXAM = "EXIT"
+    FILE_OK = "FO"
     
     def tobytes(self):
         return bytes(self.value,'utf-8')

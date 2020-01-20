@@ -2,5 +2,13 @@
 *.kate-swp
 *.cache
 *.pid
-*.log
+*.log*
 .idea
+
+push.sh
+commit.sh
+.settings
+.spyproject
+.project
+.pydevproject
+plantuml.jar

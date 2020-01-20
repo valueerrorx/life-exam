@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Thomas Michael Weissel
 #
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import datetime
 import ntpath
 import os
 
-
 import classes.mutual_functions as mutual_functions
-from server import MyServerProtocol
 from config.enums import Command, DataType
 
 
 class ServerToClient:
     def __init__(self):
-        self.clients = dict()   # type: dict
-        self.clientlifesigns = dict()   #type: dict       # we will store the time of the last (try) to connect with.. check it against the screenshot intervall (our heartbeat) and disconnect client if the timespan is twice the heartbeat intervall
+        self.clients = dict()           # type: dict
+        # we will store the time of the last (try) to connect with.. check it against the screenshot 
+        # intervall (our heartbeat) and disconnect client if the timespan is twice the heartbeat intervall
+        self.clientlifesigns = dict()   #type: dict       
 
     ## client handling ##
     def get_client(self, key):
@@ -29,6 +28,9 @@ class ServerToClient:
         return client
 
     def add_client(self, client):
+        """
+        Client has made a connection
+        """
         self.clients.update({str(client.transport.client[1]): client})
 
     def remove_client(self, client):
@@ -64,7 +66,9 @@ class ServerToClient:
             return False
         line = "%s %s" % (Command.LOCK.value, "%s")
         if who is "all":
-            self.broadcast_line(line)
+            for clientid in self.clients:
+                client = self.get_client(clientid)
+                client.sendEncodedLine(line % client.clientConnectionID)
         else:
             client = self.get_client(who)
             client.sendEncodedLine(line % client.clientConnectionID)
@@ -76,7 +80,9 @@ class ServerToClient:
             return False
         line = "%s %s" % (Command.UNLOCK.value, "%s")
         if who is "all":
-            self.broadcast_line(line)
+            for clientid in self.clients:
+                client = self.get_client(clientid)
+                client.sendEncodedLine(line % client.clientConnectionID)
         else:
             client = self.get_client(who)
             client.sendEncodedLine(line % client.clientConnectionID)
@@ -84,10 +90,8 @@ class ServerToClient:
         return True
 
 
-
-
-    ## client file requests (get from client) ##
     def request_screenshots(self, who):
+        """ client file requests (get from client) """
         if not self.clients:
             return False
 
@@ -114,11 +118,6 @@ class ServerToClient:
             client.sendEncodedLine(line % client.clientConnectionID) # filename still has an empty %s to fill with client id
 
         return True
-
-
-
-
-
 
     
     ## client file transfer (send to client)
@@ -168,11 +167,8 @@ class ServerToClient:
 
 
     ## send bytes ##
-    def send_bytes(self, client, file_path): # TODO: this can probably go in common.py
+    def send_bytes(self, client, file_path): 
         for b in mutual_functions.read_bytes_from_file(file_path):
             client.transport.write(b)
-
         client.transport.write(b'\r\n')
-        
-        
-        
+    

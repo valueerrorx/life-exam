@@ -1,0 +1,37 @@
+@startuml
+Client -> Server: Multicast Call
+Server --> Client: Multicast Response
+note right: Awaiting Connection\nfrom Client
+Client->Client: starts twisted daemon in background
+
+group twisted daemon examclient_plugin runs on client
+	Client -> Server: connectionMade(): AUTH
+	note right: On every data received\ncheck AUTH from Client\nMyServerProtocol:lineReceived()
+	Server -> Server: MyServerProtocol: rawDataReceived(DataType.SCREENSHOT)\nServerUI: createOrUpdateListItem()
+	
+	note over Server: EXIT EXAM
+	Server -> Server: ServerUI: _on_exit_exam(who)
+	Server -> Client: server2client: request_abgabe(who)\nFILETRANSFER:SEND
+	
+	Client -> Client: client2server: file_transfer_request(client)
+	Client -> Server: examclient_plugin: _sendFile(filename, filetype)
+	
+	
+	Server -> Thread: << Thread-Wait >>
+	activate Thread
+	
+	Thread -> Client: server2client: exit_exam\nEXITEXAM
+	deactivate Thread
+	
+	note over Server: Datei senden
+	Server -> Server: ServerUI: _onSendFile()
+	Server -> Client: server_to_client.send_file()
+	Client -> Server: examclient_plugin:\nrawDataReceived[DataType.FILE]: Command.FILE_OK
+	
+	note over Client: START EXAM
+	Client -> Client: rawDataReceived():_startExam()
+	
+	
+end
+
+@enduml 

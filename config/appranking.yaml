@@ -1,0 +1,15 @@
+version: 1
+
+apps:
+   '1':
+      - wxmaxima
+      - geogebra
+   '2':
+      - libreOffice writer
+      - libreOffice calc
+   '3':
+      - kate
+      - kcalc
+      - calligra words
+      - musescore
+      - audacity

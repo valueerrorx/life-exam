@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>924</width>
-    <height>676</height>
+    <height>742</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -94,7 +94,7 @@
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgba(255,0,0,0.3);</string>
+            <string notr="true"/>
            </property>
            <property name="text">
             <string>Exam starten</string>
@@ -528,7 +528,7 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QLabel" name="label_7">
+                    <widget class="QLabel" name="label_clients">
                      <property name="styleSheet">
                       <string notr="true">margin:0px;margin-left:6px;</string>
                      </property>
@@ -845,8 +845,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>852</width>
-               <height>1004</height>
+               <width>757</width>
+               <height>936</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -1344,19 +1344,6 @@
                          </property>
                         </widget>
                        </item>
-                       <item>
-                        <spacer name="verticalSpacer">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>40</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
                       </layout>
                      </widget>
                     </item>
@@ -1428,128 +1415,117 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QWidget" name="widget_28" native="true">
-                   <layout class="QVBoxLayout" name="verticalLayout_22">
-                    <item>
-                     <widget class="QWidget" name="widget_23" native="true">
-                      <property name="styleSheet">
-                       <string notr="true"/>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_18">
-                       <item>
-                        <widget class="QPushButton" name="showip">
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="toolTip">
-                          <string>IP Adresse anzeigen</string>
-                         </property>
-                         <property name="text">
-                          <string>IP Adresse</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
-                         </property>
-                         <property name="iconSize">
-                          <size>
-                           <width>32</width>
-                           <height>32</height>
-                          </size>
-                         </property>
-                         <property name="autoDefault">
-                          <bool>false</bool>
-                         </property>
-                         <property name="flat">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="starthotspot">
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="toolTip">
-                          <string>Accesspoint aktivieren</string>
-                         </property>
-                         <property name="statusTip">
-                          <string/>
-                         </property>
-                         <property name="text">
-                          <string>Accesspoint</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
-                         </property>
-                         <property name="iconSize">
-                          <size>
-                           <width>32</width>
-                           <height>32</height>
-                          </size>
-                         </property>
-                         <property name="autoDefault">
-                          <bool>false</bool>
-                         </property>
-                         <property name="flat">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="printconf">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::TabFocus</enum>
-                         </property>
-                         <property name="text">
-                          <string>Drucker Konfiguration</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../pixmaps/printer.png</normaloff>../pixmaps/printer.png</iconset>
-                         </property>
-                         <property name="iconSize">
-                          <size>
-                           <width>32</width>
-                           <height>32</height>
-                          </size>
-                         </property>
-                         <property name="autoDefault">
-                          <bool>false</bool>
-                         </property>
-                         <property name="flat">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <spacer name="verticalSpacer_3">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::MinimumExpanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>30</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </widget>
+                  <layout class="QGridLayout" name="gridLayout_3">
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="printconf">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="focusPolicy">
+                      <enum>Qt::TabFocus</enum>
+                     </property>
+                     <property name="text">
+                      <string>Drucker Konfiguration</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../pixmaps/printer.png</normaloff>../pixmaps/printer.png</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
+                     <property name="flat">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QPushButton" name="showip">
+                     <property name="focusPolicy">
+                      <enum>Qt::TabFocus</enum>
+                     </property>
+                     <property name="toolTip">
+                      <string>IP Adresse anzeigen</string>
+                     </property>
+                     <property name="text">
+                      <string>IP Adresse</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../pixmaps/tag.png</normaloff>../pixmaps/tag.png</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
+                     <property name="flat">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QPushButton" name="starthotspot">
+                     <property name="focusPolicy">
+                      <enum>Qt::TabFocus</enum>
+                     </property>
+                     <property name="toolTip">
+                      <string>Accesspoint aktivieren</string>
+                     </property>
+                     <property name="statusTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>Accesspoint</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../pixmaps/network-wireless.png</normaloff>../pixmaps/network-wireless.png</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
+                     <property name="flat">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>5</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </widget>
@@ -2007,12 +1983,12 @@
                        <enum>Qt::Vertical</enum>
                       </property>
                       <property name="sizeType">
-                       <enum>QSizePolicy::MinimumExpanding</enum>
+                       <enum>QSizePolicy::Fixed</enum>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
                         <width>20</width>
-                        <height>20</height>
+                        <height>5</height>
                        </size>
                       </property>
                      </spacer>
@@ -2453,6 +2429,34 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>10</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="info_label">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -2529,9 +2533,6 @@
   <tabstop>aintervall</tabstop>
   <tabstop>ssintervall</tabstop>
   <tabstop>applist</tabstop>
-  <tabstop>showip</tabstop>
-  <tabstop>starthotspot</tabstop>
-  <tabstop>printconf</tabstop>
   <tabstop>firewall1</tabstop>
   <tabstop>port1</tabstop>
   <tabstop>firewall2</tabstop>

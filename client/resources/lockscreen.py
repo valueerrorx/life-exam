@@ -9,36 +9,41 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 
-import sys, os, subprocess
-from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPixmap, QIcon, QKeySequence
+import sys
+
 from PyQt5.QtCore import Qt
-from subprocess import Popen, PIPE, STDOUT
+from pathlib import Path
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.Qt import QStyle, QStyleOptionTitleBar 
 
 
-application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, application_path)
 
-
-
-from config.config import *
+# add application root to python path for imports at position 0 
+sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
 class ScreenlockWindow(QtWidgets.QMainWindow):
     def __init__(self):
         #super(ScreenlockWindow, self).__init__(parent)
         QtWidgets.QMainWindow.__init__(self)
-        self.setWindowIcon(QIcon("pixmaps/windowicon.png"))
+        #rootDir of Application
+        self.rootDir = Path(__file__).parent.parent
+        
+        icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
+        self.setWindowIcon(QIcon(icon))
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint )
         self.setStyleSheet("ScreenlockWindow {background-color: black;}")
         self.label = QtWidgets.QLabel("")
-        self.pixmap = QPixmap( os.path.join(APP_DIRECTORY, "pixmaps/windowicon.png"))
+        
+        icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
+        self.pixmap = QPixmap(icon)
         self.label.setPixmap(self.pixmap)
         self.label.setAlignment(Qt.AlignCenter)
         self.layout().addWidget(self.label)
         self.label.move(QtWidgets.QApplication.desktop().screen().rect().center()- self.rect().center())
         self.grabMouse()
         self.grabKeyboard()
-        self.grabShortcut(QKeySequence(Qt.AltModifier))
+        self.grabShortcut(QtGui.QKeySequence(Qt.AltModifier))
         self.setWindowModality(Qt.NonModal)
 
     def clickedEvent(self,event):
@@ -69,16 +74,17 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         self.move(0,0)
         event.ignore()
         pass
-
-
+    
+    def closeEvent(self, event):
+        ''' window tries to close '''
+        #now stay active unless client kills the process
+        #event.ignore()
 
 
 if __name__ == "__main__":
-    
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)  # @UndefinedVariable
     myapp = ScreenlockWindow()
     myapp.setGeometry(app.desktop().screenGeometry())
-    myapp.setFixedSize(6000, 6000)
+    myapp.setFixedSize(6000, 6000)    
     myapp.show()
     sys.exit(app.exec_())
-
