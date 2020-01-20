@@ -15,7 +15,7 @@ from PyQt5.QtCore import Qt
 from pathlib import Path
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.Qt import QStyle, QStyleOptionTitleBar
+from PyQt5.Qt import QStyle, QStyleOptionTitleBar 
 
 
 
