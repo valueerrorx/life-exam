@@ -65,6 +65,10 @@ function backupCurrentConfig(){
         cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
         cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
         cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
+        mv ${HOME}.config/libreoffice/4/user/autocorr/acor* ${BACKUPDIR}   # disable autoreplace 
+        sudo mv /usr/lib/libreoffice/share/autocorr/acor_de* ${BACKUPDIR}
+        sudo mv /usr/lib/libreoffice/share/autocorr/acor_en* ${BACKUPDIR}
+        sudo mv /usr/lib/libreoffice/share/autocorr/acor_fr* ${BACKUPDIR}
         #chrome
         cp -a ${HOME}.config/google-chrome/Default/Preferences ${BACKUPDIR}
         sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership

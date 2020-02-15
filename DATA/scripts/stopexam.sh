@@ -105,6 +105,10 @@ sleep 0.5
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
     
+    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   # enable autoreplace 
+    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/
+
+    
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 
     qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
