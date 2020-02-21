@@ -21,13 +21,13 @@ DELSHARE=$1
 # Check if root and running exam #
 #--------------------------------#
 if ! [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Not running an Exam - nothing to stop!' --title 'Starting Exam'
+    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
     sleep 2
     exit 0
 fi
 
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping ...' --title 'Starting Exam'
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
     exit 0
 fi
 
@@ -49,15 +49,22 @@ stopIPtables(){
     sudo iptables -t raw -X
 }
 
+
+
+
+
+
 #--------------------------------#
 # ASK FOR CONFIRMATION           #
 #--------------------------------#
-kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
-if [ "$?" = 0 ]; then
-  sleep 0
-else
-  exit 1   #cancel
-fi;
+
+
+    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
+    if [ "$?" = 0 ]; then
+        sleep 0
+    else
+        exit 1   #cancel
+    fi;
   
 
 
@@ -97,6 +104,10 @@ sleep 0.5
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
+    
+    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   # enable autoreplace 
+    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/
+
     
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 

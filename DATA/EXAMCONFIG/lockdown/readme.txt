@@ -1,5 +1,5 @@
-Diese Dateien beinhalten die spezielle Konfigurationen 
-die für einen gesperrten Desktop notwendig sind.
+Diese Dateien beinhalten die spezielle Konfiguration 
+die für einen gesperrten Desktop notwendig ist.
 
 Teilweise werden diese auch durch die Anpassung des Prüfungsdesktops verändert.
 

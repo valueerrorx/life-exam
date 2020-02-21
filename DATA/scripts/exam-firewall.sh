@@ -4,8 +4,8 @@
 # SERVER FILE #
 
 
-#logname seems to always deliver the current xsession user - no matter if you are using SUDO
-USER=$(logname)   
+
+USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
@@ -14,6 +14,7 @@ IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 # 10.0.0.1, 80
 # 10.2.2.22, 443
 # IPPORTARRAY = [ [10.0.01] , [80] ]
+
 
 
 setIPtables(){
@@ -112,7 +113,7 @@ stopIPtables(){
 
 
 
-if [[ "$1" = "start" ]]; then
+if [ "$1" = "start" ]; then
     echo "starting firewall"
     stopIPtables
     
