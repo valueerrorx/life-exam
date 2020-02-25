@@ -11,7 +11,7 @@ from pathlib import Path
 
 from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY
+    SCRIPTS_DIRECTORY, DEBUG_PIN
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot
@@ -48,6 +48,12 @@ class ServerUI(QtWidgets.QDialog):
         
         iconfile=self.rootDir.joinpath('pixmaps/windowicon.png').as_posix()
         self.ui.setWindowIcon(QIcon(iconfile))  # definiere icon für taskleiste
+        
+        #only debug if DEBUG_PIN is not ""
+        if DEBUG_PIN !="":
+            self.ui.setWindowTitle(".: DEBUG MODE :. - Exam Server - .: DEBUG MODE :.")
+        else:
+            self.ui.setWindowTitle("Exam Server")
                 
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)

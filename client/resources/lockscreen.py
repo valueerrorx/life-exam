@@ -77,8 +77,8 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         ''' window tries to close '''
-        #now stay active unless client kills the process
-        #event.ignore()
+        #now stay active unless client kills the process, also locks all ALt+F4 Keys etc.
+        #event.ignore() 
 
 
 if __name__ == "__main__":

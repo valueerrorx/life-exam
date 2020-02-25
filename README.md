@@ -1,5 +1,5 @@
 # life-exam-controlcenter 2
-A simple server/client application that allows to take over control of LiFE clients and provide a secure exam environment for schools.
+A server/client application that allows to take over control of LiFE clients and provide a secure exam environment for schools.
 
 This application is written in Python, PyQt and Twisted.
 
