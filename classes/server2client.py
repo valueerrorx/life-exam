@@ -86,7 +86,6 @@ class ServerToClient:
         else:
             client = self.get_client(who)
             client.sendEncodedLine(line % client.clientConnectionID)
-
         return True
 
 

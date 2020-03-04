@@ -27,7 +27,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
         #super(ScreenlockWindow, self).__init__(parent)
         QtWidgets.QMainWindow.__init__(self)
         #rootDir of Application
-        self.rootDir = Path(__file__).parent.parent
+        self.rootDir = Path(__file__).parent.parent.parent
         
         icon = self.rootDir.joinpath("pixmaps/windowicon.png").as_posix()
         self.setWindowIcon(QIcon(icon))
@@ -78,7 +78,7 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         ''' window tries to close '''
         #now stay active unless client kills the process, also locks all ALt+F4 Keys etc.
-        #event.ignore() 
+        event.ignore() 
 
 
 if __name__ == "__main__":

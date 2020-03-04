@@ -13,6 +13,10 @@ class Thread_Wait(QtCore.QThread):
     
     client_finished = pyqtSignal(str)
     client_received_file = pyqtSignal(MyCustomWidget)
+    client_lock_screen = pyqtSignal(str)
+    client_unlock_screen = pyqtSignal(str)
+    
+    
     running = False
     clients = []
     
@@ -23,10 +27,22 @@ class Thread_Wait(QtCore.QThread):
     def __del__(self):
         self.wait()
         
+    def fireEvent_Lock_Screen(self, who):
+        self.client_lock_screen.emit(who)
+        
+    def fireEvent_UnLock_Screen(self, who):
+        self.client_unlock_screen.emit(who)
+        
     def fireEvent_Abgabe_finished(self, who):
-        self.client_finished.emit(who)
+        self.client_finished.emit(who)   
     
-
+    def fireEvent_File_received(self, clientWidget):
+        """ client has received a file """
+        #delete client from list
+        if len(self.clients)>0:
+            self.deleteItemFromList(clientWidget.getName())
+            self.client_received_file.emit(clientWidget)
+            
     def deleteItemFromList(self, who):
         """ delete an Item from the client list """
         index=-1
@@ -38,15 +54,6 @@ class Thread_Wait(QtCore.QThread):
         #time critical only if you find an index
         if index!=-1:
             self.clients = self.clients[:index] + self.clients[index+1 :]
-        
-    
-    
-    def fireEvent_File_received(self, clientWidget):
-        """ client has received a file """
-        #delete client from list
-        if len(self.clients)>0:
-            self.deleteItemFromList(clientWidget.getName())
-            self.client_received_file.emit(clientWidget)
         
     def isAlive(self):
         if self.running:

@@ -26,11 +26,11 @@ from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
-from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done
+from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done,\
+    client_lock_screen, client_unlock_screen
 
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
-from PyQt5.QtWidgets import QToolTip
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -50,8 +50,10 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon(iconfile))  # definiere icon für taskleiste
         
         #only debug if DEBUG_PIN is not ""
+        debug_css=""
         if DEBUG_PIN !="":
             self.ui.setWindowTitle(".: DEBUG MODE :. - Exam Server - .: DEBUG MODE :.")
+            debug_css="QDialog{ background: #ffffbf; }"
         else:
             self.ui.setWindowTitle("Exam Server")
                 
@@ -113,25 +115,26 @@ class ServerUI(QtWidgets.QDialog):
         #connect Events        
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
         self.waiting_thread.client_received_file.connect(client_received_file_done)
+        self.waiting_thread.client_lock_screen.connect(client_lock_screen)
+        self.waiting_thread.client_unlock_screen.connect(client_unlock_screen)
         
         #CSS Styling
-        self.ui.listWidget.setStyleSheet( """QListWidget::item
-                {
+        self.ui.listWidget.setStyleSheet( """QListWidget::item{
                     background: rgb(255,255,255); 
                 }
-                QListWidget::item:selected
-                {
+                QListWidget::item:selected{
                     background: rgb(255,227,245);
                 }""")
-        self.ui.setStyleSheet("""QToolTip
-               { 
+        self.ui.setStyleSheet("""QToolTip{ 
                    background: #ffff96; 
                    color: #000000; 
                    border: 1px solid #666666;
-               }""")
+               }"""+debug_css)
+        
     
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
+        
             
     def testImage(self, filename):
         """ test if image is valid """
@@ -314,6 +317,9 @@ class ServerUI(QtWidgets.QDialog):
             
             #Waiting Thread
             self.waiting_thread.setClients(clients)
+            if self.waiting_thread:
+                self.waiting_thread.stop()
+            self.waiting_thread.start()
            
             
             msg = "Sending File %s to %s" % (os.path.basename(file_path), receiver)
@@ -710,6 +716,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.log("Found existing list widget for client connectionId %s" % client_connection_id )
                 return widget
         return False
+    
     
     def get_QListWidgetItem_by_client_id(self, client_id):
         """ 

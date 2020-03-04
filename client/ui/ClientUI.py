@@ -50,6 +50,13 @@ class ClientDialog(QtWidgets.QDialog, Observers):
          
         iconfile=self.rootDir.joinpath('pixmaps/windowicon.png').as_posix()
         self.ui.setWindowIcon(QIcon(iconfile))
+        #only debug if DEBUG_PIN is not ""
+        if DEBUG_PIN !="":
+            self.ui.setWindowTitle(".: DEBUG MODE :. - LiFE Exam - .: DEBUG MODE :.")
+            debug_css="QDialog{ background: #ffffbf; }"
+            self.ui.setStyleSheet(debug_css)
+        else:
+            self.ui.setWindowTitle("LiFE Exam")
         
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
         self.ui.start.clicked.connect(self._onStartExamClient)

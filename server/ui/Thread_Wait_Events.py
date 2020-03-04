@@ -24,4 +24,12 @@ def client_received_file_done(clientWidget):
     logger.info("Client %s has received a file ..." % clientWidget.getName())
     #set the status Icon
     clientWidget.setFileReceivedOK()
+  
+def client_lock_screen(who):
+    """ will be fired when client locks the screen """
+    logger.info("Client %s has locked the screen ..." % who)
+    
+def client_unlock_screen(who):
+    """ will be fired when client unlocks the screen """
+    logger.info("Client %s has un-locked the screen ..." % who)
     
