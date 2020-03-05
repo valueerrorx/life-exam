@@ -10,7 +10,7 @@ from server.resources.MyCustomWidget import MyCustomWidget
 
 
 class Thread_Wait(QtCore.QThread):
-    
+    """ ecents """
     client_finished = pyqtSignal(str)
     client_received_file = pyqtSignal(MyCustomWidget)
     client_lock_screen = pyqtSignal(str)
@@ -28,12 +28,15 @@ class Thread_Wait(QtCore.QThread):
         self.wait()
         
     def fireEvent_Lock_Screen(self, who):
+        """ client has locked the screen """
         self.client_lock_screen.emit(who)
         
     def fireEvent_UnLock_Screen(self, who):
+        """ client has unlocked the screen """
         self.client_unlock_screen.emit(who)
         
     def fireEvent_Abgabe_finished(self, who):
+        """ client has sended his Files """
         self.client_finished.emit(who)   
     
     def fireEvent_File_received(self, clientWidget):
@@ -71,8 +74,8 @@ class Thread_Wait(QtCore.QThread):
      
     def run(self):    
         """
-        on exit Exam, this thread waits for all Clients to sent their files,
-        the fireEvent() will be fired
+        this thread waits for all Clients to sent their OK for different
+        operations, an event() will be fired
         """
         self.running = True
         while(self.running):

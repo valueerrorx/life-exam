@@ -82,8 +82,9 @@ class MyClientProtocol(basic.LineReceiver):
             os.system(command)
             os._exit(1)
 
-    # twisted-Event: Data received > what schould i do?
+    
     def rawDataReceived(self, data):
+        """ twisted-Event: Data received > what schould i do? """
         print(self.line_data_list)
         filename = self.line_data_list[3]
         cleanup_abgabe = self.line_data_list[5]
@@ -247,7 +248,7 @@ class MyClientProtocol(basic.LineReceiver):
         # When the transfer is finished, we go back to the line mode  
         self.setLineMode()   
         #print("Filetransfer finished, switched back to LineMode")
-
+        
 
     def _activatePrinterconfig(self, file_path):
         """extracts the config folder /etc/cups moves it to /etc restarts cups service"""

@@ -69,24 +69,37 @@ class ClientToServer:
         client.factory.failcount = 100
 
     def lock_screen(self, client):
-        """Just locks the client screens
+        """Just locks the client screen
         :param client: ClientProtocol
-        :return:
         """
-
-        if client.line_data_list[0] == "LKS":
+        if client.line_data_list[0] == Command.LOCK.value:
             print("locking screen")
 
             # check if a serverprocess is running and do not lock screen if any 
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
             answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"],shell=True, stdout=subprocess.PIPE)
             answer = answer.communicate()[0].strip().decode()
+            
+            
+            #Test der Meldung an den Server 
+            line = '%s' % (Command.LOCKSCREEN_OK.value)
+            print("Sending Lock Screen OK")
+            client.sendEncodedLine(line)
+            
+            
             if not answer <= "1":
                 print("prevented locking of the teachers screen")
                 return
             
             startcommand = "exec %s/client/resources/lockscreen.py &" %(self.rootDir) #kill it if it already exists
             os.system(startcommand)
+            # send OK to Server
+            
+            
+            
+            
+            
+            
         else:
             print("closing lockscreen")
             startcommand = "exec pkill -9 -f lockscreen.py &"

@@ -28,6 +28,8 @@ class Command(Enum):
     UNLOCK = "ULKS"
     EXITEXAM = "EXIT"
     FILE_OK = "FO"
+    LOCKSCREEN_OK = "LKSOK"
+    UNLOCKSCREEN_OK = "ULKSOK"
     
     def tobytes(self):
         return bytes(self.value,'utf-8')

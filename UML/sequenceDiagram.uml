@@ -17,7 +17,7 @@ group twisted daemon examclient_plugin runs on client
 	Client -> Server: examclient_plugin: _sendFile(filename, filetype)
 	
 	
-	Server -> Thread: << Thread-Wait >>
+	Server -> Thread: << Thread-Wait >> wait for all clients\nMyServerProtocol:rawDataReceived -> fire Events
 	activate Thread
 	
 	Thread -> Client: server2client: exit_exam\nEXITEXAM
@@ -27,6 +27,16 @@ group twisted daemon examclient_plugin runs on client
 	Server -> Server: ServerUI: _onSendFile()
 	Server -> Client: server_to_client.send_file()
 	Client -> Server: examclient_plugin:\nrawDataReceived[DataType.FILE]: Command.FILE_OK
+	
+	note over Server: Lock Screens
+	Server -> Server: ServerUI: _onScreenlock()
+	Server -> Client: server_to_client.lock_screens()
+	Client -> Server: examclient_plugin:\nrawDataReceived[DataType.FILE]: Command.FILE_OK
+	
+	Server -> Thread: << Thread-Wait >> wait for all clients\nMyServerProtocol:rawDataReceived -> fire Events
+	activate Thread  
+	Thread -> Server: Repeat send lock_screen ???
+	deactivate Thread
 	
 	note over Client: START EXAM
 	Client -> Client: rawDataReceived():_startExam()

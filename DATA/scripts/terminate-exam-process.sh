@@ -15,7 +15,7 @@ fi
 if [ -f $PIDFILE ];
 then
     if [ "$(id -u)" != "0" ]; then
-        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam Config' --caption "Starting Exam Config"
+        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam Config'
         exit 1
     fi
 

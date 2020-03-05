@@ -113,6 +113,7 @@ class ServerUI(QtWidgets.QDialog):
         #Waiting Thread
         self.waiting_thread = Thread_Wait()
         #connect Events        
+        self.waiting_thread.client_finished.connect(self.client_abgabe_done)
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
         self.waiting_thread.client_received_file.connect(client_received_file_done)
         self.waiting_thread.client_lock_screen.connect(client_lock_screen)
@@ -210,11 +211,18 @@ class ServerUI(QtWidgets.QDialog):
 
 
     def _onScreenlock(self,who):
-        """locks the client screens"""
-        self._show_workingIndicator(1000, "Locke die Screens")
+        """locks or unlock the client screens"""
+        self._startWorkingIndicator("Locking Client Screens ... ")
+        
+        #Waiting Thread           
+        clients = self.get_list_widget_items()
+        self.waiting_thread.setClients(clients)
+        if self.waiting_thread:
+            self.waiting_thread.stop()
+        self.waiting_thread.start()
         
         if self.factory.clientslocked:
-            self.log("<b>UnLocking Client Screens </b>")
+            self.log("<b>UnLocking Client Screens</b>")
             icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png").as_posix()
             self.ui.screenlock.setIcon(QIcon(icon))
             self.factory.clientslocked = False
@@ -225,7 +233,7 @@ class ServerUI(QtWidgets.QDialog):
             if not self.factory.server_to_client.unlock_screens(who):
                 self.log("No clients connected")
         else:
-            self.log("<b>Locking Client Screens </b>")
+            self.log("<b>Locking Client Screens</b>")
             icon = self.rootDir.joinpath("pixmaps/unlock.png").as_posix()
             self.ui.screenlock.setIcon(QIcon(icon))
             self.factory.clientslocked = True
@@ -467,7 +475,6 @@ class ServerUI(QtWidgets.QDialog):
         #start Thread 
         self.log("Waiting for all Clients to send their Abgabe-Files")
         #on Event call        
-        self.waiting_thread.client_finished.connect(self.client_abgabe_done)
         self.waiting_thread.start()
         mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner/SHARE")
         
