@@ -68,12 +68,13 @@ class ClientToServer:
         mutual_functions.showDesktopMessage('Connection aborted by the Teacher!')
         client.factory.failcount = 100
 
+
     def lock_screen(self, client):
         """Just locks the client screen
         :param client: ClientProtocol
         """
         if client.line_data_list[0] == Command.LOCK.value:
-            print("locking screen")
+            print("Locking Screen")
 
             # check if a serverprocess is running and do not lock screen if any 
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
@@ -82,7 +83,7 @@ class ClientToServer:
             
             
             #Test der Meldung an den Server 
-            line = '%s' % (Command.LOCKSCREEN_OK.value)
+            line = '%s %s' % (Command.LOCKSCREEN_OK.value, client.factory.options['id'])
             print("Sending Lock Screen OK")
             client.sendEncodedLine(line)
             

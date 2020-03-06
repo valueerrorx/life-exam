@@ -60,111 +60,98 @@ class MyServerProtocol(basic.LineReceiver):
                 self.factory.disconnected_list.remove(self.clientName)   # this one is not coming back
             except:
                 return
-       
+    
     # twisted-Event: Data Received     
     def rawDataReceived(self, data):
-        #File_OK Signal?
-        if self.line_data_list[0]==Command.FILE_OK.value:
-            #a File was sent to the Client, Client says ok i have it
-            #fire Event to Thread
-            ui = self.factory.window
-            #get the client item from QListWidget
-            clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
-                        
-            ui.waiting_thread.fireEvent_File_received(clientWidget)
+        """ is handled, if Server is set in RawMode """
+        filename = self.line_data_list[2]
+        file_path = os.path.join(self.factory.files_path, filename)
+        # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
+        
+        if not self.file_handler:
+            self.file_handler = open(file_path, 'wb')
+
+        if data.endswith(b'\r\n'):  # Last chunk
+            data = data[:-2]
+            self.file_handler.write(data)
+            self.file_handler.close()
+            self.file_handler = None
+            self.setLineMode()
             #filetransfer finished "UNLOCK" fileopertions
-            self.factory.rawmode = False; 
+            self.factory.rawmode = False;  
+
+            # everything ok..  file received
+            if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):
+                msg = 'File %s has been successfully transferred' % (filename)  
+                self.factory.window.log(msg)
+                self.filetransfer_fail_count = 0
+                
+                """
+                Client is connecting
+                """
+                if self.line_data_list[1] == DataType.SCREENSHOT.value:
+                    # screenshot is received on initial connection  
+                    screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
+                    # move image to screenshot folder
+                    os.rename(file_path, screenshot_file_path)  
+                    # fix filepermission of transferred file
+                    mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  
+                    # make the clientscreenshot visible in the listWidget
+                    self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  
+                
+                elif self.line_data_list[1] == DataType.ABGABE.value:
+                    """
+                    End of Exam
+                    """
+                    #extract to unzipDIR / clientName / foldername without .zip (cut last four letters 
+                    #shutil.unpack_archive(file_path, extract_dir, 'tar')   
+                    #python3 only but twisted RPC is not ported to python3 yet
+                    extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])  
+                    user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
+                    
+                    #was there an exam? if not, we will receive this dummy.zip file
+                    if self.line_data_list[2] != "dummy.zip":
+                        #checks if filename is taken and renames this file in order to make room for the userfolder
+                        mutual_functions.checkIfFileExists(user_dir)  
+    
+                        with zipfile.ZipFile(file_path, "r") as zip_ref:
+                            zip_ref.extractall(extract_dir)
+                        #fix filepermission of transferred file
+                        mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
+                        
+                        #delete zip file 
+                        os.unlink(file_path)
+                        
+                        #Send Event to Wait Thread with Client Name
+                        ui = self.factory.window
+                        if ui.waiting_thread:
+                            ui.waiting_thread.fireEvent_Abgabe_finished(self.line_data_list[4])  
+                    
+                    
+            else:  # wrong file hash
+                os.unlink(file_path)
+                self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
+                
+                #string.encode()
+                #return an encoded version of the string as a bytes object
+                msg = Command.ENDMSG+"\r\n"
+                self.transport.write(msg.encode())
+                msg='File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename)
+                self.factory.window.log(msg)
+                self.logger.error(msg)
+                
+                # request file again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
+                if self.line_data_list[1] == DataType.ABGABE.value and self.filetransfer_fail_count <= 1:
+                    self.filetransfer_fail_count += 1
+                    msg='Failed transfers: %s' % (self.filetransfer_fail_count)
+                    self.factory.window.log(msg)
+                    self.logger.info(msg)
+                    self.factory.window._onAbgabe(self.clientConnectionID)
+                else:
+                    self.filetransfer_fail_count = 0
 
         else:
-            """ handle incoming byte data """
-            filename = self.line_data_list[2]
-            file_path = os.path.join(self.factory.files_path, filename)
-            # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
-            
-            if not self.file_handler:
-                self.file_handler = open(file_path, 'wb')
-    
-            if data.endswith(b'\r\n'):  # Last chunk
-                data = data[:-2]
-                self.file_handler.write(data)
-                self.file_handler.close()
-                self.file_handler = None
-                self.setLineMode()
-                #filetransfer finished "UNLOCK" fileopertions
-                self.factory.rawmode = False;  
-    
-                # everything ok..  file received
-                if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):
-                    msg = 'File %s has been successfully transferred' % (filename)  
-                    self.factory.window.log(msg)
-                    self.filetransfer_fail_count = 0
-                    
-                    """
-                    Client is connecting
-                    """
-                    if self.line_data_list[1] == DataType.SCREENSHOT.value:
-                        # screenshot is received on initial connection  
-                        screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
-                        # move image to screenshot folder
-                        os.rename(file_path, screenshot_file_path)  
-                        # fix filepermission of transferred file
-                        mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)  
-                        # make the clientscreenshot visible in the listWidget
-                        self.factory.window.createOrUpdateListItem(self, screenshot_file_path)  
-                    
-                    elif self.line_data_list[1] == DataType.ABGABE.value:
-                        """
-                        End of Exam
-                        """
-                        #extract to unzipDIR / clientName / foldername without .zip (cut last four letters 
-                        #shutil.unpack_archive(file_path, extract_dir, 'tar')   
-                        #python3 only but twisted RPC is not ported to python3 yet
-                        extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])  
-                        user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
-                        
-                        #was there an exam? if not, we will receive this dummy.zip file
-                        if self.line_data_list[2] != "dummy.zip":
-                            #checks if filename is taken and renames this file in order to make room for the userfolder
-                            mutual_functions.checkIfFileExists(user_dir)  
-        
-                            with zipfile.ZipFile(file_path, "r") as zip_ref:
-                                zip_ref.extractall(extract_dir)
-                            #fix filepermission of transferred file
-                            mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
-                            
-                            #delete zip file 
-                            os.unlink(file_path)
-                            
-                            #Send Event to Wait Thread with Client Name
-                            ui = self.factory.window
-                            if ui.waiting_thread:
-                                ui.waiting_thread.fireEvent_Abgabe_finished(self.line_data_list[4])  
-                        
-                        
-                else:  # wrong file hash
-                    os.unlink(file_path)
-                    self.transport.write(b'File was successfully transferred but not saved, due to invalid MD5 hash\n')
-                    
-                    #string.encode()
-                    #return an encoded version of the string as a bytes object
-                    msg = Command.ENDMSG+"\r\n"
-                    self.transport.write(msg.encode())
-                    msg='File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename)
-                    self.factory.window.log(msg)
-                    self.logger.error(msg)
-                    
-                    # request file again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
-                    if self.line_data_list[1] == DataType.ABGABE.value and self.filetransfer_fail_count <= 1:
-                        self.filetransfer_fail_count += 1
-                        msg='Failed transfers: %s' % (self.filetransfer_fail_count)
-                        self.factory.window.log(msg)
-                        self.logger.info(msg)
-                        self.factory.window._onAbgabe(self.clientConnectionID)
-                    else:
-                        self.filetransfer_fail_count = 0
-    
-            else:
-                self.file_handler.write(data)
+            self.file_handler.write(data)
 
 
     def sendEncodedLine(self,line):
@@ -179,7 +166,7 @@ class MyServerProtocol(basic.LineReceiver):
         if DEBUG_SHOW_NETWORKTRAFFIC:
             self.logger.debug(self.line_data_list)
             
-        self.line_dispatcher()    #pass "self" as "client"
+        self.line_dispatcher() 
 
 
     def line_dispatcher(self):
@@ -203,15 +190,40 @@ class MyServerProtocol(basic.LineReceiver):
         clientName = self.line_data_list[1]
         
         """
-        command = {
-            Command.AUTH.value: self._checkclientAuth, 
-            Command.FILETRANSFER.value: self._get_file_request,
-            Command.FILE_OK.value: self._get_file_request,
-        }
-            
-        line_handler = command.get(self.line_data_list[0], None)
-        line_handler()
-
+        try:
+            command = {
+                Command.AUTH.value:             self._checkclientAuth, 
+                Command.FILETRANSFER.value:     self._get_file_request,
+                Command.FILE_OK.value:          self._file_ok,
+                Command.LOCKSCREEN_OK.value:    self._lockscreen_ok,
+            }
+                
+            line_handler = command.get(self.line_data_list[0], None)
+            line_handler()
+        except:
+            self.logger.error("line_dispatcher: Command NOT Found ... doing nothing!")  
+    
+    
+    def _lockscreen_ok(self):   
+        """ a client has locked or unlocked the screen and sends OK """
+        #fire Event to Thread
+        ui = self.factory.window
+        #get the client item from QListWidget
+        clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
+        ui.waiting_thread.fireEvent_Lock_Screen(clientWidget)
+        
+        
+    def _file_ok(self):
+        """ a client has received a file sends OK """       
+        #fire Event to Thread
+        ui = self.factory.window
+        #get the client item from QListWidget
+        clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
+                    
+        ui.waiting_thread.fireEvent_File_received(clientWidget)
+        #filetransfer finished "UNLOCK" fileopertions
+        self.factory.rawmode = False;
+         
 
     def _get_file_request(self):
         """
