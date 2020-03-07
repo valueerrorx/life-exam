@@ -11,6 +11,7 @@ from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
     DEBUG_SHOW_NETWORKTRAFFIC
 import zipfile
 from classes.HTMLTextExtractor import html_to_text
+import sys
 
 class MyServerProtocol(basic.LineReceiver):
     """every new connection builds one MyServerProtocol object"""
@@ -191,6 +192,7 @@ class MyServerProtocol(basic.LineReceiver):
         
         """
         try:
+            #Dictionary
             command = {
                 Command.AUTH.value:             self._checkclientAuth, 
                 Command.FILETRANSFER.value:     self._get_file_request,
@@ -198,10 +200,12 @@ class MyServerProtocol(basic.LineReceiver):
                 Command.LOCKSCREEN_OK.value:    self._lockscreen_ok,
             }
                 
+            #Default is None if nothing is found
             line_handler = command.get(self.line_data_list[0], None)
             line_handler()
-        except:
-            self.logger.error("line_dispatcher: Command NOT Found ... doing nothing!")  
+        except Exception as e: 
+            self.logger.error("line_dispatcher: Command [%s] NOT Found ... doing nothing!" % self.line_data_list[0])
+            self.logger.error(e)  
     
     
     def _lockscreen_ok(self):   

@@ -27,7 +27,7 @@ from classes.HTMLTextExtractor import html_to_text
 from classes import mutual_functions
 from server.ui.Thread_Wait import Thread_Wait
 from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done,\
-    client_lock_screen, client_unlock_screen
+    client_lock_screen, client_unlock_screen, client_abgabe_done
 
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
@@ -90,6 +90,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.examlabeledit1.textChanged.connect(self._updateExamName)
         self.ui.ssintervall.valueChanged.connect(self._changeAutoscreenshot)
         self.ui.label_clients.setText(self.createClientsLabel())
+        #ProgressBar Network operations
+        self.ui.networkProgress.hide()
         
         self.filedialog = QtWidgets.QFileDialog()
         
@@ -113,26 +115,28 @@ class ServerUI(QtWidgets.QDialog):
         #Waiting Thread
         self.waiting_thread = Thread_Wait()
         #connect Events        
-        self.waiting_thread.client_finished.connect(self.client_abgabe_done)
+        self.waiting_thread.client_finished.connect(client_abgabe_done)
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
         self.waiting_thread.client_received_file.connect(client_received_file_done)
         self.waiting_thread.client_lock_screen.connect(client_lock_screen)
         self.waiting_thread.client_unlock_screen.connect(client_unlock_screen)
         
         #CSS Styling
-        self.ui.listWidget.setStyleSheet( """QListWidget::item{
-                    background: rgb(255,255,255); 
-                }
-                QListWidget::item:selected{
-                    background: rgb(255,227,245);
-                }""")
-        self.ui.setStyleSheet("""QToolTip{ 
-                   background: #ffff96; 
-                   color: #000000; 
-                   border: 1px solid #666666;
-               }"""+debug_css)
+        self.ui.listWidget.setStyleSheet( """
+            QListWidget::item{
+                background: rgb(255,255,255); 
+            }
+            QListWidget::item:selected{
+                background: rgb(255,227,245);
+            }""")
         
-    
+        self.ui.setStyleSheet("""
+            QToolTip{ 
+                background: #ffff96; 
+                color: #000000; 
+                border: 1px solid #666666;
+            }"""+debug_css)
+        
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
         
@@ -477,19 +481,7 @@ class ServerUI(QtWidgets.QDialog):
         #on Event call        
         self.waiting_thread.start()
         mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner/SHARE")
-        
-        
-    def client_abgabe_done(self, who):
-        """ will fired when Client has sent his Abgabe File """
-        
-        self.log("Client %s has finished sending Abgabe-File, now exiting ..." % who)
-        onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()   
-        #get from who the connectionID        
-        item = self.get_list_widget_by_client_name(who)
-        # then send the exam exit signal
-        if not self.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe):
-            pass
-
+    
 
     def _onStartHotspot(self):
         self._show_workingIndicator(500, "Starte Hotspot")

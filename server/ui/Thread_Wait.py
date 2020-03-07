@@ -10,11 +10,11 @@ from server.resources.MyCustomWidget import MyCustomWidget
 
 
 class Thread_Wait(QtCore.QThread):
-    """ ecents """
+    """ events """
     client_finished = pyqtSignal(str)
     client_received_file = pyqtSignal(MyCustomWidget)
-    client_lock_screen = pyqtSignal(str)
-    client_unlock_screen = pyqtSignal(str)
+    client_lock_screen = pyqtSignal(MyCustomWidget)
+    client_unlock_screen = pyqtSignal(MyCustomWidget)
     
     
     running = False
@@ -29,11 +29,13 @@ class Thread_Wait(QtCore.QThread):
         
     def fireEvent_Lock_Screen(self, who):
         """ client has locked the screen """
-        self.client_lock_screen.emit(who)
+        if len(self.clients)>0:
+            self.client_lock_screen.emit(who)
         
     def fireEvent_UnLock_Screen(self, who):
         """ client has unlocked the screen """
-        self.client_unlock_screen.emit(who)
+        if len(self.clients)>0:
+            self.client_unlock_screen.emit(who)
         
     def fireEvent_Abgabe_finished(self, who):
         """ client has sended his Files """
