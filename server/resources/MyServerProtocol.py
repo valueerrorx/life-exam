@@ -164,6 +164,7 @@ class MyServerProtocol(basic.LineReceiver):
         """whenever the CLIENT sent something """
         line = line.decode()  # we get bytes but need strings
         self.line_data_list = mutual_functions.clean_and_split_input(line)
+        
         if DEBUG_SHOW_NETWORKTRAFFIC:
             self.logger.debug(self.line_data_list)
             

@@ -6,15 +6,20 @@ import time
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
+
+from PyQt5.QtWidgets import QDialog
+
 from server.resources.MyCustomWidget import MyCustomWidget
+
+
 
 
 class Thread_Wait(QtCore.QThread):
     """ events """
     client_finished = pyqtSignal(str)
     client_received_file = pyqtSignal(MyCustomWidget)
-    client_lock_screen = pyqtSignal(MyCustomWidget)
-    client_unlock_screen = pyqtSignal(MyCustomWidget)
+    client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
+    client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
     
     
     running = False
@@ -23,6 +28,7 @@ class Thread_Wait(QtCore.QThread):
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
         self.running = False
+        self.parent = parent
         
     def __del__(self):
         self.wait()
@@ -30,12 +36,12 @@ class Thread_Wait(QtCore.QThread):
     def fireEvent_Lock_Screen(self, who):
         """ client has locked the screen """
         if len(self.clients)>0:
-            self.client_lock_screen.emit(who)
+            self.client_lock_screen.emit(self.parent, who)
         
     def fireEvent_UnLock_Screen(self, who):
         """ client has unlocked the screen """
         if len(self.clients)>0:
-            self.client_unlock_screen.emit(who)
+            self.client_unlock_screen.emit(self.parent, who)
         
     def fireEvent_Abgabe_finished(self, who):
         """ client has sended his Files """

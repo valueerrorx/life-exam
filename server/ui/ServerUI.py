@@ -31,6 +31,7 @@ from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_re
 
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
+from server.ui.NetworkProgressBar import NetworkProgressBar
 
 class ServerUI(QtWidgets.QDialog):
     def __init__(self, factory):
@@ -91,7 +92,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.ssintervall.valueChanged.connect(self._changeAutoscreenshot)
         self.ui.label_clients.setText(self.createClientsLabel())
         #ProgressBar Network operations
-        self.ui.networkProgress.hide()
+        self.networkProgress = NetworkProgressBar(self.ui.networkProgress)
         
         self.filedialog = QtWidgets.QFileDialog()
         
@@ -113,7 +114,7 @@ class ServerUI(QtWidgets.QDialog):
         findApps(self.ui.applist, self.ui.appview)
         
         #Waiting Thread
-        self.waiting_thread = Thread_Wait()
+        self.waiting_thread = Thread_Wait(self)
         #connect Events        
         self.waiting_thread.client_finished.connect(client_abgabe_done)
         self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
@@ -216,10 +217,12 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onScreenlock(self,who):
         """locks or unlock the client screens"""
+        clients = self.get_list_widget_items()
+        
         self._startWorkingIndicator("Locking Client Screens ... ")
+        self.networkProgress.show(len(clients))
         
         #Waiting Thread           
-        clients = self.get_list_widget_items()
         self.waiting_thread.setClients(clients)
         if self.waiting_thread:
             self.waiting_thread.stop()

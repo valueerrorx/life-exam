@@ -38,23 +38,16 @@ def client_abgabe_done(self, who):
             pass
 
   
-def client_lock_screen(who):
+def client_lock_screen(parent, who):
     """ will be fired when client locks the screen """
-    logger.info("Client %s has locked the screen ..." % who.getName())
+    parent.networkProgress.decrement()
+    if parent.networkProgress.value()==0:
+        #if there is an animation showing
+        parent.workinganimation.stop()
 
     
-def client_unlock_screen(who):
+def client_unlock_screen(parent, who):
     """ will be fired when client unlocks the screen """
-    logger.info("Client %s has un-locked the screen ..." % who.getName())
+    parent.networkProgress.decrement()  
 
-#------- no events, just Methods ----------------------------------
-    
-def showNetworkProgress(self, clients_count):
-        """ shows a ProgressBar for Network operations, the size equals number of clients """
-        self.ui.networkProgress.setMaximun(clients_count)
-        self.ui.networkProgress.setValue(clients_count)
-        self.ui.networkProgress.show()
-        
-def hideNetworkProgress(self):
-    self.ui.networkProgress.hide()
     
