@@ -18,12 +18,16 @@ def client_abgabe_done_exit_exam(who):
     mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, who))
 
         
-def client_received_file_done(clientWidget):
+def client_received_file_done(parent, clientWidget):
     """ will be fired, if a client has received a file that was sent by server """
     #event fired in MyServerProtocol
     logger.info("Client %s has received a file ..." % clientWidget.getName())
     #set the status Icon
     clientWidget.setFileReceivedOK()
+    parent.networkProgress.decrement()
+    if parent.networkProgress.value()==0:
+        #if there is an animation showing
+        parent.workinganimation.stop()
 
     
 def client_abgabe_done(self, who):
@@ -48,6 +52,9 @@ def client_lock_screen(parent, who):
     
 def client_unlock_screen(parent, who):
     """ will be fired when client unlocks the screen """
-    parent.networkProgress.decrement()  
+    parent.networkProgress.decrement()
+    if parent.networkProgress.value()==0:
+        #if there is an animation showing
+        parent.workinganimation.stop()  
 
     

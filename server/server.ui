@@ -2528,8 +2528,7 @@
           </property>
           <property name="styleSheet">
            <string notr="true">QProgressBar{
-  border: 2px solid grey;
-  border-radius: 5px;
+  border: 1px solid #eeeeee;
   text-align: center;
 }
 QProgressBar::chunk{

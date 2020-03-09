@@ -188,7 +188,7 @@ class MyCustomWidget (QtWidgets.QWidget):
        
     def setStatusIcon (self, imagePath):
         """
-        sets a status icon in one of the 5 places
+        sets a status icon in one of the 5 places, but only once a time
         """
         #choose next free slot
         index=0
@@ -235,11 +235,13 @@ class MyCustomWidget (QtWidgets.QWidget):
     def setFileReceivedOK(self):
         """ set all File received Icon """
         self.removeStatusIcon("pixmaps/file_cancel.png")
+        self.removeStatusIcon("pixmaps/file_ok.png")
         self.setStatusIcon("pixmaps/file_ok.png")
         
     def setFileReceivedERROR(self):
         """ set all File NOT Received icon """
         self.removeStatusIcon("pixmaps/file_ok.png")
+        self.removeStatusIcon("pixmaps/file_cancel.png")
         self.setStatusIcon("pixmaps/file_cancel.png")
         
         

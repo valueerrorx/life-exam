@@ -17,7 +17,7 @@ from server.resources.MyCustomWidget import MyCustomWidget
 class Thread_Wait(QtCore.QThread):
     """ events """
     client_finished = pyqtSignal(str)
-    client_received_file = pyqtSignal(MyCustomWidget)
+    client_received_file = pyqtSignal(QDialog, MyCustomWidget)
     client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
     client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
     
@@ -52,7 +52,7 @@ class Thread_Wait(QtCore.QThread):
         #delete client from list
         if len(self.clients)>0:
             self.deleteItemFromList(clientWidget.getName())
-            self.client_received_file.emit(clientWidget)
+            self.client_received_file.emit(self.parent, clientWidget)
             
     def deleteItemFromList(self, who):
         """ delete an Item from the client list """

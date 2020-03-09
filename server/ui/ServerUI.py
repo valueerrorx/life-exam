@@ -327,25 +327,27 @@ class ServerUI(QtWidgets.QDialog):
                 receiver = c.id
                 
             self._startWorkingIndicator("%s wird an %s gesendet" % (os.path.basename(file_path), receiver))
-             
-            success, filename, file_size, client_id = server_to_client.send_file(file_path, client_id, DataType.FILE.value)
             
             #Waiting Thread
             self.waiting_thread.setClients(clients)
             if self.waiting_thread:
                 self.waiting_thread.stop()
             self.waiting_thread.start()
-           
+            
+            self.networkProgress.show(len(clients))
+            
+            #here starts the bytestream
+            success, filename, file_size, client_id = server_to_client.send_file(file_path, client_id, DataType.FILE.value)
             
             msg = "Sending File %s to %s" % (os.path.basename(file_path), receiver)
             self.log(msg)
-
+            
             if success:
                 msg = '<b>Sending file:</b> %s (%d Byte) to <b> %s </b>' % (filename, file_size, receiver)
-                self.log(msg)
             else:
                 msg = '<b>Sending file:</b> Something went wrong sending file %s (%d KB) to <b> %s </b>' % (filename, file_size / 1024, receiver) 
-                self.log(msg)
+
+            self.log(msg)
             self.logger.info(html_to_text(msg))
         else:
             self.factory.rawmode = False;
