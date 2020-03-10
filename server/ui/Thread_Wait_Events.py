@@ -10,12 +10,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def client_abgabe_done_exit_exam(who):
+def client_abgabe_done_exit_exam(parent, who):
     """ will fired when Client has sent his Abgabe File """
     #event fired in MyServerProtocol
-    logger.info("Client %s has finished sending Abgabe-File ..." % who)
+    item = parent.get_list_widget_by_client_name(who)
+    logger.info("Client %s has finished sending Abgabe-File ..." % item.getID())
     #shoe in Filemanager
-    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, who))
+    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, item.getID()))
 
         
 def client_received_file_done(parent, clientWidget):
@@ -30,16 +31,20 @@ def client_received_file_done(parent, clientWidget):
         parent.workinganimation.stop()
 
     
-def client_abgabe_done(self, who):
-        """ will fired when Client has sent his Abgabe File """
-        
-        self.log("Client %s has finished sending Abgabe-File, now exiting ..." % who)
-        onexit_cleanup_abgabe = self.ui.exitcleanabgabe.checkState()   
-        #get from who the connectionID        
-        item = self.get_list_widget_by_client_name(who)
-        # then send the exam exit signal
-        if not self.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe):
-            pass
+def client_abgabe_done(parent, who):
+    """ will fired when Client has sent his Abgabe File """
+    onexit_cleanup_abgabe = parent.ui.exitcleanabgabe.checkState()
+    
+    parent.networkProgress.decrement()
+    if parent.networkProgress.value()==0:
+        #if there is an animation showing
+        parent.workinganimation.stop()
+       
+    #get from who the connectionID        
+    item = parent.get_list_widget_by_client_name(who)
+    parent.log("Client %s has finished sending Abgabe-File, now exiting ..." % item.getID())
+    # then send the exam exit signal
+    parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe)
 
   
 def client_lock_screen(parent, who):
@@ -57,4 +62,3 @@ def client_unlock_screen(parent, who):
         #if there is an animation showing
         parent.workinganimation.stop()  
 
-    

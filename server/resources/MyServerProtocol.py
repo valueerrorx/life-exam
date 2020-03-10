@@ -122,11 +122,12 @@ class MyServerProtocol(basic.LineReceiver):
                         
                         #delete zip file 
                         os.unlink(file_path)
-                        
-                        #Send Event to Wait Thread with Client Name
-                        ui = self.factory.window
-                        if ui.waiting_thread:
-                            ui.waiting_thread.fireEvent_Abgabe_finished(self.line_data_list[4])  
+                    
+                    #the network progress is allways handled    
+                    #Send Event to Wait Thread with Client Name
+                    ui = self.factory.window
+                    if ui.waiting_thread:
+                        ui.waiting_thread.fireEvent_Abgabe_finished(self.line_data_list[4])  
                     
                     
             else:  # wrong file hash

@@ -388,11 +388,25 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onAbgabe(self, who):
         """get SHARE folder from client"""
-        self._show_workingIndicator(500)
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
-        itime = 2000 if who is 'all' else 1000
-        self._show_workingIndicator(itime)
-
+        self._startWorkingIndicator('Abgabe ...')
+        
+        clients=[]
+        if who=="all":
+            clients = self.get_list_widget_items()
+        else:
+            c = self.get_list_widget_by_client_id(who)
+            clients.append(c)
+            
+        #Waiting Thread
+        self.log("Waiting for Client to send Abgabe-Files")
+        self.waiting_thread.setClients(clients)
+        if self.waiting_thread:
+            self.waiting_thread.stop()
+        self.waiting_thread.start()
+        
+        self.networkProgress.show(len(clients))
+       
         if self.factory.rawmode == True:
             self.log("Waiting for ongoing file-transfers to finish ...")
             return
@@ -402,13 +416,7 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False;     # UNLOCK all fileoperations 
             self.log("No clients connected")
-        
-        #start Thread 
-        self.log("Waiting for Client to send his Abgabe-Files")
-        if self.waiting_thread:
-            self.waiting_thread.stop()
-        self.waiting_thread.start()
-    
+       
 
     def _on_start_exam(self, who):
         """

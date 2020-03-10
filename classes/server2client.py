@@ -45,7 +45,18 @@ class ServerToClient:
             return client.clientName
         return False
     
-    
+    def send_to_receivers(self, who, line):
+        """ sends to all clients, or just to the selected """
+        if who is "all":
+            for clientid in self.clients:
+                client = self.get_client(clientid)
+                client.sendEncodedLine(line % client.clientConnectionID)
+        else:
+            try:
+                client = self.get_client(who)
+                client.sendEncodedLine(line % client.clientConnectionID)
+            except:
+                print("server2client: Some Error, clientID: %s" % client.clientConnectionID)
     
 
     ## client instructions ##
@@ -53,11 +64,7 @@ class ServerToClient:
         if not self.clients:
             return False
         line = "%s %s %s" % (Command.EXITEXAM.value, onexit_cleanup_abgabe, "%s")
-        if who is "all":
-            self.broadcast_line(line)
-        else:
-            client = self.get_client(who)
-            client.sendEncodedLine(line % client.clientConnectionID)    #replace %s in line with connectionID
+        self.send_to_receivers(who, line)
         return True
     
 
@@ -65,13 +72,7 @@ class ServerToClient:
         if not self.clients:
             return False
         line = "%s %s" % (Command.LOCK.value, "%s")
-        if who is "all":
-            for clientid in self.clients:
-                client = self.get_client(clientid)
-                client.sendEncodedLine(line % client.clientConnectionID)
-        else:
-            client = self.get_client(who)
-            client.sendEncodedLine(line % client.clientConnectionID)
+        self.send_to_receivers(who, line)
         return True
 
 
@@ -79,13 +80,7 @@ class ServerToClient:
         if not self.clients:
             return False
         line = "%s %s" % (Command.UNLOCK.value, "%s")
-        if who is "all":
-            for clientid in self.clients:
-                client = self.get_client(clientid)
-                client.sendEncodedLine(line % client.clientConnectionID)
-        else:
-            client = self.get_client(who)
-            client.sendEncodedLine(line % client.clientConnectionID)
+        self.send_to_receivers(who, line)
         return True
 
 
@@ -95,11 +90,7 @@ class ServerToClient:
             return False
 
         line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, "%s")
-        if who is "all":
-            self.broadcast_line(line)
-        else:
-            client = self.get_client(who)
-            client.sendEncodedLine(line % client.clientConnectionID  )
+        self.send_to_receivers(who, line)
         return True
 
 
@@ -110,12 +101,7 @@ class ServerToClient:
         filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H-%M-%S"), "%s")
         line = "%s %s %s %s none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.ABGABE.value, filename)
         
-        if who is "all":
-            self.broadcast_line(line)
-        else:
-            client = self.get_client(who)          
-            client.sendEncodedLine(line % client.clientConnectionID) # filename still has an empty %s to fill with client id
-
+        self.send_to_receivers(who, line)         
         return True
 
     

@@ -258,4 +258,5 @@ def showDesktopMessage(msg):
     
 def openFileManager(path):
     """ cross OS """
-    webbrowser.open('file:///' + path)
+    if os.path.exists(path):
+        webbrowser.open('file:///' + path)

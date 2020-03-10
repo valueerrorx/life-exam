@@ -16,7 +16,7 @@ from server.resources.MyCustomWidget import MyCustomWidget
 
 class Thread_Wait(QtCore.QThread):
     """ events """
-    client_finished = pyqtSignal(str)
+    client_finished = pyqtSignal(QDialog, str)
     client_received_file = pyqtSignal(QDialog, MyCustomWidget)
     client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
     client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
@@ -42,10 +42,12 @@ class Thread_Wait(QtCore.QThread):
         """ client has unlocked the screen """
         if len(self.clients)>0:
             self.client_unlock_screen.emit(self.parent, who)
+
         
     def fireEvent_Abgabe_finished(self, who):
         """ client has sended his Files """
-        self.client_finished.emit(who)   
+        self.client_finished.emit(self.parent, who)   
+
     
     def fireEvent_File_received(self, clientWidget):
         """ client has received a file """
