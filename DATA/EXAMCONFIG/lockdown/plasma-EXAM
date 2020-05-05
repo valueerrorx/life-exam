@@ -3,6 +3,24 @@ MidButton;NoModifier = org.kde.paste
 RightButton;NoModifier = org.kde.contextmenu
 wheel:Vertical;NoModifier = org.kde.switchdesktop
 
+[ActionPlugins][0][RightButton;NoModifier]
+_add panel = true
+_context = true
+_lock_screen = true
+_logout = true
+_run_command = true
+_sep1 = true
+_sep2 = true
+_sep3 = true
+_wallpaper = true
+add widgets = true
+configure = true
+configure shortcuts = false
+edit mode = true
+manage activities = true
+remove = true
+run associated application = true
+
 [ActionPlugins][1]
 RightButton;NoModifier = org.kde.contextmenu
 
@@ -15,97 +33,94 @@ location = 4
 plugin = org.kde.panel
 wallpaperplugin = org.kde.image
 
-[Containments][2][Applets][22][Configuration]
-PreloadWeight = 88
-
-[Containments][2][Applets][22][Configuration][General]
-alphaSort = true
-customButtonImage = /home/student/.life/icons/logo64white.png
-favoritesPortedToKAstats = true
-showRecentApps = false
-showRecentDocs = false
-useCustomButtonImage = true
-useExtraRunners = false
-
-[Containments][2][Applets][3][Configuration][General]
-favorites = preferred://browser,org.kde.discover.desktop,org.kde.kontact.desktop,org.kde.kate.desktop,libreoffice-startcenter.desktop,org.kde.dolphin.desktop,org.kde.ksysguard.desktop,systemsettings.desktop,org.kde.konsole.desktop
-favoritesPortedToKAstats = true
-showAppsByName = true
-
-[Containments][2][Applets][42]
+[Containments][2][Applets][25]
 immutability = 1
-plugin = org.kde.plasma.lock_logout
+plugin = org.kde.plasma.eventcalendar
 
-[Containments][2][Applets][42][Configuration]
-PreloadWeight = 0
+[Containments][2][Applets][25][Configuration]
+PreloadWeight = 28
 
-[Containments][2][Applets][42][Configuration][ConfigDialog]
-DialogHeight = 540
-DialogWidth = 720
+[Containments][2][Applets][25][Configuration][ConfigDialog]
+DialogHeight = 703
+DialogWidth = 1366
 
-[Containments][2][Applets][42][Configuration][General]
-show_lockScreen = false
+[Containments][2][Applets][25][Configuration][General]
+clock_line_2 = true
+clock_line_2_height_ratio = 0.45999999999999996
+clock_timeformat = hh:mm
+clock_timeformat_2 = dd.MM.yy
+
+[Containments][2][Applets][25][Configuration][Google Calendar]
+calendar_list = W10=
+events_pollinterval = 60
+
+[Containments][2][Applets][25][Configuration][Weather]
+weather_city_id = 2774326
+
+[Containments][2][Applets][48]
+immutability = 1
+plugin = org.kde.plasma.panelspacer
+
+[Containments][2][Applets][48][Configuration]
+PreloadWeight = 26
+
+[Containments][2][Applets][48][Configuration][General]
+expanding = false
+length = 9
 
 [Containments][2][Applets][5]
 immutability = 1
 plugin = org.kde.plasma.taskmanager
 
 [Containments][2][Applets][5][Configuration]
-PreloadWeight = 0
+PreloadWeight = 18
 
 [Containments][2][Applets][5][Configuration][ConfigDialog]
-DialogHeight = 705
-DialogWidth = 1366
+DialogHeight = 540
+DialogWidth = 720
 
 [Containments][2][Applets][5][Configuration][General]
 groupingStrategy = 0
-launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:org.kde.calligrawords.desktop,applications:libreoffice-writer.desktop,applications:geogebra-classic.desktop
 maxStripes = 1
-middleClickAction = NewInstance
-sortingStrategy = 1
 wheelEnabled = false
+launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
+
+[Containments][2][Applets][50]
+immutability = 1
+plugin = org.kde.plasma.lock_logout
+
+[Containments][2][Applets][50][Configuration][ConfigDialog]
+DialogHeight = 540
+DialogWidth = 720
+
+[Containments][2][Applets][50][Configuration][General]
+show_lockScreen = false
+
+[Containments][2][Applets][51]
+immutability = 1
+plugin = org.kde.lifename
 
 [Containments][2][Applets][6]
 immutability = 1
 plugin = org.kde.plasma.systemtray
 
 [Containments][2][Applets][6][Configuration]
-PreloadWeight = 0
+PreloadWeight = 58
 SystrayContainmentId = 7
-
-[Containments][2][Applets][8]
-immutability = 1
-plugin = org.kde.plasma.digitalclock
-
-[Containments][2][Applets][8][Configuration]
-PreloadWeight = 0
-
-[Containments][2][Applets][8][Configuration][Appearance]
-showDate = true
-use24hFormat = 2
-
-[Containments][2][Applets][8][Configuration][ConfigDialog]
-DialogHeight = 540
-DialogWidth = 720
-
-
-[Containments][2][Applets][200]
-immutability = 1
-plugin = org.kde.lifename
-
 
 [Containments][2][ConfigDialog]
 DialogHeight = 84
 DialogWidth = 1366
 
 [Containments][2][Configuration]
-PreloadWeight = 0
+PreloadWeight = 18
 
 [Containments][2][General]
-AppletOrder = 5;200;6;8;42
+AppletOrder = 48;5;51;6;25;50
 
-[Containments][21]
-activityId = ec70fc74-8c27-4ea2-865d-3fc85484aa26
+[Containments][22]
+ItemGeometriesHorizontal = Applet-24:32,48,464,272,0;Applet-45:496,48,80,80,0;
+activityId = c9697392-e302-4ed3-80cb-ab331240871c
 formfactor = 0
 immutability = 1
 lastScreen = 0
@@ -113,7 +128,7 @@ location = 0
 plugin = org.kde.desktopcontainment
 wallpaperplugin = org.kde.image
 
-[Containments][21][Applets][23]
+[Containments][22][Applets][24]
 activityId = ""
 formfactor = 0
 immutability = 1
@@ -122,7 +137,7 @@ location = 0
 plugin = org.kde.plasma.folder
 wallpaperplugin = ""
 
-[Containments][21][Applets][23][Configuration]
+[Containments][22][Applets][24][Configuration]
 PreloadWeight = 0
 activityId = ""
 formfactor = 0
@@ -132,36 +147,35 @@ location = 0
 plugin = org.kde.plasma.folder
 wallpaperplugin = ""
 
-[Containments][21][Applets][23][Configuration][ConfigDialog]
+[Containments][22][Applets][24][Configuration][ConfigDialog]
 DialogHeight = 540
 DialogWidth = 720
 
-[Containments][21][Applets][23][Configuration][General]
+[Containments][22][Applets][24][Configuration][General]
 url = file:///home/student/SHARE
 
-[Containments][21][Applets][31]
+[Containments][22][Applets][45]
 immutability = 1
 plugin = org.kde.plasma.icon
 
-[Containments][21][Applets][31][Configuration]
-PreloadWeight = 0
+[Containments][22][Applets][45][Configuration]
+PreloadWeight = 26
 localPath = /home/student/.local/share/plasma_icons/Exam Student.desktop
 url = file:///home/student/.local/share/applications/Exam Student.desktop
 
-[Containments][21][ConfigDialog]
-DialogHeight = 705
-DialogWidth = 892
+[Containments][22][ConfigDialog]
+DialogHeight = 611
+DialogWidth = 1004
 
-[Containments][21][Configuration]
-PreloadWeight = 0
+[Containments][22][Configuration]
+PreloadWeight = 18
 
-[Containments][21][General]
-ItemsGeometries = Applet-23:16,16,544,320,0;Applet-31:16,368,144,80,0;
-pressToMove = false
-showToolbox = false
+[Containments][22][General]
+ToolBoxButtonState = topcenter
+ToolBoxButtonX = 389
 
-[Containments][21][Wallpaper][org.kde.image][General]
-Image = file:///home/student/.life/wallpapers/life-exam.png
+[Containments][22][Wallpaper][org.kde.image][General]
+Image = file:///home/student/.life/wallpapers/life-exam.jpg
 
 [Containments][7]
 activityId = ""
@@ -172,80 +186,108 @@ location = 4
 plugin = org.kde.plasma.private.systemtray
 wallpaperplugin = org.kde.image
 
+[Containments][7][Applets][10]
+immutability = 1
+plugin = org.kde.plasma.volume
+
 [Containments][7][Applets][10][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
+
+[Containments][7][Applets][11]
+immutability = 1
+plugin = org.kde.plasma.clipboard
 
 [Containments][7][Applets][11][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
 
 [Containments][7][Applets][12]
 immutability = 1
-plugin = org.kde.plasma.printmanager
+plugin = org.kde.plasma.devicenotifier
 
 [Containments][7][Applets][12][Configuration]
-PreloadWeight = 0
+PreloadWeight = 43
+
+[Containments][7][Applets][13]
+immutability = 1
+plugin = org.kde.kdeconnect
 
 [Containments][7][Applets][13][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
+
+[Containments][7][Applets][14]
+immutability = 1
+plugin = org.kde.plasma.keyboardindicator
 
 [Containments][7][Applets][14][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
+
+[Containments][7][Applets][15]
+immutability = 1
+plugin = org.kde.plasma.nightcolorcontrol
 
 [Containments][7][Applets][15][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
+
+[Containments][7][Applets][16]
+immutability = 1
+plugin = org.kde.plasma.notifications
 
 [Containments][7][Applets][16][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
+
+[Containments][7][Applets][17]
+immutability = 1
+plugin = org.kde.plasma.printmanager
 
 [Containments][7][Applets][17][Configuration]
-PreloadWeight = 42
+PreloadWeight = 18
 
 [Containments][7][Applets][18]
 immutability = 1
-plugin = org.kde.plasma.battery
+plugin = org.kde.plasma.vault
 
 [Containments][7][Applets][18][Configuration]
-PreloadWeight = 0
+PreloadWeight = 18
 
 [Containments][7][Applets][19]
 immutability = 1
-plugin = org.kde.plasma.networkmanagement
+plugin = org.kde.plasma.battery
 
 [Containments][7][Applets][19][Configuration]
-PreloadWeight = 0
+PreloadWeight = 18
+
+[Containments][7][Applets][20]
+immutability = 1
+plugin = org.kde.plasma.networkmanagement
 
 [Containments][7][Applets][20][Configuration]
-PreloadWeight = 42
+PreloadWeight = 28
 
-[Containments][7][Applets][24][Configuration]
-PreloadWeight = 42
+[Containments][7][Applets][21]
+immutability = 1
+plugin = org.kde.plasma.bluetooth
 
-[Containments][7][Applets][25]
+[Containments][7][Applets][21][Configuration]
+PreloadWeight = 18
+
+[Containments][7][Applets][31]
 immutability = 1
 plugin = org.kde.plasma.mediacontroller
 
-[Containments][7][Applets][25][Configuration]
-PreloadWeight = 0
+[Containments][7][Applets][31][Configuration]
+PreloadWeight = 26
 
 [Containments][7][ConfigDialog]
-DialogHeight = 699
+DialogHeight = 540
 DialogWidth = 720
 
 [Containments][7][Configuration]
-PreloadWeight = 0
+PreloadWeight = 18
 
 [Containments][7][General]
-applicationStatusShown = false
-communicationsShown = false
-extraItems = org.kde.plasma.networkmanagement,org.kde.plasma.battery,org.kde.plasma.printmanager
-hiddenItems = org.kde.plasma.vault,org.kde.plasma.clipboard
-knownItems = org.kde.plasma.notifications,org.kde.plasma.volume,org.kde.plasma.mediacontroller,org.kde.plasma.networkmanagement,org.kde.plasma.bluetooth,org.kde.discovernotifier,org.kde.plasma.vault,org.kde.plasma.printmanager,org.kde.plasma.clipboard,org.kde.plasma.battery,org.kde.kdeconnect,org.kde.plasma.devicenotifier,org.kde.plasma.keyboardindicator
-miscellaneousShown = false
-shownItems = org.kde.plasma.printmanager,org.kde.plasma.networkmanagement,org.kde.plasma.battery
-systemServicesShown = false
-
-[General]
-immutability = 2
+extraItems = org.kde.plasma.devicenotifier,org.kde.plasma.printmanager,org.kde.plasma.mediacontroller,org.kde.plasma.keyboardindicator,org.kde.kdeconnect,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.clipboard,org.kde.plasma.bluetooth,org.kde.plasma.vault,org.kde.plasma.nightcolorcontrol,org.kde.plasma.volume,org.kde.plasma.battery,Discover Notifier_org.kde.DiscoverNotifier
+hiddenItems = Discover Notifier_org.kde.DiscoverNotifier
+knownItems = org.kde.plasma.devicenotifier,org.kde.plasma.printmanager,org.kde.plasma.mediacontroller,org.kde.plasma.keyboardindicator,org.kde.kdeconnect,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.clipboard,org.kde.plasma.bluetooth,org.kde.plasma.vault,org.kde.plasma.nightcolorcontrol,org.kde.plasma.volume,org.kde.plasma.battery
 
 [ScreenMapping]
 itemsOnDisabledScreens = ""
