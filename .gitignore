@@ -5,10 +5,9 @@
 *.log*
 .idea
 
-push.sh
-commit.sh
 .settings
 .spyproject
 .project
 .pydevproject
 plantuml.jar
+git2SSH.sh
