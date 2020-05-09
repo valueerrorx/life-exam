@@ -27,12 +27,13 @@ def findApps(applistwidget, appview):
     for line in apps.split('\n'):
         if line == "\n":
             continue
+        
+        print(line)
 
         fields = [final.strip() for final in line.split('/')]
         
-        filepath1 = Path("/usr/share/applications/%s" %fields[-1])
-        filepath2 = Path("%s/.local/share/applications/%s" %(USER_HOME_DIR,fields[-1]))
-    
+        filepath1 = Path("/usr/share/applications/%s" % fields[-1])
+        filepath2 = Path("%s/.local/share/applications/%s" % (USER_HOME_DIR,fields[-1]))
         
         if filepath1.is_file():
             desktopfilelocation = filepath1
@@ -121,21 +122,25 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         desktop_filename = desktop_filename[2]
         
         thisapp = [desktop_filepath, desktop_filename, "", ""]
-        file_lines = open(desktop_filepath, 'r').readlines() 
         
-        if file_lines != "":
-            for line in file_lines:
-                if line == "\n":
-                    continue
-                elif line.startswith("Name="):   # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
-                    fields = [final.strip() for final in line.split('=')]
-                    if thisapp[2] == "":   #only write this once
-                        thisapp[2] = fields[1]
-                elif line.startswith("Icon="):
-                    fields = [final.strip() for final in line.split('=')]
-                    thisapp[3] = fields[1]
-
-        applist.append(thisapp)
+        try:
+            #read teh desktop File
+            file_lines = open(desktop_filepath, 'r').readlines() 
+            if file_lines != "":
+                for line in file_lines:
+                    if line == "\n":
+                        continue
+                    elif line.startswith("Name="):   # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
+                        fields = [final.strip() for final in line.split('=')]
+                        if thisapp[2] == "":   #only write this once
+                            thisapp[2] = fields[1]
+                    elif line.startswith("Icon="):
+                        fields = [final.strip() for final in line.split('=')]
+                        thisapp[3] = fields[1]
+    
+            applist.append(thisapp)
+        except (IOError, OSError) as e:
+            print(e)
     
     #sort applist and put most used apps on top  
     final_applist = create_app_ranking(applist)

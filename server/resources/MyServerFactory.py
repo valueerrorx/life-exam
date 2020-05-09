@@ -48,7 +48,7 @@ class MyServerFactory(protocol.ServerFactory):
         
         intervall = self.window.ui.ssintervall.value()
 
-        if intervall is not 0:
+        if intervall != 0:
             self.window.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
             self.lcs.start(intervall)
         else:
