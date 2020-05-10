@@ -7,3 +7,4 @@ encoding//client/ui/ClientUI.py=utf-8
 encoding//config/config.py=utf-8
 encoding//server/resources/Applist.py=utf-8
 encoding//server/resources/MyServerFactory.py=utf-8
+encoding//server/ui/ServerUI.py=utf-8

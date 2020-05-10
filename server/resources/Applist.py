@@ -12,6 +12,7 @@ import re
 import yaml
 import subprocess
 from config.config import USER_HOME_DIR, PLASMACONFIG
+from classes.CmdRunner import CmdRunner
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
@@ -27,9 +28,6 @@ def findApps(applistwidget, appview):
     for line in apps.split('\n'):
         if line == "\n":
             continue
-        
-        print(line)
-
         fields = [final.strip() for final in line.split('/')]
         
         filepath1 = Path("/usr/share/applications/%s" % fields[-1])
@@ -123,24 +121,33 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         
         thisapp = [desktop_filepath, desktop_filename, "", ""]
         
-        try:
-            #read teh desktop File
-            file_lines = open(desktop_filepath, 'r').readlines() 
-            if file_lines != "":
-                for line in file_lines:
-                    if line == "\n":
-                        continue
-                    elif line.startswith("Name="):   # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
-                        fields = [final.strip() for final in line.split('=')]
-                        if thisapp[2] == "":   #only write this once
-                            thisapp[2] = fields[1]
-                    elif line.startswith("Icon="):
-                        fields = [final.strip() for final in line.split('=')]
-                        thisapp[3] = fields[1]
+        #read the desktop File
+        cmdRunner = CmdRunner()
+        cmd = "cat %s" % desktop_filepath
+        cmdRunner.runCmd(cmd)
+        file_lines = cmdRunner.getLines()
+            
+        #file_lines = open(desktop_filepath, 'r').readlines() 
+        if file_lines != "":
+            for line in file_lines:
+                if line == "\n":
+                    continue
+                elif line.startswith("Name="):   # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
+                    fields = [final.strip() for final in line.split('=')]
+                    if thisapp[2] == "":   #only write this once
+                        thisapp[2] = fields[1]
+                elif line.startswith("Icon="):
+                    fields = [final.strip() for final in line.split('=')]
+                    thisapp[3] = fields[1]
+
+        applist.append(thisapp)
+        
+        
+        
+        #try:
     
-            applist.append(thisapp)
-        except (IOError, OSError) as e:
-            print(e)
+        #except (IOError, OSError) as e:
+        #    print(e)
     
     #sort applist and put most used apps on top  
     final_applist = create_app_ranking(applist)
