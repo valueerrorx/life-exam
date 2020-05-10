@@ -32,7 +32,7 @@ class CmdRunner():
         for line in iter(proc.stdout.readline, b''):
             self._stdout += line.decode()
         proc.communicate()
-        time.sleep(0.5)
+
         
     def runCmdasUID(self, cmd, uid, guid):
         ''' runs a command as a specific User'''
@@ -52,7 +52,7 @@ class CmdRunner():
         for line in iter(proc.stdout.readline, b''):
             self._stdout += line.decode()
         proc.communicate()
-        time.sleep(0.5)
+
             
     def check_username(self):
         """Check who is running this script"""

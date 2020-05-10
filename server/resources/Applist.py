@@ -43,9 +43,17 @@ def findApps(applistwidget, appview):
         
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
-    
+
+    desktop_files_list = clearDoubles(desktop_files_list)    
     listInstalledApplications(applistwidget, desktop_files_list, appview)
 
+
+def clearDoubles(apps):
+    ''' delete doubles, because they can be in global menue or local at the same time '''
+    # using list comprehension to remove duplicated from list  
+    res = [] 
+    [res.append(x) for x in apps if x not in res]
+    return res 
 
 def load_yml():
     """
@@ -108,6 +116,15 @@ def create_app_ranking(applist):
     return final_applist + other_applist
 
 
+def _esc_char(match):
+    return '\\' + match.group(0)
+
+def makeFilenameSafe(filename):
+    ''' If Filename has spaces, then escape them '''
+    _to_esc = re.compile(r'\s')
+    return _to_esc.sub(_esc_char, filename)
+    
+
 def listInstalledApplications(applistwidget, desktop_files_list, appview):
     """
     builds a final_applist that contains, desktopfilepath, filename, name, icon
@@ -115,6 +132,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     """
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
         
+    cmdRunner = CmdRunner()
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
         desktop_filename = desktop_filename[2]
@@ -122,32 +140,27 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         thisapp = [desktop_filepath, desktop_filename, "", ""]
         
         #read the desktop File
-        cmdRunner = CmdRunner()
-        cmd = "cat %s" % desktop_filepath
+        cmd = "cat %s" % makeFilenameSafe(desktop_filepath)
         cmdRunner.runCmd(cmd)
         file_lines = cmdRunner.getLines()
-            
-        #file_lines = open(desktop_filepath, 'r').readlines() 
-        if file_lines != "":
+
+        #didnt work anymore because of user rights problem   
+        #file_lines = open(desktop_filepath, 'r').readlines()
+        #print("%s %s" % (len(file_lines), desktop_filepath)) 
+        if len(file_lines)>1:
             for line in file_lines:
                 if line == "\n":
                     continue
-                elif line.startswith("Name="):   # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
+                # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
+                elif line.startswith("Name="):   
                     fields = [final.strip() for final in line.split('=')]
                     if thisapp[2] == "":   #only write this once
-                        thisapp[2] = fields[1]
+                        thisapp[2] = fields[1] 
                 elif line.startswith("Icon="):
                     fields = [final.strip() for final in line.split('=')]
                     thisapp[3] = fields[1]
-
+                
         applist.append(thisapp)
-        
-        
-        
-        #try:
-    
-        #except (IOError, OSError) as e:
-        #    print(e)
     
     #sort applist and put most used apps on top  
     final_applist = create_app_ranking(applist)
@@ -161,7 +174,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         if child.widget():
             child.widget().deleteLater()
         
-    #what apps allready added as selectet
+    #what apps allready added as selected
     apps_added=[]
     for APP in final_applist:   
         item = QtWidgets.QListWidgetItem()
