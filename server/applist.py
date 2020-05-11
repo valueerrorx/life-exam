@@ -1,21 +1,14 @@
-#!/usr/bin/env python3
+ #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from configobj import ConfigObj
+import subprocess
 from pathlib import Path
+from config.config import *
 
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QSize
-
-import re 
-import yaml
-import subprocess
-from config.config import USER_HOME_DIR, PLASMACONFIG
-from classes.CmdRunner import CmdRunner
-import logging
-
-path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
+from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtCore import Qt, QSize
 
 
 def findApps(applistwidget, appview):
@@ -26,13 +19,16 @@ def findApps(applistwidget, appview):
     apps = apps.decode()
     desktop_files_list=[]
     
+    
     for line in apps.split('\n'):
         if line == "\n":
             continue
+
         fields = [final.strip() for final in line.split('/')]
         
-        filepath1 = Path("/usr/share/applications/%s" % fields[-1])
-        filepath2 = Path("%s/.local/share/applications/%s" % (USER_HOME_DIR,fields[-1]))
+        filepath1 = Path("/usr/share/applications/%s" %fields[-1])
+        filepath2 = Path("%s/.local/share/applications/%s" %(USER_HOME_DIR,fields[-1]))
+    
         
         if filepath1.is_file():
             desktopfilelocation = filepath1
@@ -44,108 +40,12 @@ def findApps(applistwidget, appview):
         
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
-
-    desktop_files_list = clearDoubles(desktop_files_list)    
+    
     listInstalledApplications(applistwidget, desktop_files_list, appview)
 
 
-def clearDoubles(apps):
-    ''' delete doubles, because they can be in global menue or local at the same time '''
-    # using list comprehension to remove duplicated from list  
-    res = [] 
-    [res.append(x) for x in apps if x not in res]
-    return res 
-
-def load_yml():
-    """
-    Load the yaml file config/appranking.yaml 
-    """
-    with open(path_to_yml, 'rt') as f:
-        yml = yaml.safe_load(f.read())
-    return yml['apps']
-
-def create_pattern(data):
-    """
-    Creates a Regex Pattern from array
-    """
-    erg = ".*("
-    for i in data:
-        erg += i + "|"
-    #delete last |
-    erg = erg[:-1]
-    erg += ").*"
-    return erg
-
-def remove_duplicates(other_applist):
-    """
-    find and remove Duplicates in this AppArray
-    """
-    seen = set()
-    newlist = []
-    for item in other_applist:
-        t = tuple(item)
-        if t not in seen:
-            newlist.append(item)
-            seen.add(t)
-    return newlist
-    
-
-def create_app_ranking(applist):
-    """
-    Important Apps moving to the top
-    delete Kate new Window App
-    """
-    final_applist = []
-    other_applist = []
-    yml = load_yml()
-    index = 0
-    
-    for key in yml:
-        pattern = create_pattern(yml[key])
-        for app in applist:  
-            if app[1] != "org.kde.kate-2.desktop":     
-                match = re.search(pattern, app[2])
-                if match:
-                    final_applist.insert(index, app)
-                    index += 1
-                else:
-                    other_applist.append(app)
-    other_applist = remove_duplicates(other_applist)
-    #other_applist sortieren
-    other_applist.sort()                
-                
-    return final_applist + other_applist
 
 
-def _esc_char(match):
-    return '\\' + match.group(0)
-
-def makeFilenameSafe(filename):
-    ''' If Filename has spaces, then escape them '''
-    _to_esc = re.compile(r'\s')
-    return _to_esc.sub(_esc_char, filename)
-    
-def fallbackIcon(APP):
-    ''' 
-    if an icon is Null from List, try to extract the name from the file.desktop name
-    e.g. from 'libreoffice-calc.desktop' icon is 'libreoffice-document-new' > try 'libreoffice-calc'
-    '''
-    logger = logging.getLogger(__name__)
-    name = APP[1]
-    data = name.split('.')
-    icon = QIcon.fromTheme(data[0])
-    if icon.isNull():
-        ''' also not possible than common fallback '''
-        logger.error('No icon with filename %s found' % APP[1])
-        
-        relativeDir = Path(__file__).parent.parent.parent
-        iconfile=relativeDir.joinpath('pixmaps/empty_icon.png').as_posix()
-
-        
-        return QIcon(iconfile)
-    else:
-        return icon
-    
 
 def listInstalledApplications(applistwidget, desktop_files_list, appview):
     """
@@ -154,39 +54,41 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     """
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
         
-    cmdRunner = CmdRunner()
+        
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
         desktop_filename = desktop_filename[2]
         
         thisapp = [desktop_filepath, desktop_filename, "", ""]
+        file_lines = open(desktop_filepath, 'r').readlines() 
         
-        #read the desktop File
-        cmd = "cat %s" % makeFilenameSafe(desktop_filepath)
-        cmdRunner.runCmd(cmd)
-        file_lines = cmdRunner.getLines()
-
-        #didnt work anymore because of user rights problem   
-        #file_lines = open(desktop_filepath, 'r').readlines()
-        #print("%s %s" % (len(file_lines), desktop_filepath)) 
-        if len(file_lines)>1:
+        if file_lines != "":
             for line in file_lines:
                 if line == "\n":
                     continue
-                # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
-                elif line.startswith("Name="):   
+                elif line.startswith("Name="):   # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
                     fields = [final.strip() for final in line.split('=')]
                     if thisapp[2] == "":   #only write this once
-                        thisapp[2] = fields[1] 
+                        thisapp[2] = fields[1]
                 elif line.startswith("Icon="):
                     fields = [final.strip() for final in line.split('=')]
                     thisapp[3] = fields[1]
-                
+
         applist.append(thisapp)
     
     #sort applist and put most used apps on top  
-    final_applist = create_app_ranking(applist)
-    #what apps are activated and stored in OLD Config?
+    final_applist = []
+    for app in applist:
+        if app[2] == "GeoGebra" or app[2] == "Kate" or app[2] == "GeoGebra Classic":
+            final_applist.insert(0, app)
+        elif app[2] == "KCalc"  or app[2] == "Calligra Words"  or app[2] == "LibreOffice Calc"  or app[2] == "LibreOffice Writer"  :
+            final_applist.insert(1, app)
+        elif app[2] == "Musescore"  or app[2] == "Audacity":
+            final_applist.insert(2, app)
+        else:
+            final_applist.append(app)
+            
+
     activated_apps = get_activated_apps()
     
     #clear appview first
@@ -196,9 +98,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         if child.widget():
             child.widget().deleteLater()
         
-    #what apps allready added as selected
-    apps_added=[]
-    for APP in final_applist:   
+    for APP in final_applist:   # most used app is on top of the list (listview is built from bottom therefore we reverse)
         item = QtWidgets.QListWidgetItem()
         item.setSizeHint(QSize(40, 40));
         item.name = QtWidgets.QLabel()
@@ -210,9 +110,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         item.hint.setText("sichtbar")
         
         icon = QIcon.fromTheme(APP[3])
-        if icon.isNull():
-            icon = fallbackIcon(APP)
-        
         item.icon = QtWidgets.QLabel()
         item.icon.setPixmap(QPixmap(icon.pixmap(28)))
         
@@ -221,25 +118,15 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
 
         #turn on already activated apps  - add icons to appview widget in UI
         for activated_app in activated_apps:
-            app1 = activated_app
-            app2 = APP[1]
-            
-            if app1 == app2:
-                #is this app allready added?
-                found=False
-                for added_app in apps_added:
-                    if added_app == app1:
-                        found=True
-                        break
-                if found==False:
-                    item.checkbox.setChecked(True)
-                    iconwidget = QtWidgets.QLabel()
-                    iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
-                    iconwidget.setToolTip(item.name.text())
-                    thislayout.addWidget(iconwidget)
-                    apps_added.append(app1)
+            if activated_app in APP[1]:    
+                item.checkbox.setChecked(True)
+                iconwidget = QtWidgets.QLabel()
+                iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
+                iconwidget.setToolTip(item.name.text())
+                thislayout.addWidget(iconwidget)
 
         item.checkbox.clicked.connect(lambda: saveProfile(applistwidget, appview))
+        
         verticalSpacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Expanding)
 
         grid = QtWidgets.QGridLayout()
@@ -253,6 +140,11 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         widget.setLayout(grid)
         applistwidget.addItem(item) 
         applistwidget.setItemWidget(item, widget)
+        
+
+
+
+    
 
 
 def saveProfile(applistwidget, appview):
