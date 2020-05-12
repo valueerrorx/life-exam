@@ -14,6 +14,7 @@ from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG
 from classes.CmdRunner import CmdRunner
+import os
 
 
 
@@ -106,9 +107,6 @@ def create_app_ranking(applist):
     for key in yml:
         pattern = create_pattern(yml[key])
         for app in applist:  
-            print(pattern)
-            print(app[2])
-            
             match = re.search(pattern, app[2], re.IGNORECASE)
             if match:
                 final_applist.insert(index, app)
@@ -118,9 +116,6 @@ def create_app_ranking(applist):
     other_applist = remove_duplicates(other_applist)
     #other_applist sortieren
     other_applist.sort()
-    print(final_applist)
-    print(other_applist)                
-                
     return final_applist + other_applist
 
 
@@ -139,16 +134,27 @@ def fallbackIcon(APP):
     '''
     logger = logging.getLogger(__name__)
     name = APP[1]
-    data = name.split('.')
+    data = name.rsplit('.', 1)
     icon = QIcon.fromTheme(data[0])
     if icon.isNull():
         ''' also not possible than common fallback '''
         logger.error('No icon with filename %s found' % APP[1])
-        
-        relativeDir = Path(__file__).parent.parent.parent
-        iconfile=relativeDir.joinpath('pixmaps/empty_icon.png').as_posix()
 
+        #search a last time in /home/student/.life/icons/
+        testfile = "%s.png" % data[0]
+        found = False 
+        last_path = "/home/student/.life/icons/"
+        for file in os.listdir(last_path):
+            if testfile == file:
+                #file found, take it
+                found = True
+                iconfile="%s%s" % (last_path, makeFilenameSafe(file))
+                print(iconfile)
         
+        if found==False:
+            relativeDir = Path(__file__).parent.parent.parent
+            iconfile=relativeDir.joinpath('pixmaps/empty_icon.png').as_posix()
+
         return QIcon(iconfile)
     else:
         return icon
@@ -195,7 +201,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     final_applist = create_app_ranking(applist)
     #what apps are activated and stored in OLD Config?
     activated_apps = get_activated_apps()
-    
+        
     #clear appview first
     thislayout = appview.layout()
     while thislayout.count():
