@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from configobj import ConfigObj
+import logging
+import re
 from pathlib import Path
+import subprocess 
+import yaml
+from configobj import ConfigObj
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
-import re 
-import yaml
-import subprocess
 from config.config import USER_HOME_DIR, PLASMACONFIG
 from classes.CmdRunner import CmdRunner
-import logging
+
+
+
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
@@ -103,16 +106,20 @@ def create_app_ranking(applist):
     for key in yml:
         pattern = create_pattern(yml[key])
         for app in applist:  
-            if app[1] != "org.kde.kate-2.desktop":     
-                match = re.search(pattern, app[2])
-                if match:
-                    final_applist.insert(index, app)
-                    index += 1
-                else:
-                    other_applist.append(app)
+            print(pattern)
+            print(app[2])
+            
+            match = re.search(pattern, app[2], re.IGNORECASE)
+            if match:
+                final_applist.insert(index, app)
+                index += 1
+            else:
+                other_applist.append(app)
     other_applist = remove_duplicates(other_applist)
     #other_applist sortieren
-    other_applist.sort()                
+    other_applist.sort()
+    print(final_applist)
+    print(other_applist)                
                 
     return final_applist + other_applist
 
@@ -200,7 +207,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     apps_added=[]
     for APP in final_applist:   
         item = QtWidgets.QListWidgetItem()
-        item.setSizeHint(QSize(40, 40));
+        item.setSizeHint(QSize(40, 40))
         item.name = QtWidgets.QLabel()
         item.name.setText("%s" % APP[2])
         
@@ -328,7 +335,7 @@ def saveProfile(applistwidget, appview):
                 if appstring == "":
                     appstring="applications:%s" %(app)
                 else:
-                    appstring="%s,applications:%s" %(appstring,app)
+                    appstring="%s,applications:%s" %(appstring, app)
 
             config[launchers_section]["launchers"]=appstring
         else:  #prevent empty desktop - add geogebra
@@ -368,12 +375,12 @@ def get_activated_apps():
                 config[launchers_section] = {}   
                 config[launchers_section]["launchers"] = ""  #create section(key)
                 
-                appstring="applications:geogebra.desktop"    #add at least one application to activated apps
-                config[launchers_section]["launchers"]=appstring #and prevent empty desktops
+                appstring= "applications:geogebra.desktop"    #add at least one application to activated apps
+                config[launchers_section]["launchers"]= appstring #and prevent empty desktops
                 activate_apps_string = config[launchers_section]["launchers"]
             
             #make a list
-            if activate_apps_string == "," or activate_apps_string == "": # catch a corner case
+            if activate_apps_string in (',', ''): # catch a corner case
                 activate_apps_list = ['applications:geogebra.desktop']
             else:
                 activate_apps_list = activate_apps_string.split(",")

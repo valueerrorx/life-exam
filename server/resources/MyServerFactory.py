@@ -32,7 +32,7 @@ class MyServerFactory(protocol.ServerFactory):
         this is set to True the moment the server sends examconfig, 
         sends file, sends printconf, requests abgabe, requests screenshot
         '''
-        self.rawmode = False;  
+        self.rawmode = False  
         self.pincode = mutual_functions.generatePin(4)
         
         #only debug if DEBUG_PIN is not ""
@@ -41,7 +41,6 @@ class MyServerFactory(protocol.ServerFactory):
             self.logger.info("DEBUGGING Mode")
         
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
-        #type: ServerUI
         self.window = ServerUI(self)                            
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
