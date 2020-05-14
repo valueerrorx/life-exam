@@ -13,7 +13,7 @@ from pathlib import Path
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
-#print(sys.path)
+# print(sys.path)
 
 from config.logger import configure_logging
 from config.config import SCRIPTS_DIRECTORY, SERVER_PORT, SERVERFILES_DIRECTORY
@@ -25,9 +25,10 @@ from PyQt5 import QtWidgets
 import qt5reactor
 
 if __name__ == '__main__':
-    #Set the Logging
+    # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
-    configure_logging('%s' % (rootdir), True)       #True is Server
+    # True is Server
+    configure_logging('%s' % (rootdir), True)
 
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
     killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
@@ -41,9 +42,9 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
 
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor ))  # start the server on SERVER_PORT
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor))  # start the server on SERVER_PORT
 
     logger = logging.getLogger('server')
-    logger.info ('Listening on port %d' % (SERVER_PORT))
+    logger.info('Listening on port %d' % (SERVER_PORT))
 
     reactor.run()
