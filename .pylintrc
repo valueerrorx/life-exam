@@ -4,5 +4,15 @@
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code.
 extension-pkg-whitelist=PyQt5
-disable=bare-except
+disable=bare-except,
+    locally-disabled,
+    too-many-branches,
+    too-many-locals,
+    invalid-name,
+    singleton-comparison,
+    line-too-long,
+    trailing-whitespace,
+    missing-module-docstring,
+    logging-not-lazy,
+    pointless-string-statement
 

@@ -4,7 +4,8 @@
 import logging
 import re
 from pathlib import Path
-import subprocess 
+import subprocess
+import os
 import yaml
 from configobj import ConfigObj
 
@@ -14,7 +15,7 @@ from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG
 from classes.CmdRunner import CmdRunner
-import os
+
 
 
 
@@ -28,41 +29,41 @@ def findApps(applistwidget, appview):
     """
     apps = subprocess.check_output("kbuildsycoca5 --menutest", stderr=subprocess.DEVNULL, shell=True)
     apps = apps.decode()
-    desktop_files_list=[]
-    
+    desktop_files_list = []
+
     for line in apps.split('\n'):
         if line == "\n":
             continue
         fields = [final.strip() for final in line.split('/')]
-        
+
         filepath1 = Path("/usr/share/applications/%s" % fields[-1])
-        filepath2 = Path("%s/.local/share/applications/%s" % (USER_HOME_DIR,fields[-1]))
-        
+        filepath2 = Path("%s/.local/share/applications/%s" % (USER_HOME_DIR, fields[-1]))
+
         if filepath1.is_file():
             desktopfilelocation = filepath1
-    
+
         elif filepath2.is_file():
             desktopfilelocation = filepath2
         else:
             desktopfilelocation = "none"
-        
+
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
 
-    desktop_files_list = clearDoubles(desktop_files_list)    
+    desktop_files_list = clearDoubles(desktop_files_list)
     listInstalledApplications(applistwidget, desktop_files_list, appview)
 
 
 def clearDoubles(apps):
     ''' delete doubles, because they can be in global menue or local at the same time '''
-    # using list comprehension to remove duplicated from list  
-    res = [] 
+    # using list comprehension to remove duplicated from list
+    res = []
     [res.append(x) for x in apps if x not in res]
-    return res 
+    return res
 
 def load_yml():
     """
-    Load the yaml file config/appranking.yaml 
+    Load the yaml file config/appranking.yaml
     """
     with open(path_to_yml, 'rt') as f:
         yml = yaml.safe_load(f.read())
@@ -92,7 +93,7 @@ def remove_duplicates(other_applist):
             newlist.append(item)
             seen.add(t)
     return newlist
-    
+
 
 def create_app_ranking(applist):
     """
@@ -103,10 +104,10 @@ def create_app_ranking(applist):
     other_applist = []
     yml = load_yml()
     index = 0
-    
+
     for key in yml:
         pattern = create_pattern(yml[key])
-        for app in applist:  
+        for app in applist:
             match = re.search(pattern, app[2], re.IGNORECASE)
             if match:
                 final_applist.insert(index, app)
@@ -126,9 +127,9 @@ def makeFilenameSafe(filename):
     ''' If Filename has spaces, then escape them '''
     _to_esc = re.compile(r'\s')
     return _to_esc.sub(_esc_char, filename)
-    
+
 def fallbackIcon(APP):
-    ''' 
+    '''
     if an icon is Null from List, try to extract the name from the file.desktop name
     e.g. from 'libreoffice-calc.desktop' icon is 'libreoffice-document-new' > try 'libreoffice-calc'
     '''
@@ -142,23 +143,23 @@ def fallbackIcon(APP):
 
         #search a last time in /home/student/.life/icons/
         testfile = "%s.png" % data[0]
-        found = False 
+        found = False
         last_path = "/home/student/.life/icons/"
         for file in os.listdir(last_path):
             if testfile == file:
                 #file found, take it
                 found = True
-                iconfile="%s%s" % (last_path, makeFilenameSafe(file))
+                iconfile = "%s%s" % (last_path, makeFilenameSafe(file))
                 print(iconfile)
-        
-        if found==False:
-            relativeDir = Path(__file__).parent.parent.parent
-            iconfile=relativeDir.joinpath('pixmaps/empty_icon.png').as_posix()
 
-        return QIcon(iconfile)
-    else:
-        return icon
-    
+        if found == False:
+            relativeDir = Path(__file__).parent.parent.parent
+            iconfile = relativeDir.joinpath('pixmaps/empty_icon.png').as_posix()
+
+        icon = QIcon(iconfile)
+
+    return icon
+
 
 def listInstalledApplications(applistwidget, desktop_files_list, appview):
     """
@@ -166,69 +167,69 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     populates a QListWidgetItem with list entries
     """
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
-        
+
     cmdRunner = CmdRunner()
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
         desktop_filename = desktop_filename[2]
-        
+
         thisapp = [desktop_filepath, desktop_filename, "", ""]
-        
+
         #read the desktop File
         cmd = "cat %s" % makeFilenameSafe(desktop_filepath)
         cmdRunner.runCmd(cmd)
         file_lines = cmdRunner.getLines()
 
-        #didnt work anymore because of user rights problem   
+        #didnt work anymore because of user rights problem
         #file_lines = open(desktop_filepath, 'r').readlines()
-        #print("%s %s" % (len(file_lines), desktop_filepath)) 
-        if len(file_lines)>1:
+        #print("%s %s" % (len(file_lines), desktop_filepath))
+        if len(file_lines) > 1:
             for line in file_lines:
                 if line == "\n":
                     continue
                 # this overwrites "Name" with the latest entry if it's defined twice in the .desktop file (like in libreoffice)
-                elif line.startswith("Name="):   
+                if line.startswith("Name="):
                     fields = [final.strip() for final in line.split('=')]
                     if thisapp[2] == "":   #only write this once
-                        thisapp[2] = fields[1] 
+                        thisapp[2] = fields[1]
                 elif line.startswith("Icon="):
                     fields = [final.strip() for final in line.split('=')]
                     thisapp[3] = fields[1]
-                
+
         applist.append(thisapp)
-    
-    #sort applist and put most used apps on top  
+
+    #sort applist and put most used apps on top
     final_applist = create_app_ranking(applist)
     #what apps are activated and stored in OLD Config?
     activated_apps = get_activated_apps()
-        
+
     #clear appview first
     thislayout = appview.layout()
     while thislayout.count():
         child = thislayout.takeAt(0)
         if child.widget():
             child.widget().deleteLater()
-        
+
     #what apps allready added as selected
-    apps_added=[]
-    for APP in final_applist:   
+    apps_added = []
+    for APP in final_applist:
         item = QtWidgets.QListWidgetItem()
         item.setSizeHint(QSize(40, 40))
         item.name = QtWidgets.QLabel()
         item.name.setText("%s" % APP[2])
-        
+
         item.desktop_filename = APP[1]
-        
+
         item.hint = QtWidgets.QLabel()
         item.hint.setText("sichtbar")
-        
+
         icon = QIcon.fromTheme(APP[3])
         if icon.isNull():
             icon = fallbackIcon(APP)
-        
+
         item.icon = QtWidgets.QLabel()
         item.icon.setPixmap(QPixmap(icon.pixmap(28)))
-        
+
         item.checkbox = QtWidgets.QCheckBox()
         item.checkbox.setStyleSheet("margin-right:-2px;")
 
@@ -236,15 +237,15 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         for activated_app in activated_apps:
             app1 = activated_app
             app2 = APP[1]
-            
+
             if app1 == app2:
                 #is this app allready added?
-                found=False
+                found = False
                 for added_app in apps_added:
                     if added_app == app1:
-                        found=True
+                        found = True
                         break
-                if found==False:
+                if found == False:
                     item.checkbox.setChecked(True)
                     iconwidget = QtWidgets.QLabel()
                     iconwidget.setPixmap(QPixmap(item.icon.pixmap()))
@@ -261,12 +262,11 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         grid.addItem(verticalSpacer, 0, 2)
         grid.addWidget(item.checkbox, 0, 3)
         grid.addWidget(item.hint, 0, 4)
-                
+
         widget = QtWidgets.QWidget()
         widget.setLayout(grid)
-        applistwidget.addItem(item) 
+        applistwidget.addItem(item)
         applistwidget.setItemWidget(item, widget)
-
 
 def saveProfile(applistwidget, appview):
     """
@@ -275,13 +275,13 @@ def saveProfile(applistwidget, appview):
     changes the plasmaconfig
     writes the plasmaconfig file
     """
-    
+
     #PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")   # (this should be the config file that is then transferred to the clients and used for the exam desktop)
-    
+
     if Path(PLASMACONFIG).is_file():
-        config = ConfigObj(str(PLASMACONFIG),list_values=False, encoding='utf8')
-        
-        # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case) 
+        config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+
+        # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case)
         taskmanagersections = []
         for section in config:
             try:
@@ -296,14 +296,14 @@ def saveProfile(applistwidget, appview):
     apps_activated = []
     for index in range(applistwidget.count()):
         items.append(applistwidget.item(index))
-        
+
     #clear appview first
     thislayout = appview.layout()
     while thislayout.count():
         child = thislayout.takeAt(0)
         if child.widget():
             child.widget().deleteLater()
-      
+
     checked = False
     #add checked items to apps_activated in order to save them to plasmaconf and make them visible in the UI
     for item in items:
@@ -313,39 +313,39 @@ def saveProfile(applistwidget, appview):
             iconwidget = QtWidgets.QLabel()
             iconwidget.setPixmap(QPixmap(icon))
             iconwidget.setToolTip(item.name.text())
-            
+
             apps_activated.append(item.desktop_filename)
             thislayout.addWidget(iconwidget)
-            
-    
+
+
     if not checked:   #no application launchers are visible
         warninglabel = QtWidgets.QLabel()
         warninglabel.setText('Achtung: Keine Programmstarter gewählt!')
         thislayout.addWidget(warninglabel)
-      
+
     #generate appstring (value for the launchers section of the taskmanager applet)
     appstring = ""
 
     #prepare config section for the taskmanager applet
     for targetsection in taskmanagersections:
         launchers_section = "%s][Configuration][General" %(targetsection)
-        
+
         try:
             config[launchers_section]["launchers"] = ''
         except KeyError:   #key does not exist..  no pinned applications yet
-            config[launchers_section] = {}   
+            config[launchers_section] = {}
             config[launchers_section]["launchers"] = ''  #create section(key)
-        
+
         if len(apps_activated) > 0:
             for app in apps_activated:
                 if appstring == "":
-                    appstring="applications:%s" %(app)
+                    appstring = "applications:%s" %(app)
                 else:
-                    appstring="%s,applications:%s" %(appstring, app)
+                    appstring = "%s,applications:%s" %(appstring, app)
 
-            config[launchers_section]["launchers"]=appstring
+            config[launchers_section]["launchers"] = appstring
         else:  #prevent empty desktop - add geogebra
-            config[launchers_section]["launchers"]="applications:geogebra.desktop"
+            config[launchers_section]["launchers"] = "applications:geogebra.desktop"
 
     # write new plasmaconfig
     config.filename = str(PLASMACONFIG)
@@ -358,11 +358,11 @@ def get_activated_apps():
     reads plasmaconfig file and searches for pinned apps in the taskmanager
     """
     activated_apps = []
-    
+
     if Path(PLASMACONFIG).is_file():
-        config = ConfigObj(str(PLASMACONFIG),list_values=False)
-        
-        # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case) 
+        config = ConfigObj(str(PLASMACONFIG), list_values=False)
+
+        # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case)
         taskmanagersections = []
         for section in config:
             try:
@@ -374,17 +374,18 @@ def get_activated_apps():
         # get activated apps
         for targetsection in taskmanagersections:
             launchers_section = "%s][Configuration][General" %(targetsection)
-            
+
             try:
                 activate_apps_string = config[launchers_section]["launchers"]
             except KeyError:   #key does not exist..  no pinned applications yet
-                config[launchers_section] = {}   
-                config[launchers_section]["launchers"] = ""  #create section(key)
-                
-                appstring= "applications:geogebra.desktop"    #add at least one application to activated apps
-                config[launchers_section]["launchers"]= appstring #and prevent empty desktops
+                config[launchers_section] = {}
+                #create section(key)
+                config[launchers_section]["launchers"] = ""
+
+                appstring = "applications:geogebra.desktop"    #add at least one application to activated apps
+                config[launchers_section]["launchers"] = appstring #and prevent empty desktops
                 activate_apps_string = config[launchers_section]["launchers"]
-            
+
             #make a list
             if activate_apps_string in (',', ''): # catch a corner case
                 activate_apps_list = ['applications:geogebra.desktop']
