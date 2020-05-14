@@ -9,7 +9,7 @@ def show_ip():
     os.system(startcommand)
 
 
-#TODO use systemcommander in examclient and add startexam 
+# TODO use systemcommander in examclient and add startexam
 
 def start_hotspot():
     scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")

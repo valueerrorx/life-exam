@@ -1,7 +1,7 @@
 # https://flake8.pycqa.org/en/latest/user/configuration.html
 [flake8]
-max-line-length = 200
+max-line-length = 400
 exclude =
     .git,
     __pycache__
-ignore = F812,H101,H202,H233,H301,H306,H401,H403,H404,H405,H501,E402,D401,D403,E722
+ignore = F812,H101,H202,H233,H301,H306,H401,H403,H404,H405,H501,E402,D401,D403,E722,W391

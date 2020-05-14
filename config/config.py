@@ -11,28 +11,28 @@ import subprocess
 
 
 SERVER_IP = "localhost"
-SERVER_PORT = 11411   #according to wikipedia and IANA no other service uses this port.. so this is ours ;)
+SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
 VERSION = '3.2'
 
-#Debugging Stuff, set Name of Client and a fix Pin Code
-#if empty, then we are NOT debugging
-DEBUG_ID="TestUser"
-DEBUG_PIN="1234"
-DEBUG_SHOW_NETWORKTRAFFIC=True
+# Debugging Stuff, set Name of Client and a fix Pin Code
+# if empty, then we are NOT debugging
+DEBUG_ID = "TestUser"
+DEBUG_PIN = "1234"
+DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # seconds
 SCREENSHOTINTERVALL = 30
 
-# these apps will try to autosave your work before "abgabe" via xdotool or qdbus 
-SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets'];
+# these apps will try to autosave your work before "abgabe" via xdotool or qdbus
+SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets']
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()
 USER_HOME_DIR = os.path.join("/home", str(USER))
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/EXAM")
 
-# work directory for client and server  - absolute paths 
+# work directory for client and server  - absolute paths
 SCRIPTS_DIRECTORY = os.path.join(WORK_DIRECTORY, "scripts")
 EXAMCONFIG_DIRECTORY = os.path.join(WORK_DIRECTORY, "EXAMCONFIG")
 
@@ -53,7 +53,7 @@ SERVERZIP_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, ZIP)
 SHARE_DIRECTORY = os.path.join(USER_HOME_DIR, "SHARE")
 PRINTERCONFIG_DIRECTORY = "/etc/cups"
 
-PLASMACONFIG = os.path.join(EXAMCONFIG_DIRECTORY,"lockdown/plasma-EXAM") # (this should be the config file that is then transferred to the clients and used for the exam desktop)
+PLASMACONFIG = os.path.join(EXAMCONFIG_DIRECTORY, "lockdown/plasma-EXAM")  # (this should be the config file that is then transferred to the clients and used for the exam desktop)
 
 
 # relative paths

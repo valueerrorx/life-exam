@@ -5,16 +5,18 @@
 
 import html.parser
 
+
 class HTMLTextExtractor(html.parser.HTMLParser):
     def __init__(self):
         super(HTMLTextExtractor, self).__init__()
-        self.result = [ ]
+        self.result = []
 
     def handle_data(self, d):
         self.result.append(d)
 
     def get_text(self):
         return ''.join(self.result)
+
 
 def html_to_text(html):
     """Converts HTML to plain text (stripping tags and converting entities).

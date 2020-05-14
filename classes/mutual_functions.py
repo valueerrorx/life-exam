@@ -28,17 +28,18 @@ from random import randint
 
 import time
 
+
 def generatePin(n):
     """generates a random number in the given length n """
-    range_start = 10**(n-1)
-    range_end = (10**n)-1
+    range_start = 10**(n - 1)
+    range_end = (10**n) - 1
     return randint(range_start, range_end)
 
 
 def checkIfFileExists(filename):
     if os.path.isfile(filename):
         logger.info("file with the same name found")   # since we mount a fat32 partition file and folder with same name are not allowed .. catch that cornercase
-        newname = "%s-%s" %(filename, generatePin(6))
+        newname = "%s-%s" % (filename, generatePin(6))
         if os.path.isfile(newname):
             checkIfFileExists(newname)
         else:
@@ -57,7 +58,6 @@ def checkFirewall(firewall_ip_list):
 
     ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
     lines = [line.rstrip('\n') for line in open(ipstore)]
-
 
     count = 0
     for i in firewall_ip_list:
@@ -83,7 +83,7 @@ def checkIP(iptest):
 def validate_file_md5_hash(file, original_hash):
     """ Returns true if file MD5 hash matches with the provided one, false otherwise. """
     filehash = get_file_md5_hash(file)
-    
+
     if filehash == original_hash:
         return True
 
@@ -150,9 +150,9 @@ def deleteFolderContent(folder):
 
 
 def prepareDirectories():
-    #rootDir of Application
+    # rootDir of Application
     rootDir = Path(__file__).parent.parent
-        
+
     if not os.path.exists(WORK_DIRECTORY):  # scripts just need to be on a specific location for plasma configfiles
         os.makedirs(WORK_DIRECTORY)
         os.makedirs(CLIENTFILES_DIRECTORY)
@@ -173,7 +173,7 @@ def prepareDirectories():
         os.makedirs(SHARE_DIRECTORY)
     else:
         settime = time.time()  # zip does not support filetimes before 1980 .. WTF ??
-        os.utime(SHARE_DIRECTORY, (settime,settime))
+        os.utime(SHARE_DIRECTORY, (settime, settime))
 
     copycommand = "cp -r %s/DATA/scripts %s" % (rootDir, WORK_DIRECTORY)
     os.system(copycommand)
@@ -184,9 +184,9 @@ def prepareDirectories():
         os.system(copycommand)
     else:
         # leave the EXAM-A-IPS.DB alone - it stores firewall information which must not be reset on every update
-        # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes 
+        # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes
         # but always provide a new copy of startexam.sh (will be updated more frequently)
-        logger.info("Old examconfig found - keeping old config")  #friendly reminder to the devs ;-)
+        logger.info("Old examconfig found - keeping old config")  # friendly reminder to the devs ;-)
         copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (rootDir, EXAMCONFIG_DIRECTORY)
         os.system(copycommand2)
 
@@ -194,9 +194,8 @@ def prepareDirectories():
     fixFilePermissions(SHARE_DIRECTORY)
 
 
-
 def fixFilePermissions(folder):
-    """ FIXME ?? both scripts are running as root 
+    """ FIXME ?? both scripts are running as root
     in order to be able to start exam mode and survive Xorg restart - therefore all transferred files belong to root
     """
     if folder:
@@ -212,50 +211,55 @@ def fixFilePermissions(folder):
     else:
         logger.error("no folder given")
 
+
 def writePidFile():
-    file = os.path.join(WORK_DIRECTORY,'server.pid')
+    file = os.path.join(WORK_DIRECTORY, 'server.pid')
     pid = str(os.getpid())
 
     f = open(file, 'w+')
     f.write(pid)
     f.close()
-    
+
+
 def deletePidFile():
-    file = os.path.join(WORK_DIRECTORY,'server.pid')
+    file = os.path.join(WORK_DIRECTORY, 'server.pid')
     os.remove(file)
 
 
 def writeLockFile():
     """ lock File indicates that client has started EXAM Mode """
-    file = os.path.join(WORK_DIRECTORY,'client.lock')
+    file = os.path.join(WORK_DIRECTORY, 'client.lock')
 
     f = open(file, 'w+')
     f.write("Client has started EXAM Mode")
     f.close()
 
+
 def lockFileExists():
     my_file = Path(WORK_DIRECTORY).joinpath('client.lock')
     if my_file.is_file():
         # file exists
-        return True 
+        return True
     else:
         return False
+
 
 def createFakeZipFile():
     """ Create an empty zip File, its a dummy """
     my_file = Path(CLIENTZIP_DIRECTORY).joinpath('dummy')
-    #create dummy dir to zip
+    # create dummy dir to zip
     my_path = Path(CLIENTZIP_DIRECTORY).joinpath('dummydir')
     my_path.mkdir()
     shutil.make_archive(my_file, 'zip', my_path)
-      
+
 
 def showDesktopMessage(msg):
     """uses a passivepopup to display messages from the daemon"""
     message = "Exam Server: %s " % (msg)
     command = "runuser -u %s -- kdialog --title 'EXAM' --passivepopup '%s' 5 " % (USER, message)
     os.system(command)
-    
+
+
 def openFileManager(path):
     """ cross OS """
     if os.path.exists(path):

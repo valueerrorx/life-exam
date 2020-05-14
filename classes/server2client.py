@@ -5,8 +5,6 @@
 #
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
-
-
 import datetime
 import ntpath
 import os
@@ -18,11 +16,11 @@ from config.enums import Command, DataType
 class ServerToClient:
     def __init__(self):
         self.clients = dict()           # type: dict
-        # we will store the time of the last (try) to connect with.. check it against the screenshot 
+        # we will store the time of the last (try) to connect with.. check it against the screenshot
         # intervall (our heartbeat) and disconnect client if the timespan is twice the heartbeat intervall
-        self.clientlifesigns = dict()   #type: dict       
+        self.clientlifesigns = dict()   # type: dict
 
-    ## client handling ##
+    """client handling"""
     def get_client(self, key):
         client = self.clients.get(key, None)  # type: MyServerProtocol
         return client
@@ -44,7 +42,7 @@ class ServerToClient:
             client.transport.loseConnection()
             return client.clientName
         return False
-    
+
     def send_to_receivers(self, who, line):
         """ sends to all clients, or just to the selected """
         if who is "all":
@@ -57,16 +55,14 @@ class ServerToClient:
                 client.sendEncodedLine(line % client.clientConnectionID)
             except:
                 print("server2client: Some Error, clientID: %s" % client.clientConnectionID)
-    
 
-    ## client instructions ##
+    """client instructions"""
     def exit_exam(self, who, onexit_cleanup_abgabe="none"):
         if not self.clients:
             return False
         line = "%s %s %s" % (Command.EXITEXAM.value, onexit_cleanup_abgabe, "%s")
         self.send_to_receivers(who, line)
         return True
-    
 
     def lock_screens(self, who):
         if not self.clients:
@@ -75,14 +71,12 @@ class ServerToClient:
         self.send_to_receivers(who, line)
         return True
 
-
     def unlock_screens(self, who):
         if not self.clients:
             return False
         line = "%s %s" % (Command.UNLOCK.value, "%s")
         self.send_to_receivers(who, line)
         return True
-
 
     def request_screenshots(self, who):
         """ client file requests (get from client) """
@@ -93,19 +87,17 @@ class ServerToClient:
         self.send_to_receivers(who, line)
         return True
 
-
     def request_abgabe(self, who):
         if not self.clients:
             return False
 
         filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H-%M-%S"), "%s")
         line = "%s %s %s %s none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.ABGABE.value, filename)
-        
-        self.send_to_receivers(who, line)         
+
+        self.send_to_receivers(who, line)
         return True
 
-    
-    ## client file transfer (send to client)
+    """client file transfer (send to client)"""
     def send_file(self, file_path, who, datatype, cleanup_abgabe="none"):
         """
         Dispatches Method to prepare requested file transfer and sends file
@@ -123,23 +115,21 @@ class ServerToClient:
                 self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe)
             else:
                 client = self.get_client(who)
-                client.sendEncodedLine('%s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe ))  # trigger clienttask type filename filehash)
+                client.sendEncodedLine('%s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash
                 client.setRawMode()
                 who = client.clientName
                 self.send_bytes(client, file_path)
                 client.setLineMode()
-                client.factory.rawmode = False  # UNLOCK all fileoperations 
+                client.factory.rawmode = False  # UNLOCK all fileoperations
 
             return [True, filename, file_size, who]
 
         return [False, None, None, who]
 
-
     def broadcast_line(self, line):
         for client in self.clients.values():
-            newline = line % client.clientConnectionID    #substitue the last %s in line with clientConnectionID (don't overwrite line)
+            newline = line % client.clientConnectionID    # substitue the last %s in line with clientConnectionID (don't overwrite line)
             client.sendEncodedLine(newline)
-
 
     def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe):
         for client in self.clients.values():
@@ -147,13 +137,10 @@ class ServerToClient:
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()
-            client.factory.rawmode = False  # UNLOCK all fileoperations 
+            client.factory.rawmode = False  # UNLOCK all fileoperations
 
-
-
-    ## send bytes ##
-    def send_bytes(self, client, file_path): 
+    """ send bytes """
+    def send_bytes(self, client, file_path):
         for b in mutual_functions.read_bytes_from_file(file_path):
             client.transport.write(b)
         client.transport.write(b'\r\n')
-    
