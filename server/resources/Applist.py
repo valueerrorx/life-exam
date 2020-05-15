@@ -15,6 +15,8 @@ from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG
 from classes.CmdRunner import CmdRunner
+from classes.time_it import time_it
+
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
@@ -141,6 +143,7 @@ def fallbackIcon(APP):
     if icon.isNull():
         ''' also not possible than common fallback '''
         logger.error('No icon with filename %s found' % APP[1])
+        logger.error('Using Fallback Icon')
 
         # search a last time in /home/student/.life/icons/
         testfile = "%s.png" % data[0]
@@ -151,7 +154,6 @@ def fallbackIcon(APP):
                 # file found, take it
                 found = True
                 iconfile = "%s%s" % (last_path, makeFilenameSafe(file))
-                print(iconfile)
 
         if found is False:
             relativeDir = Path(__file__).parent.parent.parent
@@ -170,20 +172,23 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
 
     cmdRunner = CmdRunner()
+    print(desktop_files_list)
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
         desktop_filename = desktop_filename[2]
 
         thisapp = [desktop_filepath, desktop_filename, "", ""]
+        # didnt work sometimes anymore because of user rights problem
+        try:
+            file_lines = open(desktop_filepath, 'r').readlines()
+            # print("%s %s" % (len(file_lines), desktop_filepath))
+        except:
+            # Fallback if open fails
+            # read the desktop File via cat
+            cmd = "cat %s" % makeFilenameSafe(desktop_filepath)
+            cmdRunner.runCmd(cmd)
+            file_lines = cmdRunner.getLines()
 
-        # read the desktop File
-        cmd = "cat %s" % makeFilenameSafe(desktop_filepath)
-        cmdRunner.runCmd(cmd)
-        file_lines = cmdRunner.getLines()
-
-        # didnt work anymore because of user rights problem
-        # file_lines = open(desktop_filepath, 'r').readlines()
-        # print("%s %s" % (len(file_lines), desktop_filepath))
         if len(file_lines) > 1:
             for line in file_lines:
                 if line == "\n":

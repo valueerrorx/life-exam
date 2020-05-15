@@ -10,7 +10,7 @@
 # export PYTHONPATH="/home/student/.life/applications/life-exam"
 # sudo twistd -n --pidfile client.pid examclient -p 11411 -h 10.2.1.251 -i testuser -c 1234
 
-# Log messages only with print(), they are Handles by twisted
+# Log messages only with print(), they are handled by twisted
 
 import os
 import sys
@@ -142,6 +142,7 @@ class MyClientProtocol(basic.LineReceiver):
     def lineReceived(self, line):
         """whenever the SERVER sent something """
         # decode the moment you recieve a line and encode it right before you send
+        print("incoming")
         line = line.decode()
         self.line_data_list = mutual_functions.clean_and_split_input(line)
         print("DEBUG: line received and decoded: %s" % self.line_data_list)
@@ -324,7 +325,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
 
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
-    def buildProtocol(self, addr):
+    def buildProtocol(self):
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self)
 
