@@ -39,7 +39,7 @@ def load_yml(isServer):
     return yml_config
 
 
-def load_logging_config(isServer, default_level=logging.INFO, env_key='LOG_CFG'):
+def load_logging_config(isServer, default_level=logging.INFO):
     """
     Setup logging configuration from the yaml File config/logger
     """

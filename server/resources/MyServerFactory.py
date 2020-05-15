@@ -63,7 +63,7 @@ class MyServerFactory(protocol.ServerFactory):
     """
     http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
     """
-    def buildProtocol(self, addr):
+    def buildProtocol(self):
         return MyServerProtocol(self)
         """
         wird bei einer eingehenden client connection aufgerufen - erstellt ein object der Klasse MyServerProtocol für jede connection und übergibt self (die factory)
