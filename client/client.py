@@ -36,7 +36,7 @@ from PyQt5 import QtWidgets
 if __name__ == '__main__':
     # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
-    configure_logging('%s' % (rootdir), False)       # True is Server
+    configure_logging(False)       # True is Server
 
     app = QtWidgets.QApplication(sys.argv)
     dialog = ClientDialog()

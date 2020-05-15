@@ -161,7 +161,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if self.factory.lcs.running:
             self.factory.lcs.stop()
-        if intervall is not 0:
+        if intervall != 0:
             self.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
             self.factory.lcs.start(intervall)
         else:
@@ -511,7 +511,7 @@ class ServerUI(QtWidgets.QDialog):
                 if checkIP(ip):
                     thisexamfile = open(ipstore, 'a+')  # anhängen
                     number += 1
-                    if number is not 1:  # zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
+                    if number != 1:  # zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
                         thisexamfile.write("\n")
                     thisexamfile.write("%s:%s" % (ip, port))
                 else:
@@ -537,7 +537,7 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lc.stop()
             self.log("<b>Auto-Submission deactivated </b>")
             return
-        if intervall is not 0:
+        if intervall != 0:
             icon = self.rootDir.joinpath("pixmaps/chronometer.png").as_posix()
             self.ui.autoabgabe.setIcon(QIcon(icon))
             self.log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
@@ -745,6 +745,12 @@ class ServerUI(QtWidgets.QDialog):
         retval = self.msg.exec_()   # 16384 = yes, 65536 = no
 
         if str(retval) == "16384":
+            # if in root mode than change log Files to student User
+            print("root?: uid: %s" % os.getuid())
+            if os.getuid() == 0:
+                # root has uid = 0
+                os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))
+
             mutual_functions.deletePidFile()
             self.ui.close()
             os._exit(0)  # otherwise only the gui is closed and connections are kept alive

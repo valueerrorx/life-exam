@@ -28,7 +28,7 @@ if __name__ == '__main__':
     # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
     # True is Server
-    configure_logging('%s' % (rootdir), True)
+    configure_logging(True)
 
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
     killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")

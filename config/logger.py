@@ -51,10 +51,9 @@ def load_logging_config(isServer, default_level=logging.INFO):
         logging.basicConfig(level=default_level)
 
 
-def configure_logging(logfile_path, isServer):
+def configure_logging(isServer):
     """
     Initialize logging defaults, also for a twisted server
-    :param logfile_path: path to store the file(s)
     """
 
     load_logging_config(isServer)
