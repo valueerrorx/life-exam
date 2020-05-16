@@ -10,7 +10,8 @@ from pathlib import Path
 from classes.Observers import Observers
 from config.config import EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
     WORK_DIRECTORY, SERVER_PORT, DEBUG_PIN, DEBUG_ID, USER
-from classes.mutual_functions import checkIP, prepareDirectories
+from classes.mutual_functions import checkIP, prepareDirectories,\
+    changePermission
 
 from PyQt5.QtCore import QRegExp, Qt
 from PyQt5 import QtWidgets, uic
@@ -174,9 +175,11 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 os.system("bash %s %s" % (clientkillscript, 'client'))
                 self.logger.info("Terminated old running twisted Client")
 
-                namefile = os.path.join(WORK_DIRECTORY, "myname.txt")  # moved this to workdirectory because configdirectory is overwritten on exam start
+                # moved this to workdirectory because configdirectory is overwritten on exam start
+                namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
                 openednamefile = open(namefile, 'w+')  # erstelle die datei neu
                 openednamefile.write("%s" % (ID))
+                changePermission(namefile, "777")
 
                 from twisted.plugin import IPlugin, getPlugins
                 # plgs =
@@ -187,13 +190,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # print(sys.path)
 
                 # port, host, id, pincode, application_dir
-                command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
+                command = "sudo -u %s twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (USER, WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 self.logger.info(command)
                 os.system(command)
-
-                # subprocess.call(command, shell=True,env=dict(os.environ ))
-                # for non daemon mode manual to track bugs
-                # sudo twistd -n --pidfile /home/student/.life/EXAM/client.pid examclient -p 11411 -h 10.0.0.110 -i ich -c 2604
         else:
             self._changePalette(self.ui.serverip, "warn")
 

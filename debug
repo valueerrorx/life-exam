@@ -1,2 +1,0 @@
- [Failure instance: Traceback (failure with no frames): 
- <class 'twisted.internet.error.ConnectionDone'>: Connection was closed cleanly.

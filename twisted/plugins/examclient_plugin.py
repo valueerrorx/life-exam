@@ -68,7 +68,7 @@ class MyClientProtocol(basic.LineReceiver):
         mutual_functions.showDesktopMessage(msg)
 
     # twisted-Event:
-    def connectionLost(self, reason):
+    def connectionLost(self, reason):  #noqa
         self.factory.failcount += 1
         self.file_handler = None
         self.line_data_list = ()
@@ -142,7 +142,6 @@ class MyClientProtocol(basic.LineReceiver):
     def lineReceived(self, line):
         """whenever the SERVER sent something """
         # decode the moment you recieve a line and encode it right before you send
-        print("incoming")
         line = line.decode()
         self.line_data_list = mutual_functions.clean_and_split_input(line)
         print("DEBUG: line received and decoded: %s" % self.line_data_list)
@@ -171,7 +170,12 @@ class MyClientProtocol(basic.LineReceiver):
         }
 
         line_handler = command.get(self.line_data_list[0], None)
-        line_handler(self) if line_handler is not None else self.buffer.append(line)  # attach "self" (client) # triggert entweder einen command oder (falls es einfach nur text ist) füllt einen buffer.. ENDMSG macht diesen dann als deskotp message sichtbar
+        """
+        attach "self" (client)
+        triggert entweder einen command oder (falls es einfach nur text ist) füllt einen buffer..
+        ENDMSG macht diesen dann als deskotp message sichtbar
+        """
+        line_handler(self) if line_handler is not None else self.buffer.append(line)  # noqa
 
     def _triggerAutosave(self):
         """
@@ -361,7 +365,7 @@ class MyServiceMaker(object):
     options = Options
 
     def makeService(self, options):
-        return internet.TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))
+        return internet.TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))  #noqa
 
 
 serviceMaker = MyServiceMaker()

@@ -45,5 +45,5 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
 
-    reactor.listenMulticast(8005, MulticastLifeClient(), listenMultiple=True)
+    reactor.listenMulticast(8005, MulticastLifeClient(), listenMultiple=True)  #noqa
     sys.exit(app.exec_())

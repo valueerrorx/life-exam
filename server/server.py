@@ -42,9 +42,10 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
 
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor))  # start the server on SERVER_PORT
+    # start the server on SERVER_PORT
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor))  #noqa
 
     logger = logging.getLogger('server')
     logger.info('Listening on port %d' % (SERVER_PORT))
 
-    reactor.run()
+    reactor.run()  #noqa

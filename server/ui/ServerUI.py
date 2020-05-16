@@ -746,7 +746,8 @@ class ServerUI(QtWidgets.QDialog):
 
         if str(retval) == "16384":
             # if in root mode than change log Files to student User
-            print("root?: uid: %s" % os.getuid())
+            self.log("Shuting down >")
+            self.log("root?: uid: %s" % os.getuid())
             if os.getuid() == 0:
                 # root has uid = 0
                 os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))

@@ -18,6 +18,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
     SHARE_DIRECTORY, USER
+import stat
 
 logger = logging.getLogger(__name__)
 
@@ -212,6 +213,35 @@ def fixFilePermissions(folder):
         logger.error("no folder given")
 
 
+def changePermission(path, octal):
+    """
+    change the permission to ... see man 2 open
+    stat.S_ISUID − Set user ID on execution.
+    stat.S_ISGID − Set group ID on execution.
+    stat.S_ENFMT − Record locking enforced.
+    stat.S_ISVTX − Save text image after execution.
+    stat.S_IREAD − Read by owner.
+    stat.S_IWRITE − Write by owner.
+    stat.S_IEXEC − Execute by owner.
+    stat.S_IRWXU − Read, write, and execute by owner.
+    stat.S_IRUSR − Read by owner.
+    stat.S_IWUSR − Write by owner.
+    stat.S_IXUSR − Execute by owner.
+    stat.S_IRWXG − Read, write, and execute by group.
+    stat.S_IRGRP − Read by group.
+    stat.S_IWGRP − Write by group.
+    stat.S_IXGRP − Execute by group.
+    stat.S_IRWXO − Read, write, and execute by others.
+    stat.S_IROTH − Read by others.
+    stat.S_IWOTH − Write by others.
+    stat.S_IXOTH − Execute by others.
+    """
+    st = os.stat(path)
+    if octal == "777":
+        mode = stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO
+    os.chmod(path, st.st_mode | mode)
+
+
 def writePidFile():
     file = os.path.join(WORK_DIRECTORY, 'server.pid')
     pid = str(os.getpid())
@@ -219,6 +249,7 @@ def writePidFile():
     f = open(file, 'w+')
     f.write(pid)
     f.close()
+    changePermission(file, "777")
 
 
 def deletePidFile():
@@ -233,6 +264,7 @@ def writeLockFile():
     f = open(file, 'w+')
     f.write("Client has started EXAM Mode")
     f.close()
+    changePermission(file, "777")
 
 
 def lockFileExists():

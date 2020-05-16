@@ -4,7 +4,7 @@
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 
-if [[( "$1" = "client" )]]
+if [ "$1" = "client" ];
 then
     PIDFILE="${HOME}.life/EXAM/client.pid"
 else

@@ -76,6 +76,7 @@ class MyServerProtocol(basic.LineReceiver):
         filename = self.line_data_list[2]
         file_path = os.path.join(self.factory.files_path, filename)
         # self.factory.window.log('Receiving file chunk (%d KB)' % (len(data)/1024))
+        # print('Receiving file chunk (%d KB)' % (len(data)/1024))
 
         if not self.file_handler:
             self.file_handler = open(file_path, 'wb')
