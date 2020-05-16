@@ -18,7 +18,7 @@ if __name__ == '__main__':
     setup(
         name="life-exam",
         version='3.2',
-        description="LiFE Exam Client",
+        description="LiFE Exam",
         author=__author__,
         maintainer=__author__,
         license="GPLv3",
