@@ -3,22 +3,22 @@ A server/client application that allows to take over control of LiFE clients and
 
 This application is written in Python, PyQt.
 
+## Prerequisites
 Tools needed in order to provide 100% functionality are:
 - xdotool
 - imagemagick
 - kde plasma > 5.12
 - PyQt5
 - Python 3
-- Twisted ![sdfsdf](https://pypi.org/project/Twisted/)
+- [Twisted](https://pypi.org/project/Twisted/)
 
 
 ![Image of life-exam](http://life-edu.eu/images/exam2.gif)
 
-Run
-`sudo python3 setup.py`
-in order to install the twisted plugin and other Python Modules.
+## Install
+Run in life-exam path `sudo python3 setup.py` in order to install the Twisted plugin and other Python Modules.
 
-
+## Running the Server and Client
 `sudo python3 server/server.py`
 runs the server.
 
@@ -29,9 +29,11 @@ runs the client.
 if your setup can't find the twisted plugin add the follwing lines to your "sudoers" file
 `sudo visudo`
 
->  Defaults    env_reset
->  Defaults    env_keep =  "PYTHONPATH DISPLAY"
->  Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
+```bash
+Defaults    env_reset
+Defaults    env_keep =  "PYTHONPATH DISPLAY"
+Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
+```
 
 and PYTHONPATH to your /etc/environment
 
