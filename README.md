@@ -1,20 +1,20 @@
-# life-exam-controlcenter 2
+# life-exam
 A server/client application that allows to take over control of LiFE clients and provide a secure exam environment for schools.
 
-This application is written in Python, PyQt and Twisted.
+This application is written in Python, PyQt.
 
 Tools needed in order to provide 100% functionality are:
 - xdotool
 - imagemagick
 - kde plasma > 5.12
 - PyQt5
-- python 3
-- python twisted > 18.4.0 
+- Python 3
+- Twisted ![sdfsdf](https://pypi.org/project/Twisted/)
 
 
 ![Image of life-exam](http://life-edu.eu/images/exam2.gif)
 
-Run 
+Run
 `sudo python3 setup.py`
 in order to install the twisted plugin and other Python Modules.
 
@@ -26,7 +26,7 @@ runs the server.
 runs the client.
 
 
-if your setup can't find the twisted plugin add the follwing lines to your "sudoers" file 
+if your setup can't find the twisted plugin add the follwing lines to your "sudoers" file
 `sudo visudo`
 
 >  Defaults    env_reset
@@ -36,4 +36,3 @@ if your setup can't find the twisted plugin add the follwing lines to your "sudo
 and PYTHONPATH to your /etc/environment
 
 >   PYTHONPATH=".:/home/student/.life/applications/life-exam"
-
