@@ -61,10 +61,12 @@ class MyServerFactory(protocol.ServerFactory):
         self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
 
     """
-    http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
+    https://twistedmatrix.com/documents/current/api/twisted.internet.protocol.Factory.html
     """
-    def buildProtocol(self):
+    # twisted Method
+    def buildProtocol(self, addr):  # noqa
         return MyServerProtocol(self)
         """
-        wird bei einer eingehenden client connection aufgerufen - erstellt ein object der Klasse MyServerProtocol für jede connection und übergibt self (die factory)
+        wird bei einer eingehenden client connection aufgerufen
+        erstellt ein object der Klasse MyServerProtocol für jede connection und übergibt self (die factory)
         """

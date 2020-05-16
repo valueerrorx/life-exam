@@ -2,12 +2,8 @@
 setup.py for life-exam
 Usage: pip3 install .
 """
-
 __author__ = 'Thomas Michael Weissel'
 
-# removing this app:
-# sudo rm -r /usr/local/lib/python3.6/dist-packages/classes /usr/local/lib/python3.6/dist-packages/config /usr/local/lib/python3.6/dist-packages/twisted/plugins/examclient_plugin.py
-# sudo rm -r /usr/local/lib/python3.6/dist-packages/life_exam-1.99-py3.5.egg/
 
 from distutils.core import setup
 

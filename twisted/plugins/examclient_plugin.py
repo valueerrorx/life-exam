@@ -232,8 +232,8 @@ class MyClientProtocol(basic.LineReceiver):
             return  # TODO: inform that nothing has been done
 
         self.setRawMode()
-        for bytes in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
-            self.transport.write(bytes)
+        for bytess in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
+            self.transport.write(bytess)
 
         # send this to inform the server that the datastream is finished
         self.transport.write(b'\r\n')
@@ -314,7 +314,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         # self.factor = 1.8
 
     # twisted-Event: Called when a connection has failed to connect
-    def clientConnectionFailed(self, connector, reason):
+    def clientConnectionFailed(self, connector, reason):  #noqa
         self.failcount += 1
 
         if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
@@ -325,7 +325,8 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
 
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
-    def buildProtocol(self):
+    # twisted Method
+    def buildProtocol(self, addr):  #noqa
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self)
 

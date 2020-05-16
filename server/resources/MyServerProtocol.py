@@ -28,7 +28,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.logger = logging.getLogger(__name__)
 
     # twisted-Event: A Connection is made
-    def connectionMade(self):
+    def connectionMade(self):  # noqa
         self.factory.server_to_client.add_client(self)
         self.file_handler = None
         self.line_data_list = ()
@@ -40,14 +40,22 @@ class MyServerProtocol(basic.LineReceiver):
                 self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
 
     # twisted-Event: A Connection is lost
-    def connectionLost(self, reason):
+    def connectionLost(self, reason):  # noqa
         self.logger.warning("ConnectionLost")
-        # self.logger.warning(reason)  # maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
+        """
+        maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
+        """
+        self.logger.warning(reason)
 
         self.factory.server_to_client.remove_client(self)
         self.file_handler = None
         self.line_data_list = ()
-        self.factory.rawmode = False  # we deactivate the rawmode ft block here in case the disconnect interrupted an ongoing filetransfer which would never send \r\n and therefore never unblock (worst case scenario: an other ft could be started during an ongoing ft - because notblocked - and lead to a corrupted (and therefore removed) ft)
+        """we deactivate the rawmode FT block here in case the disconnect interrupted an ongoing filetransfer
+        which would never send \r\n and therefore never unblock
+        (worst case scenario: an other FT could be started during an ongoing FT - because notblocked -
+        and lead to a corrupted (and therefore removed) FT)
+        """
+        self.factory.rawmode = False
 
         self.factory.window.log(
             'Connection from %s lost (%d clients left)' % (
