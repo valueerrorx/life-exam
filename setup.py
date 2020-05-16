@@ -28,6 +28,9 @@ if __name__ == '__main__':
             'Twisted>20.0.0',
             'PyYAML',
             'regex',
+            'numpy',
+            'matplotlib',
+            'opencv-python',
         ],
         packages=[
             "config",

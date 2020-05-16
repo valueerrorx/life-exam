@@ -65,7 +65,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         msg = 'Auth sent to the server'
         print(msg)
-        mutual_functions.showDesktopMessage(msg)
+        # mutual_functions.showDesktopMessage(msg)
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
@@ -73,7 +73,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.line_data_list = ()
         print('Connection to the server has been lost')
-        mutual_functions.showDesktopMessage('Connection to the server has been lost')
+        # mutual_functions.showDesktopMessage('Connection to the server has been lost')
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
             command = "%s/client/client.py &" % (self.rootDir)
@@ -103,7 +103,7 @@ class MyClientProtocol(basic.LineReceiver):
                 # initialize exam mode.. unzip and start exam
                 if self.line_data_list[2] == DataType.EXAM.value:
                     msg = 'Initializing Exam Mode'
-                    mutual_functions.showDesktopMessage(msg)
+                    # mutual_functions.showDesktopMessage(msg)
                     print(msg)
                     self._startExam(filename, file_path, cleanup_abgabe)
 
@@ -116,7 +116,7 @@ class MyClientProtocol(basic.LineReceiver):
                         shutil.move(file_path, SHARE_DIRECTORY)
 
                     msg = 'File %s received!' % (filename)
-                    mutual_functions.showDesktopMessage(msg)
+                    # mutual_functions.showDesktopMessage(msg)
                     print(msg)
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
 
@@ -125,7 +125,7 @@ class MyClientProtocol(basic.LineReceiver):
                     self.sendEncodedLine(line)
 
                 elif self.line_data_list[2] == DataType.PRINTER.value:
-                    mutual_functions.showDesktopMessage('Receiving Printer Configuration')
+                    # mutual_functions.showDesktopMessage('Receiving Printer Configuration')
                     self._activatePrinterconfig(file_path)
 
             else:
@@ -261,7 +261,7 @@ class MyClientProtocol(basic.LineReceiver):
         time.sleep(1)
 
         print("restarting cups service")
-        mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
+        # mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
         command = "systemctl start cups.service &"
         os.system(command)
 

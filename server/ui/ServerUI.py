@@ -566,7 +566,7 @@ class ServerUI(QtWidgets.QDialog):
                 # UI Label Update count clients
                 self.ui.label_clients.setText(self.createClientsLabel())
             else:
-                self.logger.error("Cant delete client %s" % client_name)
+                self.logger.error("Can't delete client %s" % client_name)
 
     def _disableClientScreenshot(self, client):
         self._show_workingIndicator(500, "Client Screenshot ausgeschaltet")
@@ -614,7 +614,7 @@ class ServerUI(QtWidgets.QDialog):
 
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientConnectionID, False))
-        widget.mouseDoubleClickEvent = self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
 
         # important!
         itemN.setSizeHint(widget.sizeHint())
@@ -650,7 +650,6 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         screenshotfilename = "%s.jpg" % client_connection_id
-
         self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
         self.screenshotwindow.exec_()
 

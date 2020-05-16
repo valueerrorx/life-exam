@@ -16,7 +16,8 @@ Tools needed in order to provide 100% functionality are:
 ![Image of life-exam](http://life-edu.eu/images/exam2.gif)
 
 ## Install
-Run in life-exam path `sudo python3 setup.py` or `sudo pip3 install .`in order to install the Twisted plugin and other Python Modules.
+- Run in life-exam path `sudo python3 setup.py` or `sudo pip3 install .`in order to install the Twisted plugin and other Python Modules.
+- copy alle files from DATA/EXAMCONFIG to ~/.life/EXAM/EXAMCONFIG
 
 ## Running the Server and Client
 `sudo python3 server/server.py`

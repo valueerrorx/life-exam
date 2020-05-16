@@ -16,7 +16,7 @@ SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses th
 VERSION = '3.2'
 
 # Debugging Stuff, set Name of Client and a fix Pin Code
-# if empty, then we are NOT debugging
+# set both empty, then we are NOT debugging
 DEBUG_ID = "TestUser"
 DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
