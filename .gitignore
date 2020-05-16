@@ -103,3 +103,4 @@ ENV/
 dropin.cache
 plantuml.jar
 git2SSH.sh
+__init__.py
