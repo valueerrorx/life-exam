@@ -17,6 +17,9 @@
    <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -148,7 +151,7 @@ text-fill: #aaaaaa; border: none;</string>
           </widget>
          </item>
          <item alignment="Qt::AlignTop">
-          <widget class="QLabel" name="message">
+          <widget class="QLabel" name="text">
            <property name="styleSheet">
             <string notr="true">font-size: 13px;
 text-fill: #eaeaec; border: none;</string>
@@ -182,6 +185,9 @@ text-fill: #eaeaec; border: none;</string>
          <string notr="true">border: none;</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetFixedSize</enum>
+         </property>
          <property name="leftMargin">
           <number>0</number>
          </property>
