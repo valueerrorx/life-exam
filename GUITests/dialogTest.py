@@ -9,8 +9,8 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 
 
-""" Display a Notififation for some reasons """
 class Notification(QLabel):
+    """ Display a Notififation for some reasons """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.__press_pos = None
@@ -22,13 +22,12 @@ class Notification(QLabel):
         self.ui = uic.loadUi(uifile)        # load UI
 
         self.ui.setWindowFlags(Qt.FramelessWindowHint)
-        #self.setAttribute(Qt.WA_TranslucentBackground)
 
         # center widget on the screen
         self.ui.adjustSize()  # update self.rect() now
         # position right middle of screen
         screen = QApplication.instance().desktop().screen().rect()
-        self.ui.move(screen.width()-self.ui.width(), (screen.height() - self.ui.height()) // 2)
+        self.ui.move(screen.width() - self.ui.width(), (screen.height() - self.ui.height()) // 2)
         iconfile = self.rootDir.joinpath('pixmaps/success.png').as_posix()
         self.ui.icon.setPixmap(QPixmap(iconfile))
 
