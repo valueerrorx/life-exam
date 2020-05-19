@@ -1,45 +1,57 @@
 #!/usr/bin/env python3
-"""Drag invisible window."""
 import sys
+from pathlib import Path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5 import uic, QtCore, QtWidgets, QtGui
+from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 
 
-class Invisible(QLabel):
+""" Display a Notififation for some reasons """
+class Notification(QLabel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.__press_pos = None
         self.initUI()
 
     def initUI(self):
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setText("Drag me...")
-        self.setFont(QFont("Times", 50, QFont.Bold))
+        self.rootDir = Path(__file__).parent
+        uifile = self.rootDir.joinpath('Notification.ui')
+        self.ui = uic.loadUi(uifile)        # load UI
+
+        self.ui.setWindowFlags(Qt.FramelessWindowHint)
+        #self.setAttribute(Qt.WA_TranslucentBackground)
+
         # center widget on the screen
-        self.adjustSize()  # update self.rect() now
-        self.move(QApplication.instance().desktop().screen().rect().center()
-                  - self.rect().center())
+        self.ui.adjustSize()  # update self.rect() now
+        # position right middle of screen
+        screen = QApplication.instance().desktop().screen().rect()
+        self.ui.move(screen.width()-self.ui.width(), (screen.height() - self.ui.height()) // 2)
+        iconfile = self.rootDir.joinpath('pixmaps/success.png').as_posix()
+        self.ui.icon.setPixmap(QPixmap(iconfile))
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.__press_pos = event.pos()  # remember starting position
+        self.ui.exit.clicked.connect(self._onAbbrechen)
 
-    def mouseReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.__press_pos = None
+    def show(self):
+        """ show it """
+        self.ui.show()
 
-    def mouseMoveEvent(self, event):
-        if self.__press_pos:  # follow the mouse
-            self.move(self.pos() + (event.pos() - self.__press_pos))
+    def hide(self):
+        """ show it """
+        self.ui.hide()
+
+    def _onAbbrechen(self):
+        """ hide it"""
+        self.hide()
 
 
 def main():
     app = QApplication(sys.argv)
-    w = Invisible()
-    w.show()
+    notification = Notification()
+    notification.show()
+    # w.show()
     return app.exec_()
 
 
