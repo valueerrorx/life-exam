@@ -1,0 +1,79 @@
+import PyQt5
+
+#This below import is the python file that gets created from using QtDesigner
+#And running pyuic5 to create a .py file from your .ui file - hopefully
+#whomever reads this is familiar with using QtDesigner
+import dialogBox as fxRun
+
+#This is the file that would contain your primary UI, also created using QtDesigner
+import mainUI
+import threading
+
+class MAIN_UI(PyQt5.QtWidgets.QMainWindow, mainUI.Ui_interface):
+    startSignal = PyQt5.QtCore.pyqtSignal()
+    endSignal = PyQt5.QtCore.pyqtSignal()
+
+    def __init__(self,parent=None):
+        super(MAIN_UI, self).__init__(parent)
+        self.setupUi(self)
+        self.buttonStartFunction1.clicked.connect(self.startFunction1)
+        self.buttonStartFunction2.clicked.connect(self.startFunction2)
+
+    def startFunction1(self):
+        self.startThread(self.exampleMethod1)
+
+   def startFunction2(self):
+        self.startThread(self.exampleMethod2)
+
+    def startThread(self,functionName):
+        t = threading.Thread(target=functionName)
+        t.daemon = True
+        t.start()
+
+    def exampleMethod1(self):
+        #This function will show the dialog box at the beginning of the process
+        # and will update the text and button once the process is complete
+        FULLPROGRAM.mainUI.startSignal.emit()
+        #Do lots of things here that take a long time
+        FULLPROGRAM.mainUI.endSignal.emit()
+
+    def exampleMethod2(self):
+        #This can be a different function, just showing that you can send
+        #whatever function into the startThread() method and it will work
+        #the same way
+        FULLPROGRAM.mainUI.startSignal.emit()
+        #Do lots of things here that take a long time
+        FULLPROGRAM.mainUI.endSignal.emit()
+
+class PROCESS_BOX(PyQt5.QtWidgets.QDialog, fxRun.Ui_dialogBox):
+    def __init__(self,parent=None):
+        super(PROCESS_BOX,self).__init__(parent)
+        self.setupUi(self)
+        self.buttonProcessCompleted.clicked.connect(self.close)
+
+    def show_dialogbox(self):
+        self.setWindowTitle("RUNNING")
+        self.labelProcessStatus.setText("PROCESSING REQUEST... \n PLEASE WAIT...")
+        self.buttonProcessCompleted.setEnabled(False)
+        super(PROCESS_BOX,self).exec_()
+
+    def processComplete(self):
+        self.setWindowTitle("FINISHED")
+        self.labelProcessStatus.setText("PROCESS COMPLETE! \n CLICK OK")
+        self.buttonProcessCompleted.setEnabled(True)
+
+class FULLPROGRAM:
+    def __init__(self):
+        app = PyQt5.QtWidgets.QApplication(sys.argv)
+        FULLPROGRAM.fxRun = PROCESS_BOX()
+        FULLPROGRAM.mainUI = MAIN_UI()
+        FULLPROGRAM.mainUI.startSignal.connect(FULLPROGRAM.fxRun.show_dialogbox)
+        FULLPROGRAM.mainUI.endSignal.connect(FULLPROGRAM.fxRun.processComplete)
+        FULLPROGRAM.mainUI.show()
+        app.exec_()
+
+def main():
+    program = FULLPROGRAM()
+
+if __name__ == '__main__':
+    main()

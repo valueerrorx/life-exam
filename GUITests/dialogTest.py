@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 import sys
 import multiprocessing
+import threading
 import time
 from pathlib import Path
-
+import PyQt5
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QApplication, QLabel
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from PyQt5.QtCore import pyqtSignal
+import multitasking
 
 
-class Notification(QLabel):
+class Notification(QtWidgets.QDialog):
     """ Display a Notififation for some reasons """
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, parent=None):
+        super(Notification, self).__init__(parent)
         self.initUI()
 
     def initUI(self):
@@ -39,9 +42,13 @@ class Notification(QLabel):
         # connect Events
         self.ticker.timeout_event.connect(self.timer_done)
 
+    def moveTo(self, x, y):
+        """ move the dialog on the screen """
+        self.ui.move(x, y)
+
     def show(self):
         """ show it """
-        self.ticker.start()
+        # self.ticker.start()
         self.ui.show()
 
     def hide(self):
@@ -112,15 +119,60 @@ class Notification_Ticker(QtCore.QThread):
             self.timeout_event.emit(self.parent)
 
 
+# ------------------------------------------------------------------------------
+# only for testing
+class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
+    startNotification = pyqtSignal()
+    endNotification = pyqtSignal()
+
+    def __init__(self,parent=None):
+        super(MAIN_UI, self).__init__(parent)
+        self.rootDir = Path(__file__).parent
+        uifile = self.rootDir.joinpath('main.ui')
+        self.ui = uic.loadUi(uifile)        # load UI
+
+        self.startNotification.connect(Notification().show)
+        self.endNotification.connect(Notification().hide)
+
+        self.ui.btn1.clicked.connect(lambda: self.startTest())
+        self.ui.btn1.clicked.connect(lambda: self.stopTest())
+
+        self.ui.show()
+
+    def startThread(self,functionName):
+        t = threading.Thread(target=functionName)
+        t.daemon = True
+        t.start()
+
+    def exampleMethod1(self):
+        #This function will show the dialog box at the beginning of the process
+        # and will update the text and button once the process is complete
+        mainUI.startSignal.emit()
+        #Do lots of things here that take a long time
+        mainUI.endSignal.emit()
+
+    def startTest(self):
+        self.startThread(self.exampleMethod1)
+
+    def stopTest(self):
+        pass
+
+
 
 def main():
     app = QApplication(sys.argv)
-    notification = Notification()
-    notification.showInformation("Information", "Vor langer langer Zeit lebte ein Tux in Österreich und hatte keine Windows daheim")
-    # notification.showWarning("Warnung", "Vor langer langer Zeit lebte ein Tux in Österreich und hatte keine Windows daheim")
+    #notification = Notification()
+    #notification.showInformation("Information", "Vor langer langer Zeit lebte ein Tux in Österreich und hatte keine Windows daheim")
 
-    return app.exec_()
+    #notification.moveTo(100, 100)
+    #notification.showWarning("Warnung", "Vor langer langer Zeit lebte ein Tux in Österreich und hatte keine Windows daheim")
+
+    # show main Window
+    mainUI = MAIN_UI()
+
+
+    app.exec_()
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()
