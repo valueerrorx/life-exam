@@ -65,15 +65,16 @@ class MyClientProtocol(basic.LineReceiver):
 
         msg = 'Auth sent to the server'
         print(msg)
-        # mutual_functions.showDesktopMessage(msg)
+        # self.notification.showInformation(msg)
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
         self.factory.failcount += 1
         self.file_handler = None
         self.line_data_list = ()
-        print('Connection to the server has been lost')
-        # mutual_functions.showDesktopMessage('Connection to the server has been lost')
+        msg = 'Connection to the server has been lost'
+        print(msg)
+        # self.notification.showInformation(msg)
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
             command = "%s/client/client.py &" % (self.rootDir)
@@ -103,8 +104,9 @@ class MyClientProtocol(basic.LineReceiver):
                 # initialize exam mode.. unzip and start exam
                 if self.line_data_list[2] == DataType.EXAM.value:
                     msg = 'Initializing Exam Mode'
-                    # mutual_functions.showDesktopMessage(msg)
                     print(msg)
+                    # self.notification.showInformation(msg)
+
                     self._startExam(filename, file_path, cleanup_abgabe)
 
                 elif self.line_data_list[2] == DataType.FILE.value:
@@ -116,8 +118,9 @@ class MyClientProtocol(basic.LineReceiver):
                         shutil.move(file_path, SHARE_DIRECTORY)
 
                     msg = 'File %s received!' % (filename)
-                    # mutual_functions.showDesktopMessage(msg)
                     print(msg)
+                    # self.notification.showInformation(msg)
+
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
 
                     line = '%s %s' % (Command.FILE_OK.value, self.factory.options['id'])
@@ -125,7 +128,7 @@ class MyClientProtocol(basic.LineReceiver):
                     self.sendEncodedLine(line)
 
                 elif self.line_data_list[2] == DataType.PRINTER.value:
-                    # mutual_functions.showDesktopMessage('Receiving Printer Configuration')
+                    # self.notification.showInformation('Receiving Printer Configuration')
                     self._activatePrinterconfig(file_path)
 
             else:
@@ -260,8 +263,10 @@ class MyClientProtocol(basic.LineReceiver):
         os.unlink(file_path)  # delete zip file
         time.sleep(1)
 
-        print("restarting cups service")
-        # mutual_functions.showDesktopMessage('Restarting Cups Printer Service')
+        msg = 'Restarting Cups Printer Service'
+        print(msg)
+        # self.notification.showInformation(msg)
+
         command = "systemctl start cups.service &"
         os.system(command)
 
