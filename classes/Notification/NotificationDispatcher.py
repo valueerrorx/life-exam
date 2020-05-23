@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 from PyQt5.QtWidgets import QApplication
-from classes.Notification.Notification import Notification, Notification_Core,\
+from Qt.Notification.Notification import Notification, Notification_Core,\
     Notification_Type
 
 
