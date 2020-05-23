@@ -30,6 +30,7 @@ from config.enums import Command, DataType
 
 from classes.client2server import ClientToServer
 import time
+from classes.Notification.Notification import Notification_Type
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 from twisted.internet import protocol, defer
@@ -53,6 +54,7 @@ class MyClientProtocol(basic.LineReceiver):
         mutual_functions.prepareDirectories()
         # rootDir of Application
         self.rootDir = Path(__file__).parent.parent
+        print(self.rootDir)
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -63,18 +65,14 @@ class MyClientProtocol(basic.LineReceiver):
         self.sendEncodedLine(line)
         print(line)
 
-        msg = 'Auth sent to the server'
-        print(msg)
-        # self.notification.showInformation(msg)
+        self.inform('Authentication with server ...')
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
         self.factory.failcount += 1
         self.file_handler = None
         self.line_data_list = ()
-        msg = 'Connection to the server has been lost'
-        print(msg)
-        # self.notification.showInformation(msg)
+        self.inform("Connection to the server has been lost")
 
         if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
             command = "%s/client/client.py &" % (self.rootDir)
@@ -103,9 +101,7 @@ class MyClientProtocol(basic.LineReceiver):
 
                 # initialize exam mode.. unzip and start exam
                 if self.line_data_list[2] == DataType.EXAM.value:
-                    msg = 'Initializing Exam Mode'
-                    print(msg)
-                    # self.notification.showInformation(msg)
+                    self.inform('Initializing Exam Mode ...')
 
                     self._startExam(filename, file_path, cleanup_abgabe)
 
@@ -117,9 +113,7 @@ class MyClientProtocol(basic.LineReceiver):
                     else:
                         shutil.move(file_path, SHARE_DIRECTORY)
 
-                    msg = 'File %s received!' % (filename)
-                    print(msg)
-                    # self.notification.showInformation(msg)
+                    self.inform('File %s received!' % (filename))
 
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
 
@@ -128,7 +122,8 @@ class MyClientProtocol(basic.LineReceiver):
                     self.sendEncodedLine(line)
 
                 elif self.line_data_list[2] == DataType.PRINTER.value:
-                    # self.notification.showInformation('Receiving Printer Configuration')
+                    self.inform('Receiving Printer Configuration')
+
                     self._activatePrinterconfig(file_path)
 
             else:
@@ -263,9 +258,7 @@ class MyClientProtocol(basic.LineReceiver):
         os.unlink(file_path)  # delete zip file
         time.sleep(1)
 
-        msg = 'Restarting Cups Printer Service'
-        print(msg)
-        # self.notification.showInformation(msg)
+        self.inform('Restarting Cups Printer Service')
 
         command = "systemctl start cups.service &"
         os.system(command)
@@ -307,6 +300,23 @@ class MyClientProtocol(basic.LineReceiver):
             os.system(startcommand)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original
+
+    def inform(self, msg, ntype=Notification_Type.Information):
+        """ print to the log and show a notification """
+        print(msg)
+        if ntype == Notification_Type.Information:
+            stype = "information"
+        elif ntype == Notification_Type.Error:
+            stype = "error"
+        elif ntype == Notification_Type.Warning:
+            stype = "warning"
+        elif ntype == Notification_Type.Success:
+            stype = "success"
+
+        path = self.rootDir.parent.joinpath('classes/Notification')
+        command = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (path, stype, msg)
+        print(command)
+        os.system(command)
 
 
 class MyClientFactory(protocol.ReconnectingClientFactory):

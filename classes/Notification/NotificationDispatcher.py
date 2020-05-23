@@ -22,8 +22,8 @@ python3 NotificationDispatcher.py "Information" "Linux is great!"
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    if len(sys.argv) > 3:
-        print("Too much arguments...")
+    if len(sys.argv) != 3:
+        print("Argument mismatch...")
         printhelp()
 
     typ = sys.argv[1]
