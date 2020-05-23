@@ -4,7 +4,7 @@ from pathlib import Path
 import PyQt5
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication
-from Notification import Notification_Core, Notification
+from classes.Notification.Notification import Notification_Core, Notification
 
 
 class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
