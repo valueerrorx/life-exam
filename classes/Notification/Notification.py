@@ -8,6 +8,7 @@ import time
 import random
 from enum import Enum
 from PyQt5.Qt import QObject
+import threading
 
 
 class Notification_Type(Enum):
@@ -107,14 +108,19 @@ class Notification(QObject):
 
     def __del__(self):
         pass
-    
+
+    def setDemo(self):
+        """ activates random positioning """
+        self.demo = True
+
     def _showNotification(self, n):
         """ shows the notification n """
         n.show()
-        
+
     def _hideNotification(self, n):
         """ hides the notification n """
         n.hide()
+        self.done_signal.emit()
 
     def _createNotification(self):
         """ shows the Notification as thread"""
@@ -145,31 +151,35 @@ class Notification(QObject):
 
         self.startNotification_Signal.connect(self._showNotification)
         self.stopNotification_Signal.connect(self._hideNotification)
-        
+
         self.startNotification_Signal.emit(self._notification)
         time.sleep(self._notification.getTimeout())
         self.stopNotification_Signal.emit(self._notification)
 
     def showInformation(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Information])
+        self._notification.setType(Notification_Type.Information)
+        self._notification.setMessage(msg)
+        t = threading.Thread(target=self._createNotification)
         t.daemon = True
         t.start()
 
     def showSuccess(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Success])
+        self._notification.setType(Notification_Type.Success)
+        self._notification.setMessage(msg)
+        t = threading.Thread(target=self._createNotification)
         t.daemon = True
         t.start()
 
     def showError(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Error])
+        self._notification.setType(Notification_Type.Error)
+        self._notification.setMessage(msg)
+        t = threading.Thread(target=self._createNotification)
         t.daemon = True
         t.start()
 
     def showWarning(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Warning])
+        self._notification.setType(Notification_Type.Warning)
+        self._notification.setMessage(msg)
+        t = threading.Thread(target=self._createNotification)
         t.daemon = True
         t.start()
-
-    def run(self):
-        self._createNotification()
-        self.done_signal.emit()
