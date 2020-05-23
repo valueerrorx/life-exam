@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtCore import Qt, pyqtSignal, QObject
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QPixmap
 import time
-import threading
 import random
 from enum import Enum
-from PyQt5.Qt import QThread
+
+
+class Notification_Type(Enum):
+    Information = 1
+    Success = 2
+    Error = 3
+    Warning = 4
 
 
 class Notification_Core(QtWidgets.QDialog):
@@ -23,15 +28,15 @@ class Notification_Core(QtWidgets.QDialog):
         self.ui = uic.loadUi(uifile)        # load UI
         self.ui.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.ui.adjustSize()
         # position right middle of screen
-        screen = QApplication.instance().desktop().screen().rect()
-        self.ui.move(screen.width() - self.ui.width(), (screen.height() - self.ui.height()) // 2)
+        self.moveToDefaultPosition()
+
         iconfile = self.rootDir.joinpath('pixmaps/success.png').as_posix()
         self.ui.icon.setPixmap(QPixmap(iconfile))
 
         self.ui.exit.clicked.connect(self._onAbbrechen)
         self._timeout = 4  # sec
+        self._typ = Notification_Type.Information
 
     def moveTo(self, x, y):
         """ move the dialog on the screen """
@@ -72,19 +77,27 @@ class Notification_Core(QtWidgets.QDialog):
     def setBarColor(self, color):
         self.ui.colorbar.setStyleSheet("background-color: %s;" % color)
 
+    def setType(self, typ):
+        """ set the type of the notification """
+        self._typ = typ
 
-class Notification_Type(Enum):
-    Information = 1
-    Success = 2
-    Error = 3
-    Warning = 4
+    def getType(self):
+        """ get the type of the notification """
+        return self._typ
+
+    def moveToDefaultPosition(self):
+        """ the default position right middle of screen """
+        self.ui.adjustSize()
+        screen = QApplication.instance().desktop().screen().rect()
+        self.ui.move(screen.width(), (screen.height() - self.ui.height()) // 2)
 
 
 class Notification(QtCore.QThread):
     done_signal = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, notification, parent=None):
         super(Notification, self).__init__(parent)
+        self._notification = notification
         # random position on screen just for demonstration
         self.demo = False
         self.parent = parent
@@ -92,59 +105,37 @@ class Notification(QtCore.QThread):
     def __del__(self):
         pass
 
-    def _createNotification(self, msg, typ):
-        """ shows a Information Notification """
-        n = Notification_Core(self.parent)
+    def _createNotification(self):
+        """ shows the Notification as thread"""
+        typ = self._notification.getType()
         if typ == Notification_Type.Information:
-            n.setHeader("Information")
-            n.setIcon('pixmaps/notice.png')
-            n.setBarColor("#2C54AB")
+            self._notification.setHeader("Information")
+            self._notification.setIcon('pixmaps/notice.png')
+            self._notification.setBarColor("#2C54AB")
         elif typ == Notification_Type.Success:
-            n.setHeader("Done")
-            n.setIcon('pixmaps/success.png')
-            n.setBarColor("#009961")
+            self._notification.setHeader("Done")
+            self._notification.setIcon('pixmaps/success.png')
+            self._notification.setBarColor("#009961")
         elif typ == Notification_Type.Error:
-            n.setHeader("Error")
-            n.setIcon('pixmaps/error.png')
-            n.setBarColor("#CC0033")
+            self._notification.setHeader("Error")
+            self._notification.setIcon('pixmaps/error.png')
+            self._notification.setBarColor("#CC0033")
         elif typ == Notification_Type.Warning:
-            n.setHeader("Warning")
-            n.setIcon('pixmaps/warning.png')
-            n.setBarColor("#E23E0A")
-
-        n.setMessage(msg)
+            self._notification.setHeader("Warning")
+            self._notification.setIcon('pixmaps/warning.png')
+            self._notification.setBarColor("#E23E0A")
 
         if self.demo:
             x = random.randrange(100, 800)
             y = random.randrange(100, 800)
-            n.moveTo(x, y)
+            self._notification.moveTo(x, y)
+        else:
+            self._notification.moveToDefaultPosition()
 
-        n.show()
-        time.sleep(n.getTimeout())
-        n.hide()
+        self._notification.show()
+        time.sleep(self._notification.getTimeout())
+        self._notification.hide()
 
     def run(self):
-        notification = Notification()
-        notification._createNotification("sdxfdf", Notification_Type.Success)
+        self._createNotification()
         self.done_signal.emit()
-
-    def showInformation(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Information])
-        t.daemon = True
-        t.start()
-
-    def showSuccess(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Success])
-        t.daemon = True
-        t.start()
-
-    def showError(self, msg):
-        self.t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Error])
-        self.t.daemon = True
-        self.t.start()
-
-    def showWarning(self, msg):
-        t = threading.Thread(target=self._createNotification, args=[msg, Notification_Type.Warning])
-        t.daemon = True
-        t.start()
-

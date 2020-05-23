@@ -142,8 +142,7 @@
          <item alignment="Qt::AlignTop">
           <widget class="QLabel" name="header">
            <property name="styleSheet">
-            <string notr="true">font-size: 16pt;
-text-fill: #aaaaaa; border: none;</string>
+            <string notr="true">font-size: 16pt;color: #666666; border: none;</string>
            </property>
            <property name="text">
             <string>Information</string>
@@ -153,8 +152,7 @@ text-fill: #aaaaaa; border: none;</string>
          <item alignment="Qt::AlignTop">
           <widget class="QLabel" name="text">
            <property name="styleSheet">
-            <string notr="true">font-size: 13px;
-text-fill: #eaeaec; border: none;</string>
+            <string notr="true">font-size: 13px;color: #222222; border: none;</string>
            </property>
            <property name="text">
             <string>Der Drucker wurde wieder zurückgesetzt, und neu initialisiert.... das ist ein langer langer Text</string>
