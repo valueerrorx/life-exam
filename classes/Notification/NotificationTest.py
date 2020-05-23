@@ -4,9 +4,7 @@ from pathlib import Path
 import PyQt5
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication
-from PyQt5.Qt import QThread
-import threading
-from classes.Notification.Notification import Notification_Core, Notification
+from Notification import Notification_Core, Notification
 
 
 class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
@@ -50,7 +48,7 @@ def main():
     app = QApplication(sys.argv)
 
     # show main Window
-    mainUI = MAIN_UI()  #noqa
+    MAIN_UI()  #noqa
     app.exec_()
 
 
