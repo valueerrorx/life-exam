@@ -64,7 +64,6 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
         print(line)
-        print("Test")
 
         self.inform('Authentication with server ...')
 
@@ -315,9 +314,19 @@ class MyClientProtocol(basic.LineReceiver):
             stype = "success"
 
         path = self.rootDir.parent.joinpath('classes/Notification')
-        command = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (path, stype, msg)
-        print(command)
-        os.system(command)
+        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (path, stype, msg)
+        print(cmd)
+        self.runCmd(cmd)
+
+    def runCmd(self, cmd):
+        ''' runs a command '''
+        proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
+        for line in iter(proc.stderr.readline, b''):
+            print(line.decode())
+
+        for line in iter(proc.stdout.readline, b''):
+            print(line.decode())
+        proc.communicate()
 
 
 class MyClientFactory(protocol.ReconnectingClientFactory):
