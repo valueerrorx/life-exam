@@ -64,6 +64,7 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
         print(line)
+        print("Test")
 
         self.inform('Authentication with server ...')
 
