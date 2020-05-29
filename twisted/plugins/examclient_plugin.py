@@ -13,13 +13,10 @@
 # Log messages only with print(), they are handled by twisted
 
 import os
-import sys
-
 import shutil
 import subprocess
 import zipfile
 import datetime
-from pathlib import Path
 
 from classes import mutual_functions
 from config.config import SHARE_DIRECTORY, SAVEAPPS, USER,\
@@ -31,7 +28,6 @@ from config.enums import Command, DataType
 from classes.client2server import ClientToServer
 import time
 from classes.Notification.Notification import Notification_Type
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # add application root to python path for imports
 
 from twisted.internet import protocol, defer
 from twisted.protocols import basic
@@ -41,6 +37,7 @@ from twisted.application import internet
 from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
+from pathlib import Path
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -53,8 +50,10 @@ class MyClientProtocol(basic.LineReceiver):
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
         # rootDir of Application
-        self.rootDir = Path(__file__).parent.parent
-        print(self.rootDir)
+        self.rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # create Path to Notifications
+        self.notification_path = Path(self.rootDir).parent
+        self.notification_path = self.notification_path.joinpath('classes/Notification')
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -313,9 +312,7 @@ class MyClientProtocol(basic.LineReceiver):
         elif ntype == Notification_Type.Success:
             stype = "success"
 
-        path = self.rootDir.parent.joinpath('classes/Notification')
-        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (path, stype, msg)
-        print(cmd)
+        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (self.notification_path, stype, msg)
         self.runCmd(cmd)
 
     def runCmd(self, cmd):
@@ -323,7 +320,6 @@ class MyClientProtocol(basic.LineReceiver):
         proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
         for line in iter(proc.stderr.readline, b''):
             print(line.decode())
-
         for line in iter(proc.stdout.readline, b''):
             print(line.decode())
         proc.communicate()
