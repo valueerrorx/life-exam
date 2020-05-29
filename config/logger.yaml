@@ -31,8 +31,8 @@ handlers:
     level: ERROR
     formatter: default
     filename: 
-       client: life_exam_client_errors.log
-       server: life_exam_server_errors.log
+       client: errors_client.log
+       server: errors_server.log
     maxBytes: 1048576 # 1MB
     backupCount: 2
     encoding: utf8

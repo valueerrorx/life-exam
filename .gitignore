@@ -106,3 +106,5 @@ git2SSH.sh
 __init__.py
 ~lock.*
 .settings
+
+*.log
