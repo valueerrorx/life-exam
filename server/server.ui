@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>924</width>
-    <height>742</height>
+    <height>763</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,7 +48,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>64</height>
+          <height>75</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -235,10 +235,10 @@
             <enum>QLayout::SetMinimumSize</enum>
            </property>
            <property name="topMargin">
-            <number>8</number>
+            <number>0</number>
            </property>
            <property name="bottomMargin">
-            <number>8</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QLabel" name="currentlabel">
@@ -262,7 +262,7 @@
               <string>exam-123</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -288,7 +288,24 @@
               <string>1234</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="currentip">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>192.168.23.177</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -322,10 +339,10 @@
             <enum>QLayout::SetMinimumSize</enum>
            </property>
            <property name="topMargin">
-            <number>8</number>
+            <number>0</number>
            </property>
            <property name="bottomMargin">
-            <number>8</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QLabel" name="examlabel">
@@ -359,7 +376,7 @@
               <enum>Qt::RichText</enum>
              </property>
              <property name="alignment">
-              <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="wordWrap">
               <bool>false</bool>
@@ -395,7 +412,22 @@
               <enum>Qt::RichText</enum>
              </property>
              <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="iplabel">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>IP Adr.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -845,7 +877,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>757</width>
+               <width>756</width>
                <height>936</height>
               </rect>
              </property>

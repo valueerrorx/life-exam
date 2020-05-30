@@ -75,7 +75,7 @@ class Thread_Wait(QtCore.QThread):
 
     def setClients(self, clients):
         """ a list within all clients to actually work with """
-        self.clients = clients
+        self.clients = clients  # evtl. noch die art des progresses mitnehmen
 
     def run(self):
         """

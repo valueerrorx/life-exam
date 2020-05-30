@@ -14,3 +14,4 @@ encoding//server/resources/MyServerFactory.py=utf-8
 encoding//server/resources/MyServerProtocol.py=utf-8
 encoding//server/ui/ServerUI.py=utf-8
 encoding//server/ui/Thread_Wait.py=utf-8
+encoding//server/ui/Thread_Wait_Events.py=utf-8

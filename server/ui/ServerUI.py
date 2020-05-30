@@ -14,7 +14,8 @@ from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
     SCRIPTS_DIRECTORY, DEBUG_PIN
 from config.enums import DataType
 from server.resources.Applist import findApps
-from classes.system_commander import dialog_popup, show_ip, start_hotspot
+from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
+    get_primary_ip
 
 from classes.mutual_functions import get_file_list, checkIP
 
@@ -122,6 +123,9 @@ class ServerUI(QtWidgets.QDialog):
         self.waiting_thread.client_received_file.connect(client_received_file_done)
         self.waiting_thread.client_lock_screen.connect(client_lock_screen)
         self.waiting_thread.client_unlock_screen.connect(client_unlock_screen)
+
+        # get your IP
+        self.ui.currentip.setText("<b>%s</b>" % get_primary_ip())
 
         # CSS Styling
         self.ui.listWidget.setStyleSheet("""

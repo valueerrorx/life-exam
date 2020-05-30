@@ -1,6 +1,8 @@
+import socket
 import os
+from config.config import SCRIPTS_DIRECTORY
 
-from config.config import *
+# TODO use systemcommander in examclient and add startexam
 
 
 def show_ip():
@@ -9,7 +11,19 @@ def show_ip():
     os.system(startcommand)
 
 
-# TODO use systemcommander in examclient and add startexam
+def get_primary_ip():
+    """ give the primary IP Adress of the host """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
 
 def start_hotspot():
     scriptfile = os.path.join(SCRIPTS_DIRECTORY, "gui-activate-lifehotspot-root.sh")
