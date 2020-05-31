@@ -70,15 +70,14 @@ class ClientToServer:
         """Just locks the client screen
         :param client: ClientProtocol
         """
+        print(client.line_data_list)
         if client.line_data_list[0] == Command.LOCK.value:
-            print("Locking Screen")
-
             # check if a serverprocess is running and do not lock screen if any
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
             answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"], shell=True, stdout=subprocess.PIPE)
             answer = answer.communicate()[0].strip().decode()
 
-            # Test der Meldung an den Server
+            # Send OK i'm locked to Server
             line = '%s %s' % (Command.LOCKSCREEN_OK.value, client.factory.options['id'])
             print("Sending Lock Screen OK")
             client.sendEncodedLine(line)
@@ -89,12 +88,14 @@ class ClientToServer:
 
             startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
             os.system(startcommand)
-            # send OK to Server
-
         else:
-            print("closing lockscreen")
             startcommand = "exec pkill -9 -f lockscreen.py &"
             os.system(startcommand)
+
+            # Send OK i'm UNlocked to Server
+            line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, client.factory.options['id'])
+            print("Sending UN-Lock Screen OK")
+            client.sendEncodedLine(line)
         return
 
     def exitExam(self, client):
@@ -117,13 +118,12 @@ class ClientToServer:
         :param line: Line received from server
         :return:
         """
-
-        trigger = client.line_data_list[0]
+        trigger = client.line_data_list[0]  # noqa
         task = client.line_data_list[1]
         filetype = client.line_data_list[2]
         filename = client.line_data_list[3]
-        file_hash = client.line_data_list[4]
-        cleanup_abgabe = client.line_data_list[5]
+        file_hash = client.line_data_list[4]  # noqa
+        cleanup_abgabe = client.line_data_list[5]  # noqa
 
         if task == Command.SEND.value:
             if filetype == DataType.SCREENSHOT.value:

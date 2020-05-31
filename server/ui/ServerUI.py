@@ -220,10 +220,7 @@ class ServerUI(QtWidgets.QDialog):
         self.networkProgress.show(len(clients))
 
         # Waiting Thread
-        self.waiting_thread.setClients(clients)
-        if self.waiting_thread:
-            self.waiting_thread.stop()
-        self.waiting_thread.start()
+        self.waiting_thread.restart(clients)
 
         if self.factory.clientslocked:
             self.log("<b>UnLocking Client Screens</b>")
