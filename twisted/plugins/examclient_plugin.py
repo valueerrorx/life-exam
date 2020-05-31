@@ -52,8 +52,12 @@ class MyClientProtocol(basic.LineReceiver):
         # rootDir of Application
         self.rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         # create Path to Notifications
+        print("RootDir: %s" % self.rootDir)
         self.notification_path = Path(self.rootDir).parent
+        print("2: %s" % self.notification_path)
         self.notification_path = self.notification_path.joinpath('classes/Notification')
+        print("3: %s" % self.notification_path)
+        
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -313,7 +317,6 @@ class MyClientProtocol(basic.LineReceiver):
         elif ntype == Notification_Type.Success:
             stype = "success"
 
-        print(self.notification_path)
         cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (self.notification_path, stype, msg)
         print(cmd)
         self.runCmd(cmd)
