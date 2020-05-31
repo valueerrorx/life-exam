@@ -41,25 +41,18 @@ from pathlib import Path
 
 
 class MyClientProtocol(basic.LineReceiver):
-    def __init__(self, factory):
+    def __init__(self, factory, appDir):
         self.factory = factory
         self.client_to_server = self.factory.client_to_server
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
+        print(appDir)
+
+        self.notification_path = Path(appDir)
+        self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
-
-    def setAppDir(self, dir):
-        """ sets the application directory """
-        # rootDir of Application
-        self.rootDir = dir
-        # create Path to Notifications
-        print("RootDir: %s" % self.rootDir)
-        self.notification_path = Path(self.rootDir).parent
-        print("2: %s" % self.notification_path)
-        self.notification_path = self.notification_path.joinpath('classes/Notification')
-        print("3: %s" % self.notification_path)
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -361,9 +354,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
     # twisted Method
     def buildProtocol(self, addr):  #noqa
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        protocol = MyClientProtocol(self)
-        protocol.setAppDir(self.rootDir)
-        return protocol
+        return MyClientProtocol(self, self.rootDir)
 
 
 """
@@ -381,11 +372,12 @@ export PYTHONPATH=".:/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 class Options(usage.Options):
+    appDir = "/home/student/.life/applications/life-exam/"
     optParameters = [["port", "p", 5000, "The port number to connect to."],
                      ["host", "h", '127.0.0.1', "The host machine to connect to."],
                      ["id", "i", 'unnamed', "A custom unique Client id."],
                      ["pincode", "c", '12345', "The pincode needed for authorization"],
-                     ["appdirectory", "d", '/home/student/.life/applications/life-exam/', "Directory of the Application itself"],
+                     ["appdirectory", "d", appDir, "Directory of the Application itself"],
                      ]
 
 
