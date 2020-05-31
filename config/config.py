@@ -31,6 +31,7 @@ SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kat
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()
 USER_HOME_DIR = os.path.join("/home", str(USER))
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/EXAM")
+NOTIFICATION_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/applications/life-exam/classes/Notification/")
 
 # work directory for client and server  - absolute paths
 SCRIPTS_DIRECTORY = os.path.join(WORK_DIRECTORY, "scripts")

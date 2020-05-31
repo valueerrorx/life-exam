@@ -21,7 +21,7 @@ import datetime
 from classes import mutual_functions
 from config.config import SHARE_DIRECTORY, SAVEAPPS, USER,\
     PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY,\
-    CLIENTFILES_DIRECTORY
+    CLIENTFILES_DIRECTORY, NOTIFICATION_DIRECTORY
 from config.enums import Command, DataType
 
 
@@ -47,10 +47,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
-        print(appDir)
-
-        self.notification_path = Path(appDir)
-        self.notification_path = self.notification_path.joinpath('classes/Notification')
+        self.notification_path = NOTIFICATION_DIRECTORY
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
 
