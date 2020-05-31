@@ -17,6 +17,7 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5 import QtWidgets, uic
 
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
+from classes.CmdRunner import CmdRunner
 # from twisted.internet.task import LoopingCall
 
 
@@ -38,6 +39,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.completerlist = []
         self._initUi()
         prepareDirectories()
+        self.cmdRunner = CmdRunner()
 
     def _initUi(self):
         # Register self to Global Observer List Object
@@ -172,7 +174,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 self.ui.close()
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 # make sure only one client instance is running per client
-                os.system("bash %s %s" % (clientkillscript, 'client'))
+                cmd = "bash %s %s" % (clientkillscript, 'client')
+                self.cmdRunner.runCmd(cmd)
+
                 self.logger.info("Terminated old running twisted Client")
 
                 # moved this to workdirectory because configdirectory is overwritten on exam start
