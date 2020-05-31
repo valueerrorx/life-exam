@@ -190,7 +190,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # print(sys.path)
 
                 # port, host, id, pincode, application_dir
-                command = "sudo -u %s twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (USER, WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
+                command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (USER, WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 self.logger.info(command)
                 os.system(command)
         else:
