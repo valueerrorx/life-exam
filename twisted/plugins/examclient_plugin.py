@@ -49,15 +49,17 @@ class MyClientProtocol(basic.LineReceiver):
         self.line_data_list = ()
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
+
+    def setAppDir(self, dir):
+        """ sets the application directory """
         # rootDir of Application
-        self.rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.rootDir = dir
         # create Path to Notifications
         print("RootDir: %s" % self.rootDir)
         self.notification_path = Path(self.rootDir).parent
         print("2: %s" % self.notification_path)
         self.notification_path = self.notification_path.joinpath('classes/Notification')
         print("3: %s" % self.notification_path)
-        
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -359,7 +361,9 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
     # twisted Method
     def buildProtocol(self, addr):  #noqa
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        return MyClientProtocol(self)
+        protocol = MyClientProtocol(self)
+        protocol.setAppDir(self.rootDir)
+        return protocol
 
 
 """
