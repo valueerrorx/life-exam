@@ -31,7 +31,8 @@ if __name__ == '__main__':
             'numpy',
             'matplotlib',
             'opencv-python',
-            'pathlib', 'shutil', 'subprocess', 'zipfile', 'datetime'
+            'pathlib',
+            'datetime'
         ],
         packages=[
             "config",

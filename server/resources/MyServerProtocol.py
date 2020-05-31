@@ -10,7 +10,6 @@ from config.enums import DataType, Command
 from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
     DEBUG_SHOW_NETWORKTRAFFIC, DEBUG_PIN
 import zipfile
-from classes.HTMLTextExtractor import html_to_text
 
 
 class MyServerProtocol(basic.LineReceiver):

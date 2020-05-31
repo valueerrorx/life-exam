@@ -21,7 +21,7 @@ import datetime
 from classes import mutual_functions
 from config.config import SHARE_DIRECTORY, SAVEAPPS, USER,\
     PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY,\
-    CLIENTFILES_DIRECTORY, NOTIFICATION_DIRECTORY
+    CLIENTFILES_DIRECTORY
 from config.enums import Command, DataType
 
 
@@ -47,7 +47,8 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
-        self.notification_path = NOTIFICATION_DIRECTORY
+        self.notification_path = Path(appDir)
+        self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
 
@@ -380,6 +381,7 @@ class Options(usage.Options):
 
 @implementer(IServiceMaker, IPlugin)
 class MyServiceMaker(object):
+    # see https://twistedmatrix.com/documents/current/core/howto/plugin.html#extending-an-existing-program
     tapname = "examclient"
     description = "LiFE-Exam Client"
     options = Options

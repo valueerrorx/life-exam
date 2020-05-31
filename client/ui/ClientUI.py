@@ -18,7 +18,6 @@ from PyQt5 import QtWidgets, uic
 
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 from classes.CmdRunner import CmdRunner
-# from twisted.internet.task import LoopingCall
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -189,7 +188,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                     self.logger.error("Can't create myname.txt")
 
                 from twisted.plugin import IPlugin, getPlugins
-                # plgs =
+                # Update the cache system
+                # see https://twistedmatrix.com/documents/current/core/howto/plugin.html
                 list(getPlugins(IPlugin))
 
                 # for item in plgs:
