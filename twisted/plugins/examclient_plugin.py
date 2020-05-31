@@ -311,7 +311,6 @@ class MyClientProtocol(basic.LineReceiver):
             stype = "success"
 
         cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (self.notification_path, stype, msg)
-        print(cmd)
         self.runCmd(cmd)
 
     def runCmd(self, cmd):
