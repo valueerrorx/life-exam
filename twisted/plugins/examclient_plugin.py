@@ -69,8 +69,8 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
         print(line)
-
         self.inform('Authentication with server ...')
+        print("========================================================")
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
