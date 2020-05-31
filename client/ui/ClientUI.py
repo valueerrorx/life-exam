@@ -177,9 +177,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
                 # moved this to workdirectory because configdirectory is overwritten on exam start
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
-                openednamefile = open(namefile, 'w+')  # erstelle die datei neu
-                openednamefile.write("%s" % (ID))
-                changePermission(namefile, "777")
+                try:
+                    openednamefile = open(namefile, 'w+')  # erstelle die datei neu
+                    openednamefile.write("%s" % (ID))
+                    changePermission(namefile, "777")
+                except IOError:
+                    self.logger.error("Can't create myname.txt")
 
                 from twisted.plugin import IPlugin, getPlugins
                 # plgs =
