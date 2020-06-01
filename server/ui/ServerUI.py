@@ -60,7 +60,7 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.ui.setWindowTitle("Exam Server")
 
-        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
+        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))

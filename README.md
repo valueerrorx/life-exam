@@ -1,7 +1,7 @@
 # life-exam
 A server/client application that allows to take over control of LiFE clients and provide a secure exam environment for schools.
 
-This application is written in Python, PyQt.
+This application is written in Python and PyQt.
 
 ## Prerequisites
 Tools needed in order to provide 100% functionality are:
@@ -16,8 +16,8 @@ Tools needed in order to provide 100% functionality are:
 ![Image of life-exam](http://life-edu.eu/images/exam2.gif)
 
 ## Install
-- Run in life-exam path `sudo python3 setup.py` or `sudo pip3 install .`in order to install the Twisted plugin and other Python Modules.
-- copy alle files from DATA/EXAMCONFIG to ~/.life/EXAM/EXAMCONFIG
+- Run `sudo pip3 install .` in exam-life path, in order to global install missing modules
+- copy all files from DATA/EXAMCONFIG to ~/.life/EXAM/EXAMCONFIG
 - place in your `~/.profile`
   ```bash 
   # is an old EXAM running > then stop it

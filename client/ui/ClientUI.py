@@ -60,7 +60,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         else:
             self.ui.setWindowTitle("LiFE Exam")
 
-        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
+        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.offlineexam.clicked.connect(self._on_offline_exam)
         self.ui.offlineexamexit.clicked.connect(self._on_offline_exam_exit)
