@@ -32,7 +32,8 @@ if __name__ == '__main__':
             'matplotlib',
             'opencv-python',
             'pathlib',
-            'datetime'
+            'datetime',
+            'timeloop'  # https://github.com/sankalpjonn/timeloop/tree/master/timeloop
         ],
         python_requires='>=3.8',
     )

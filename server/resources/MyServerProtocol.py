@@ -140,8 +140,8 @@ class MyServerProtocol(basic.LineReceiver):
                     # the network progress is allways handled
                     # Send Event to Wait Thread with Client Name
                     ui = self.factory.window
-                    if ui.waiting_thread:
-                        ui.waiting_thread.fireEvent_Abgabe_finished(self.line_data_list[4])
+                    if ui.progress_thread:
+                        ui.progress_thread.fireEvent_Abgabe_finished(self.line_data_list[4])
 
             else:  # wrong file hash
                 os.unlink(file_path)
@@ -229,7 +229,7 @@ class MyServerProtocol(basic.LineReceiver):
         ui = self.factory.window
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
-        ui.waiting_thread.fireEvent_Lock_Screen(clientWidget)
+        ui.progress_thread.fireEvent_Lock_Screen(clientWidget)
 
     def _unlockscreen_ok(self):
         """ a client has locked the screen and sends OK """
@@ -237,7 +237,7 @@ class MyServerProtocol(basic.LineReceiver):
         ui = self.factory.window
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
-        ui.waiting_thread.fireEvent_UnLock_Screen(clientWidget)
+        ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
 
     def _file_ok(self):
         """ a client has received a file sends OK """
@@ -246,7 +246,7 @@ class MyServerProtocol(basic.LineReceiver):
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
 
-        ui.waiting_thread.fireEvent_File_received(clientWidget)
+        ui.progress_thread.fireEvent_File_received(clientWidget)
         # filetransfer finished "UNLOCK" fileopertions
         self.factory.rawmode = False
 
