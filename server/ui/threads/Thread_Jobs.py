@@ -1,63 +1,51 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
-
 import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QDialog
-from server.resources.MyCustomWidget import MyCustomWidget
+
+from Job import Job
+from PeriodicTimer import PeriodicTimer
 
 
 class Thread_Jobs(QtCore.QThread):
-    """ a Thread that controlls the progressbar, if clients are contacted """
-    client_finished = pyqtSignal(QDialog, str)
-    client_received_file = pyqtSignal(QDialog, MyCustomWidget)
-    client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
-    client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
+    """
+    a Thread that controlls jobs within the system
+    if a job fails for some reason, it will retry n times before giving up
+    """
+    jobs_done = pyqtSignal()
 
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
-        self.running = False
         self.parent = parent
+        self.setObjectName("Jobs")
         self.running = False
-        self.clients = []
+        self.running = False
+        self._jobs = []
+        # start after xs than every xs
+        self.timer = PeriodicTimer(1, 1, self.checkJobs)
+        # start the Timer the first time
+        self.timer.first_start()
 
     def __del__(self):
         self.wait()
 
-    def fireEvent_Lock_Screen(self, who):
-        """ client has locked the screen """
-        if len(self.clients) > 0:
-            self.client_lock_screen.emit(self.parent, who)
+    def addJob(self, ID, func):
+        """ adds a job for a client """
+        self._jobs.append(Job(ID, func))
 
-    def fireEvent_UnLock_Screen(self, who):
-        """ client has unlocked the screen """
-        if len(self.clients) > 0:
-            self.client_unlock_screen.emit(self.parent, who)
-
-    def fireEvent_Abgabe_finished(self, who):
-        """ client has sended his Files """
-        self.client_finished.emit(self.parent, who)
-
-    def fireEvent_File_received(self, clientWidget):
-        """ client has received a file """
-        # delete client from list
-        if len(self.clients) > 0:
-            self.deleteItemFromList(clientWidget.getName())
-            self.client_received_file.emit(self.parent, clientWidget)
-
-    def deleteItemFromList(self, who):
-        """ delete an Item from the client list """
-        index = -1
-        for x in range(len(self.clients)):
-            if self.clients[x].id == who:
-                index = x
+    def delJob(self, ID):
+        """ removes a Job from the list """
+        for i in range(len(self._jobs)):
+            job = self._jobs[i]
+            if job.getID() == ID:
+                del self.jobs[i]
                 break
-        # remove Element
-        # time critical only if you find an index
-        if index != -1:
-            self.clients = self.clients[:index] + self.clients[index + 1:]
+
+    def checkJobs(self):
+        """ check all outstanding jobs or retry them """
+        print("Job")
 
     def isAlive(self):
         if self.running:
@@ -66,13 +54,10 @@ class Thread_Jobs(QtCore.QThread):
             return False
 
     def stop(self):
+        print("stopping Timer")
+        self.timer.stop()
         self.running = False
-        self.quit()
-
-    def setClients(self, clients):
-        """ a list within all clients to actually work with """
-        self.clients = []
-        self.clients = clients  # evtl. noch die art des progresses mitnehmen
+        print("stopping")
 
     def run(self):
         """
@@ -82,9 +67,4 @@ class Thread_Jobs(QtCore.QThread):
         self.running = True
         while(self.running):
             time.sleep(0.01)
-
         return 0
-
-    def restart(self, clients):
-        """ clears all clients and restarts the Thread """
-        self.setClients(clients)
