@@ -1,22 +1,24 @@
 import sys
 from pathlib import Path
-import PyQt5
-from PyQt5 import uic
+from PyQt5 import uic, QtWidgets
 from PyQt5.QtWidgets import QApplication
+
+sys.path.insert(0, Path(__file__).parent.parent.as_posix())
+print(Path(__file__).parent.parent.as_posix())
+
 from Thread_Jobs import Thread_Jobs
 
 
-class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
+class MAIN_UI(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
-        super(MAIN_UI, self).__init__(parent)
+        QtWidgets.QMainWindow.__init__(self)
         self.parent = parent
         self.rootDir = Path(__file__).parent
         uifile = self.rootDir.joinpath('main.ui')
-        self.ui = uic.loadUi(uifile)        # load UI
-        self.ui.show()
+        uic.loadUi(uifile, self)        # load UI inside QMainWindow
 
-        self.ui.btn.clicked.connect(lambda: self.stopIt()())
+        self.btn.clicked.connect(lambda: self.stopIt()())
 
         self.jobs = Thread_Jobs()  # no parent!
         self.jobs.jobs_done.connect(self.allJobsDone)
@@ -28,6 +30,12 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
 
     def stopIt(self):
         self.jobs.stop()
+        QApplication.quit
+
+    def closeEvent(self, event):
+        ''' window tries to close '''
+        self.stopIt()
+        event.ignore()
 
 
 def main():
@@ -35,6 +43,7 @@ def main():
 
     # show main Window
     gui = MAIN_UI()  #noqa
+    gui.show()
     app.exec_()
 
 
