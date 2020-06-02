@@ -1,6 +1,6 @@
 """
 setup.py for life-exam
-Usage: pip3 install .
+Usage: sudo pip3 install .
 """
 __author__ = 'Thomas Michael Weissel'
 
