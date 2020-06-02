@@ -59,9 +59,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.line_data_list = ()
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
-        print(line)
         self.inform('Authentication with server ...')
-        print("========================================================")
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
@@ -71,13 +69,13 @@ class MyClientProtocol(basic.LineReceiver):
         self.inform("Connection to the server has been lost")
 
         print("Server Fail #%s" % self.factory.failcount)
-        if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+        if self.factory.failcount > 2:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
             command = "%s/client/client.py &" % (self.rootDir)
             os.system(command)
             os._exit(1)
 
     def rawDataReceived(self, data):
-        """ twisted-Event: Data received > what schould i do? """
+        """ twisted-Event: Data received > what should i do? """
         print(self.line_data_list)
         filename = self.line_data_list[3]
         cleanup_abgabe = self.line_data_list[5]
@@ -331,10 +329,13 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.deferred = defer.Deferred()
         self.files = None
         self.failcount = 0
-        self.delay
         self.client_to_server = ClientToServer()  # type: ClientToServer
         self.rootDir = self.options["appdirectory"]
-        # self.factor = 1.8
+        # ReconnectingClientFactory settings
+        self.initialDelay = 2  # initial reconnection after 4 s
+        self.maxDelay = 10  # maximim delay
+        self.factor = 1.2  # A multiplicitive factor by which the delay grows
+        self.maxRetries = 10
 
     # twisted-Event: Called when a connection has failed to connect
     def clientConnectionFailed(self, connector, reason):  #noqa
@@ -347,6 +348,11 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
             os._exit(1)
 
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
+
+    # twisted Method
+    def startedConnecting(self, connector):
+        # Reconnection delays resetting
+        self.resetDelay()
 
     # twisted Method
     def buildProtocol(self, addr):  #noqa
