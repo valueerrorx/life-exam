@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2019 Stefan Hagmann
 import sys
 from PyQt5.QtWidgets import QApplication
 from classes.Notification.Notification import Notification_Core, Notification

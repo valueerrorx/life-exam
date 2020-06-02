@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2019 Stefan Hagmann
 import sys
 from pathlib import Path
 import PyQt5
@@ -25,7 +27,7 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
         # creates the Notification Dialog
         n = Notification_Core()
         notification = Notification(n)
-        notification.setDemo()
+        # notification.setDemo()
         notification.showInformation(texte[0])
 
         n = Notification_Core()

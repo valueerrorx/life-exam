@@ -2,12 +2,11 @@ import sys
 from pathlib import Path
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtWidgets import QApplication
-from PyQt5.Qt import QGuiApplication, QScreen
+from PyQt5.Qt import QGuiApplication
+from server.ui.threads.Thread_Jobs import Thread_Jobs
 
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 print(Path(__file__).parent.parent.as_posix())
-
-from Thread_Jobs import Thread_Jobs
 
 
 class MAIN_UI(QtWidgets.QMainWindow):
@@ -19,7 +18,7 @@ class MAIN_UI(QtWidgets.QMainWindow):
         uifile = self.rootDir.joinpath('main.ui')
         uic.loadUi(uifile, self)        # load UI inside QMainWindow
 
-        self.btn.clicked.connect(lambda: self.stopIt()())
+        self.btn.clicked.connect(lambda: self.stopIt())
 
         self.jobs = Thread_Jobs()  # no parent!
         self.jobs.jobs_done.connect(self.allJobsDone)
@@ -27,16 +26,17 @@ class MAIN_UI(QtWidgets.QMainWindow):
 
     def allJobsDone(self):
         print("All Jobs done ....")
-        QApplication.quit
+        QApplication.quit()
 
     def stopIt(self):
         self.jobs.stop()
-        QApplication.quit
+        QApplication.quit()
 
     def closeEvent(self, event):
         ''' window tries to close '''
         self.stopIt()
         event.ignore()
+
 
 def testScreens():
     # first approach

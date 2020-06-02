@@ -4,9 +4,8 @@
 import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-
-from Job import Job
-from PeriodicTimer import PeriodicTimer
+from server.ui.threads.PeriodicTimer import PeriodicTimer
+from server.ui.threads.Job import Job
 
 
 class Thread_Jobs(QtCore.QThread):
