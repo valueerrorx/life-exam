@@ -51,51 +51,53 @@ class MyCustomWidget (QtWidgets.QWidget):
         """
         return QSize(self.width, self.height)
 
+ 
+
+
     def set_ui(self):
         """
-        designed wit QT Designer, convertet with pyuic5
-        dropped self.gridLayoutWidget
+        designed wit QT Designer, converted with pyuic5
+        - replace: self.mywidget > self.
+        - self.setGeometry( to 0,0 
         """
-        self.setGeometry(QtCore.QRect(70, 10, 145, 94))
+        self.setGeometry(QtCore.QRect(0, 0, 182, 116))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
         self.setStyleSheet("border-width: 1px; border-style: solid; border-color: #AAA; margin-top: 4px; margin-left:4px;")
-        self.setObjectName("MyCustomWidget")
-
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.setObjectName("mywidget")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self)
+        self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.verticalLayout.setObjectName("verticalLayout")
-
-        self.image = QtWidgets.QLabel()
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.image = QtWidgets.QLabel(self)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.image.sizePolicy().hasHeightForWidth())
         self.image.setSizePolicy(sizePolicy)
+        self.image.setMinimumSize(QtCore.QSize(180, 100))
+        self.image.setMaximumSize(QtCore.QSize(180, 100))
         self.image.setStyleSheet("padding:0;margin:0;border:0;")
         self.image.setText("")
-        icon = self.rootDir.joinpath("pixmaps/Test.jpg").as_posix()
-        self.image.setPixmap(QtGui.QPixmap(icon))
         self.image.setScaledContents(False)
         self.image.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.image.setObjectName("image")
         self.verticalLayout.addWidget(self.image)
-
-        self.info = QtWidgets.QLabel()
+        self.info = QtWidgets.QLabel(self)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.info.sizePolicy().hasHeightForWidth())
         self.info.setSizePolicy(sizePolicy)
-        self.info.setMinimumSize(QtCore.QSize(122, 18))
-        self.info.setMaximumSize(QtCore.QSize(122, 18))
+        self.info.setMinimumSize(QtCore.QSize(180, 14))
+        self.info.setMaximumSize(QtCore.QSize(180, 14))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.info.setFont(font)
@@ -104,32 +106,6 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.info.setObjectName("info")
         self.verticalLayout.addWidget(self.info)
         self.horizontalLayout.addLayout(self.verticalLayout)
-
-        self.gridLayout_icons = QtWidgets.QGridLayout()
-        self.gridLayout_icons.setHorizontalSpacing(0)
-        self.gridLayout_icons.setVerticalSpacing(1)
-        self.gridLayout_icons.setObjectName("gridLayout_icons")
-
-        # 5 status icons
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        for x in range(1, 6):
-            status_icon = QtWidgets.QLabel()
-            sizePolicy.setHeightForWidth(status_icon.sizePolicy().hasHeightForWidth())
-            status_icon.setSizePolicy(sizePolicy)
-            status_icon.setStyleSheet("padding:0;margin:0;border:0;")
-            status_icon.setText("")
-            icon = self.rootDir.joinpath("pixmaps/fileok.png").as_posix()
-            status_icon.setPixmap(QtGui.QPixmap(icon))
-            status_icon.setAlignment(QtCore.Qt.AlignCenter)
-            status_icon.setObjectName("status_icon_%s" % x)
-            # int r, int c, int rowspan, int columnspan
-            self.gridLayout_icons.addWidget(status_icon, x, 0, 1, 1)
-            self.statusIcons.append(status_icon)
-
-        self.horizontalLayout.addLayout(self.gridLayout_icons)
-        self.setLayout(self.horizontalLayout)
 
     def setImage(self, screenshot_file_path):
         """
@@ -172,51 +148,6 @@ class MyCustomWidget (QtWidgets.QWidget):
         set the text at bottom of Item
         """
         self.info.setText(text)
-
-    def clearStatusIcons(self):
-        """
-        replace all status icons with empty dummy
-        """
-        for status_icon in self.statusIcons:
-            icon = self.rootDir.joinpath("pixmaps/dummy.png").as_posix()
-            status_icon.setPixmap(QtGui.QPixmap(icon))
-
-        for x in range(0, self.max_status_icons - 1):
-            self.statusIcons_on[x] = False
-
-    def setStatusIcon(self, imagePath):
-        """
-        sets a status icon in one of the 5 places, but only once a time
-        """
-        # choose next free slot
-        index = 0
-        for isON in self.statusIcons_on:
-            # there are
-            if isON is False and index < self.max_status_icons:
-                # get the slot
-                status_icon = self.statusIcons[index]
-                icon = self.rootDir.joinpath(imagePath).as_posix()
-                status_icon.setPixmap(QtGui.QPixmap(icon))
-                self.statusIcons_on[index] = imagePath
-            else:
-                index += 1
-
-    def removeStatusIcon(self, imagePath):
-        """
-        search for the correct icon an remove it
-        """
-        for x in range(0, self.max_status_icons):
-            # if icon is set, then its a string
-            stored_img = self.statusIcons_on[x]
-            if type(stored_img) == str:
-                if stored_img == imagePath:
-                    # Icon found delete
-                    icon = self.rootDir.joinpath("pixmaps/dummy.png").as_posix()
-                    self.statusIcons[x].setPixmap(QtGui.QPixmap(icon))
-                    self.statusIcons_on[x] = False
-            else:
-                # Status Icons are a stack, firts False means, there are no more Icons
-                return False
 
     def setExamIconON(self):
         """ set all Status Exam Icons to on """
