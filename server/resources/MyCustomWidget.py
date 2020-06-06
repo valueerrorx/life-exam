@@ -42,7 +42,6 @@ class MyCustomWidget (QtWidgets.QWidget):
 
         self.set_ui()
         self.setText('%s' % (client.clientName))
-        self.clearStatusIcons()
         self.show()
 
     def sizeHint(self, *args, **kwargs):
@@ -151,22 +150,16 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def setExamIconON(self):
         """ set all Status Exam Icons to on """
-        self.removeStatusIcon("pixmaps/exam_off.png")
-        self.setStatusIcon("pixmaps/exam_on.png")
+        pass
 
     def setExamIconOFF(self):
         """ set all Status Exam Icons to off """
-        self.removeStatusIcon("pixmaps/exam_on.png")
-        self.setStatusIcon("pixmaps/exam_off.png")
+        pass
 
     def setFileReceivedOK(self):
         """ set all File received Icon """
-        self.removeStatusIcon("pixmaps/file_cancel.png")
-        self.removeStatusIcon("pixmaps/file_ok.png")
-        self.setStatusIcon("pixmaps/file_ok.png")
+        pass
 
     def setFileReceivedERROR(self):
         """ set all File NOT Received icon """
-        self.removeStatusIcon("pixmaps/file_ok.png")
-        self.removeStatusIcon("pixmaps/file_cancel.png")
-        self.setStatusIcon("pixmaps/file_cancel.png")
+        pass
