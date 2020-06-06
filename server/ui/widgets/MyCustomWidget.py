@@ -25,7 +25,7 @@ class Ui_Form(object):
         self.mywidget.setMaximumSize(QtCore.QSize(196, 125))
         self.mywidget.setObjectName("mywidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.mywidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setContentsMargins(6, 6, 0, 0)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.content = QtWidgets.QWidget(self.mywidget)
