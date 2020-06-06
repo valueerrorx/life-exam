@@ -12,12 +12,6 @@ class MyCustomWidget (QtWidgets.QWidget):
     """
     Creates a Item for the Client
     """
-    # from UI Designer
-    width = 140
-    height = 93
-    img_width = 120
-    img_height = 67
-
     # Status Icons
     max_status_icons = 5
     statusIcons = []
@@ -37,8 +31,6 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.id = client.clientName
         self.pID = client.clientConnectionID
         self.disabled = False
-        self.setMinimumSize(self.width, self.height)
-        self.setMaximumSize(self.width, self.height)
 
         self.set_ui()
         self.setText('%s' % (client.clientName))
@@ -46,52 +38,63 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def sizeHint(self):
         """ this is our default size """
-        return QSize(self.width, self.height)
+        return QSize(self.image_width, self.image_height)
 
     def set_ui(self):
         """
         designed wit QT Designer, converted with pyuic5
         - replace: self.mywidget > self.
-        - self.setGeometry( to 0,0
+        - suche: self.mywidget > self
+        - dontuseLabel löschen
         """
-        self.setGeometry(QtCore.QRect(0, 0, 182, 116))
+        # do not delete, set it to correct values =================
+        # read them from QT Designer
+        self.image_width = 180
+        self.image_height = 101
+        # =========================================================
+        self.setGeometry(QtCore.QRect(0, 0, 204, 133))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setStyleSheet("border-width: 1px; border-style: solid; border-color: #AAA; margin-top: 4px; margin-left:4px;")
+        self.setMinimumSize(QtCore.QSize(196, 125))
+        self.setMaximumSize(QtCore.QSize(196, 125))
         self.setObjectName("mywidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
-        self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.image = QtWidgets.QLabel(self)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.content = QtWidgets.QWidget(self)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.image.sizePolicy().hasHeightForWidth())
-        self.image.setSizePolicy(sizePolicy)
-        self.image.setMinimumSize(QtCore.QSize(180, 100))
-        self.image.setMaximumSize(QtCore.QSize(180, 100))
-        self.image.setStyleSheet("padding:0;margin:0;border:0;")
+        sizePolicy.setHeightForWidth(self.content.sizePolicy().hasHeightForWidth())
+        self.content.setSizePolicy(sizePolicy)
+        self.content.setStyleSheet("border-width: 1px; border-style: solid; border-color: #AAA; margin: 5x 2px;")
+        self.content.setObjectName("content")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.content)
+        self.horizontalLayout_2.setContentsMargins(8, 5, 8, 5)
+        self.horizontalLayout_2.setSpacing(0)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.image = QtWidgets.QLabel(self.content)
+        self.image.setStyleSheet("padding:0;margin:0;border:0;background-color: #ffff00;")
         self.image.setText("")
         self.image.setScaledContents(False)
-        self.image.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.image.setAlignment(QtCore.Qt.AlignCenter)
         self.image.setObjectName("image")
         self.verticalLayout.addWidget(self.image)
-        self.info = QtWidgets.QLabel(self)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.info = QtWidgets.QLabel(self.content)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.info.sizePolicy().hasHeightForWidth())
         self.info.setSizePolicy(sizePolicy)
-        self.info.setMinimumSize(QtCore.QSize(180, 14))
-        self.info.setMaximumSize(QtCore.QSize(180, 14))
+        self.info.setMinimumSize(QtCore.QSize(0, 14))
+        self.info.setMaximumSize(QtCore.QSize(16777215, 14))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.info.setFont(font)
@@ -99,7 +102,11 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.info.setAlignment(QtCore.Qt.AlignCenter)
         self.info.setObjectName("info")
         self.verticalLayout.addWidget(self.info)
-        self.horizontalLayout.addLayout(self.verticalLayout)
+        self.horizontalLayout_2.addLayout(self.verticalLayout)
+        self.horizontalLayout.addWidget(self.content)
+
+
+        
 
     def setImage(self, screenshot_file_path):
         """
@@ -108,7 +115,9 @@ class MyCustomWidget (QtWidgets.QWidget):
         """
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
-        pixmap = pixmap.scaled(QtCore.QSize(self.img_width, self.img_height))
+        pixmap = pixmap.scaled(QtCore.QSize(self.image_width, self.image_height))
+        print(self.image.geometry())
+        
         self.image.setPixmap(pixmap)
 
     def getConnectionID(self):

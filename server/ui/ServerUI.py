@@ -620,12 +620,11 @@ class ServerUI(QtWidgets.QDialog):
 
         # important!
         itemN.setSizeHint(widget.sizeHint())
-        print(widget.sizeHint())
         # link Object to item
         itemN.setData(QtCore.Qt.UserRole, widget)
 
         # Add widget to QListWidget
-        self.ui.listWidget.addItem(itemN)               # add the listitem to the listwidget
+        self.ui.listWidget.addItem(itemN)                # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
