@@ -32,7 +32,7 @@ class Notification_Core(QtWidgets.QDialog):
         # this will hide the app from task bar
         self.ui.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.ui.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)
-
+        self.setModal(False)
         # position right middle of screen
         self.moveToDefaultPosition()
 

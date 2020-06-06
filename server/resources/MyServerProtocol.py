@@ -109,7 +109,7 @@ class MyServerProtocol(basic.LineReceiver):
                     screenshot_file_path = os.path.join(SERVERSCREENSHOT_DIRECTORY, filename)
                     # move image to screenshot folder
                     os.rename(file_path, screenshot_file_path)
-                    # fix filepermission of transferred file
+                    # fix file permission of transferred file
                     mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)
                     # make the clientscreenshot visible in the listWidget
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)

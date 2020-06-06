@@ -620,6 +620,7 @@ class ServerUI(QtWidgets.QDialog):
 
         # important!
         itemN.setSizeHint(widget.sizeHint())
+        print(widget.sizeHint())
         # link Object to item
         itemN.setData(QtCore.Qt.UserRole, widget)
 
@@ -629,7 +630,8 @@ class ServerUI(QtWidgets.QDialog):
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         try:
-            self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
+            # if client reconnected remove from disconnected_list
+            self.factory.disconnected_list.remove(client.clientName)
         except:
             pass            # changed return to pass otherwise the screenshot is not updated
 
@@ -642,7 +644,8 @@ class ServerUI(QtWidgets.QDialog):
         try:
             if self.screenshotwindow.client_connection_id == existing_item.pID:
                 self.screenshotwindow.oImage = QImage(screenshot_file_path)
-                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
+                # resize Image to widgets size
+                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))
                 self.screenshotwindow.palette = QPalette()
                 self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
                 self.screenshotwindow.setPalette(self.screenshotwindow.palette)

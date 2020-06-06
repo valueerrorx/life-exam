@@ -44,20 +44,15 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.setText('%s' % (client.clientName))
         self.show()
 
-    def sizeHint(self, *args, **kwargs):
-        """
-        this is our default size
-        """
+    def sizeHint(self):
+        """ this is our default size """
         return QSize(self.width, self.height)
-
- 
-
 
     def set_ui(self):
         """
         designed wit QT Designer, converted with pyuic5
         - replace: self.mywidget > self.
-        - self.setGeometry( to 0,0 
+        - self.setGeometry( to 0,0
         """
         self.setGeometry(QtCore.QRect(0, 0, 182, 116))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)

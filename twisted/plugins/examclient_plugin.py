@@ -308,17 +308,8 @@ class MyClientProtocol(basic.LineReceiver):
         elif ntype == Notification_Type.Success:
             stype = "success"
 
-        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (self.notification_path, stype, msg)
-        self.runCmd(cmd)
-
-    def runCmd(self, cmd):
-        ''' runs a command '''
-        proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
-        for line in iter(proc.stderr.readline, b''):
-            print(line.decode())
-        for line in iter(proc.stdout.readline, b''):
-            print(line.decode())
-        proc.communicate()
+        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s" &' % (self.notification_path, stype, msg)
+        os.system(cmd)
 
 
 class MyClientFactory(protocol.ReconnectingClientFactory):
