@@ -271,7 +271,7 @@ class MyClientProtocol(basic.LineReceiver):
         # testClient running on the same machine
         if self.factory.options['host'] != "127.0.0.1":
             # create lock File
-            mutual_functions.writeLockFile(WORK_DIRECTORY)
+            mutual_functions.writeLockFile()
 
             # extract to unzipDIR / clientID / foldername without .zip
             # (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')
