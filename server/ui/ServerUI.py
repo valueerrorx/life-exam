@@ -26,13 +26,14 @@ from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCurso
 from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
-from server.ui.Thread_Wait import Thread_Wait
-from server.ui.Thread_Wait_Events import client_abgabe_done_exit_exam, client_received_file_done,\
-    client_lock_screen, client_unlock_screen, client_abgabe_done
 
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
 from server.ui.NetworkProgressBar import NetworkProgressBar
+from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
+    client_abgabe_done_exit_exam, client_received_file_done, client_lock_screen,\
+    client_unlock_screen
+from server.ui.threads.Thread_Progress import Thread_Progress
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -60,7 +61,7 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.ui.setWindowTitle("Exam Server")
 
-        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
+        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
@@ -116,13 +117,13 @@ class ServerUI(QtWidgets.QDialog):
         findApps(self.ui.applist, self.ui.appview)
 
         # Waiting Thread
-        self.waiting_thread = Thread_Wait(self)
+        self.progress_thread = Thread_Progress(self)
         # connect Events
-        self.waiting_thread.client_finished.connect(client_abgabe_done)
-        self.waiting_thread.client_finished.connect(client_abgabe_done_exit_exam)
-        self.waiting_thread.client_received_file.connect(client_received_file_done)
-        self.waiting_thread.client_lock_screen.connect(client_lock_screen)
-        self.waiting_thread.client_unlock_screen.connect(client_unlock_screen)
+        self.progress_thread.client_finished.connect(client_abgabe_done)
+        self.progress_thread.client_finished.connect(client_abgabe_done_exit_exam)
+        self.progress_thread.client_received_file.connect(client_received_file_done)
+        self.progress_thread.client_lock_screen.connect(client_lock_screen)
+        self.progress_thread.client_unlock_screen.connect(client_unlock_screen)
 
         # get your IP
         self.ui.currentip.setText("<b>%s</b>" % get_primary_ip())
@@ -220,7 +221,7 @@ class ServerUI(QtWidgets.QDialog):
         self.networkProgress.show(len(clients))
 
         # Waiting Thread
-        self.waiting_thread.restart(clients)
+        self.progress_thread.restart(clients)
 
         if self.factory.clientslocked:
             self.log("<b>UnLocking Client Screens</b>")
@@ -321,10 +322,10 @@ class ServerUI(QtWidgets.QDialog):
             self._startWorkingIndicator("%s wird an %s gesendet" % (os.path.basename(file_path), receiver))
 
             # Waiting Thread
-            self.waiting_thread.setClients(clients)
-            if self.waiting_thread:
-                self.waiting_thread.stop()
-            self.waiting_thread.start()
+            self.progress_thread.setClients(clients)
+            if self.progress_thread:
+                self.progress_thread.stop()
+            self.progress_thread.start()
 
             self.networkProgress.show(len(clients))
 
@@ -385,10 +386,10 @@ class ServerUI(QtWidgets.QDialog):
 
         # Waiting Thread
         self.log("Waiting for Client to send Abgabe-Files")
-        self.waiting_thread.setClients(clients)
-        if self.waiting_thread:
-            self.waiting_thread.stop()
-        self.waiting_thread.start()
+        self.progress_thread.setClients(clients)
+        if self.progress_thread:
+            self.progress_thread.stop()
+        self.progress_thread.start()
 
         self.networkProgress.show(len(clients))
 
@@ -474,7 +475,7 @@ class ServerUI(QtWidgets.QDialog):
         # start Thread
         self.log("Waiting for all Clients to send their Abgabe-Files")
         # on Event call
-        self.waiting_thread.start()
+        self.progress_thread.start()
         mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner/SHARE")
 
     def _onStartHotspot(self):
@@ -623,12 +624,13 @@ class ServerUI(QtWidgets.QDialog):
         itemN.setData(QtCore.Qt.UserRole, widget)
 
         # Add widget to QListWidget
-        self.ui.listWidget.addItem(itemN)               # add the listitem to the listwidget
+        self.ui.listWidget.addItem(itemN)                # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         try:
-            self.factory.disconnected_list.remove(client.clientName)  # if client reconnected remove from disconnected_list
+            # if client reconnected remove from disconnected_list
+            self.factory.disconnected_list.remove(client.clientName)
         except:
             pass            # changed return to pass otherwise the screenshot is not updated
 
@@ -641,7 +643,8 @@ class ServerUI(QtWidgets.QDialog):
         try:
             if self.screenshotwindow.client_connection_id == existing_item.pID:
                 self.screenshotwindow.oImage = QImage(screenshot_file_path)
-                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))  # resize Image to widgets size
+                # resize Image to widgets size
+                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))
                 self.screenshotwindow.palette = QPalette()
                 self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
                 self.screenshotwindow.setPalette(self.screenshotwindow.palette)
@@ -757,3 +760,4 @@ class ServerUI(QtWidgets.QDialog):
             os._exit(0)  # otherwise only the gui is closed and connections are kept alive
         else:
             self.msg = False
+

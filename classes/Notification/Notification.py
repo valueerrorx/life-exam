@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2019 Stefan Hagmann
 from pathlib import Path
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QGuiApplication
 import time
 import random
 from enum import Enum
@@ -28,8 +29,10 @@ class Notification_Core(QtWidgets.QDialog):
         self.rootDir = Path(__file__).parent
         uifile = self.rootDir.joinpath('Notification.ui')
         self.ui = uic.loadUi(uifile)        # load UI
-        self.ui.setWindowFlags(Qt.FramelessWindowHint)
-
+        # this will hide the app from task bar
+        self.ui.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.ui.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)
+        self.setModal(False)
         # position right middle of screen
         self.moveToDefaultPosition()
 
@@ -88,10 +91,15 @@ class Notification_Core(QtWidgets.QDialog):
         return self._typ
 
     def moveToDefaultPosition(self):
-        """ the default position right middle of screen """
+        """ the default position right bottom of screen """
         self.ui.adjustSize()
-        screen = QApplication.instance().desktop().screen().rect()
-        self.ui.move(screen.width(), (screen.height() - self.ui.height()) // 2)
+        # get main screen
+        screen = QGuiApplication.screens()[0]
+        taskbar_height = screen.geometry().height() - screen.availableVirtualGeometry().height()
+        self.ui.move(screen.geometry().width(), screen.geometry().height() - taskbar_height)
+        x = screen.geometry().width() - self.ui.width()
+        y = screen.availableVirtualGeometry().height() - self.ui.height()
+        self.ui.move(x, y)
 
 
 class Notification(QObject):
@@ -143,10 +151,12 @@ class Notification(QObject):
             self._notification.setBarColor("#E23E0A")
 
         if self.demo:
+            print("Demo")
             x = random.randrange(100, 800)
             y = random.randrange(100, 800)
             self._notification.moveTo(x, y)
         else:
+            print("NO")
             self._notification.moveToDefaultPosition()
 
         self.startNotification_Signal.connect(self._showNotification)

@@ -3,17 +3,14 @@
 # Copyright (C) 2019 Stefan Hagmann
 
 import time
-
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-
 from PyQt5.QtWidgets import QDialog
-
 from server.resources.MyCustomWidget import MyCustomWidget
 
 
-class Thread_Wait(QtCore.QThread):
-    """ events """
+class Thread_Progress(QtCore.QThread):
+    """ a Thread that controlls the progressbar, if clients are contacted """
     client_finished = pyqtSignal(QDialog, str)
     client_received_file = pyqtSignal(QDialog, MyCustomWidget)
     client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)

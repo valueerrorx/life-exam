@@ -17,7 +17,7 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5 import QtWidgets, uic
 
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
-# from twisted.internet.task import LoopingCall
+from classes.CmdRunner import CmdRunner
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -38,6 +38,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.completerlist = []
         self._initUi()
         prepareDirectories()
+        self.cmdRunner = CmdRunner()
 
     def _initUi(self):
         # Register self to Global Observer List Object
@@ -59,7 +60,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         else:
             self.ui.setWindowTitle("LiFE Exam")
 
-        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup Slots
+        self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.start.clicked.connect(self._onStartExamClient)
         self.ui.offlineexam.clicked.connect(self._on_offline_exam)
         self.ui.offlineexamexit.clicked.connect(self._on_offline_exam_exit)
@@ -172,17 +173,23 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 self.ui.close()
                 clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 # make sure only one client instance is running per client
-                os.system("bash %s %s" % (clientkillscript, 'client'))
+                cmd = "bash %s %s" % (clientkillscript, 'client')
+                self.cmdRunner.runCmd(cmd)
+
                 self.logger.info("Terminated old running twisted Client")
 
                 # moved this to workdirectory because configdirectory is overwritten on exam start
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
-                openednamefile = open(namefile, 'w+')  # erstelle die datei neu
-                openednamefile.write("%s" % (ID))
-                changePermission(namefile, "777")
+                try:
+                    openednamefile = open(namefile, 'w+')  # erstelle die datei neu
+                    openednamefile.write("%s" % (ID))
+                    changePermission(namefile, "777")
+                except IOError:
+                    self.logger.error("Can't create myname.txt")
 
                 from twisted.plugin import IPlugin, getPlugins
-                # plgs =
+                # Update the cache system
+                # see https://twistedmatrix.com/documents/current/core/howto/plugin.html
                 list(getPlugins(IPlugin))
 
                 # for item in plgs:
@@ -190,7 +197,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # print(sys.path)
 
                 # port, host, id, pincode, application_dir
-                command = "sudo -u %s twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (USER, WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
+                command = "twistd -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 self.logger.info(command)
                 os.system(command)
         else:

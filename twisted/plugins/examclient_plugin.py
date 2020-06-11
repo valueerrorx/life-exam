@@ -41,19 +41,16 @@ from pathlib import Path
 
 
 class MyClientProtocol(basic.LineReceiver):
-    def __init__(self, factory):
+    def __init__(self, factory, appDir):
         self.factory = factory
         self.client_to_server = self.factory.client_to_server
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
+        self.notification_path = Path(appDir)
+        self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
-        # rootDir of Application
-        self.rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        # create Path to Notifications
-        self.notification_path = Path(self.rootDir).parent
-        self.notification_path = self.notification_path.joinpath('classes/Notification')
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -62,8 +59,6 @@ class MyClientProtocol(basic.LineReceiver):
         self.line_data_list = ()
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
-        print(line)
-
         self.inform('Authentication with server ...')
 
     # twisted-Event:
@@ -73,13 +68,14 @@ class MyClientProtocol(basic.LineReceiver):
         self.line_data_list = ()
         self.inform("Connection to the server has been lost")
 
-        if self.factory.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+        print("Server Fail #%s" % self.factory.failcount)
+        if self.factory.failcount > 2:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
             command = "%s/client/client.py &" % (self.rootDir)
             os.system(command)
             os._exit(1)
 
     def rawDataReceived(self, data):
-        """ twisted-Event: Data received > what schould i do? """
+        """ twisted-Event: Data received > what should i do? """
         print(self.line_data_list)
         filename = self.line_data_list[3]
         cleanup_abgabe = self.line_data_list[5]
@@ -275,7 +271,7 @@ class MyClientProtocol(basic.LineReceiver):
         # testClient running on the same machine
         if self.factory.options['host'] != "127.0.0.1":
             # create lock File
-            mutual_functions.writeLockFile(WORK_DIRECTORY)
+            mutual_functions.writeLockFile()
 
             # extract to unzipDIR / clientID / foldername without .zip
             # (cut last four letters #shutil.unpack_archive(file_path, extract_dir, 'tar')
@@ -312,17 +308,8 @@ class MyClientProtocol(basic.LineReceiver):
         elif ntype == Notification_Type.Success:
             stype = "success"
 
-        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s"' % (self.notification_path, stype, msg)
-        self.runCmd(cmd)
-
-    def runCmd(self, cmd):
-        ''' runs a command '''
-        proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
-        for line in iter(proc.stderr.readline, b''):
-            print(line.decode())
-        for line in iter(proc.stdout.readline, b''):
-            print(line.decode())
-        proc.communicate()
+        cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s" &' % (self.notification_path, stype, msg)
+        os.system(cmd)
 
 
 class MyClientFactory(protocol.ReconnectingClientFactory):
@@ -333,10 +320,13 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.deferred = defer.Deferred()
         self.files = None
         self.failcount = 0
-        self.delay
         self.client_to_server = ClientToServer()  # type: ClientToServer
         self.rootDir = self.options["appdirectory"]
-        # self.factor = 1.8
+        # ReconnectingClientFactory settings
+        self.initialDelay = 2  # initial reconnection after 4 s
+        self.maxDelay = 10  # maximim delay
+        self.factor = 1.2  # A multiplicitive factor by which the delay grows
+        self.maxRetries = 10
 
     # twisted-Event: Called when a connection has failed to connect
     def clientConnectionFailed(self, connector, reason):  #noqa
@@ -351,9 +341,14 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     # twisted Method
+    def startedConnecting(self, connector):
+        # Reconnection delays resetting
+        self.resetDelay()
+
+    # twisted Method
     def buildProtocol(self, addr):  #noqa
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
-        return MyClientProtocol(self)
+        return MyClientProtocol(self, self.rootDir)
 
 
 """
@@ -371,16 +366,18 @@ export PYTHONPATH=".:/pathto/life-exam-controlcenter:$PYTHONPATH"
 
 
 class Options(usage.Options):
+    appDir = "/home/student/.life/applications/life-exam/"
     optParameters = [["port", "p", 5000, "The port number to connect to."],
                      ["host", "h", '127.0.0.1', "The host machine to connect to."],
                      ["id", "i", 'unnamed', "A custom unique Client id."],
                      ["pincode", "c", '12345', "The pincode needed for authorization"],
-                     ["appdirectory", "d", '/home/student/.life/applications/life-exam/', "Directory of the Application itself"],
+                     ["appdirectory", "d", appDir, "Directory of the Application itself"],
                      ]
 
 
 @implementer(IServiceMaker, IPlugin)
 class MyServiceMaker(object):
+    # see https://twistedmatrix.com/documents/current/core/howto/plugin.html#extending-an-existing-program
     tapname = "examclient"
     description = "LiFE-Exam Client"
     options = Options

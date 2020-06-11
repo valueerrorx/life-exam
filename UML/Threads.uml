@@ -1,0 +1,20 @@
+@startuml
+	Server -> Thread_jobs:
+	note left: waiting for Jobs
+	activate Thread_jobs
+	
+	
+	
+	Thread_jobs -> PeriodicTimer
+	note right PeriodicTimer: every x seconds check Jobs
+	activate PeriodicTimer
+	note over PeriodicTimer: Jobs per client and type of job\n retries a failed job ntime
+	deactivate PeriodicTimer
+	PeriodicTimer -> Thread_jobs
+	note over Thread_jobs: no jobs? idle
+	deactivate Thread_jobs
+	
+	Server -> Thread_jobs: stop()
+	Thread_jobs -> PeriodicTimer: stop()
+	PeriodicTimer -> Server: done ...
+@enduml 

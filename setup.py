@@ -1,6 +1,6 @@
 """
 setup.py for life-exam
-Usage: pip3 install .
+Usage: sudo pip3 install .
 """
 __author__ = 'Thomas Michael Weissel'
 
@@ -31,17 +31,10 @@ if __name__ == '__main__':
             'numpy',
             'matplotlib',
             'opencv-python',
-            'pathlib', 'shutil', 'subprocess', 'zipfile', 'datetime'
+            'pathlib',
+            'datetime',
         ],
-        packages=[
-            "config",
-            "classes",
-            "twisted.plugins",
-        ],
-        package_data={
-            'twisted': ['plugins/examclient_plugin.py'],
-        },
-        python_requires='>=3.6',
+        python_requires='>=3.8',
     )
 
     refresh_plugin_cache()
