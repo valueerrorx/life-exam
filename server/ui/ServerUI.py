@@ -21,7 +21,7 @@ from classes.mutual_functions import get_file_list, checkIP
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
-from PyQt5.Qt import QRegExpValidator
+from PyQt5.Qt import QRegExpValidator, QFileDialog
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from classes.HTMLTextExtractor import html_to_text
 
@@ -146,6 +146,8 @@ class ServerUI(QtWidgets.QDialog):
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
+        
+        file_path = self._showFilePicker(SHARE_DIRECTORY)
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -338,8 +340,13 @@ class ServerUI(QtWidgets.QDialog):
 
     def _showFilePicker(self, directory):
         # show filepicker
-        self.filedialog.setDirectory(directory)  # set default directory
-        file_path = self.filedialog.getOpenFileName()  # get filename
+        self.filedialog.setDirectory(directory)  
+        self.filedialog.setAcceptMode(QFileDialog.AcceptOpen)
+        self.filedialog.setFileMode(QFileDialog.AnyFile)
+        
+        
+        # get filename
+        file_path = self.filedialog.getOpenFileName()  
         file_path = file_path[0]
         return file_path
 
