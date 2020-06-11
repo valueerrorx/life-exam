@@ -170,7 +170,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
 
     cmdRunner = CmdRunner()
-    print(desktop_files_list)
+    # print(desktop_files_list)
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
         desktop_filename = desktop_filename[2]

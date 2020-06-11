@@ -17,7 +17,7 @@ class SplashScreen(QSplashScreen):
         QSplashScreen.__init__(self, QtGui.QPixmap(), QtCore.Qt.WindowStaysOnTopHint)
 
         self.rootDir = Path(__file__).parent
-        image = self.rootDir.joinpath("img/loading.jpg").as_posix()
+        image = self.rootDir.joinpath("img/abstract_wave.jpg").as_posix()
         self.version = "3.4"
 
         splash_pix = QtGui.QPixmap(image)

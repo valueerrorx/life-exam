@@ -34,6 +34,7 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
     client_abgabe_done_exit_exam, client_received_file_done, client_lock_screen,\
     client_unlock_screen
 from server.ui.threads.Thread_Progress import Thread_Progress
+from classes.Splashscreen import SplashScreen
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -42,6 +43,11 @@ class ServerUI(QtWidgets.QDialog):
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
+        
+        
+    
+    
+        
 
         self.factory = factory     # type: MyServerFactory
         # rootDir of Application
@@ -146,8 +152,8 @@ class ServerUI(QtWidgets.QDialog):
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
-        
-        file_path = self._showFilePicker(SHARE_DIRECTORY)
+        # TEST
+        # file_path = self._showFilePicker(SHARE_DIRECTORY)
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -340,13 +346,11 @@ class ServerUI(QtWidgets.QDialog):
 
     def _showFilePicker(self, directory):
         # show filepicker
-        self.filedialog.setDirectory(directory)  
+        self.filedialog.setDirectory(directory)
         self.filedialog.setAcceptMode(QFileDialog.AcceptOpen)
         self.filedialog.setFileMode(QFileDialog.AnyFile)
-        
-        
         # get filename
-        file_path = self.filedialog.getOpenFileName()  
+        file_path = self.filedialog.getOpenFileName()
         file_path = file_path[0]
         return file_path
 
