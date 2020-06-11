@@ -19,13 +19,12 @@ class Thread_Wait(QtCore.QThread):
     client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
     client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
 
-    running = False
-    clients = []
-
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
         self.running = False
         self.parent = parent
+        self.running = False
+        self.clients = []
 
     def __del__(self):
         self.wait()
@@ -75,6 +74,7 @@ class Thread_Wait(QtCore.QThread):
 
     def setClients(self, clients):
         """ a list within all clients to actually work with """
+        self.clients = []
         self.clients = clients  # evtl. noch die art des progresses mitnehmen
 
     def run(self):
@@ -87,3 +87,7 @@ class Thread_Wait(QtCore.QThread):
             time.sleep(0.01)
 
         return 0
+
+    def restart(self, clients):
+        """ clears all clients and restarts the Thread """
+        self.setClients(clients)
