@@ -147,15 +147,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
 
-    def testImage(self, filename):
-        """ test if image is valid """
-        pixmap = QtGui.QPixmap(filename)
-        if pixmap.isNull():
-            self.logger.error('No icon with filename %s found' % filename)
-            return False
-        else:
-            return True
-
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
         return ("Clients: <b>%s</b>" % self.ui.listWidget.count())

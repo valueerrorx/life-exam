@@ -252,6 +252,17 @@ def writePidFile():
     changePermission(file, "777")
 
 
+def checkPidFile(pid_type):
+    """ check if PID File exists
+    :param type: String server/client
+    """
+    pid_file = 'client.pid'
+    if pid_type == "server":
+        pid_file = 'server.pid'
+    file = os.path.join(WORK_DIRECTORY, pid_file)
+    return os.path.isfile(file)
+
+
 def deletePidFile():
     file = os.path.join(WORK_DIRECTORY, 'server.pid')
     os.remove(file)

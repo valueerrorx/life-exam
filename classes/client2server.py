@@ -73,18 +73,20 @@ class ClientToServer:
         print(client.line_data_list)
         if client.line_data_list[0] == Command.LOCK.value:
             # check if a serverprocess is running and do not lock screen if any
+            # check for server.pid in ~/.life/EXAM
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
-            answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"], shell=True, stdout=subprocess.PIPE)
-            answer = answer.communicate()[0].strip().decode()
+
+            if mutual_functions.checkPidFile("server"):
+                # True > Im the Teacher
+                print("client2server: Prevented locking of the teachers screen [server.pid found]")
+                return
+            # answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"], shell=True, stdout=subprocess.PIPE)
+            # answer = answer.communicate()[0].strip().decode()
 
             # Send OK i'm locked to Server
             line = '%s %s' % (Command.LOCKSCREEN_OK.value, client.factory.options['id'])
             print("Sending Lock Screen OK")
             client.sendEncodedLine(line)
-
-            if not answer <= "1":
-                print("prevented locking of the teachers screen")
-                return
 
             startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
             os.system(startcommand)
