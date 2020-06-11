@@ -31,7 +31,8 @@ class ScreenshotWindow(QtWidgets.QDialog):
         self.setGeometry(100, 100, 1200, 675)
         self.setFixedSize(1200, 675)
         oImage = QImage(screenshot_file_path)
-        sImage = oImage.scaled(QSize(1200, 675))                   # resize Image to widgets size
+        # resize Image to widgets size
+        sImage = oImage.scaled(1200, 675, Qt.SmoothTransformation)
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)

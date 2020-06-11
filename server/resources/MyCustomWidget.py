@@ -106,7 +106,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.horizontalLayout.addWidget(self.content)
 
 
-        
+
 
     def setImage(self, screenshot_file_path):
         """
@@ -115,9 +115,9 @@ class MyCustomWidget (QtWidgets.QWidget):
         """
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
-        pixmap = pixmap.scaled(QtCore.QSize(self.image_width, self.image_height))
+        pixmap = pixmap.scaled(self.image_width, self.image_height, Qt.SmoothTransformation)
         print(self.image.geometry())
-        
+
         self.image.setPixmap(pixmap)
 
     def getConnectionID(self):

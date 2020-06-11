@@ -43,11 +43,11 @@ class ServerUI(QtWidgets.QDialog):
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
-        
-        
-    
-    
-        
+
+
+
+
+
 
         self.factory = factory     # type: MyServerFactory
         # rootDir of Application
@@ -646,7 +646,7 @@ class ServerUI(QtWidgets.QDialog):
             if self.screenshotwindow.client_connection_id == existing_item.pID:
                 self.screenshotwindow.oImage = QImage(screenshot_file_path)
                 # resize Image to widgets size
-                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(QtCore.QSize(1200, 675))
+                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(1200, 675, Qt.SmoothTransformation)
                 self.screenshotwindow.palette = QPalette()
                 self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
                 self.screenshotwindow.setPalette(self.screenshotwindow.palette)
@@ -762,4 +762,3 @@ class ServerUI(QtWidgets.QDialog):
             os._exit(0)  # otherwise only the gui is closed and connections are kept alive
         else:
             self.msg = False
-
