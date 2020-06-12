@@ -5,7 +5,7 @@ import sys
 import time
 from pathlib import Path
 import PyQt5
-from PyQt5 import uic, QtCore
+from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication
 from PyQt5.Qt import QCoreApplication
 from Qt.Splashscreen.SplashScreen import SplashScreen
@@ -40,6 +40,7 @@ def preload(splash, app):
     """ here we are loading all data that we need """
     splash.setProgressMax(4)
     for i in range(4):
+        splash.setMessage("Doing Step %s" % i)
         time.sleep(1)
         app.processEvents()
         splash.step()
@@ -53,6 +54,8 @@ def main():
 
     # Create and display the splash screen
     splash = SplashScreen()
+    splash.setImage("img/abstract_wave.jpg")
+    splash.setVersion("4.0")
     splash.show()
     app.processEvents()
 
@@ -62,6 +65,7 @@ def main():
     gui.show()
 
     time.sleep(1)
+    splash.setMessage("Done")
     splash.finish(gui)
 
     app.exec_()
