@@ -15,6 +15,7 @@ import time
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 # print(sys.path)
+from version import __version__
 
 from config.logger import configure_logging
 from config.config import SCRIPTS_DIRECTORY, SERVER_PORT, SERVERFILES_DIRECTORY
@@ -43,6 +44,8 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     # Create and display the splash screen
     splash = SplashScreen()
+    splash.setVersion(__version__)
+
     splash.show()
     app.processEvents()
 

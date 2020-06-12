@@ -4,8 +4,8 @@ Usage: sudo pip3 install .
 """
 __author__ = 'Thomas Michael Weissel'
 
-
 from distutils.core import setup
+from version import __version__
 
 
 def refresh_plugin_cache():
@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     setup(
         name="life-exam",
-        version='3.2',
+        version=__version__,
         description="LiFE Exam",
         author=__author__,
         maintainer=__author__,
