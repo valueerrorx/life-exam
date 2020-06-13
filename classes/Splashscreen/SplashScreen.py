@@ -7,7 +7,7 @@ from PyQt5.Qt import QProgressBar, QFont, QColor, Qt
 from PyQt5.QtWidgets import QSplashScreen, QLabel
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QGuiApplication
-from Qt.OvelayIcons.OpenCVLib import OpenCVLib
+from classes.OpenCVLib import OpenCVLib
 
 
 class SplashScreen(QSplashScreen):
@@ -104,20 +104,24 @@ class SplashScreen(QSplashScreen):
         self.version = version
         self.setImage(self.image)
 
+    def paintEvent(self, *args, **kwargs):
+        """ override, important to work """
+        return QSplashScreen.paintEvent(self, *args, **kwargs)
+
     def setImage(self, img):
         """ sets the image and adds a Version Number """
-        self.image = self.image = self.rootDir.joinpath(img).as_posix()
-        splash_pix = QtGui.QPixmap(img)
+        self.image = self.rootDir.joinpath(img).as_posix()
+        splash_pix = QtGui.QPixmap(self.image)
         # Add version
-        painter = QtGui.QPainter()
-        painter.begin(splash_pix)
-
+        painter = QtGui.QPainter(splash_pix)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
         painter.setFont(QFont("Arial", self.vsize, QFont.Bold))
         painter.setPen(QColor("#FFFFFF"))
         painter.drawText(0, 0, splash_pix.size().width() - self.vx,
                          splash_pix.size().height() - self.vy,
                          QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight, self.version)
         painter.end()
+
         self.setPixmap(self.scale(splash_pix))
         # ----------------------------------------------
         # other stuff

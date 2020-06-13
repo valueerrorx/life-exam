@@ -38,11 +38,13 @@ from classes.Splashscreen import SplashScreen
 
 
 class ServerUI(QtWidgets.QDialog):
-    def __init__(self, factory):
+    def __init__(self, factory, splash):
         QtWidgets.QDialog.__init__(self)
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
+        
+        self.splashscreen = splash
 
 
 

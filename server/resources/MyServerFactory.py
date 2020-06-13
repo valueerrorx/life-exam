@@ -21,7 +21,7 @@ from classes import mutual_functions
 
 
 class MyServerFactory(protocol.ServerFactory):
-    def __init__(self, files_path, reactor):
+    def __init__(self, files_path, reactor, splash):
         self.logger = logging.getLogger(__name__)
         self.files_path = files_path
         self.reactor = reactor
@@ -42,7 +42,7 @@ class MyServerFactory(protocol.ServerFactory):
             self.logger.info("DEBUGGING Mode")
 
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
-        self.window = ServerUI(self)
+        self.window = ServerUI(self, splash)
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
 

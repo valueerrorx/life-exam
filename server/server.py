@@ -44,8 +44,9 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     # Create and display the splash screen
     splash = SplashScreen()
+    # path is relativ zu SplashScreen File
+    splash.setImage("img/abstract_wave.jpg")
     splash.setVersion(__version__)
-
     splash.show()
     app.processEvents()
 
@@ -66,7 +67,7 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
     # start the server on SERVER_PORT
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor))  #noqa
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash))  #noqa
 
     logger = logging.getLogger('server')
     logger.info('Listening on port %d' % (SERVER_PORT))
