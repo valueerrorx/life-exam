@@ -20,13 +20,14 @@ from classes.CmdRunner import CmdRunner
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
 
-def findApps(applistwidget, appview):
+def findApps(applistwidget, appview, app):
     """
     uses kbuildsycoca5 to list the current application menu from the system
     """
     apps = subprocess.check_output("kbuildsycoca5 --menutest", stderr=subprocess.DEVNULL, shell=True)
     apps = apps.decode()
     desktop_files_list = []
+    app.processEvents()
 
     for line in apps.split('\n'):
         if line == "\n":
@@ -48,7 +49,9 @@ def findApps(applistwidget, appview):
             desktop_files_list.append(str(desktopfilelocation))
 
     desktop_files_list = clearDoubles(desktop_files_list)
+    app.processEvents()
     listInstalledApplications(applistwidget, desktop_files_list, appview)
+    app.processEvents()
 
 
 def clearDoubles(apps):

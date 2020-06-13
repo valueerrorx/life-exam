@@ -4,7 +4,7 @@
 
 from pathlib import Path
 from PyQt5.Qt import QProgressBar, QFont, QColor, Qt
-from PyQt5.QtWidgets import QSplashScreen, QLabel
+from PyQt5.QtWidgets import QSplashScreen, QLabel, QGraphicsDropShadowEffect
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QGuiApplication
 from classes.OpenCVLib import OpenCVLib
@@ -44,20 +44,31 @@ class SplashScreen(QSplashScreen):
         self.setPositionProgressBar()
 
         self.message = QLabel(self)
-        self.message.setFont(QFont("Arial", self.msize, QFont.Bold))
-        self.message.setStyleSheet("QLabel { color : #FFFFFF; }")
+        self.message.setFont(QFont("Arial", self.msize))
+        self.message.setStyleSheet("QLabel { color : #000000; }")
         self.message.setAlignment(Qt.AlignCenter)
+
+        # Shadow Effekt
+        effect = QGraphicsDropShadowEffect(self)
+        effect.setBlurRadius(5)
+        effect.setColor(QColor("#ffffff"))
+        effect.setOffset(1, 1)
+        self.message.setGraphicsEffect(effect)
         self.setPositionMessage()
         # self.message.hide()
 
         # CSS Styling
         self.setStyleSheet("""
-            QProgressBar:horizontal {
-                border: 1px solid gray;
-                background: white;
-                padding: 0;
-                text-align: right;
-                margin-top: 10px;
+            QProgressBar{
+              border: 1px solid #eeeeee;
+              text-align: center;
+              padding: 0;
+              margin-top:  10px;
+            }
+            QProgressBar::chunk{
+              background-color: #3daee9;
+              width: 0.34em;
+              margin:  0 1px;
             }
             """)
 
@@ -128,13 +139,9 @@ class SplashScreen(QSplashScreen):
         self.setPositionProgressBar()
         self.setPositionMessage()
 
-    def _incProgressbar(self):
-        self.progressBar.setValue(self.progressBar.value() + 1)
-
     def step(self):
         """ a preloading step is done """
-        # check if maximum is reached
-        self._incProgressbar()
+        self.progressBar.setValue(self.progressBar.value() + 1)
         self.progressBar.repaint()
 
         if(self.progressBar.value() >= (self.progressBar.maximum() - 1)):

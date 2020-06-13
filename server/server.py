@@ -27,19 +27,6 @@ from classes.Splashscreen.SplashScreen import SplashScreen
 from PyQt5 import QtWidgets
 import qt5reactor
 
-
-def preload(splash, app):
-    """ here we are loading all data that we need """
-    splash.setProgressMax(4)
-    for i in range(4):
-        time.sleep(1)
-        app.processEvents()
-        splash.step()
-
-    app.processEvents()
-    return 0
-
-
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     # Create and display the splash screen
@@ -67,7 +54,7 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
     # start the server on SERVER_PORT
-    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash))  #noqa
+    reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app))  #noqa
 
     logger = logging.getLogger('server')
     logger.info('Listening on port %d' % (SERVER_PORT))

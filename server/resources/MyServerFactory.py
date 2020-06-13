@@ -21,7 +21,11 @@ from classes import mutual_functions
 
 
 class MyServerFactory(protocol.ServerFactory):
-    def __init__(self, files_path, reactor, splash):
+    def __init__(self, files_path, reactor, splash, app):
+        """
+        :param splash: the Splashscreen started in Main Application
+        :param app: the main QApplication
+        """
         self.logger = logging.getLogger(__name__)
         self.files_path = files_path
         self.reactor = reactor
@@ -42,7 +46,7 @@ class MyServerFactory(protocol.ServerFactory):
             self.logger.info("DEBUGGING Mode")
 
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
-        self.window = ServerUI(self, splash)
+        self.window = ServerUI(self, splash, app)
         self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
 

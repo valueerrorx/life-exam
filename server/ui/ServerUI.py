@@ -21,7 +21,7 @@ from classes.mutual_functions import get_file_list, checkIP
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
-from PyQt5.Qt import QRegExpValidator, QFileDialog
+from PyQt5.Qt import QRegExpValidator, QFileDialog, Qt
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
 from classes.HTMLTextExtractor import html_to_text
 
@@ -38,18 +38,22 @@ from classes.Splashscreen import SplashScreen
 
 
 class ServerUI(QtWidgets.QDialog):
-    def __init__(self, factory, splash):
+    def __init__(self, factory, splash, app):
+        """
+        :param factory: Server Factory
+        :param splash: the Splashscreen started in Main Application
+        :param app: the main QApplication
+        """
         QtWidgets.QDialog.__init__(self)
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
-        
+
+        self.application = app
         self.splashscreen = splash
-
-
-
-
-
+        # loadUI, findApps, timeout
+        self.splashscreen.setProgressMax(3)
+        self.splashscreen.setMessage("Loading UI")
 
         self.factory = factory     # type: MyServerFactory
         # rootDir of Application
@@ -57,6 +61,9 @@ class ServerUI(QtWidgets.QDialog):
 
         uifile = self.rootDir.joinpath('server/server.ui')
         self.ui = uic.loadUi(uifile)        # load UI
+
+        self.splashscreen.step()
+        self.application.processEvents()
 
         iconfile = self.rootDir.joinpath('pixmaps/windowicon.png').as_posix()
         self.ui.setWindowIcon(QIcon(iconfile))  # definiere icon für taskleiste
@@ -92,6 +99,7 @@ class ServerUI(QtWidgets.QDialog):
         self.workinganimation.setSpeed(100)
         self.ui.working.setMovie(self.workinganimation)
         self.ui.info_label.setText("")
+        self.application.processEvents()
 
         self.timer = False
         self.msg = False
@@ -122,7 +130,10 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port3.setValidator(num_validator)
         self.ui.port4.setValidator(num_validator)
 
-        findApps(self.ui.applist, self.ui.appview)
+        # Applications ------------------------------------------------------
+        self.splashscreen.setMessage("Generating Application List")
+        findApps(self.ui.applist, self.ui.appview, self.application)
+        self.splashscreen.step()
 
         # Waiting Thread
         self.progress_thread = Thread_Progress(self)
@@ -151,6 +162,11 @@ class ServerUI(QtWidgets.QDialog):
                 color: #000000;
                 border: 1px solid #666666;
             }""" + debug_css)
+
+        self.splashscreen.step()
+        time.sleep(3)
+        self.splashscreen.setMessage("Done")
+        self.splashscreen.finish(self)
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
