@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # Create and display the splash screen
     splash = SplashScreen()
     # path is relativ zu SplashScreen File
-    splash.setImage("img/abstract_wave.jpg")
+    splash.setImage("img/LIFE.jpg")
     splash.setVersion(__version__)
     splash.show()
     app.processEvents()
