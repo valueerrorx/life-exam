@@ -33,6 +33,7 @@ if __name__ == '__main__':
             'opencv-python',
             'pathlib',
             'datetime',
+            'psutils',
         ],
         python_requires='>=3.8',
     )
