@@ -78,6 +78,13 @@ class ServerToClient:
         self.send_to_receivers(who, line)
         return True
 
+    def request_heartbeat(self, who):
+        if not self.clients:
+            return False
+        line = "%s %s" % (Command.HEARTBEAT.value, "%s")
+        self.send_to_receivers(who, line)
+        return True
+
     def request_screenshots(self, who):
         """ client file requests (get from client) """
         if not self.clients:

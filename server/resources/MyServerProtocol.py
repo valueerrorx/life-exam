@@ -239,14 +239,6 @@ class MyServerProtocol(basic.LineReceiver):
         clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
         ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
 
-    def _unlockscreen_ok(self):
-        """ a client has locked the screen and sends OK """
-        # fire Event to Thread
-        ui = self.factory.window
-        # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
-        ui.waiting_thread.fireEvent_UnLock_Screen(clientWidget)
-
     def _file_ok(self):
         """ a client has received a file sends OK """
         # fire Event to Thread

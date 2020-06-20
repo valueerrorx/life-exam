@@ -4,35 +4,37 @@
 import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-from server.ui.threads.Job import Job
-from classes import PeriodicTimer
+from server.ui.threads.PeriodicTimer import PeriodicTimer
+from config.config import HEARTBEAT_INTERVALL, HEARTBEAT_START_AFTER
 
 
-class Thread_Jobs(QtCore.QThread): 
-    """
-    a Thread that controlls jobs within the system
-    if a job fails for some reason, it will retry n times before giving up
-    """
-    jobs_done = pyqtSignal()
+class Heartbeat(QtCore.QThread):
+    """a Thread that checks if a Client is still alive"""
+    client_is_dead = pyqtSignal()
 
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
         self.parent = parent
-        self.setObjectName("Jobs")
+        self.setObjectName("Heartbeat")
         self.running = False
         self.running = False
-        self._jobs = []
+        self._clients = parent.ui.listWidget
+        # eigene Liste für die clients mit heartbeatversuchen
+        self._heartbeats = []
+        
         # start after xs than every xs
-        self.timer = PeriodicTimer(1, 1, self.checkJobs)
+        self.timer = PeriodicTimer(HEARTBEAT_START_AFTER, HEARTBEAT_INTERVALL, self.checkClients)
         # start the Timer the first time
         self.timer.first_start()
 
     def __del__(self):
         self.wait()
 
-    def addClient(self, ID, func):
-        """ adds a job for a client """
-        self._jobs.append(Job(ID, func))
+    def updateClientHeartbeats(self, ID, func):
+        """ compares Client List with here stored Beats Client List """
+        for i in range(len(self._clients)):
+            beat = self._clients[i]
+            print(beat)
 
     def delClient(self, ID):
         """ removes a Job from the list """
@@ -42,9 +44,11 @@ class Thread_Jobs(QtCore.QThread):
                 del self.jobs[i]
                 break
 
-    def checkJobs(self):
+    def checkClients(self):
         """ check all outstanding jobs or retry them """
-        print("Job")
+        print("Clients: %s" % self._clients.count())
+        server_to_client = self.parent.factory.server_to_client
+        # server_to_client.request_heartbeat(file_path, who, DataType.EXAM.value, cleanup_abgabe)
 
     def isAlive(self):
         if self.running:
@@ -53,10 +57,9 @@ class Thread_Jobs(QtCore.QThread):
             return False
 
     def stop(self):
-        print("stopping Timer")
-        self.timer.stop()
         self.running = False
-        print("stopping")
+        self.timer.stop()
+        self.parent.log("Heartbeat Thread stopped ...")
 
     def run(self):
         """
@@ -66,4 +69,3 @@ class Thread_Jobs(QtCore.QThread):
         self.running = True
         while(self.running):
             time.sleep(0.01)
-        return 0

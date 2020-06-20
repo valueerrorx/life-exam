@@ -87,7 +87,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
-            self.logger.info("Close-Event triggered")
+            self.logger.info("Close-Event triggered ...", True)
 
     def closeEvent(self, evnt):
         evnt.ignore()

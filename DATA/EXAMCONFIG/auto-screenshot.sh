@@ -4,8 +4,8 @@
 #the EXAM mode puts this script into the autstart folder before it starts the exam desktop 
 #it also removes the script but in case something went wrong the script is per default only taking 48 images 
 
-SCREENSHOTINTERVALL=300;   #seconds    (every 5th minute)
-LOOPS=48;           #repeat - but not indefinitely..  4h
+SCREENSHOT_INTERVALL=300;   #seconds    (every 5th minute)
+LOOPS=48;           		#repeat - but not indefinitely..  4h
 
 
 
@@ -22,7 +22,7 @@ shoot(){
     then
         for (( c=1; c<=$LOOPS; c++ ))
         do
-            import -window root ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOTINTERVALL;
+            import -window root ${MOUNTPOINT}$(date -d "today" +"%d-%m-%Y_%H-%M-%S").jpg & sleep $SCREENSHOT_INTERVALL;
             #switching ttys (even if disabled) did reenable shortcuts in the past.. untested
             qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts true
         done

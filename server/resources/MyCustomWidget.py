@@ -4,7 +4,7 @@
 
 from pathlib import Path
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui, Qt
 from PyQt5.QtCore import QSize
 
 
@@ -105,9 +105,6 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.horizontalLayout.addWidget(self.content)
 
-
-
-
     def setImage(self, screenshot_file_path):
         """
         sets the screenshot image
@@ -115,7 +112,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         """
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
-        pixmap = pixmap.scaled(self.image_width, self.image_height, Qt.SmoothTransformation)
+        pixmap = pixmap.scaled(self.image_width, self.image_height)
         print(self.image.geometry())
 
         self.image.setPixmap(pixmap)

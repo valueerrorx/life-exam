@@ -21,8 +21,9 @@ DEBUG_ID = "TestUser"
 DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
-# seconds
-SCREENSHOTINTERVALL = 30
+# Heartbeat Section
+HEARTBEAT_INTERVALL = 4
+HEARTBEAT_START_AFTER = 1
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets']

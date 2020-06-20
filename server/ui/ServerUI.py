@@ -34,7 +34,7 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
     client_abgabe_done_exit_exam, client_received_file_done, client_lock_screen,\
     client_unlock_screen
 from server.ui.threads.Thread_Progress import Thread_Progress
-from classes.Splashscreen import SplashScreen
+from server.ui.threads.Heartbeat import Heartbeat
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -164,9 +164,15 @@ class ServerUI(QtWidgets.QDialog):
             }""" + debug_css)
 
         self.splashscreen.step()
-        time.sleep(3)
+        if DEBUG_PIN == "":
+            time.sleep(3)  # only if not debugging
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
+
+        # Heartbeat Thread
+        self.heartbeat = Heartbeat(self)
+        self.heartbeat.client_is_dead.connect(self.removeZombie)
+        self.heartbeat.start()
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -375,7 +381,7 @@ class ServerUI(QtWidgets.QDialog):
     def _onScreenshots(self, who):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
-        self.log(html_to_text(msg))
+        self.log(html_to_text(msg), True)
         self._show_workingIndicator(1000, "Screenhot Update")
 
         if self.factory.rawmode is True:
@@ -587,6 +593,8 @@ class ServerUI(QtWidgets.QDialog):
                 # remove from Listwidget the QListWidgetItem
                 # UI Label Update count clients
                 self.ui.label_clients.setText(self.createClientsLabel())
+                # Update Heartbeat List
+                self.heartbeat.updateClientHeartbeats()
             else:
                 self.logger.error("Can't delete client %s" % client_name)
 
@@ -605,7 +613,7 @@ class ServerUI(QtWidgets.QDialog):
             # item not found because first connection attempt
             return
 
-    def log(self, msg, onlyinGUI=True):
+    def log(self, msg, onlyinGUI=False):
         """ creates an log entry inside GUI LOG Textfield """
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
@@ -646,6 +654,9 @@ class ServerUI(QtWidgets.QDialog):
         # Add widget to QListWidget
         self.ui.listWidget.addItem(itemN)                # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
+
+        # Update Heartbeat List
+        self.heartbeat.updateClientHeartbeats()
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         try:
@@ -768,6 +779,10 @@ class ServerUI(QtWidgets.QDialog):
         retval = self.msg.exec_()   # 16384 = yes, 65536 = no
 
         if str(retval) == "16384":
+            # Threads Shutdown
+            #self.jobs.stop()
+            self.heartbeat.stop()
+
             # if in root mode than change log Files to student User
             self.log("Shuting down >")
             self.log("root?: uid: %s" % os.getuid())
@@ -780,3 +795,10 @@ class ServerUI(QtWidgets.QDialog):
             os._exit(0)  # otherwise only the gui is closed and connections are kept alive
         else:
             self.msg = False
+
+    def removeZombie(self):
+        """
+        removes a zombie client
+        fired from Heartbeat.py
+        """
+        print("Client is dead")

@@ -53,10 +53,9 @@ class Thread_Jobs(QtCore.QThread):
             return False
 
     def stop(self):
-        print("stopping Timer")
         self.timer.stop()
         self.running = False
-        print("stopping")
+        self.parent.log("Jobs Thread stopped ...")
 
     def run(self):
         """
