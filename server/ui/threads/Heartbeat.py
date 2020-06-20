@@ -6,6 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from server.ui.threads.PeriodicTimer import PeriodicTimer
 from config.config import HEARTBEAT_INTERVALL, HEARTBEAT_START_AFTER
+from server.ui.threads.Beat import Beat
 
 
 class Heartbeat(QtCore.QThread):
@@ -30,23 +31,52 @@ class Heartbeat(QtCore.QThread):
     def __del__(self):
         self.wait()
 
-    def updateClientHeartbeats(self, ID, func):
-        """ compares Client List with here stored Beats Client List """
-        for i in range(len(self._clients)):
-            beat = self._clients[i]
-            print(beat)
+    def get_list_widget_items(self):
+        """
+        Creates an iterable list of all widget elements aka student screenshots
+        :return: list of widget items
+        """
+        items = []
+        for index in range(self._clients.count()):
+            item = self._clients.item(index)
+            # get the linked object back
+            mycustomwidget = item.data(QtCore.Qt.UserRole)
+            items.append(mycustomwidget)
+        return items
+    
+    def _cleanUpHeartBeats(self):
+        """verwaiste HB entfernen"""
+        for i in range(len(self._heartbeats)):
+            hb = self._heartbeats[i]
+            found = False
+            for widget in self.get_list_widget_items():
+                if hb.getID() == widget.getID():
+                    found = True
+                    break
+            if found is False:
+                # HB löschen
+                del self._heartbeats[i]
 
-    def delClient(self, ID):
-        """ removes a Job from the list """
-        for i in range(len(self._jobs)):
-            job = self._jobs[i]
-            if job.getID() == ID:
-                del self.jobs[i]
-                break
+    def updateClientHeartbeats(self):
+        """ compares Client List with here stored Beats Client List """
+        self._cleanUpHeartBeats()
+        # neue Elemente suchen
+        for widget in self.get_list_widget_items():
+            wid = widget.getID()
+            found = False
+            for i in range(len(self._heartbeats)):
+                if self._heartbeats[i] == wid:
+                    found = True
+                    break
+            if found is False:
+                # client hat hier keinen Heartbeat Eintrag > anlegen
+                self._heartbeats.append(Beat(wid))
 
     def checkClients(self):
         """ check all outstanding jobs or retry them """
         print("Clients: %s" % self._clients.count())
+        print("HB: %s" % len(self._heartbeats))
+        
         server_to_client = self.parent.factory.server_to_client
         # server_to_client.request_heartbeat(file_path, who, DataType.EXAM.value, cleanup_abgabe)
 

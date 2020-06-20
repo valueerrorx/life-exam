@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 
-class Beats(object):
+
+class Beat(object):
     """ Data for a Client """
     def __init__(self, ID):
         self.ID = ID
