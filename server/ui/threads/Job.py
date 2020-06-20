@@ -12,6 +12,6 @@ class Job(object):
 
     def getID(self):
         return self._ID
-        
+
     def getFunction(self):
         return self._func
