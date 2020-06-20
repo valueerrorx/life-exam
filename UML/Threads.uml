@@ -8,7 +8,7 @@
 	Thread_jobs -> PeriodicTimer
 	note right PeriodicTimer: every x seconds check Jobs
 	activate PeriodicTimer
-	note over PeriodicTimer: Jobs per client and type of job\n retries a failed job ntime
+	note over PeriodicTimer: Jobs per client and type of job\n retries a failed job n times
 	deactivate PeriodicTimer
 	PeriodicTimer -> Thread_jobs
 	note over Thread_jobs: no jobs? idle
@@ -16,5 +16,23 @@
 	
 	Server -> Thread_jobs: stop()
 	Thread_jobs -> PeriodicTimer: stop()
+	PeriodicTimer -> Server: done ...
+	
+	Server -> Heartbeat:
+	note left: _add Client, create HB
+	activate Heartbeat
+	
+	Heartbeat -> PeriodicTimer
+	note right PeriodicTimer: every x seconds check HB of client
+	activate PeriodicTimer
+	note over PeriodicTimer: retry n times
+	deactivate PeriodicTimer
+	
+	PeriodicTimer -> Heartbeat
+	note over Heartbeat: no Heartbeat of client > Remove Widget
+	deactivate Heartbeat
+	
+	Server -> Heartbeat: stop()
+	Heartbeat -> PeriodicTimer: stop()
 	PeriodicTimer -> Server: done ...
 @enduml 
