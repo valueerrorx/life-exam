@@ -8,7 +8,7 @@ from server.ui.threads.Job import Job
 from classes import PeriodicTimer
 
 
-class Thread_Jobs(QtCore.QThread):
+class Thread_Jobs(QtCore.QThread): 
     """
     a Thread that controlls jobs within the system
     if a job fails for some reason, it will retry n times before giving up
