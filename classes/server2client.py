@@ -11,6 +11,7 @@ import os
 
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
+from builtins import len
 
 
 class ServerToClient:
@@ -45,7 +46,7 @@ class ServerToClient:
 
     def send_to_receivers(self, who, line):
         """ sends to all clients, or just to the selected """
-        if who is "all":
+        if who == "all":
             for clientid in self.clients:
                 client = self.get_client(clientid)
                 client.sendEncodedLine(line % client.clientConnectionID)
@@ -54,7 +55,8 @@ class ServerToClient:
                 client = self.get_client(who)
                 client.sendEncodedLine(line % client.clientConnectionID)
             except:
-                print("server2client: Some Error, clientID: %s" % client.clientConnectionID)
+                client = self.get_client(who)
+                print("server2client Error, clientID: %s, %s" % (client.clientConnectionID, line))
 
     """client instructions"""
     def exit_exam(self, who, onexit_cleanup_abgabe="none"):
@@ -118,7 +120,7 @@ class ServerToClient:
             file_size = os.path.getsize(file_path)
             md5_hash = mutual_functions.get_file_md5_hash(file_path)
 
-            if who is 'all':
+            if who == 'all':
                 self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe)
             else:
                 client = self.get_client(who)

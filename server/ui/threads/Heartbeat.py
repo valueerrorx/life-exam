@@ -62,7 +62,7 @@ class Heartbeat(QtCore.QThread):
         self._cleanUpHeartBeats()
         # neue Elemente suchen
         for widget in self.get_list_widget_items():
-            wid = widget.getID()
+            wid = widget.getConnectionID()  # remark ID = Name!!
             found = False
             for i in range(len(self._heartbeats)):
                 if self._heartbeats[i] == wid:
@@ -80,7 +80,7 @@ class Heartbeat(QtCore.QThread):
         
         for i in range(len(self._heartbeats)):
                 hb = self._heartbeats[i]
-                #server_to_client.request_heartbeat(hb.getID())
+                server_to_client.request_heartbeat(hb.getID())
         
         
          

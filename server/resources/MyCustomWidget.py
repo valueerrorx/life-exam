@@ -12,11 +12,6 @@ class MyCustomWidget (QtWidgets.QWidget):
     """
     Creates a Item for the Client
     """
-    # Status Icons
-    max_status_icons = 5
-    statusIcons = []
-    # stores Image Name/False if Icon is set/not
-    statusIcons_on = [False, False, False, False, False]
 
     def __init__(self, client, screenshot_file_path):
         super(MyCustomWidget, self).__init__()
@@ -28,8 +23,8 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.screenshot_file_path = screenshot_file_path
 
         # store clientName as itemID for later use (delete event)
-        self.id = client.clientName
-        self.pID = client.clientConnectionID
+        self.id = client.clientName     # eg TestUser
+        self.pID = client.clientConnectionID    # eg 5508
         self.disabled = False
 
         self.set_ui()

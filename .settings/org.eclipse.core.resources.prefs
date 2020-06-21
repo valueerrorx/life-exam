@@ -24,6 +24,7 @@ encoding//server/ui/ServerUI.py=utf-8
 encoding//server/ui/threads/Beat.py=utf-8
 encoding//server/ui/threads/Heartbeat.py=utf-8
 encoding//server/ui/threads/Job.py=utf-8
+encoding//server/ui/threads/PeriodicTimer.py=utf-8
 encoding//server/ui/threads/Thread_Jobs.py=utf-8
 encoding//server/ui/threads/Thread_Progress.py=utf-8
 encoding//server/ui/threads/Thread_Progress_Events.py=utf-8

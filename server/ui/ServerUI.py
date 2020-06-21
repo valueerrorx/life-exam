@@ -791,7 +791,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if str(retval) == "16384":
             # Threads Shutdown
-            #self.jobs.stop()
+            # self.jobs.stop()
             self.heartbeat.stop()
 
             # if in root mode than change log Files to student User
