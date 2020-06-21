@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//classes/ConnectionStatus/ConnectionStatus.py=utf-8
+encoding//classes/HTMLTextExtractor.py=utf-8
 encoding//classes/Notification/Notification.py=utf-8
 encoding//classes/Notification/NotificationDispatcher.py=utf-8
 encoding//classes/Notification/NotificationTest.py=utf-8

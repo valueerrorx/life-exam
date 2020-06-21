@@ -19,6 +19,8 @@ VERSION = '3.2'
 # set both empty, then we are NOT debugging
 DEBUG_ID = "TestUser"
 DEBUG_PIN = "1234"
+DEBUG_PIN = ""
+DEBUG_ID = ""
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # Heartbeat Section

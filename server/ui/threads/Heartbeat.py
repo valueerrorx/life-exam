@@ -20,9 +20,9 @@ class Heartbeat(QtCore.QThread):
         self.running = False
         self.running = False
         self._clients = parent.ui.listWidget
-        # eigene Liste für die clients mit heartbeatversuchen
+        # eigene Liste für die clients mit heartbeat Versuchen
         self._heartbeats = []
-        
+
         # start after xs than every xs
         self.timer = PeriodicTimer(HEARTBEAT_START_AFTER, HEARTBEAT_INTERVALL, self.checkClients)
         # start the Timer the first time
@@ -43,7 +43,7 @@ class Heartbeat(QtCore.QThread):
             mycustomwidget = item.data(QtCore.Qt.UserRole)
             items.append(mycustomwidget)
         return items
-    
+
     def _cleanUpHeartBeats(self):
         """verwaiste HB entfernen"""
         for i in range(len(self._heartbeats)):
@@ -76,9 +76,14 @@ class Heartbeat(QtCore.QThread):
         """ check all outstanding jobs or retry them """
         print("Clients: %s" % self._clients.count())
         print("HB: %s" % len(self._heartbeats))
-        
         server_to_client = self.parent.factory.server_to_client
-        # server_to_client.request_heartbeat(file_path, who, DataType.EXAM.value, cleanup_abgabe)
+        
+        for i in range(len(self._heartbeats)):
+                hb = self._heartbeats[i]
+                #server_to_client.request_heartbeat(hb.getID())
+        
+        
+         
 
     def isAlive(self):
         if self.running:

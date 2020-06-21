@@ -3,6 +3,7 @@
 
 import logging
 from twisted.internet.protocol import DatagramProtocol
+from config.config import DEBUG_PIN
 
 
 class MultcastLifeServer(DatagramProtocol):
@@ -22,7 +23,8 @@ class MultcastLifeServer(DatagramProtocol):
         if "CLIENT" in datagram:
             # Rather than replying to the group multicast address, we send the
             # reply directly (unicast) to the originating port:
-            self.logger.info("Datagram %s received from %s" % (repr(datagram), repr(address)))
+            if DEBUG_PIN != "":
+                self.logger.info("Datagram %s received from %s" % (repr(datagram), repr(address)))
 
             serverinfo = self.factory.examid + " " + " ".join(self.factory.disconnected_list)
             message = "SERVER %s" % serverinfo

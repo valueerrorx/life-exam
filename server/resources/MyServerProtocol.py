@@ -10,6 +10,8 @@ from config.enums import DataType, Command
 from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
     DEBUG_SHOW_NETWORKTRAFFIC, DEBUG_PIN
 import zipfile
+from classes.HTMLTextExtractor import html_to_text
+from server.ui.ServerUI import MsgType
 
 
 class MyServerProtocol(basic.LineReceiver):
@@ -26,11 +28,6 @@ class MyServerProtocol(basic.LineReceiver):
 
         self.logger = logging.getLogger(__name__)
 
-    def DebugLog(self, msg):
-        """ logs only if Debuging """
-        if DEBUG_PIN != "":
-            self.logger.info(msg)
-
     # twisted-Event: A Connection is made
     def connectionMade(self):  # noqa
         self.factory.server_to_client.add_client(self)
@@ -41,7 +38,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.transport.setTcpKeepAlive(1)
         self.factory.window.log(
             'Connection from: %s (%d clients total)' % (
-                self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
+                self.transport.getPeer().host, len(self.factory.server_to_client.clients)), MsgType.AllwaysDebug)
 
     # twisted-Event: A Connection is lost
     def connectionLost(self, reason):  # noqa
@@ -49,7 +46,6 @@ class MyServerProtocol(basic.LineReceiver):
         """
         maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
         """
-        self.DebugLog(reason)
 
         self.factory.server_to_client.remove_client(self)
         self.file_handler = None
@@ -63,7 +59,7 @@ class MyServerProtocol(basic.LineReceiver):
 
         self.factory.window.log(
             'Connection from %s lost (%d clients left)' % (
-                self.transport.getPeer().host, len(self.factory.server_to_client.clients)))
+                self.transport.getPeer().host, len(self.factory.server_to_client.clients)), MsgType.AllwaysDebug)
 
         if not self.refused:
             self.factory.window._disableClientScreenshot(self)
@@ -98,7 +94,6 @@ class MyServerProtocol(basic.LineReceiver):
             if mutual_functions.validate_file_md5_hash(file_path, self.line_data_list[3]):
                 msg = 'File %s has been successfully transferred' % (filename)
                 self.factory.window.log(msg)
-                self.DebugLog(msg)
                 self.filetransfer_fail_count = 0
 
                 """
@@ -153,7 +148,6 @@ class MyServerProtocol(basic.LineReceiver):
                 self.transport.write(msg.encode())
                 msg = 'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename)
                 self.factory.window.log(msg)
-                self.DebugLog(msg)
                 self.logger.error(msg)
 
                 # request file again if filerequest was ABGABE (we don't care about a missed screenshotupdate)
@@ -275,7 +269,6 @@ class MyServerProtocol(basic.LineReceiver):
             self.transport.loseConnection()
             msg = 'Client Connection from %s has been refused. User already exists' % (newID)
             self.factory.window.log(msg)
-            self.DebugLog(msg)
             return
         elif int(pincode) != int(self.factory.pincode):
             self.refused = True
@@ -283,14 +276,12 @@ class MyServerProtocol(basic.LineReceiver):
             self.transport.loseConnection()
             msg = 'Client Connection from %s has been refused. Wrong pincode given' % (newID)
             self.factory.window.log(msg)
-            self.DebugLog(msg)
             return
         else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
             self.clientName = newID
-            msg = 'New Connection from <b>%s </b>' % (newID)
+            msg = 'New Connection from <b>%s</b>' % (newID)
             self.factory.window.log(msg)
-            self.DebugLog(msg)
-            # transfer, send, screenshot, filename, hash, clean abgabe
+            # transfer, send, screenshot, filename, hash, clean Abgabe
             line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
             self.sendEncodedLine(line)
             return

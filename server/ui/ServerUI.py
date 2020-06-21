@@ -35,6 +35,11 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
     client_unlock_screen
 from server.ui.threads.Thread_Progress import Thread_Progress
 from server.ui.threads.Heartbeat import Heartbeat
+from enum import Enum
+
+
+class MsgType(Enum):
+    AllwaysDebug = 1
 
 
 class ServerUI(QtWidgets.QDialog):
@@ -381,7 +386,6 @@ class ServerUI(QtWidgets.QDialog):
     def _onScreenshots(self, who):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
-        self.log(html_to_text(msg), True)
         self._show_workingIndicator(1000, "Screenhot Update")
 
         if self.factory.rawmode is True:
@@ -613,12 +617,19 @@ class ServerUI(QtWidgets.QDialog):
             # item not found because first connection attempt
             return
 
-    def log(self, msg, onlyinGUI=False):
+    def DebugLog(self, msg, show_allways=-1):
+        """ Debug Logging """
+        if show_allways == MsgType.AllwaysDebug:
+            self.logger.info(html_to_text(msg))
+        elif DEBUG_PIN != "":
+            self.logger.info(html_to_text(msg))
+
+    def log(self, msg, show_allways=-1):
         """ creates an log entry inside GUI LOG Textfield """
         timestamp = '[%s]' % datetime.datetime.now().strftime("%H:%M:%S")
         self.ui.logwidget.append(timestamp + " " + str(msg))
-        if onlyinGUI is False:
-            self.logger.info(html_to_text(msg))
+        # ...
+        self.DebugLog(msg, show_allways)
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """

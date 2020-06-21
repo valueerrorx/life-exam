@@ -13,7 +13,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
-from config.config import USER_HOME_DIR, PLASMACONFIG
+from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN
 from classes.CmdRunner import CmdRunner
 
 
@@ -144,7 +144,8 @@ def fallbackIcon(APP):
     icon = QIcon.fromTheme(data[0])
     if icon.isNull():
         ''' also not possible than common fallback '''
-        logger.error('Fallback Icon for: %s' % APP[1])
+        if DEBUG_PIN != "":
+            logger.error('Fallback Icon for: %s' % APP[1])
 
         # search a last time in /home/student/.life/icons/
         testfile = "%s.png" % data[0]
