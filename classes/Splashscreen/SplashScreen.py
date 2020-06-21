@@ -21,7 +21,7 @@ class SplashScreen(QSplashScreen):
         self.rootDir = Path(__file__).parent
 
         # default values
-        self.image = self.rootDir.joinpath("img/loading.jpg").as_posix()
+        self.image = self.rootDir.joinpath("img/LIFE.jpg").as_posix()
         self.version = "Version: 3.x"
 
         # pixmap.height - ?
@@ -120,7 +120,7 @@ class SplashScreen(QSplashScreen):
 
     def setImage(self, img):
         """ sets the image and adds a Version Number """
-        self.image = self.rootDir.joinpath(img).as_posix()
+        #self.image = self.rootDir.joinpath(img).as_posix()
         splash_pix = QtGui.QPixmap(self.image)
         # Add version
         painter = QtGui.QPainter(splash_pix)
