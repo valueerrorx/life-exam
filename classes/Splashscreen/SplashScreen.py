@@ -93,14 +93,14 @@ class SplashScreen(QSplashScreen):
 
     def scale(self, pix):
         gold = 0.618
-        h = pix.height()
-        w = pix.width()
+        h = pix.size().height()
+        w = pix.size().width()
 
         # max width 68% of screen
         screen = QGuiApplication.screens()[0]
         new_w = screen.geometry().width() * gold
         new_h = h * new_w / w
-        # print("%s x %s" %(w, h))
+
         # python resize
         # return pix.scaled(new_w, new_h, Qt.KeepAspectRatioByExpanding | Qt.SmoothTransformation)
         # resize with opencv
@@ -120,8 +120,12 @@ class SplashScreen(QSplashScreen):
 
     def setImage(self, img):
         """ sets the image and adds a Version Number """
+
         #self.image = self.rootDir.joinpath(img).as_posix()
-        splash_pix = QtGui.QPixmap(self.image)
+        splash_pix = QtGui.QPixmap(self.image, format='jpg')
+        if splash_pix.isNull():
+            print("Loading Error: %s" % self.image)
+
         # Add version
         painter = QtGui.QPainter(splash_pix)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
