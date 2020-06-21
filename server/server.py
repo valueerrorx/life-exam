@@ -10,7 +10,6 @@ import sys
 import os
 import logging
 from pathlib import Path
-import time
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -32,7 +31,7 @@ if __name__ == '__main__':
     # Create and display the splash screen
     splash = SplashScreen()
     # path is relativ zu SplashScreen File
-    splash.setImage("img/LIFE.jpg")
+    # splash.setImage("img/LIFE.jpg")
     splash.setVersion(__version__)
     splash.show()
     app.processEvents()

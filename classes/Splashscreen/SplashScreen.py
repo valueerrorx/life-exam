@@ -21,7 +21,7 @@ class SplashScreen(QSplashScreen):
         self.rootDir = Path(__file__).parent
 
         # default values
-        self.image = self.rootDir.joinpath("img/LIFE.jpg").as_posix()
+        self.image = None
         self.version = "Version: 3.x"
 
         # pixmap.height - ?
@@ -70,6 +70,11 @@ class SplashScreen(QSplashScreen):
               margin:  0 1px;
             }
             """)
+    
+    def show(self, *args, **kwargs):
+        if self.image == None:
+            raise ValueError('Specify an Image via SplashScreen::setImage()')
+        return QSplashScreen.show(self, *args, **kwargs)
 
     def setMessage(self, msg):
         self.message.setText("%s ..." % (msg))
@@ -112,7 +117,6 @@ class SplashScreen(QSplashScreen):
     def setVersion(self, version):
         """ adds a Version Number and updates the image """
         self.version = "Version: %s" % version
-        self.setImage(self.image)
 
     def paintEvent(self, *args, **kwargs):
         """ override, important to work """
@@ -121,10 +125,10 @@ class SplashScreen(QSplashScreen):
     def setImage(self, img):
         """ sets the image and adds a Version Number """
 
-        #self.image = self.rootDir.joinpath(img).as_posix()
+        self.image = self.rootDir.joinpath(img).as_posix()
         splash_pix = QtGui.QPixmap(self.image, format='jpg')
         if splash_pix.isNull():
-            print("Loading Error: %s" % self.image)
+            raise ValueError('Error loading Image [self.image]')
 
         # Add version
         painter = QtGui.QPainter(splash_pix)
