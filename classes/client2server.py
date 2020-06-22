@@ -67,6 +67,7 @@ class ClientToServer:
 
     def heartbeat(self, client):
         """send Heartbeat to Server"""
+        print("XXXXXXXXXXXXXXXXXXXXXXXx HB")
         line = '%s %s' % (Command.HEARTBEAT_BEAT.value, client.factory.options['id'])
         client.sendEncodedLine(line)
 

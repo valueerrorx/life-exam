@@ -3,19 +3,25 @@
 # Copyright (C) 2019 Stefan Hagmann
 
 from threading import Timer
+from PyQt5 import QtCore
 
 
 # https://stackoverflow.com/questions/474528/what-is-the-best-way-to-repeatedly-execute-a-function-every-x-seconds
-class PeriodicTimer(object):
-    def __init__(self, first_interval, interval, func, *args, **kwargs):
+class PeriodicTimer(QtCore.QThread):
+    def __init__(self, parent, first_interval, interval, func, *args, **kwargs):
+        QtCore.QThread.__init__(self, parent)
+        self.parent = parent
         self.timer = None
         self.first_interval = first_interval
         self.interval = interval
         self.func = func
-        self.args = args
-        self.kwargs = kwargs
         self.running = False
         self.is_started = False
+        self.args = args
+        self.kwargs = kwargs
+
+    def __del__(self):
+        self.wait()
 
     def first_start(self):
         try:

@@ -177,6 +177,8 @@ class ServerUI(QtWidgets.QDialog):
         # Heartbeat Thread
         self.heartbeat = Heartbeat(self)
         self.heartbeat.client_is_dead.connect(self.removeZombie)
+        self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
+        self.heartbeat.retry_heartbeat.connect(self.retry_heartbeat)
         self.heartbeat.start()
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
@@ -393,7 +395,6 @@ class ServerUI(QtWidgets.QDialog):
             return
         else:
             self.factory.rawmode = True  # LOCK all other fileoperations
-
         if not self.factory.server_to_client.request_screenshots(who):
             self.factory.rawmode = False   # UNLOCK all fileoperations
             self.log("No clients connected")
@@ -813,3 +814,12 @@ class ServerUI(QtWidgets.QDialog):
         fired from Heartbeat.py
         """
         print("Client is dead")
+
+    def request_heartbeat(self, who):
+        """Heartbeat fired time to check the Heartbeat of client"""
+        server_to_client = self.factory.server_to_client
+        server_to_client.request_heartbeat(who)
+        
+    def retry_heartbeat(self, who):
+        """Heartbeat fired time to re-check the Heartbeat of Zombie client"""
+        pass
