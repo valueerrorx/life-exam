@@ -160,6 +160,7 @@ class MyClientProtocol(basic.LineReceiver):
             Command.LOCK.value: self.client_to_server.lock_screen,
             Command.UNLOCK.value: self.client_to_server.lock_screen,
             Command.EXITEXAM.value: self.client_to_server.exitExam,
+            Command.HEARTBEAT.value: self.client_to_server.heartbeat,
         }
 
         line_handler = command.get(self.line_data_list[0], None)

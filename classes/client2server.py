@@ -10,7 +10,6 @@ import time
 import shutil
 import sys
 from pathlib import Path
-import subprocess
 import os
 from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
@@ -65,6 +64,11 @@ class ClientToServer:
         """
         mutual_functions.showDesktopMessage('Connection aborted by the Teacher!')
         client.factory.failcount = 100
+
+    def heartbeat(self, client):
+        """send Heartbeat to Server"""
+        line = '%s %s' % (Command.HEARTBEAT_BEAT.value, client.factory.options['id'])
+        client.sendEncodedLine(line)
 
     def lock_screen(self, client):
         """Just locks the client screen

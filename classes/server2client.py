@@ -11,7 +11,6 @@ import os
 
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
-from builtins import len
 
 
 class ServerToClient:

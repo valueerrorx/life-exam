@@ -30,9 +30,10 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     # Create and display the splash screen
     splash = SplashScreen()
-    # path is relativ zu SplashScreen File
-    # splash.setImage("img/LIFE.jpg")
+    # set version first
     splash.setVersion(__version__)
+    splash.setImage("img/LIFE.jpg")
+
     splash.show()
     app.processEvents()
 
