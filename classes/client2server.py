@@ -67,7 +67,7 @@ class ClientToServer:
 
     def heartbeat(self, client):
         """send Heartbeat to Server"""
-        print("XXXXXXXXXXXXXXXXXXXXXXXx HB")
+        print(client.line_data_list)
         line = '%s %s' % (Command.HEARTBEAT_BEAT.value, client.factory.options['id'])
         client.sendEncodedLine(line)
 
@@ -75,7 +75,6 @@ class ClientToServer:
         """Just locks the client screen
         :param client: ClientProtocol
         """
-        print(client.line_data_list)
         if client.line_data_list[0] == Command.LOCK.value:
             # check if a serverprocess is running and do not lock screen if any
             # check for server.pid in ~/.life/EXAM

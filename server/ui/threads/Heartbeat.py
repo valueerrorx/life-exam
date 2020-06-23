@@ -28,16 +28,10 @@ class Heartbeat(QtCore.QThread):
         # start after xs than every xs
         self.timer = PeriodicTimer(self, HEARTBEAT_START_AFTER, HEARTBEAT_INTERVALL, self.checkClients)
 
-        # This Timer is used, if a client didn't response even more > check n times before deleting the client
-        # start after 10sec than every 2min
-        self.hbRetryTimer = PeriodicTimer(self, 20, 60 * 2, self.checkHBAgain)
-
     def start(self, *args, **kwargs):
         erg = QtCore.QThread.start(self, *args, **kwargs)
         # start the Timer the first time
         self.timer.first_start()
-        # start the Timer the first time
-        self.hbRetryTimer.first_start()
         return erg
 
     def __del__(self):
@@ -86,22 +80,9 @@ class Heartbeat(QtCore.QThread):
 
     def checkClients(self):
         """ check HB of the clients """
-        server_to_client = self.parent.factory.server_to_client
         for i in range(len(self._heartbeats)):
                 hb = self._heartbeats[i]
-                print("HB: %s" % hb.getID())
-                #server_to_client.request_heartbeat()
-                
                 self.request_heartbeat.emit(hb.getID())
-
-    def checkHBAgain(self):
-        """ re-test HB of not responding Clients """
-        print("Re Check HB")
-        server_to_client = self.parent.factory.server_to_client
-        for i in range(len(self._heartbeats)):
-            hb = self._heartbeats[i]
-            if hb.isResponding() is False:
-                server_to_client.request_heartbeat(hb.getID())
 
     def isAlive(self):
         if self.running:
@@ -112,7 +93,6 @@ class Heartbeat(QtCore.QThread):
     def stop(self):
         self.running = False
         self.timer.stop()
-        self.hbRetryTimer.stop()
         self.parent.log("Heartbeat Thread stopped ...")
 
     def run(self):

@@ -199,7 +199,6 @@ class MyServerProtocol(basic.LineReceiver):
 
         """
         try:
-            print(self.line_data_list)
             # Dictionary
             command = {
                 Command.AUTH.value: self._checkclientAuth,
