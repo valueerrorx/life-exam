@@ -6,7 +6,7 @@ import datetime
 import os
 import shutil
 import sip
-import time
+from time import time, sleep
 from pathlib import Path
 
 from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
@@ -56,6 +56,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.application = app
         self.splashscreen = splash
+
         # loadUI, findApps, timeout
         self.splashscreen.setProgressMax(3)
         self.splashscreen.setMessage("Loading UI")
@@ -176,9 +177,8 @@ class ServerUI(QtWidgets.QDialog):
 
         # Heartbeat Thread
         self.heartbeat = Heartbeat(self)
-        self.heartbeat.client_is_dead.connect(self.removeZombie)
+        #self.heartbeat.client_is_dead.connect(self.removeZombie)
         self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
-        self.heartbeat.retry_heartbeat.connect(self.retry_heartbeat)
         self.heartbeat.start()
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
@@ -741,8 +741,8 @@ class ServerUI(QtWidgets.QDialog):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
             if client_connection_id == widget.getConnectionID():
-                self.log("Found existing list widget for client connectionId %s" % client_connection_id)
                 return widget
+        self.log("Error:  no list widget for client connectionId %s" % client_connection_id)
         return False
 
     def get_QListWidgetItem_by_client_id(self, client_id):
@@ -819,7 +819,3 @@ class ServerUI(QtWidgets.QDialog):
         """Heartbeat fired time to check the Heartbeat of client"""
         server_to_client = self.factory.server_to_client
         server_to_client.request_heartbeat(who)
-        
-    def retry_heartbeat(self, who):
-        """Heartbeat fired time to re-check the Heartbeat of Zombie client"""
-        pass

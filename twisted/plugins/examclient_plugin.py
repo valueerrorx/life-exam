@@ -163,9 +163,7 @@ class MyClientProtocol(basic.LineReceiver):
             Command.HEARTBEAT.value: self.client_to_server.heartbeat,
         }
 
-        
         line_handler = command.get(self.line_data_list[0], None)
-        print("XXXXXXXXXXX %s" % line_handler)
         """
         attach "self" (client)
         triggert entweder einen command oder (falls es einfach nur text ist) füllt einen buffer..

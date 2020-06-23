@@ -5,15 +5,15 @@ import time
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from server.ui.threads.PeriodicTimer import PeriodicTimer
-from config.config import HEARTBEAT_INTERVALL, HEARTBEAT_START_AFTER
+from config.config import HEARTBEAT_INTERVALL, HEARTBEAT_START_AFTER,\
+    MAX_HEARTBEAT_FAILS
 from server.ui.threads.Beat import Beat
 
 
 class Heartbeat(QtCore.QThread):
     """a Thread that checks if a Client is still alive"""
-    client_is_dead = pyqtSignal()
+    kick_zombie = pyqtSignal(str)
     request_heartbeat = pyqtSignal(str)
-    retry_heartbeat = pyqtSignal(str)
 
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
@@ -82,7 +82,10 @@ class Heartbeat(QtCore.QThread):
         """ check HB of the clients """
         for i in range(len(self._heartbeats)):
                 hb = self._heartbeats[i]
-                self.request_heartbeat.emit(hb.getID())
+                if hb.getRetries() >= MAX_HEARTBEAT_FAILS:
+                    self.kickZombie(hb)
+                else:
+                    self.request_heartbeat.emit(hb.getConnectionID())
 
     def isAlive(self):
         if self.running:
@@ -105,11 +108,17 @@ class Heartbeat(QtCore.QThread):
             time.sleep(0.01)
 
     def fireEvent_Heartbeat(self, who):
-        """ client has sended a heartbeat """
+        """
+        client has sended a heartbeat
+        :param who: MyCustomWidget Object
+        """
         for i in range(len(self._heartbeats)):
             hb = self._heartbeats[i]
-            item = self.parent.get_list_widget_by_client_name(who)
-            if hb.getID() == item.getID():
-                hb.setResponding()
+            if hb.getConnectionID() == who.getConnectionID():
+                hb.failed()
                 break
+
+    def kickZombie(self, hb):
+        """HB Limit reached, kick clients"""
+        self.kick_zombie.emit(hb.getConnectionID())
 

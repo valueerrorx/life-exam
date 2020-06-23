@@ -8,9 +8,8 @@ class Beat(object):
     def __init__(self, ID):
         self._ID = ID   # connection ID
         self._retries = 0
-        self._responding = False
 
-    def getID(self):
+    def getConnectionID(self):
         return self._ID
 
     def setRetries(self, r):
@@ -19,8 +18,6 @@ class Beat(object):
     def getRetries(self):
         return self._retries
 
-    def setResponding(self):
-        self._responding = True
-
-    def isResponding(self):
-        return self._responding
+    def failed(self):
+        """No HB from Client > Fail Count"""
+        self._retries += 1

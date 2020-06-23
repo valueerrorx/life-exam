@@ -10,6 +10,7 @@ import sys
 import os
 import logging
 from pathlib import Path
+from time import time, sleep
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -28,14 +29,18 @@ import qt5reactor
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+
+    start = time()
     # Create and display the splash screen
     splash = SplashScreen()
     # set version first
     splash.setVersion(__version__)
     splash.setImage("img/LIFE.jpg")
-
     splash.show()
-    app.processEvents()
+    splash.update()
+    while time() - start < 1:
+        sleep(0.001)
+        app.processEvents()
 
     # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
