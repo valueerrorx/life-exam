@@ -18,6 +18,9 @@ class Beat(object):
     def getRetries(self):
         return self._retries
 
-    def failed(self):
-        """No HB from Client > Fail Count"""
+    def incCounter(self):
+        """trying to contact client"""
         self._retries += 1
+        
+    def resetCounter(self):
+        self._retries = 0

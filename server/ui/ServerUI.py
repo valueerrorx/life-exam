@@ -177,7 +177,7 @@ class ServerUI(QtWidgets.QDialog):
 
         # Heartbeat Thread
         self.heartbeat = Heartbeat(self)
-        #self.heartbeat.client_is_dead.connect(self.removeZombie)
+        self.heartbeat.kick_zombie.connect(self.removeZombie)
         self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
         self.heartbeat.start()
 
@@ -755,16 +755,16 @@ class ServerUI(QtWidgets.QDialog):
             # get the linked object back
             mycustomwidget = item.data(QtCore.Qt.UserRole)
             if client_id == mycustomwidget.getID():
-                self.log("Found existing list widget for client connectionId %s" % client_id)
                 return item
+        self.log("Error: list widget NOT found for client connectionId %s" % client_id)
         return False
 
     def get_list_widget_by_client_name(self, client_name):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
             if client_name == widget.getName():
-                self.log("Found existing list widget for client name %s" % client_name)
                 return widget
+        self.log("Error: list widget NOT found for client name %s" % client_name)
         return False
 
     def get_existing_or_skeleton_list_widget(self, client_name):
@@ -808,10 +808,10 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.msg = False
 
-    def removeZombie(self):
+    def removeZombie(self, conId):
         """
-        removes a zombie client
-        fired from Heartbeat.py
+        removes a zombie client, fired from Heartbeat.py
+        :param conId: the Connection ID from the Client
         """
         print("Client is dead")
 

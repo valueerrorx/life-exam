@@ -171,12 +171,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 self._changePalette(self.ui.pincode, "warn")
             else:
                 self.ui.close()
-                clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+                # clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 # make sure only one client instance is running per client
-                cmd = "bash %s %s" % (clientkillscript, 'client')
-                self.cmdRunner.runCmd(cmd)
+                # cmd = "bash %s %s" % (clientkillscript, 'client')
+                # self.cmdRunner.runCmd(cmd)
 
-                self.logger.info("Terminated old running twisted Client")
+                # self.logger.info("Terminated old running twisted Client")
 
                 # moved this to workdirectory because configdirectory is overwritten on exam start
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")

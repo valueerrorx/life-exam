@@ -49,8 +49,8 @@ if __name__ == '__main__':
     app.processEvents()
 
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
-    killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-    os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
+    # killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+    # os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
     # time.sleep(1)
     mutual_functions.writePidFile()
     app.processEvents()

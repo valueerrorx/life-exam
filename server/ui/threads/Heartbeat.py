@@ -83,8 +83,12 @@ class Heartbeat(QtCore.QThread):
         for i in range(len(self._heartbeats)):
                 hb = self._heartbeats[i]
                 if hb.getRetries() >= MAX_HEARTBEAT_FAILS:
+                    self.DebugPrint()
                     self.kickZombie(hb)
                 else:
+                    # inc counter, counter is set to 0 when client answers
+                    hb.incCounter()
+                    # send Request
                     self.request_heartbeat.emit(hb.getConnectionID())
 
     def isAlive(self):
@@ -115,10 +119,16 @@ class Heartbeat(QtCore.QThread):
         for i in range(len(self._heartbeats)):
             hb = self._heartbeats[i]
             if hb.getConnectionID() == who.getConnectionID():
-                hb.failed()
+                hb.resetCounter()
                 break
+        self.DebugPrint()
 
     def kickZombie(self, hb):
         """HB Limit reached, kick clients"""
         self.kick_zombie.emit(hb.getConnectionID())
+        
+    def DebugPrint(self):
+        for i in range(len(self._heartbeats)):
+            hb = self._heartbeats[i]
+            print("cID: %s, Tries: %s" % (hb.getConnectionID(), hb.getRetries()))
 
