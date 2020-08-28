@@ -171,7 +171,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.splashscreen.step()
         if DEBUG_PIN == "":
-            time.sleep(3)  # only if not debugging
+            sleep(3)  # only if not debugging
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
 
@@ -291,7 +291,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.workinganimation.stop()
         self.ui.info_label.setText("%s ..." % info)
-        time.sleep(0.1)
+        sleep(0.1)
         self.workinganimation.start()
         self.ui.working.show()
 

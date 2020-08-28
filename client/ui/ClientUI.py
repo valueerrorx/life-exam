@@ -80,6 +80,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         num_regex = QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
         self.ui.pincode.setValidator(num_validator)
+        
+        # detect changing of userdata, only needed if debugging is active
+        self.inputs_changed = False
 
         # ip_regex = QRegExp("[0-9\._]+")
         # ip_validator = QRegExpValidator(ip_regex)
@@ -87,7 +90,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
-            self.logger.info("Close-Event triggered ...", True)
+            self.logger.info("Close-Event triggered ...")
 
     def closeEvent(self, evnt):
         evnt.ignore()
@@ -132,10 +135,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
         # only debug if DEBUG_PIN is not ""
         if DEBUG_PIN != "":
-            ID = DEBUG_ID
-            PIN = DEBUG_PIN
-            self.ui.studentid.setText(ID)
-            self.ui.pincode.setText(PIN)
+            if self.inputs_changed == False:
+                ID = DEBUG_ID
+                PIN = DEBUG_PIN
+                self.ui.studentid.setText(ID)
+                self.ui.pincode.setText(PIN)
+                # print("Update: %s %s" % (ID, PIN))
 
     def _on_offline_exam(self):
         self.msg = QtWidgets.QMessageBox()
@@ -212,6 +217,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             palettedefault = item.palette()
             palettedefault.setColor(item.backgroundRole(), QColor(255, 255, 255))
             item.setPalette(palettedefault)
+        self.inputs_changed = True
 
     def _updateServerlist(self):
         """updates the dropdownmenu if new servers are found"""
