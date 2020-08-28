@@ -2,20 +2,16 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 from pathlib import Path
-from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5 import uic, QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QGuiApplication
-import time
-import random
-from enum import Enum
-from PyQt5.Qt import QObject
-import threading
 import os
 import stat
 import psutil
+from PyQt5.QtWidgets import QMainWindow
 
 
-class ConnectionStatus(QtWidgets.QDialog):
+class ConnectionStatus(QMainWindow):
     """ Display a Status Window for some reasons """
     def __init__(self, parent=None):
         super(ConnectionStatus, self).__init__(parent)
@@ -28,20 +24,30 @@ class ConnectionStatus(QtWidgets.QDialog):
         # this will hide the app from task bar
         self.ui.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.ui.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)
-        self.setModal(False)
-
         self.moveToDefaultPosition()
-        self.ui.abort.clicked.connect(self._onAbbrechen)
         
-        self.msgpattern = "LIFE-EXAM\n%s\n%s"
+        # be sure that in Designe MouseTracking is enabled!
+        self.ui.icon.mousePressEvent = lambda event: self._onClick(event)
+                
+        self.msgpattern = "%s\n%s"
         self.serverid = "None"
         self.workdir = "."
         # terminate existing ConnectionStatus
-        self.checkPID()
+        self._checkPID()
         # create new PID File
         self._writePID()
-
-
+        
+    def _onClick(self, event):
+        if event.buttons() == QtCore.Qt.NoButton:
+            # print("Simple mouse motion")
+            pass
+        elif event.buttons() == QtCore.Qt.LeftButton:
+            # maybe hide the Status Icon
+            print("Left click drag")
+        elif event.buttons() == QtCore.Qt.RightButton:
+            # print("Right click drag")
+            pass
+   
     def show(self):
         """ show it """
         # self.ticker.start()
@@ -64,9 +70,9 @@ class ConnectionStatus(QtWidgets.QDialog):
             self.setIcon("disconnected.png")
             self._setMessage("disconnected")
     
-    def setServerID(self, id):
+    def setServerID(self, theid):
         """the identifier from the server"""
-        self.serverid = id
+        self.serverid = theid
 
     def _setMessage(self, txt):
         """ set the Message of the notification """       
@@ -112,7 +118,7 @@ class ConnectionStatus(QtWidgets.QDialog):
         file = os.path.join(self.workdir, 'connection.pid')
         os.remove(file)
         
-    def checkPID(self):
+    def _checkPID(self):
         """
         check for a PID File
         :return: Pid Number if exists, or None
@@ -132,17 +138,3 @@ class ConnectionStatus(QtWidgets.QDialog):
         if psutil.pid_exists(PID):
             p = psutil.Process(PID)
             p.terminate()  #or p.kill()
-    
-    
-    
-    
-
-
-
-
-    def showInformation(self, msg):
-        self._notification.setType(Notification_Type.Information)
-        self._notification.setMessage(msg)
-        t = threading.Thread(target=self._createNotification)
-        t.daemon = True
-        t.start()

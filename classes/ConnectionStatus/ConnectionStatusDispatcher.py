@@ -3,11 +3,7 @@
 # Copyright (C) 2019 Stefan Hagmann
 import sys
 from PyQt5.QtWidgets import QApplication
-from Qt.ConnectionStatus.ConnectionStatus import ConnectionStatus
-import os
-import stat
-import signal
-import psutil
+from classes.ConnectionStatus.ConnectionStatus import ConnectionStatus
 
 
 def close_app():
@@ -33,16 +29,18 @@ the new one.
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    """
     print(sys.argv)
-    #if len(sys.argv) != 2:
-    #    print("Argument mismatch...")
-    #    printhelp()
-    #typ = sys.argv[1]
+    if len(sys.argv) != 3:
+        print("Argument mismatch...")
+        printhelp()
+    typ = sys.argv[1]
+    s = sys.argv[2]
+    """
     typ = 1
-    s = "exam-123"
+    s = "1234"
 
-    status = ConnectionStatus()    
-    # status.setWorkDirectory("dsfsdf")  
+    status = ConnectionStatus()     
     status.setServerID(s)  
     status.setType(typ)
     status.show()
