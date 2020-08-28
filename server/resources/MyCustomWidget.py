@@ -4,7 +4,7 @@
 
 from pathlib import Path
 
-from PyQt5 import QtWidgets, QtCore, QtGui, Qt
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QSize
 
 
@@ -37,7 +37,7 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def set_ui(self):
         """
-        designed wit QT Designer, converted with pyuic5
+        designed with QT Designer, converted with pyuic5
         - replace: self.mywidget > self.
         - suche: self.mywidget > self
         - dontuseLabel löschen
