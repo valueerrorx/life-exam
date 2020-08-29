@@ -13,11 +13,11 @@ from PyQt5.QtWidgets import QMainWindow
 
 class ConnectionStatus(QMainWindow):
     """ Display a Status Window for some reasons """
-    def __init__(self, parent=None):
+    def __init__(self, workingdir, parent=None):
         super(ConnectionStatus, self).__init__(parent)
-        self.initUI()
+        self.initUI(workingdir)
 
-    def initUI(self):
+    def initUI(self, workingdir):
         self.rootDir = Path(__file__).parent
         uifile = self.rootDir.joinpath('status.ui')
         self.ui = uic.loadUi(uifile)        # load UI
@@ -26,12 +26,15 @@ class ConnectionStatus(QMainWindow):
         self.ui.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)
         self.moveToDefaultPosition()
         
-        # be sure that in Designe MouseTracking is enabled!
+        # be sure that in UI Design MouseTracking is enabled!
+        # prevent from dragging arround 
         self.ui.icon.mousePressEvent = lambda event: self._onClick(event)
+        self.ui.msg.mousePressEvent = lambda event: self._onClick(event)
+        self.ui.mousePressEvent = lambda event: self._onClick(event)
                 
         self.msgpattern = "%s\n%s"
         self.serverid = "None"
-        self.workdir = "."
+        self.workdir = workingdir
         # terminate existing ConnectionStatus
         self._checkPID()
         # create new PID File
@@ -63,7 +66,7 @@ class ConnectionStatus(QMainWindow):
         self.close()
         
     def setType(self, typ):
-        if typ==1:
+        if (typ==1) or (typ=="1"):
             self.setIcon("connected.png")
             self._setMessage("connected")
         else:
@@ -73,7 +76,7 @@ class ConnectionStatus(QMainWindow):
     def setServerID(self, theid):
         """the identifier from the server"""
         self.serverid = theid
-
+   
     def _setMessage(self, txt):
         """ set the Message of the notification """       
         self.ui.msg.setText(self.msgpattern % (self.serverid, txt))

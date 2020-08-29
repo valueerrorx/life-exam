@@ -6,7 +6,7 @@ import datetime
 import os
 import shutil
 import sip
-from time import time, sleep
+from time import sleep
 from pathlib import Path
 
 from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\

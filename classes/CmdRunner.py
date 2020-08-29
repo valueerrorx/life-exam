@@ -1,10 +1,7 @@
 import subprocess
 import os
 
-''' A Class for runing cmds with subprocess, also as a specifiv user '''
-import time
-
-
+''' A Class for runing cmds with subprocess, also as a specific user '''
 class CmdRunner():
     def __init__(self):
         self._stderr = ""
@@ -17,7 +14,7 @@ class CmdRunner():
         return self._stdout
 
     def getLines(self):
-        ''' give me an arry of lines from stdout '''
+        ''' give me an array of lines from stdout '''
         # split the text
         words = self._stdout.split("\n")
         return words

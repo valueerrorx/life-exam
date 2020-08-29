@@ -7,7 +7,6 @@
 # of the GPLv3 license.  See the LICENSE file for details..
 
 import sys
-import os
 import logging
 from pathlib import Path
 from time import time, sleep
@@ -18,7 +17,7 @@ sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 from version import __version__
 
 from config.logger import configure_logging
-from config.config import SCRIPTS_DIRECTORY, SERVER_PORT, SERVERFILES_DIRECTORY
+from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
 
 import classes.mutual_functions as mutual_functions
 from server.resources.MyServerFactory import MyServerFactory

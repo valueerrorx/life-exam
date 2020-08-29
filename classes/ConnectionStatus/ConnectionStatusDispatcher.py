@@ -4,6 +4,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from classes.ConnectionStatus.ConnectionStatus import ConnectionStatus
+from config.config import WORK_DIRECTORY
 
 
 def close_app():
@@ -29,18 +30,18 @@ the new one.
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    """
-    print(sys.argv)
+    # print(sys.argv)
     if len(sys.argv) != 3:
         print("Argument mismatch...")
         printhelp()
     typ = sys.argv[1]
     s = sys.argv[2]
     """
-    typ = 1
+    typ = "1"
     s = "1234"
+    """
 
-    status = ConnectionStatus()     
+    status = ConnectionStatus(WORK_DIRECTORY)     
     status.setServerID(s)  
     status.setType(typ)
     status.show()
