@@ -9,13 +9,14 @@ import sip
 from time import sleep
 from pathlib import Path
 
-from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
+from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
     SCRIPTS_DIRECTORY, DEBUG_PIN
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
     get_primary_ip
+from version import __version__
 
 from classes.mutual_functions import get_file_list, checkIP
 
@@ -109,7 +110,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.timer = False
         self.msg = False
-        self.ui.version.setText("<b>Version</b> %s" % VERSION)
+        self.ui.version.setText("<b>Version</b> %s" % __version__)
         self.ui.currentpin.setText("<b>%s</b>" % self.factory.pincode)
         self.ui.examlabeledit1.setText(self.factory.examid)
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid)

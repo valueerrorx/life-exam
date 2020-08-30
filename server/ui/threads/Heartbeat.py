@@ -121,7 +121,7 @@ class Heartbeat(QtCore.QThread):
             if hb.getConnectionID() == who.getConnectionID():
                 hb.resetCounter()
                 break
-        #self.DebugPrint()
+        # self.DebugPrint()
 
     def kickZombie(self, hb):
         """HB Limit reached, kick clients"""

@@ -109,9 +109,10 @@ class MyCustomWidget (QtWidgets.QWidget):
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
         pixmap = pixmap.scaled(self.image_width, self.image_height)
-        # print(self.image.geometry())
 
         self.image.setPixmap(pixmap)
+        self.repaint()
+        # print(self.geometry())
 
     def getConnectionID(self):
         """ return the ID of the Client """
