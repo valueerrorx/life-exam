@@ -71,39 +71,43 @@ class ClientToServer:
         line = '%s %s' % (Command.HEARTBEAT_BEAT.value, cID)
         client.sendEncodedLine(line)
 
-    def lock_screen(self, client):
+    def un_lock_screen(self, client):
         """
-        Just locks the client screen
+        Just UNlock the client screen and send OK
         :param client: ClientProtocol
         """
-        if client.line_data_list[0] == Command.LOCK.value:
-            cID = client.line_data_list[1]
-            # check if a serverprocess is running and do not lock screen if any
-            # check for server.pid in ~/.life/EXAM
-            # dirty hack to prevent locking yourself as a teacher when connected at the same time
+        cID = client.line_data_list[1]
+        # prevent locking yourself as a teacher when connected at the same time
+        if mutual_functions.checkPidFile("server"):
+            # True > I'm the Teacher nothing to do
+            return
+        startcommand = "exec pkill -9 -f lockscreen.py &"
+        os.system(startcommand)
 
-            if mutual_functions.checkPidFile("server"):
-                # True > Im the Teacher
-                print("client2server: Prevented locking of the teachers screen [server.pid found]")
-                return
-            # answer = subprocess.Popen(["ps aux|grep python3|grep server.py|wc -l"], shell=True, stdout=subprocess.PIPE)
-            # answer = answer.communicate()[0].strip().decode()
+        # Send OK i'm UNlocked to Server
+        line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, cID)
+        print("Sending UN-Lock Screen OK")
+        client.sendEncodedLine(line)
+        return
 
-            # Send OK i'm locked to Server
-            line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
-            print("Sending Lock Screen OK")
-            client.sendEncodedLine(line)
+    def lock_screen(self, client):
+        """
+        Just lock the client screen and send OK
+        :param client: ClientProtocol
+        """
+        cID = client.line_data_list[1]
+        # prevent locking yourself as a teacher when connected at the same time
+        if mutual_functions.checkPidFile("server"):
+            # True > I'm the Teacher nothing to do
+            return
 
-            startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
-            os.system(startcommand)
-        else:
-            startcommand = "exec pkill -9 -f lockscreen.py &"
-            os.system(startcommand)
+        # Send OK i'm locked to Server
+        line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
+        print("Sending Lock Screen OK")
+        client.sendEncodedLine(line)
 
-            # Send OK i'm UNlocked to Server
-            line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, cID)
-            print("Sending UN-Lock Screen OK")
-            client.sendEncodedLine(line)
+        startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
+        os.system(startcommand)
         return
 
     def exitExam(self, client):

@@ -663,7 +663,7 @@ class ServerUI(QtWidgets.QDialog):
         if widget:
             found = True
             newIP = client.transport.hostname
-            print("**************** IP Adr.: %s" % client.getIP())
+            print("**************** IP Adr.: %s" % newIP)
             # reconnecting, compare from wich IP we are coming
             if(widget.getIP() != newIP):
                 # same Name but different host via IP > Rename

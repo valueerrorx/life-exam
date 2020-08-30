@@ -158,7 +158,7 @@ class MyClientProtocol(basic.LineReceiver):
             Command.REMOVED.value: self.client_to_server.connection_removed,
             Command.FILETRANSFER.value: self.client_to_server.file_transfer_request,
             Command.LOCK.value: self.client_to_server.lock_screen,
-            Command.UNLOCK.value: self.client_to_server.lock_screen,
+            Command.UNLOCK.value: self.client_to_server.un_lock_screen,
             Command.EXITEXAM.value: self.client_to_server.exitExam,
             Command.HEARTBEAT.value: self.client_to_server.heartbeat,
         }
