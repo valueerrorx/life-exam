@@ -645,7 +645,8 @@ class ServerUI(QtWidgets.QDialog):
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
         else:
             new_client_name = self._checkDoubleClientName(client)
-            print("Neuer Name %s" % new_client_name)
+            # change name
+            client.clientName = new_client_name
 
             self._addNewListItem(client, screenshot_file_path)
             # Update Label
@@ -658,21 +659,26 @@ class ServerUI(QtWidgets.QDialog):
         """
         newName = client.clientName
         index = 1
-        found = self._testName(client.clientName)
-        if found:
+        widget = self._testName(client.clientName)
+        if widget:
             found = True
-            # search as long Name is Unique
-            while found:
-                newName = client.clientName + index
-                found = self._testName(newName)
-                index += 1
+            newIP = client.transport.hostname
+            print("**************** IP Adr.: %s" % client.getIP())
+            # reconnecting, compare from wich IP we are coming
+            if(widget.getIP() != newIP):
+                # same Name but different host via IP > Rename
+                # search as long Name is Unique
+                while found:
+                    newName = "%s[%s]" % (client.clientName, index)
+                    found = self._testName(newName)
+                    index += 1
         return newName
 
     def _testName(self, name):
         """just a helper"""
         for widget in self.get_list_widget_items():
             if name == widget.getName():
-                return True
+                return widget
         return False
 
     def _addNewListItem(self, client, screenshot_file_path):
@@ -774,7 +780,7 @@ class ServerUI(QtWidgets.QDialog):
                 return widget
         # there are items in list
         if len(self.get_list_widget_items()) > 0:
-            self.log("Error:  no list widget for client connectionId %s" % client_connection_id)
+            self.log("Error: No list widget for client connectionID %s" % client_connection_id)
         return False
 
     def get_QListWidgetItem_by_client_id(self, client_id):

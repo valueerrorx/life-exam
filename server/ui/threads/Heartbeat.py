@@ -56,7 +56,7 @@ class Heartbeat(QtCore.QThread):
             hb = self._heartbeats[i]
             found = False
             for widget in self.get_list_widget_items():
-                if hb.getID() == widget.getID():
+                if hb.getConnectionID() == widget.getConnectionID():
                     found = True
                     break
             if found is False:
@@ -121,7 +121,7 @@ class Heartbeat(QtCore.QThread):
             if hb.getConnectionID() == who.getConnectionID():
                 hb.resetCounter()
                 break
-        self.DebugPrint()
+        #self.DebugPrint()
 
     def kickZombie(self, hb):
         """HB Limit reached, kick clients"""

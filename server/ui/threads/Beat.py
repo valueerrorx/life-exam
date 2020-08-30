@@ -21,6 +21,6 @@ class Beat(object):
     def incCounter(self):
         """trying to contact client"""
         self._retries += 1
-        
+
     def resetCounter(self):
         self._retries = 0

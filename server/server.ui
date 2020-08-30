@@ -865,7 +865,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>851</width>
+               <width>756</width>
                <height>936</height>
               </rect>
              </property>
@@ -2548,7 +2548,6 @@
           </property>
           <property name="styleSheet">
            <string notr="true">QProgressBar{
-  border: 1px solid #eeeeee;
   text-align: center;
 }
 QProgressBar::chunk{

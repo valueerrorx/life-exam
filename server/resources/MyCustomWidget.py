@@ -23,8 +23,9 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.screenshot_file_path = screenshot_file_path
 
         # store clientName as itemID for later use (delete event)
-        self.id = client.clientName     # eg TestUser
+        self.id = client.clientName             # eg TestUser
         self.pID = client.clientConnectionID    # eg 5508
+        self.ip = client.transport.hostname     # eg 192.168.1.10
         self.disabled = False
 
         self.set_ui()
@@ -108,7 +109,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
         pixmap = pixmap.scaled(self.image_width, self.image_height)
-        print(self.image.geometry())
+        # print(self.image.geometry())
 
         self.image.setPixmap(pixmap)
 
@@ -126,6 +127,13 @@ class MyCustomWidget (QtWidgets.QWidget):
     def getName(self):
         """ return the ID of the Client """
         return self.id
+
+    def setIP(self, the_ip):
+        self.ip = the_ip
+
+    def getIP(self):
+        """ return the IP Adr. of the Client """
+        return self.ip
 
     def setDisabled(self):
         """ Client is disabled """

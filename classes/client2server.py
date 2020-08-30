@@ -69,14 +69,15 @@ class ClientToServer:
         """send Heartbeat to Server"""
         cID = client.line_data_list[1]
         line = '%s %s' % (Command.HEARTBEAT_BEAT.value, cID)
-        print(line)
         client.sendEncodedLine(line)
 
     def lock_screen(self, client):
-        """Just locks the client screen
+        """
+        Just locks the client screen
         :param client: ClientProtocol
         """
         if client.line_data_list[0] == Command.LOCK.value:
+            cID = client.line_data_list[1]
             # check if a serverprocess is running and do not lock screen if any
             # check for server.pid in ~/.life/EXAM
             # dirty hack to prevent locking yourself as a teacher when connected at the same time
@@ -89,7 +90,6 @@ class ClientToServer:
             # answer = answer.communicate()[0].strip().decode()
 
             # Send OK i'm locked to Server
-            cID = client.line_data_list[1]
             line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
             print("Sending Lock Screen OK")
             client.sendEncodedLine(line)
@@ -101,7 +101,7 @@ class ClientToServer:
             os.system(startcommand)
 
             # Send OK i'm UNlocked to Server
-            line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, client.factory.options['id'])
+            line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, cID)
             print("Sending UN-Lock Screen OK")
             client.sendEncodedLine(line)
         return
