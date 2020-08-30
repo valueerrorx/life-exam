@@ -636,14 +636,44 @@ class ServerUI(QtWidgets.QDialog):
         """
         generates new List Item that displays the client screenshot
         """
-        existing_item = self.get_list_widget_by_client_name(client.clientName)
+        # existing_item = self.get_list_widget_by_client_name(client.clientName)
+        # die cID ist eindeutig
+
+        existing_item = self.get_list_widget_by_client_id(client.clientConnectionID)
 
         if existing_item:  # just update screenshot
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
         else:
+            new_client_name = self._checkDoubleClientName(client)
+            print("Neuer Name %s" % new_client_name)
+
             self._addNewListItem(client, screenshot_file_path)
             # Update Label
             self.ui.label_clients.setText(self.createClientsLabel())
+
+    def _checkDoubleClientName(self, client):
+        """
+        check for if Client name exists > rename it
+        Connection is unique with connectionID!
+        """
+        newName = client.clientName
+        index = 1
+        found = self._testName(client.clientName)
+        if found:
+            found = True
+            # search as long Name is Unique
+            while found:
+                newName = client.clientName + index
+                found = self._testName(newName)
+                index += 1
+        return newName
+
+    def _testName(self, name):
+        """just a helper"""
+        for widget in self.get_list_widget_items():
+            if name == widget.getName():
+                return True
+        return False
 
     def _addNewListItem(self, client, screenshot_file_path):
         itemN = QtWidgets.QListWidgetItem()
@@ -742,7 +772,9 @@ class ServerUI(QtWidgets.QDialog):
         for widget in self.get_list_widget_items():
             if client_connection_id == widget.getConnectionID():
                 return widget
-        self.log("Error:  no list widget for client connectionId %s" % client_connection_id)
+        # there are items in list
+        if len(self.get_list_widget_items()) > 0:
+            self.log("Error:  no list widget for client connectionId %s" % client_connection_id)
         return False
 
     def get_QListWidgetItem_by_client_id(self, client_id):
@@ -756,7 +788,9 @@ class ServerUI(QtWidgets.QDialog):
             mycustomwidget = item.data(QtCore.Qt.UserRole)
             if client_id == mycustomwidget.getID():
                 return item
-        self.log("Error: list widget NOT found for client connectionId %s" % client_id)
+        # there are items in list
+        if self.ui.listWidget.count() > 0:
+            self.log("Error: list widget NOT found for client connectionId %s" % client_id)
         return False
 
     def get_list_widget_by_client_name(self, client_name):
@@ -764,7 +798,9 @@ class ServerUI(QtWidgets.QDialog):
         for widget in self.get_list_widget_items():
             if client_name == widget.getName():
                 return widget
-        self.log("Error: list widget NOT found for client name %s" % client_name)
+        # there are items in list
+        if self.ui.listWidget.count() > 0:
+            self.log("Error: list widget NOT found for client name %s" % client_name)
         return False
 
     def get_existing_or_skeleton_list_widget(self, client_name):

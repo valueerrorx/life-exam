@@ -81,12 +81,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         num_regex = QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
         self.ui.pincode.setValidator(num_validator)
-        
+
         # detect changing of userdata, only needed if debugging is active
         self.inputs_changed = False
-        
+
         self.checkConnectionInfo()
-        
+
     def checkConnectionInfo(self):
         '''is there an active connection Info on desktop? > close it'''
         pid_file = Path(WORK_DIRECTORY).joinpath('connection.pid')
@@ -94,14 +94,14 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             # file exists
             file = open(pid_file, "r")
             pid = file.read()
-            self.closeDialog(pid) 
-            
+            self.closeDialog(pid)
+
     def closeDialog(self, pid):
         """kill the old running Process"""
-        PID = int(pid) 
+        PID = int(pid)
         if psutil.pid_exists(PID):
             p = psutil.Process(PID)
-            p.terminate()  #or p.kill()
+            p.terminate()  # or p.kill()
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
@@ -150,7 +150,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
         # only debug if DEBUG_PIN is not ""
         if DEBUG_PIN != "":
-            if self.inputs_changed == False:
+            if self.inputs_changed is False:
                 ID = DEBUG_ID
                 PIN = DEBUG_PIN
                 self.ui.studentid.setText(ID)
@@ -191,15 +191,14 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 self._changePalette(self.ui.pincode, "warn")
             else:
                 self.ui.close()
-                
+
                 # show Connected Information
                 path = os.path.join(self.rootDir, "classes/ConnectionStatus/ConnectionStatusDispatcher.py")
                 exam = self.ui.serverdropdown.currentText()
                 # 1 = connected
                 cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
                 os.system(cmd)
-                
-                
+
                 # clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 # make sure only one client instance is running per client
                 # cmd = "bash %s %s" % (clientkillscript, 'client')

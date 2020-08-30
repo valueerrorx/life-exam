@@ -67,8 +67,9 @@ class ClientToServer:
 
     def heartbeat(self, client):
         """send Heartbeat to Server"""
-        print(client.line_data_list)
-        line = '%s %s' % (Command.HEARTBEAT_BEAT.value, client.factory.options['id'])
+        cID = client.line_data_list[1]
+        line = '%s %s' % (Command.HEARTBEAT_BEAT.value, cID)
+        print(line)
         client.sendEncodedLine(line)
 
     def lock_screen(self, client):
@@ -88,7 +89,8 @@ class ClientToServer:
             # answer = answer.communicate()[0].strip().decode()
 
             # Send OK i'm locked to Server
-            line = '%s %s' % (Command.LOCKSCREEN_OK.value, client.factory.options['id'])
+            cID = client.line_data_list[1]
+            line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
             print("Sending Lock Screen OK")
             client.sendEncodedLine(line)
 
@@ -133,7 +135,7 @@ class ClientToServer:
 
         if task == Command.SEND.value:
             if filetype == DataType.SCREENSHOT.value:
-                finalfilename = self.prepare_screenshot(client, filename)
+                finalfilename = self.prepare_screenshot(filename)
                 client._sendFile(finalfilename, filetype)
 
             elif filetype == DataType.ABGABE.value:
@@ -148,7 +150,7 @@ class ClientToServer:
             client.setRawMode()
 
     """ prepare filetype """
-    def prepare_screenshot(self, client, filename):
+    def prepare_screenshot(self, filename):
         """
         Prepares a screenshot to be sent
         :param client: clientprotocol

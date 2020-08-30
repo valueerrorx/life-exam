@@ -126,7 +126,7 @@ class Heartbeat(QtCore.QThread):
     def kickZombie(self, hb):
         """HB Limit reached, kick clients"""
         self.kick_zombie.emit(hb.getConnectionID())
-        
+
     def DebugPrint(self):
         for i in range(len(self._heartbeats)):
             hb = self._heartbeats[i]
