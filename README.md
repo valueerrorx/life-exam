@@ -11,9 +11,7 @@ Tools needed in order to provide 100% functionality are:
 - PyQt5
 - Python 3
 - [Twisted](https://pypi.org/project/Twisted/)
-
-
-![Image of life-exam](http://life-edu.eu/images/exam2.gif)
+- and some others, see *setup.py*
 
 ## Install
 - Run `sudo pip3 install .` in exam-life path, in order to global install missing modules
@@ -44,3 +42,5 @@ Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
 and PYTHONPATH to your /etc/environment
 
 >   PYTHONPATH=".:/home/student/.life/applications/life-exam"
+
+![Image of life-exam](http://life-edu.eu/images/exam2.gif)
