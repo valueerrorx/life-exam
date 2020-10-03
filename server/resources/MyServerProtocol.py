@@ -8,9 +8,8 @@ import classes.mutual_functions as mutual_functions
 from twisted.protocols import basic
 from config.enums import DataType, Command
 from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
-    DEBUG_SHOW_NETWORKTRAFFIC, DEBUG_PIN
+    DEBUG_SHOW_NETWORKTRAFFIC
 import zipfile
-from classes.HTMLTextExtractor import html_to_text
 from server.ui.ServerUI import MsgType
 
 
@@ -200,7 +199,6 @@ class MyServerProtocol(basic.LineReceiver):
 
         """
         try:
-            print(self.line_data_list)
             # Dictionary
             command = {
                 Command.AUTH.value: self._checkclientAuth,
@@ -208,6 +206,7 @@ class MyServerProtocol(basic.LineReceiver):
                 Command.FILE_OK.value: self._file_ok,
                 Command.LOCKSCREEN_OK.value: self._lockscreen_ok,
                 Command.UNLOCKSCREEN_OK.value: self._unlockscreen_ok,
+                Command.HEARTBEAT_BEAT.value: self._heartbeat_received,
             }
 
             # Default is None if nothing is found
@@ -222,7 +221,7 @@ class MyServerProtocol(basic.LineReceiver):
         # fire Event to Thread
         ui = self.factory.window
         # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
+        clientWidget = ui.get_list_widget_by_client_id(self.line_data_list[1])
         ui.progress_thread.fireEvent_Lock_Screen(clientWidget)
 
     def _unlockscreen_ok(self):
@@ -230,8 +229,16 @@ class MyServerProtocol(basic.LineReceiver):
         # fire Event to Thread
         ui = self.factory.window
         # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_name(self.line_data_list[1])
+        clientWidget = ui.get_list_widget_by_client_id(self.line_data_list[1])
         ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
+
+    def _heartbeat_received(self):
+        """a client has sended a heartbeat"""
+        # fire Event to Thread
+        ui = self.factory.window
+        # get the client item from QListWidget
+        clientWidget = ui.get_list_widget_by_client_id(self.line_data_list[1])
+        ui.heartbeat.fireEvent_Heartbeat(clientWidget)
 
     def _file_ok(self):
         """ a client has received a file sends OK """

@@ -6,16 +6,17 @@ import datetime
 import os
 import shutil
 import sip
-import time
+from time import sleep
 from pathlib import Path
 
-from config.config import VERSION, PRINTERCONFIG_DIRECTORY,\
+from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
     SCRIPTS_DIRECTORY, DEBUG_PIN
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
     get_primary_ip
+from version import __version__
 
 from classes.mutual_functions import get_file_list, checkIP
 
@@ -56,6 +57,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.application = app
         self.splashscreen = splash
+
         # loadUI, findApps, timeout
         self.splashscreen.setProgressMax(3)
         self.splashscreen.setMessage("Loading UI")
@@ -108,7 +110,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.timer = False
         self.msg = False
-        self.ui.version.setText("<b>Version</b> %s" % VERSION)
+        self.ui.version.setText("<b>Version</b> %s" % __version__)
         self.ui.currentpin.setText("<b>%s</b>" % self.factory.pincode)
         self.ui.examlabeledit1.setText(self.factory.examid)
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid)
@@ -170,13 +172,14 @@ class ServerUI(QtWidgets.QDialog):
 
         self.splashscreen.step()
         if DEBUG_PIN == "":
-            time.sleep(3)  # only if not debugging
+            sleep(3)  # only if not debugging
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
 
         # Heartbeat Thread
         self.heartbeat = Heartbeat(self)
-        self.heartbeat.client_is_dead.connect(self.removeZombie)
+        self.heartbeat.kick_zombie.connect(self.removeZombie)
+        self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
         self.heartbeat.start()
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
@@ -289,7 +292,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.workinganimation.stop()
         self.ui.info_label.setText("%s ..." % info)
-        time.sleep(0.1)
+        sleep(0.1)
         self.workinganimation.start()
         self.ui.working.show()
 
@@ -393,7 +396,6 @@ class ServerUI(QtWidgets.QDialog):
             return
         else:
             self.factory.rawmode = True  # LOCK all other fileoperations
-
         if not self.factory.server_to_client.request_screenshots(who):
             self.factory.rawmode = False   # UNLOCK all fileoperations
             self.log("No clients connected")
@@ -635,14 +637,50 @@ class ServerUI(QtWidgets.QDialog):
         """
         generates new List Item that displays the client screenshot
         """
-        existing_item = self.get_list_widget_by_client_name(client.clientName)
+        # existing_item = self.get_list_widget_by_client_name(client.clientName)
+        # die cID ist eindeutig
+
+        existing_item = self.get_list_widget_by_client_id(client.clientConnectionID)
 
         if existing_item:  # just update screenshot
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
         else:
+            new_client_name = self._checkDoubleClientName(client)
+            # change name
+            client.clientName = new_client_name
+
             self._addNewListItem(client, screenshot_file_path)
             # Update Label
             self.ui.label_clients.setText(self.createClientsLabel())
+
+    def _checkDoubleClientName(self, client):
+        """
+        check for if Client name exists > rename it
+        Connection is unique with connectionID!
+        """
+        newName = client.clientName
+        index = 1
+        widget = self._testName(client.clientName)
+        if widget:
+            found = True
+            newIP = client.transport.hostname
+            print("**************** IP Adr.: %s" % newIP)
+            # reconnecting, compare from wich IP we are coming
+            if(widget.getIP() != newIP):
+                # same Name but different host via IP > Rename
+                # search as long Name is Unique
+                while found:
+                    newName = "%s[%s]" % (client.clientName, index)
+                    found = self._testName(newName)
+                    index += 1
+        return newName
+
+    def _testName(self, name):
+        """just a helper"""
+        for widget in self.get_list_widget_items():
+            if name == widget.getName():
+                return widget
+        return False
 
     def _addNewListItem(self, client, screenshot_file_path):
         itemN = QtWidgets.QListWidgetItem()
@@ -740,8 +778,10 @@ class ServerUI(QtWidgets.QDialog):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
             if client_connection_id == widget.getConnectionID():
-                self.log("Found existing list widget for client connectionId %s" % client_connection_id)
                 return widget
+        # there are items in list
+        if len(self.get_list_widget_items()) > 0:
+            self.log("Error: No list widget for client connectionID %s" % client_connection_id)
         return False
 
     def get_QListWidgetItem_by_client_id(self, client_id):
@@ -754,16 +794,20 @@ class ServerUI(QtWidgets.QDialog):
             # get the linked object back
             mycustomwidget = item.data(QtCore.Qt.UserRole)
             if client_id == mycustomwidget.getID():
-                self.log("Found existing list widget for client connectionId %s" % client_id)
                 return item
+        # there are items in list
+        if self.ui.listWidget.count() > 0:
+            self.log("Error: list widget NOT found for client connectionId %s" % client_id)
         return False
 
     def get_list_widget_by_client_name(self, client_name):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
             if client_name == widget.getName():
-                self.log("Found existing list widget for client name %s" % client_name)
                 return widget
+        # there are items in list
+        if self.ui.listWidget.count() > 0:
+            self.log("Error: list widget NOT found for client name %s" % client_name)
         return False
 
     def get_existing_or_skeleton_list_widget(self, client_name):
@@ -807,9 +851,14 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.msg = False
 
-    def removeZombie(self):
+    def removeZombie(self, conId):
         """
-        removes a zombie client
-        fired from Heartbeat.py
+        removes a zombie client, fired from Heartbeat.py
+        :param conId: the Connection ID from the Client
         """
         print("Client is dead")
+
+    def request_heartbeat(self, who):
+        """Heartbeat fired time to check the Heartbeat of client"""
+        server_to_client = self.factory.server_to_client
+        server_to_client.request_heartbeat(who)

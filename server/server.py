@@ -7,10 +7,9 @@
 # of the GPLv3 license.  See the LICENSE file for details..
 
 import sys
-import os
 import logging
 from pathlib import Path
-import time
+from time import time, sleep
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -18,7 +17,7 @@ sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 from version import __version__
 
 from config.logger import configure_logging
-from config.config import SCRIPTS_DIRECTORY, SERVER_PORT, SERVERFILES_DIRECTORY
+from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
 
 import classes.mutual_functions as mutual_functions
 from server.resources.MyServerFactory import MyServerFactory
@@ -29,13 +28,18 @@ import qt5reactor
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+
+    start = time()
     # Create and display the splash screen
     splash = SplashScreen()
-    # path is relativ zu SplashScreen File
-    splash.setImage("img/LIFE.jpg")
+    # set version first
     splash.setVersion(__version__)
+    splash.setImage("img/LIFE.jpg")
     splash.show()
-    app.processEvents()
+    splash.update()
+    while time() - start < 1:
+        sleep(0.001)
+        app.processEvents()
 
     # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
@@ -44,8 +48,8 @@ if __name__ == '__main__':
     app.processEvents()
 
     mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
-    killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-    os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
+    # killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+    # os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
     # time.sleep(1)
     mutual_functions.writePidFile()
     app.processEvents()

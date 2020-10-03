@@ -90,6 +90,24 @@
          </property>
          <item>
           <widget class="QLabel" name="image">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>180</width>
+             <height>101</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>180</width>
+             <height>101</height>
+            </size>
+           </property>
            <property name="styleSheet">
             <string notr="true">padding:0;margin:0;border:0;background-color: #ffff00;</string>
            </property>

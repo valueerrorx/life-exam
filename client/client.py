@@ -24,15 +24,6 @@ sys.path.insert(0, application_path)
 import qt5reactor
 from PyQt5 import QtWidgets
 
-
-# ATTENTION
-# we need elevated rights for exam mode !
-# we can stick to sudo at the beginning (starting this script) and then default to start everything without sudo
-# but we need to add env_keep += PYTHONPATH  to sudoers file  (sudo visudo) otherwise twistd will not find the exam plugin
-# in order to set PYTHONPATH in the first place we add
-# PYTHONPATH="." to /etc/environment or .bashrc
-
-
 if __name__ == '__main__':
     # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()

@@ -18,6 +18,7 @@ from PyQt5 import QtWidgets, uic
 
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 from classes.CmdRunner import CmdRunner
+import psutil
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -81,13 +82,30 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         num_validator = QRegExpValidator(num_regex)
         self.ui.pincode.setValidator(num_validator)
 
-        # ip_regex = QRegExp("[0-9\._]+")
-        # ip_validator = QRegExpValidator(ip_regex)
-        # self.ui.serverip.setValidator(ip_validator)
+        # detect changing of userdata, only needed if debugging is active
+        self.inputs_changed = False
+
+        self.checkConnectionInfo()
+
+    def checkConnectionInfo(self):
+        '''is there an active connection Info on desktop? > close it'''
+        pid_file = Path(WORK_DIRECTORY).joinpath('connection.pid')
+        if pid_file.is_file():
+            # file exists
+            file = open(pid_file, "r")
+            pid = file.read()
+            self.closeDialog(pid)
+
+    def closeDialog(self, pid):
+        """kill the old running Process"""
+        PID = int(pid)
+        if psutil.pid_exists(PID):
+            p = psutil.Process(PID)
+            p.terminate()  # or p.kill()
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
-            self.logger.info("Close-Event triggered ...", True)
+            self.logger.info("Close-Event triggered ...")
 
     def closeEvent(self, evnt):
         evnt.ignore()
@@ -120,7 +138,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                     break
 
             self.examserver.update({data[1]: str(server_ip)})    # add new entry
-            self._updateServerlist()                              # update gui
+            self._updateServerlist()                             # update gui
 
         self.ui.serversearch.setText("Server Found!")
         icon = self.rootDir.joinpath("pixmaps/checked.png").as_posix()
@@ -132,10 +150,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
         # only debug if DEBUG_PIN is not ""
         if DEBUG_PIN != "":
-            ID = DEBUG_ID
-            PIN = DEBUG_PIN
-            self.ui.studentid.setText(ID)
-            self.ui.pincode.setText(PIN)
+            if self.inputs_changed is False:
+                ID = DEBUG_ID
+                PIN = DEBUG_PIN
+                self.ui.studentid.setText(ID)
+                self.ui.pincode.setText(PIN)
+                # print("Update: %s %s" % (ID, PIN))
 
     def _on_offline_exam(self):
         self.msg = QtWidgets.QMessageBox()
@@ -171,12 +191,20 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 self._changePalette(self.ui.pincode, "warn")
             else:
                 self.ui.close()
-                clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-                # make sure only one client instance is running per client
-                cmd = "bash %s %s" % (clientkillscript, 'client')
-                self.cmdRunner.runCmd(cmd)
 
-                self.logger.info("Terminated old running twisted Client")
+                # show Connected Information
+                path = os.path.join(self.rootDir, "classes/ConnectionStatus/ConnectionStatusDispatcher.py")
+                exam = self.ui.serverdropdown.currentText()
+                # 1 = connected
+                cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
+                os.system(cmd)
+
+                # clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
+                # make sure only one client instance is running per client
+                # cmd = "bash %s %s" % (clientkillscript, 'client')
+                # self.cmdRunner.runCmd(cmd)
+
+                # self.logger.info("Terminated old running twisted Client")
 
                 # moved this to workdirectory because configdirectory is overwritten on exam start
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
@@ -212,6 +240,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             palettedefault = item.palette()
             palettedefault.setColor(item.backgroundRole(), QColor(255, 255, 255))
             item.setPalette(palettedefault)
+        self.inputs_changed = True
 
     def _updateServerlist(self):
         """updates the dropdownmenu if new servers are found"""

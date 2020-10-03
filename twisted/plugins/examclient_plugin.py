@@ -127,20 +127,20 @@ class MyClientProtocol(basic.LineReceiver):
         else:
             self.file_handler.write(data)
 
+    # twisted-Event:
     def sendEncodedLine(self, line):
-        # twisted-Event:
         self.sendLine(line.encode())
 
     # twisted-Event: A data line has been received
     def lineReceived(self, line):
         """whenever the SERVER sent something """
-        # decode the moment you recieve a line and encode it right before you send
+        # decode the moment you receive a line and encode it right before you send
         line = line.decode()
         self.line_data_list = mutual_functions.clean_and_split_input(line)
-        print("DEBUG: line received and decoded: %s" % self.line_data_list)
         self.line_dispatcher(line)
 
     def line_dispatcher(self, line):
+        print("DEBUG: line received and decoded: %s" % line)
         if len(self.line_data_list) == 0 or self.line_data_list == '':
             return
         """
@@ -158,8 +158,9 @@ class MyClientProtocol(basic.LineReceiver):
             Command.REMOVED.value: self.client_to_server.connection_removed,
             Command.FILETRANSFER.value: self.client_to_server.file_transfer_request,
             Command.LOCK.value: self.client_to_server.lock_screen,
-            Command.UNLOCK.value: self.client_to_server.lock_screen,
+            Command.UNLOCK.value: self.client_to_server.un_lock_screen,
             Command.EXITEXAM.value: self.client_to_server.exitExam,
+            Command.HEARTBEAT.value: self.client_to_server.heartbeat,
         }
 
         line_handler = command.get(self.line_data_list[0], None)

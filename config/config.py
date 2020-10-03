@@ -13,8 +13,6 @@ import subprocess
 SERVER_IP = "localhost"
 SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
-VERSION = '3.2'
-
 # Debugging Stuff, set Name of Client and a fix Pin Code
 # set both empty, then we are NOT debugging
 DEBUG_ID = "TestUser"
@@ -22,8 +20,9 @@ DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # Heartbeat Section
-HEARTBEAT_INTERVALL = 4
+HEARTBEAT_INTERVALL = 40
 HEARTBEAT_START_AFTER = 1
+MAX_HEARTBEAT_FAILS = 3  # maximum number of Heartbeats missing, until a Client gets kicked from Server
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets']

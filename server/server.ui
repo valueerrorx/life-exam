@@ -768,7 +768,7 @@
              <item>
               <widget class="QListWidget" name="listWidget">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -803,12 +803,6 @@
                <property name="defaultDropAction">
                 <enum>Qt::IgnoreAction</enum>
                </property>
-               <property name="iconSize">
-                <size>
-                 <width>140</width>
-                 <height>100</height>
-                </size>
-               </property>
                <property name="movement">
                 <enum>QListView::Static</enum>
                </property>
@@ -820,12 +814,6 @@
                </property>
                <property name="spacing">
                 <number>1</number>
-               </property>
-               <property name="gridSize">
-                <size>
-                 <width>140</width>
-                 <height>100</height>
-                </size>
                </property>
                <property name="viewMode">
                 <enum>QListView::IconMode</enum>
@@ -2560,7 +2548,6 @@
           </property>
           <property name="styleSheet">
            <string notr="true">QProgressBar{
-  border: 1px solid #eeeeee;
   text-align: center;
 }
 QProgressBar::chunk{

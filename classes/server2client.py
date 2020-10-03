@@ -11,7 +11,6 @@ import os
 
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
-from builtins import len
 
 
 class ServerToClient:
@@ -91,7 +90,6 @@ class ServerToClient:
         """ client file requests (get from client) """
         if not self.clients:
             return False
-
         line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, "%s")
         self.send_to_receivers(who, line)
         return True
