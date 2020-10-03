@@ -144,7 +144,7 @@ class MyServerProtocol(basic.LineReceiver):
 
                 # string.encode()
                 # return an encoded version of the string as a bytes object
-                msg = Command.ENDMSG + "\r\n"
+                msg = Command.ENDMSG.value + "\r\n"
                 self.transport.write(msg.encode())
                 msg = 'File %s has been successfully transferred, but deleted due to invalid MD5 hash' % (filename)
                 self.factory.window.log(msg)
