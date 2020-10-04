@@ -7,7 +7,7 @@ from pathlib import Path
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QImage, QPalette, QBrush
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, Qt
 
 
 class ScreenshotWindow(QtWidgets.QDialog):
@@ -32,7 +32,7 @@ class ScreenshotWindow(QtWidgets.QDialog):
         self.setFixedSize(1200, 675)
         oImage = QImage(screenshot_file_path)
         # resize Image to widgets size
-        sImage = oImage.scaled(1200, 675, Qt.SmoothTransformation)
+        sImage = oImage.scaled(1200, 675, Qt.IgnoreAspectRatio, Qt.FastTransformation)
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))                     # 10 = Windowrole
         self.setPalette(palette)

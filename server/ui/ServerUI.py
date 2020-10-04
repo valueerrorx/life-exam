@@ -724,7 +724,7 @@ class ServerUI(QtWidgets.QDialog):
             if self.screenshotwindow.client_connection_id == existing_item.pID:
                 self.screenshotwindow.oImage = QImage(screenshot_file_path)
                 # resize Image to widgets size
-                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(1200, 675, Qt.SmoothTransformation)
+                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(1200, 675, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
                 self.screenshotwindow.palette = QPalette()
                 self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
                 self.screenshotwindow.setPalette(self.screenshotwindow.palette)
