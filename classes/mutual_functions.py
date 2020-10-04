@@ -298,9 +298,15 @@ def createFakeZipFile():
 
 def showDesktopMessage(msg):
     """uses a passivepopup to display messages from the daemon"""
-    message = "Exam Server: %s " % (msg)
-    command = "sudo -u %s -- kdialog --title 'EXAM' --passivepopup '%s' 5 " % (USER, message)
-    os.system(command)
+    # message = "Exam Server: %s " % (msg)
+    # command = "sudo -u %s -- kdialog --title 'EXAM' --passivepopup '%s' 5 " % (USER, message)
+    # os.system(command)
+    
+    # rootDir of Application
+    rootDir = Path(__file__).parent
+    rootDir = rootDir.joinpath('Notification')
+    cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s" &' % (rootDir.as_posix(), "Information", msg)
+    os.system(cmd)
 
 
 def openFileManager(path):

@@ -47,6 +47,9 @@ class MyClientProtocol(basic.LineReceiver):
         self.file_handler = None
         self.buffer = []
         self.line_data_list = ()
+        # Path Stuff
+        self.rootDir = Path(__file__).parent.parent.parent
+        
         self.notification_path = Path(appDir)
         self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files

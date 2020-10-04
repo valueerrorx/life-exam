@@ -793,7 +793,8 @@ class ServerUI(QtWidgets.QDialog):
             item = self.ui.listWidget.item(index)
             # get the linked object back
             mycustomwidget = item.data(QtCore.Qt.UserRole)
-            if client_id == mycustomwidget.getID():
+            print("%s <> %s" % (client_id, mycustomwidget.getConnectionID()))
+            if client_id == mycustomwidget.getConnectionID():
                 return item
         # there are items in list
         if self.ui.listWidget.count() > 0:

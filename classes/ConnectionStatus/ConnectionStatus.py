@@ -158,5 +158,10 @@ class ConnectionStatus(QMainWindow):
         """kill the old running Process"""
         PID = int(pid)
         if psutil.pid_exists(PID):
-            p = psutil.Process(PID)
-            p.terminate()  # or p.kill()
+            try:
+                p = psutil.Process(PID)
+                p.terminate()  # or p.kill()
+                return True
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                self.logger.info("PsUtils cant kill process %s ..." % PID)
+                return False
