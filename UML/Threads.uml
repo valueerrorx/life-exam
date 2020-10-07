@@ -29,7 +29,8 @@
 	deactivate PeriodicTimer
 	
 	PeriodicTimer -> Heartbeat
-	note over Heartbeat: no Heartbeat of client > Remove Widget
+	note over Heartbeat: no Heartbeat of client > kickZombie()
+	Heartbeat -> Server: ServerUI.removeZombie()
 	deactivate Heartbeat
 	
 	Server -> Heartbeat: stop()

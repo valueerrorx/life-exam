@@ -20,8 +20,8 @@ DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # Heartbeat Section
-HEARTBEAT_INTERVALL = 40
-HEARTBEAT_START_AFTER = 1
+HEARTBEAT_INTERVALL = 2
+HEARTBEAT_START_AFTER = 5
 MAX_HEARTBEAT_FAILS = 3  # maximum number of Heartbeats missing, until a Client gets kicked from Server
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus

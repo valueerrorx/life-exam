@@ -854,7 +854,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def removeZombie(self, conId):
         """
-        removes a zombie client, fired from Heartbeat.py
+        removes a zombie client, fired from Heartbeat.py when a limit is reached
         :param conId: the Connection ID from the Client
         """
         print("Client is dead")
