@@ -27,7 +27,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>test/eisbaer.jpg</pixmap>
+     <pixmap>../../../../../Downloads/LIFE-DEV/life-exam/classes/OvelayIcons/overlay_icons/eisbaer.jpg</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>

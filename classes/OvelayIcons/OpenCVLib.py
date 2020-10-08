@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 
-import cv2
 import numpy as np
 from PyQt5.Qt import QImage, qRgb
 from PyQt5 import QtGui
+from cv2 import cv2
 
 
 class OpenCVLib(object):
@@ -109,6 +109,25 @@ class OpenCVLib(object):
         # tuppel positiv an odd!
         return cv2.GaussianBlur(cvImg, (3, 3), 0)
 
+    def overlayBanner(self, pixmap, text, y, height, color, alpha):
+        """
+        place a banner at y of the image, width = Imagewidth
+        :param pixmap: an QPixmap Image
+        :param text: The Text inside Banner
+        :param y:  position of the banner inside image
+        :param height:  height of the banner
+        :param color:  background color of the banner, e.g. (0, 0, 255)
+        :param alpha:  alpha of backgroundcolor
+        :return: Resultant QPixmap
+        """
+        Qimg = pixmap.toImage()
+        img = self.QImage2MAT(Qimg)
+        overlay = img.copy()
+        output = img.copy()
+        cv2.rectangle(overlay, (0, y), (pixmap.width(), y + height), color, -1)
+        cv2.addWeighted(overlay, alpha, output, 1 - alpha, 1.0, output)
+        return self.MAT2QPixmap(output)
+        
     def overlayIcon(self, pixmap, icon, x=0, y=0):
         """
         place icon onto pixmap

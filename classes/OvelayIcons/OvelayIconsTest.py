@@ -7,8 +7,8 @@ from pathlib import Path
 import PyQt5
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication
-from Qt.OvelayIcons.OpenCVLib import OpenCVLib
-from Qt.OvelayIcons.IconStack import IconStack
+from classes.OvelayIcons.IconStack import IconStack
+from classes.OvelayIcons.OpenCVLib import OpenCVLib
 
 
 class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
@@ -24,8 +24,8 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
         self.cv = OpenCVLib()
         self.CVTest(self.ui.image.pixmap())
 
-        # IconStack
-        self.stack = IconStack(self.ui.image, "test/")
+        # IconStack, Image and IconPath
+        self.stack = IconStack(self.ui.image, "overlay_icons/")
 
     def closeEvent(self, event):
         ''' window tries to close '''
@@ -33,13 +33,18 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
         pass
 
     def addIcon(self):
-        self.stack.setExamIconON()
-        self.stack.setExamIconOFF()
-        self.stack.setFileReceivedOK()
-        self.stack.setFileReceivedERROR()
+        self.stack.addExamIconON()
+        self.stack.addExamIconOFF()
+        self.stack.addFileReceivedOK()
+        self.stack.addFileReceivedERROR()
+        self.stack.addOffline()
 
     def removeIcon(self):
-        pass
+        self.stack.removeExamIconON()
+        self.stack.removeExamIconOFF()
+        self.stack.removeFileReceivedOK()
+        self.stack.removeFileReceivedERROR()
+        self.stack.removeOffline()
 
     def CVTest(self, pixmap):
         # TEST 1 ------------------------------------------------
@@ -60,7 +65,7 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
 
         # TEST 2 ------------------------------------------------
         # Icon Test
-        icon = self.cv.readPNG("test/file_ok.png")
+        icon = self.cv.readPNG("overlay_icons/file_ok.png")
         icon = self.cv.resizeTo(icon, 64, 64)
         pixmap = self.cv.overlayIcon(self.ui.image.pixmap(), icon, 100, 10)
         # write back
