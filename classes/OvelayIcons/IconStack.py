@@ -4,6 +4,7 @@
 
 from enum import Enum
 import copy
+from cv2 import cv2
 from classes.OvelayIcons.Icon import Icon
 from classes.OvelayIcons.OpenCVLib import OpenCVLib
 
@@ -130,11 +131,8 @@ class IconStack(object):
         self.remove(Icons.FILE_ERROR)
         
     def drawOffline(self, pixmap):
-        """ draw Offline Banner at bottom """
-        banner_height = 20
-        ypos = pixmap.height() - banner_height
-        color = (0, 0, 255)
-        pixmap = self.cv.overlayBanner(pixmap, "Offline", ypos, banner_height, color, 0.5)
+        """ draw Offline Banner at bottom """        
+        pixmap = self.cv.drawBanner(pixmap, 16, 'OFFLINE', (0, 0, 255))
         return pixmap
         
     def addOffline(self):

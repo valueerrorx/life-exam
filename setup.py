@@ -34,6 +34,7 @@ if __name__ == '__main__':
             'pathlib',
             'datetime',
             'psutil',
+            'pillow',
         ],
         python_requires='>=3.8',
     )

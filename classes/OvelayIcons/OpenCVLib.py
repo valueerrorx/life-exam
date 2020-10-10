@@ -6,6 +6,7 @@ import numpy as np
 from PyQt5.Qt import QImage, qRgb
 from PyQt5 import QtGui
 from cv2 import cv2
+from PIL import ImageFont, ImageDraw, Image  
 
 
 class OpenCVLib(object):
@@ -108,12 +109,43 @@ class OpenCVLib(object):
         # return cv2.medianBlur(cvImg, 5)
         # tuppel positiv an odd!
         return cv2.GaussianBlur(cvImg, (3, 3), 0)
+    
+    def _textsize(self, text, font=None, *args, **kwargs):
+        """Get the size of a given string, in pixels."""
+        if font is None:
+            return None
+        return font.getsize(text)
+    
+    def drawBanner(self, pixmap, height, text, color):
+        """
+        place a banner with centered text at bottom of pixmap
+        :param pixmap: an QPixmap Image
+        :param height: height of banner
+        :param text: text to display
+        :param color: color of banner
+        """
+        padding = 2
+        ypos = pixmap.height() - height
+        pixmap = self._overlayBanner(pixmap, ypos, height, color, 0.5)
+        
+        # Write some Text
+        font = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
+        fontSize = height - 2 * padding
+        fontColor = (255,255,255)
 
-    def overlayBanner(self, pixmap, text, y, height, color, alpha):
+        # center
+        fontobj = ImageFont.truetype(font, fontSize)
+        font_size = self._textsize(text, fontobj)
+        xpos = (pixmap.width() - font_size[0]) // 2
+        bottomLeftCornerOfText = (xpos, ypos + padding)
+        pixmap = self._putText(pixmap, text, bottomLeftCornerOfText, font, fontSize, fontColor)
+        
+        return pixmap
+
+    def _overlayBanner(self, pixmap, y, height, color, alpha):
         """
         place a banner at y of the image, width = Imagewidth
         :param pixmap: an QPixmap Image
-        :param text: The Text inside Banner
         :param y:  position of the banner inside image
         :param height:  height of the banner
         :param color:  background color of the banner, e.g. (0, 0, 255)
@@ -126,6 +158,39 @@ class OpenCVLib(object):
         output = img.copy()
         cv2.rectangle(overlay, (0, y), (pixmap.width(), y + height), color, -1)
         cv2.addWeighted(overlay, alpha, output, 1 - alpha, 1.0, output)
+        return self.MAT2QPixmap(output)
+    
+    def _putText(self, pixmap, msg, bottomLeftCornerOfText, font, fontSize, fontColor):
+        """
+        place text onto pixmap
+        ttf fonts needs full Path
+        :param pixmap: an QPixmap Image
+        :param msg: the Text
+        :param bottomLeftCornerOfText:  self explaining
+        :param font: self explaining
+        :param fontSize: self explaining
+        :param fontColor: self explaining
+        :return: Resultant QPixmap
+        """
+        Qimg = pixmap.toImage()
+        img = self.QImage2MAT(Qimg)
+        
+        # farbraum anpassen
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        
+        # Pass the image to PIL      
+        pil_im = Image.fromarray(img)
+           
+        draw = ImageDraw.Draw(pil_im)  
+        # use a truetype font  
+        font = ImageFont.truetype(font, fontSize)  
+           
+        # Draw the text  
+        draw.text(bottomLeftCornerOfText, msg, font=font)  
+           
+        # Get back the image to OpenCV  
+        output = cv2.cvtColor(np.array(pil_im), cv2.COLOR_BGRA2RGB)
+        
         return self.MAT2QPixmap(output)
         
     def overlayIcon(self, pixmap, icon, x=0, y=0):
