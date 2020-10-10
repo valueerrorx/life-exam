@@ -11,7 +11,7 @@ from pathlib import Path
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN
+    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -852,12 +852,19 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.msg = False
 
-    def removeZombie(self, conId):
+    def removeZombie(self, conId, count):
         """
         removes a zombie client, fired from Heartbeat.py when a limit is reached
-        :param conId: the Connection ID from the Client
+        :param conId: the ConnectionID from the Client
+        :param count: how often the client was not Reachable
         """
-        print("Client is dead")
+        # if count Reached a Limit, remove client and Heartbeat
+        c = int(count)
+        client = self.get_list_widget_by_client_id(conId)
+        client.setOffline()
+        print("Client is dead %s, %s" % (conId, count))
+        #if c > MAX_HEARTBEAT_KICK:
+            
 
     def request_heartbeat(self, who):
         """Heartbeat fired time to check the Heartbeat of client"""

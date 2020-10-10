@@ -4,9 +4,9 @@
 
 from enum import Enum
 import copy
-from cv2 import cv2
 from classes.OvelayIcons.Icon import Icon
 from classes.OvelayIcons.OpenCVLib import OpenCVLib
+from PyQt5.QtCore import pyqtSignal, QObject
 
 
 class Icons(Enum):
@@ -16,23 +16,32 @@ class Icons(Enum):
     EXAM_OFF = "exam_off.png"
 
 
-class IconStack(object):
+class IconStack(QObject):
     """
-    stores the visible Icons from an Image
-    the IconStack is bound to a QPixmap
-    the position is from right top > left top
-    stores also the time that the Icon is displayed
+    - stores the visible Icons from an Image
+    - the IconStack is bound to a QPixmap
+    - the position is from right top > left top
+    Usage:
+    # set a Pixmap and a relative Path where to find Overlay Icons 
+    self.stack = IconStack(self.ui.image.pixmap(), "overlay_icons/")
+    # whenever a Pixmap changed, it will be emitted an event
+    self.stack.repaint_event.connect(self.repaint_event)
+    # there u set the new Pixmap
+    self.ui.image.setPixmap(self.stack.getPixmap())
     """
-
-    def __init__(self, widget, iconpath, margin=2):
+    # pixmap was updated > repaint
+    repaint_event = pyqtSignal()
+    
+    def __init__(self, pixmap, iconpath, margin=2):
         """
-        :param widget: the widget that holds a pixmap
+        :param pixmap: a pixmap
         :param iconpath: where to find the Icons
         :param margin: margin-top and margin-right of each icon
         """
+        super().__init__()
         self.icons = []
         self._loaded_icons = []
-        self.widget = widget
+        self.pixmap = pixmap
         self.iconpath = iconpath
         self.iconSize = (64, 64)
         self.loadIcons()
@@ -41,7 +50,7 @@ class IconStack(object):
 
         self.cv = OpenCVLib()
         # store the original pixmap
-        self._original = self.widget.pixmap().copy()
+        self._original = self.pixmap.copy()
 
     def loadIcons(self):
         """ load all Icons from file to preload stack"""
@@ -64,9 +73,16 @@ class IconStack(object):
             
         if self.hasbanner:
             pixmap = self.drawOffline(pixmap)
+            
+        # save pixmap
+        self.pixmap = pixmap
 
-        # write back to widget
-        self.widget.setPixmap(pixmap)
+        # fire repaint event
+        self.repaint_event.emit()
+        
+    def getPixmap(self):
+        """ get the changed pixmap """
+        return self.pixmap
 
     def clearIcons(self):
         """ clear all status icons """

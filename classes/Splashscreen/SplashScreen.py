@@ -7,7 +7,7 @@ from PyQt5.Qt import QProgressBar, QFont, QColor, Qt
 from PyQt5.QtWidgets import QSplashScreen, QLabel, QGraphicsDropShadowEffect
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QGuiApplication
-from classes.OpenCVLib import OpenCVLib
+from classes.OvelayIcons.OpenCVLib import OpenCVLib
 
 
 class SplashScreen(QSplashScreen):

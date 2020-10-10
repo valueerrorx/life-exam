@@ -12,7 +12,7 @@ from server.ui.threads.Beat import Beat
 
 class Heartbeat(QtCore.QThread):
     """a Thread that checks if a Client is still alive"""
-    kick_zombie = pyqtSignal(str)
+    kick_zombie = pyqtSignal(str, str)
     request_heartbeat = pyqtSignal(str)
 
     def __init__(self, parent=None):
@@ -82,11 +82,11 @@ class Heartbeat(QtCore.QThread):
         """ check HB of the clients """
         for i in range(len(self._heartbeats)):
             hb = self._heartbeats[i]
+            # inc counter, counter is set to 0 when client answers
+            hb.incCounter()
             if hb.getRetries() >= MAX_HEARTBEAT_FAILS:
                 self.kickZombie(hb)
             else:
-                # inc counter, counter is set to 0 when client answers
-                hb.incCounter()
                 # send Request
                 self.request_heartbeat.emit(hb.getConnectionID())
 
@@ -120,11 +120,11 @@ class Heartbeat(QtCore.QThread):
             if hb.getConnectionID() == who.getConnectionID():
                 hb.resetCounter()
                 break
-        self.DebugPrint()
 
     def kickZombie(self, hb):
         """HB Limit reached, kick clients"""
-        self.kick_zombie.emit(hb.getConnectionID())
+        count = "%s" % hb.getRetries()
+        self.kick_zombie.emit(hb.getConnectionID(), count)
 
     def DebugPrint(self):
         for i in range(len(self._heartbeats)):

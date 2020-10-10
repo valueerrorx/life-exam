@@ -6,6 +6,8 @@ from pathlib import Path
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QSize
+from classes.OvelayIcons.OpenCVLib import OpenCVLib
+from classes.OvelayIcons.IconStack import IconStack
 
 
 class MyCustomWidget (QtWidgets.QWidget):
@@ -27,7 +29,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.pID = client.clientConnectionID    # eg 5508
         self.ip = client.transport.hostname     # eg 192.168.1.10
         self.disabled = False
-
+        
         self.set_ui()
         self.setText('%s' % (client.clientName))
         self.show()
@@ -111,8 +113,17 @@ class MyCustomWidget (QtWidgets.QWidget):
         pixmap = pixmap.scaled(self.image_width, self.image_height)
 
         self.image.setPixmap(pixmap)
+        
+        # Overlay IconsIconStack
+        self.iconStack = IconStack(pixmap, "overlay_icons/")
+        self.iconStack.repaint_event.connect(self.repaint_event)
+
         self.repaint()
         # print(self.geometry())
+        
+    def repaint_event(self):
+        """ Pixmap has changed > repaint """
+        self.ui.image.setPixmap(self.stack.getPixmap())
 
     def getConnectionID(self):
         """ return the ID of the Client """
@@ -168,3 +179,8 @@ class MyCustomWidget (QtWidgets.QWidget):
     def setFileReceivedERROR(self):
         """ set all File NOT Received icon """
         pass
+    
+    def setOffline(self):
+        """ set Client Offline, due to missing heartbeats """
+        self.iconStack.addOffline()
+        
