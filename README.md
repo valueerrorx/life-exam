@@ -77,8 +77,10 @@ Defaults    env_keep =  "PYTHONPATH DISPLAY"
 Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
 ```
 
-and PYTHONPATH to your /etc/environment
+and PYTHONPATH to your */etc/environment*
 
->   PYTHONPATH=".:/home/student/.life/applications/life-exam"
+```bash
+PYTHONPATH=".:/home/student/.life/applications/life-exam"
+```
 
 ![Image of life-exam](http://life-edu.eu/images/exam2.gif)
