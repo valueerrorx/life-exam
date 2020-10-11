@@ -22,7 +22,8 @@ Tools needed in order to provide 100% functionality are:
   $HOME/.life/applications/life-exam/DATA/scripts/isEXAMafterReboot.sh
   ```
 ## Configuration
-is made in *config/config.py*. Important things are shown here
+is made in *config/config.py*.  
+Important things are shown here
 ```python
 # Debugging Stuff, set Name of Client and a fix Pin Code
 # set both empty, then we are NOT debugging
@@ -40,9 +41,9 @@ MAX_HEARTBEAT_FAILS = 3
 # maximum number of Heartbeats missing, until a Client is removed
 MAX_HEARTBEAT_KICK = 8      
 ```
-Which Applications will be shown first when we create an Exam.
-
-What are your favorites? See *config/appranking.yml*
+Which Applications will be shown first when we create an Exam.  
+What are your favorites?  
+See *config/appranking.yml*
 ```yaml
 apps:
    '1':
