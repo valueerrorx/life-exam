@@ -32,6 +32,11 @@ class MyCustomWidget (QtWidgets.QWidget):
         
         self.set_ui()
         self.setText('%s' % (client.clientName))
+        
+        # Overlay IconsIconStack, hier noch kein Pixmap vorhanden
+        self.iconStack = IconStack(None)
+        self.iconStack.repaint_event.connect(self.repaint_event)
+        
         self.show()
 
     def sizeHint(self):
@@ -111,19 +116,17 @@ class MyCustomWidget (QtWidgets.QWidget):
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
         pixmap = pixmap.scaled(self.image_width, self.image_height)
-
         self.image.setPixmap(pixmap)
         
-        # Overlay IconsIconStack
-        self.iconStack = IconStack(pixmap, "overlay_icons/")
-        self.iconStack.repaint_event.connect(self.repaint_event)
-
+        #Overlay Icons
+        self.iconStack.setPixmap(pixmap)
+        
         self.repaint()
         # print(self.geometry())
         
     def repaint_event(self):
         """ Pixmap has changed > repaint """
-        self.ui.image.setPixmap(self.stack.getPixmap())
+        self.image.setPixmap(self.iconStack.getPixmap())
 
     def getConnectionID(self):
         """ return the ID of the Client """

@@ -20,10 +20,10 @@ DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # Heartbeat Section
-HEARTBEAT_INTERVALL = 2
-HEARTBEAT_START_AFTER = 5
-MAX_HEARTBEAT_FAILS = 3  # maximum number of Heartbeats missing, until a Client is marked as offline
-MAX_HEARTBEAT_KICK = 10  # maximum number of Heartbeats missing, until a Client is removed
+HEARTBEAT_INTERVALL = 2     # sec
+HEARTBEAT_START_AFTER = 5   # sec
+MAX_HEARTBEAT_FAILS = 3     # maximum number of Heartbeats missing, until a Client is marked as offline
+MAX_HEARTBEAT_KICK = 8      # maximum number of Heartbeats missing, until a Client is removed
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets']

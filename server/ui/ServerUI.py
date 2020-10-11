@@ -11,7 +11,7 @@ from pathlib import Path
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK
+    SCRIPTS_DIRECTORY, DEBUG_PIN
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\

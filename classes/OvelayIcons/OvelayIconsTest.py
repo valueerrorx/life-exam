@@ -25,7 +25,7 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
         self.CVTest(self.ui.image.pixmap())
 
         # IconStack, Image and IconPath
-        self.stack = IconStack(self.ui.image.pixmap(), "overlay_icons/")
+        self.stack = IconStack(self.ui.image.pixmap())
         self.stack.repaint_event.connect(self.repaint_event)
         
     def repaint_event(self):

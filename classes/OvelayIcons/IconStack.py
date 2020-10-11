@@ -7,6 +7,7 @@ import copy
 from classes.OvelayIcons.Icon import Icon
 from classes.OvelayIcons.OpenCVLib import OpenCVLib
 from PyQt5.QtCore import pyqtSignal, QObject
+from pathlib import Path
 
 
 class Icons(Enum):
@@ -32,17 +33,18 @@ class IconStack(QObject):
     # pixmap was updated > repaint
     repaint_event = pyqtSignal()
     
-    def __init__(self, pixmap, iconpath, margin=2):
+    def __init__(self, pixmap, margin=2):
         """
         :param pixmap: a pixmap
-        :param iconpath: where to find the Icons
         :param margin: margin-top and margin-right of each icon
         """
         super().__init__()
+        self.rootDir = Path(__file__).parent
+        self.iconpath = self.rootDir.joinpath('overlay_icons')
+        
         self.icons = []
         self._loaded_icons = []
         self.pixmap = pixmap
-        self.iconpath = iconpath
         self.iconSize = (64, 64)
         self.loadIcons()
         self.margin = margin
@@ -50,7 +52,16 @@ class IconStack(QObject):
 
         self.cv = OpenCVLib()
         # store the original pixmap
+        if self.pixmap != None:
+            self._original = self.pixmap.copy()
+            
+    def setPixmap(self, pixmap):
+        self.pixmap = pixmap
         self._original = self.pixmap.copy()
+        
+    def getPixmap(self):
+        """ get the changed pixmap """
+        return self.pixmap
 
     def loadIcons(self):
         """ load all Icons from file to preload stack"""
@@ -61,28 +72,25 @@ class IconStack(QObject):
 
     def _repaint(self):
         """ draw all Overlay Icons with OpenCV """
-        pixmap = self._original
-        x = pixmap.width() - 2 * self.margin
-        y = self.margin
-
-        for i in self.icons:
-            x -= i.getWidth()
-            # place all icons from top right to the left
-            pixmap = self.cv.overlayIcon(pixmap, i.getCVImg(), x, y)
-            x -= self.margin
-            
-        if self.hasbanner:
-            pixmap = self.drawOffline(pixmap)
-            
-        # save pixmap
-        self.pixmap = pixmap
-
-        # fire repaint event
-        self.repaint_event.emit()
-        
-    def getPixmap(self):
-        """ get the changed pixmap """
-        return self.pixmap
+        if self.pixmap != None:
+            pixmap = self._original
+            x = pixmap.width() - 2 * self.margin
+            y = self.margin
+    
+            for i in self.icons:
+                x -= i.getWidth()
+                # place all icons from top right to the left
+                pixmap = self.cv.overlayIcon(pixmap, i.getCVImg(), x, y)
+                x -= self.margin
+                
+            if self.hasbanner:
+                pixmap = self.drawOffline(pixmap)
+                
+            # save pixmap
+            self.pixmap = pixmap
+    
+            # fire repaint event
+            self.repaint_event.emit()
 
     def clearIcons(self):
         """ clear all status icons """
