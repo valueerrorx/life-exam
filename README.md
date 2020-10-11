@@ -41,6 +41,7 @@ MAX_HEARTBEAT_FAILS = 3
 MAX_HEARTBEAT_KICK = 8      
 ```
 Which Applications will be shown first when we create an Exam.
+
 What are your favorites? See *config/appranking.yml*
 ```yaml
 apps:
