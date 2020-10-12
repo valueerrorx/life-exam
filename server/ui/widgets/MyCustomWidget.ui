@@ -40,6 +40,9 @@
      <height>125</height>
     </size>
    </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
      <number>0</number>
@@ -65,7 +68,7 @@
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">border-width: 1px; border-style: solid; border-color: #EAEAEA; margin: 5x 2px;</string>
+       <string notr="true">border-width: 2px; border-style: solid; border-color: #666666; margin: 5x 2px;</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">

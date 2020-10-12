@@ -34,7 +34,7 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.content.sizePolicy().hasHeightForWidth())
         self.content.setSizePolicy(sizePolicy)
-        self.content.setStyleSheet("border-width: 1px; border-style: solid; border-color: #EAEAEA; margin: 5x 2px;")
+        self.content.setStyleSheet("border-width: 2px; border-style: solid; border-color: #666666; margin: 5x 2px;")
         self.content.setObjectName("content")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.content)
         self.horizontalLayout_2.setContentsMargins(8, 5, 8, 5)

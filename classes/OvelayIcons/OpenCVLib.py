@@ -110,7 +110,7 @@ class OpenCVLib(object):
         # tuppel positiv an odd!
         return cv2.GaussianBlur(cvImg, (3, 3), 0)
     
-    def _textsize(self, text, font=None, *args, **kwargs):
+    def _textsize(self, text, font=None):
         """Get the size of a given string, in pixels."""
         if font is None:
             return None
@@ -126,7 +126,7 @@ class OpenCVLib(object):
         """
         padding = 2
         ypos = pixmap.height() - height
-        pixmap = self._overlayBanner(pixmap, ypos, height, color, 0.5)
+        pixmap = self._overlayBanner(pixmap, ypos, height, color, 1.0)
         
         # Write some Text
         font = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"

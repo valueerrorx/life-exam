@@ -11,7 +11,7 @@ from pathlib import Path
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN
+    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -346,7 +346,7 @@ class ServerUI(QtWidgets.QDialog):
                 clients = self.get_list_widget_items()
                 receiver = "all"
             else:
-                c = self.get_list_widget_by_client_id(client_id)
+                c = self.get_list_widget_by_client_ConID(client_id)
                 clients.append(c)
                 receiver = c.id
 
@@ -413,7 +413,7 @@ class ServerUI(QtWidgets.QDialog):
         if who == "all":
             clients = self.get_list_widget_items()
         else:
-            c = self.get_list_widget_by_client_id(who)
+            c = self.get_list_widget_by_client_ConID(who)
             clients.append(c)
 
         # Waiting Thread
@@ -578,37 +578,43 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lc.start(minute_intervall)
         else:
             self.log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
-
-    def _onRemoveClient(self, client_id):
-        """
-        Entfernt einen Client aus dem Widget
-        """
+            
+    def _removeClientWidget(self, con_id):
+        """ remove from Widget Clients """
+        item = self.get_list_widget_by_client_ConID(con_id)
+        if item:
+            Qitem = self.get_QListWidgetItem_by_client_id(con_id)
+            sip.delete(Qitem)
+            # remove client widget no matter if client still is connected or not
+            msg = 'Connection to client <b> %s </b> has been <b>removed</b>.' % (item.getName())
+            self.log(html_to_text(msg))
+            # remove from Listwidget the QListWidgetItem
+            # UI Label Update count clients
+            self.ui.label_clients.setText(self.createClientsLabel())
+            # Update Heartbeat List
+            self.heartbeat.updateClientHeartbeats()
+        
+       
+    def _onRemoveClient(self, con_id):
+        """ Entfernt einen Client aus dem Widget """
         self._show_workingIndicator(500, "Client wird entfernt")
-        client_name = self.factory.server_to_client.kick_client(client_id)
+        # send I kick you to client
+        self.factory.server_to_client.kick_client(con_id)
+        item = self.get_list_widget_by_client_ConID(con_id)
+        client_name = item.getName()
 
         if client_name:
             # SIP C++ Module deletes the Item from ListWidget
-
-            item = self.get_list_widget_by_client_id(client_id)
-            if item:
-                item = self.get_QListWidgetItem_by_client_id(client_id)
-                sip.delete(item)
-                # remove client widget no matter if client still is connected or not
-                msg = 'Connection to client <b> %s </b> has been <b>removed</b>.' % (client_name)
-                self.log(html_to_text(msg))
-                # remove from Listwidget the QListWidgetItem
-                # UI Label Update count clients
-                self.ui.label_clients.setText(self.createClientsLabel())
-                # Update Heartbeat List
-                self.heartbeat.updateClientHeartbeats()
-            else:
-                self.logger.error("Can't delete client %s" % client_name)
+            self._removeClientWidget(con_id)
+        else:
+            self.logger.error("Can't delete client %s" % client_name)
+            
 
     def _disableClientScreenshot(self, client):
         self._show_workingIndicator(500, "Client Screenshot ausgeschaltet")
         client_name = client.clientName
         client_id = client.clientConnectionID
-        item = self.get_list_widget_by_client_id(client_id)
+        item = self.get_list_widget_by_client_ConID(client_id)
         icon = self.rootDir.joinpath("pixmaps/nouserscreenshot.png").as_posix()
         pixmap = QPixmap(icon)
         try:
@@ -640,7 +646,7 @@ class ServerUI(QtWidgets.QDialog):
         # existing_item = self.get_list_widget_by_client_name(client.clientName)
         # die cID ist eindeutig
 
-        existing_item = self.get_list_widget_by_client_id(client.clientConnectionID)
+        existing_item = self.get_list_widget_by_client_ConID(client.clientConnectionID)
 
         if existing_item:  # just update screenshot
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
@@ -774,7 +780,7 @@ class ServerUI(QtWidgets.QDialog):
             items.append(mycustomwidget)
         return items
 
-    def get_list_widget_by_client_id(self, client_connection_id):
+    def get_list_widget_by_client_ConID(self, client_connection_id):
         """ returns the widget from a client """
         for widget in self.get_list_widget_items():
             if client_connection_id == widget.getConnectionID():
@@ -784,7 +790,7 @@ class ServerUI(QtWidgets.QDialog):
             self.log("Error: No list widget for client connectionID %s" % client_connection_id)
         return False
 
-    def get_QListWidgetItem_by_client_id(self, client_id):
+    def get_QListWidgetItem_by_client_id(self, con_id):
         """
         returns the QListWidgetItem from a client
         the widget itself is connected to that Item
@@ -793,12 +799,12 @@ class ServerUI(QtWidgets.QDialog):
             item = self.ui.listWidget.item(index)
             # get the linked object back
             mycustomwidget = item.data(QtCore.Qt.UserRole)
-            print("%s <> %s" % (client_id, mycustomwidget.getConnectionID()))
-            if client_id == mycustomwidget.getConnectionID():
+            # print("%s <> %s" % (con_id, mycustomwidget.getConnectionID()))
+            if con_id == mycustomwidget.getConnectionID():
                 return item
         # there are items in list
         if self.ui.listWidget.count() > 0:
-            self.log("Error: list widget NOT found for client connectionId %s" % client_id)
+            self.log("Error: list widget NOT found for client connectionId %s" % con_id)
         return False
 
     def get_list_widget_by_client_name(self, client_name):
@@ -860,10 +866,13 @@ class ServerUI(QtWidgets.QDialog):
         """
         # if count Reached a Limit, remove client and Heartbeat
         c = int(count)
-        client = self.get_list_widget_by_client_id(conId)
-        client.setOffline()
-        print("Client is dead %s, %s" % (conId, count))
-        #if c > MAX_HEARTBEAT_KICK:
+        client = self.get_list_widget_by_client_ConID(conId)
+        if client:
+            client.setOffline()
+            print("Client is dead %s, %s" % (conId, count))
+            if c > MAX_HEARTBEAT_KICK:
+                self._removeClientWidget(conId)
+            
             
 
     def request_heartbeat(self, who):

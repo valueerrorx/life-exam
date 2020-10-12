@@ -221,7 +221,7 @@ class MyServerProtocol(basic.LineReceiver):
         # fire Event to Thread
         ui = self.factory.window
         # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_id(self.line_data_list[1])
+        clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.progress_thread.fireEvent_Lock_Screen(clientWidget)
 
     def _unlockscreen_ok(self):
@@ -229,7 +229,7 @@ class MyServerProtocol(basic.LineReceiver):
         # fire Event to Thread
         ui = self.factory.window
         # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_id(self.line_data_list[1])
+        clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
 
     def _heartbeat_received(self):
@@ -237,7 +237,7 @@ class MyServerProtocol(basic.LineReceiver):
         # fire Event to Thread
         ui = self.factory.window
         # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_id(self.line_data_list[1])
+        clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.heartbeat.fireEvent_Heartbeat(clientWidget)
 
     def _file_ok(self):
