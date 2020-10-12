@@ -33,7 +33,7 @@ DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # sec, how often do we heartbeating
-HEARTBEAT_INTERVALL = 2     
+HEARTBEAT_INTERVALL = 5     
 # sec, after what period we are starting heartbeating
 HEARTBEAT_START_AFTER = 5   
 # maximum number of Heartbeats missing, until a Client is marked as offline
