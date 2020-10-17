@@ -216,7 +216,7 @@ class MyClientProtocol(basic.LineReceiver):
         # command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to watch with console
         # os.system(command)
 
-    def _sendFile(self, filename, filetype):
+    def sendFile(self, filename, filetype):
         """send a file to the server"""
         self.factory.files = mutual_functions.get_file_list(
             self.factory.files_path)  # rebuild here just in case something changed (zip/screenshot created )
@@ -230,10 +230,11 @@ class MyClientProtocol(basic.LineReceiver):
             line = '%s %s %s %s %s' % (Command.FILETRANSFER.value, filetype, filename, self.factory.files[filename][2], self.factory.options['id'])
             self.sendEncodedLine(line)
         else:
-            return  # TODO: inform that nothing has been done
+            return None  # inform that nothing has been done
 
         self.setRawMode()
-        for bytess in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  # complete filepath as arg
+        # complete filepath as arg
+        for bytess in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  
             self.transport.write(bytess)
 
         # send this to inform the server that the datastream is finished

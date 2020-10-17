@@ -140,7 +140,7 @@ class ClientToServer:
         if task == Command.SEND.value:
             if filetype == DataType.SCREENSHOT.value:
                 finalfilename = self.prepare_screenshot(filename)
-                client._sendFile(finalfilename, filetype)
+                client.sendFile(finalfilename, filetype)
 
             elif filetype == DataType.ABGABE.value:
                 # Abgabe nur senden, wenn ein EXAM gestartet wurde ansonsten Fake.zip File
@@ -149,7 +149,7 @@ class ClientToServer:
                 fakeit = not mutual_functions.lockFileExists()
                 finalfilename = self.prepare_abgabe(client, filename, fakeit)
                 print("Abgabe-File: %s" % finalfilename)
-                client._sendFile(finalfilename, filetype)
+                client.sendFile(finalfilename, filetype)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
 
