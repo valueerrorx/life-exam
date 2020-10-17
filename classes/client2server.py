@@ -83,6 +83,9 @@ class ClientToServer:
             return
         startcommand = "exec pkill -9 -f lockscreen.py &"
         os.system(startcommand)
+        
+        # create an Screenshot
+        self.prepare_screenshot("%s.jpg" % cID)
 
         # Send OK i'm UNlocked to Server
         line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, cID)
@@ -161,11 +164,11 @@ class ClientToServer:
         :param filename: screenshot filename
         :return: filename
         """
-        print("SCREENSHOT IS PREPARED")
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, SHOT)
         screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename)
         command = "%s %s" % (scriptfile, screenshotfile)
         os.system(command)
+        print("SCREENSHOT IS PREPARED")
         return filename
 
     def prepare_abgabe(self, client, filename, fake):

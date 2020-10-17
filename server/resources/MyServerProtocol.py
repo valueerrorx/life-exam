@@ -218,6 +218,9 @@ class MyServerProtocol(basic.LineReceiver):
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.progress_thread.fireEvent_Lock_Screen(clientWidget)
+        
+        #Update Screenshot
+        ui.onScreenshots(self.line_data_list[1])
 
     def _unlockscreen_ok(self):
         """ a client has locked the screen and sends OK """
@@ -226,6 +229,9 @@ class MyServerProtocol(basic.LineReceiver):
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
+        
+        #Update Screenshot
+        ui.onScreenshots(self.line_data_list[1])
 
     def _heartbeat_received(self):
         """a client has sended a heartbeat"""

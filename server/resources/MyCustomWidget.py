@@ -28,7 +28,6 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.id = client.clientName             # eg TestUser
         self.pID = client.clientConnectionID    # eg 5508
         self.ip = client.transport.hostname     # eg 192.168.1.10
-        self.disabled = False
         
         self.set_ui()
         self.setText('%s' % (client.clientName))
@@ -122,7 +121,6 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.iconStack.setPixmap(pixmap)
         
         self.repaint()
-        # print(self.geometry())
         
     def repaint_event(self):
         """ Pixmap has changed > repaint """
@@ -149,17 +147,6 @@ class MyCustomWidget (QtWidgets.QWidget):
     def getIP(self):
         """ return the IP Adr. of the Client """
         return self.ip
-
-    def setDisabled(self):
-        """ Client is disabled """
-        self.disabled = True
-
-    def setEnabled(self):
-        """ Client is enabled """
-        self.disabled = False
-
-    def isEnabled(self):
-        return not self.disabled
 
     def setText(self, text):
         """

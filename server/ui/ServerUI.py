@@ -251,7 +251,7 @@ class ServerUI(QtWidgets.QDialog):
         """locks or unlock the client screens"""
         clients = self.get_list_widget_items()
 
-        self._startWorkingIndicator("Locking Client Screens ... ")
+        # self._startWorkingIndicator("Locking Client Screens ... ")
         self.networkProgress.show(len(clients))
 
         # Waiting Thread
@@ -278,7 +278,6 @@ class ServerUI(QtWidgets.QDialog):
                 self.factory.clientslocked = False
                 icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png.png").as_posix()
                 self.ui.screenlock.setIcon(QIcon(icon))
-        self.onScreenshots("all")   # update screenshots right after un/lock
 
     def _onOpenshare(self):
         startcommand = "runuser -u %s /usr/bin/dolphin %s &" % (USER, SHARE_DIRECTORY)
@@ -392,7 +391,6 @@ class ServerUI(QtWidgets.QDialog):
     def onScreenshots(self, who):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
-        self._show_workingIndicator(1000, "Screenhot Update")
 
         if self.factory.rawmode is True:
             self.log("Waiting for ongoing file-transfers to finish ...")
@@ -715,10 +713,7 @@ class ServerUI(QtWidgets.QDialog):
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
-        # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.setID(client.clientConnectionID)
-        existing_item.setDisabled()
-        
         
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         self.screenshotwindow.setClientConnectionID(client_connection_id)

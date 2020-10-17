@@ -50,11 +50,10 @@ class ServerToClient:
                 client = self.get_client(clientid)
                 client.sendEncodedLine(line % client.clientConnectionID)
         else:
+            client = self.get_client(who)
             try:
-                client = self.get_client(who)
                 client.sendEncodedLine(line % client.clientConnectionID)
-            except:
-                client = self.get_client(who)
+            except:                
                 print("server2client Error, clientID: %s, %s" % (client.clientConnectionID, line))
 
     """client instructions"""

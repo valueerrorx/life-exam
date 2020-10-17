@@ -28,7 +28,6 @@ class Thread_Progress(QtCore.QThread):
 
     def fireEvent_Lock_Screen(self, who):
         """ client has locked the screen """
-        print("Clients: %s -1" % (len(self.clients)))
         if len(self.clients) > 0:
             self.client_lock_screen.emit(self.parent, who)
 
