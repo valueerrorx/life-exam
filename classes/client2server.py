@@ -103,17 +103,17 @@ class ClientToServer:
         if mutual_functions.checkPidFile("server"):
             # True > I'm the Teacher nothing to do
             return
-
-        # Send OK i'm locked to Server
-        line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
-        print("Sending Lock Screen OK")
-        client.sendEncodedLine(line)
-
+        
         startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
         os.system(startcommand)
         
         # create an Screenshot
         self.prepare_screenshot("%s.jpg" % cID)
+        
+        # Send OK i'm locked to Server
+        line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
+        print("Sending Lock Screen OK")
+        client.sendEncodedLine(line)
         
         return
 
