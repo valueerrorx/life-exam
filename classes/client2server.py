@@ -13,6 +13,7 @@ from pathlib import Path
 import os
 from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
+from time import sleep
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -106,6 +107,9 @@ class ClientToServer:
         
         startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
         os.system(startcommand)
+        
+        # wait a bit
+        sleep(1)
         
         # create an Screenshot
         self.prepare_screenshot("%s.jpg" % cID)
