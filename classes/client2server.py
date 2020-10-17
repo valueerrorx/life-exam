@@ -111,6 +111,10 @@ class ClientToServer:
 
         startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
         os.system(startcommand)
+        
+        # create an Screenshot
+        self.prepare_screenshot("%s.jpg" % cID)
+        
         return
 
     def exitExam(self, client):
