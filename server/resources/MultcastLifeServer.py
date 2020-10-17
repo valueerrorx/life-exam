@@ -26,7 +26,7 @@ class MultcastLifeServer(DatagramProtocol):
             if DEBUG_PIN != "":
                 self.logger.info("Datagram %s received from %s" % (repr(datagram), repr(address)))
 
-            serverinfo = self.factory.examid + " " + " ".join(self.factory.disconnected_list)
+            serverinfo = self.factory.examid
             message = "SERVER %s" % serverinfo
             self.transport.write(message.encode(), ("228.0.0.5", 8005))
 

@@ -218,8 +218,8 @@ class MyClientProtocol(basic.LineReceiver):
 
     def sendFile(self, filename, filetype):
         """send a file to the server"""
-        self.factory.files = mutual_functions.get_file_list(
-            self.factory.files_path)  # rebuild here just in case something changed (zip/screenshot created )
+        # rebuild here just in case something changed (zip/screenshot created )
+        self.factory.files = mutual_functions.get_file_list(self.factory.files_path)  
 
         if filename not in self.factory.files:  # if folder exists
             self.sendLine(b'filename not found in client directory')

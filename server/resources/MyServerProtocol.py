@@ -62,12 +62,7 @@ class MyServerProtocol(basic.LineReceiver):
 
         if not self.refused:
             self.factory.window._disableClientScreenshot(self)
-            self.factory.disconnected_list.append(self.clientName)  # keep client name in disconnected_list
-        else:
-            try:
-                self.factory.disconnected_list.remove(self.clientName)   # this one is not coming back
-            except:
-                return
+            
 
     # twisted-Event: Data Received
     def rawDataReceived(self, data):
@@ -105,7 +100,7 @@ class MyServerProtocol(basic.LineReceiver):
                     os.rename(file_path, screenshot_file_path)
                     # fix file permission of transferred file
                     mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)
-                    # make the clientscreenshot visible in the listWidget
+                    # make the client screenshot visible in the listWidget
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)
 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
@@ -155,7 +150,7 @@ class MyServerProtocol(basic.LineReceiver):
                     msg = 'Failed transfers: %s' % (self.filetransfer_fail_count)
                     self.factory.window.log(msg)
                     self.logger.info(msg)
-                    self.factory.window._onAbgabe(self.clientConnectionID)
+                    self.factory.window.onAbgabe(self.clientConnectionID)
                 else:
                     self.filetransfer_fail_count = 0
 

@@ -86,8 +86,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
-        self.ui.abgabe.clicked.connect(lambda: self._onAbgabe("all"))
-        self.ui.screenshots.clicked.connect(lambda: self._onScreenshots("all"))
+        self.ui.abgabe.clicked.connect(lambda: self.onAbgabe("all"))
+        self.ui.screenshots.clicked.connect(lambda: self.onScreenshots("all"))
         self.ui.startexam.clicked.connect(lambda: self._on_start_exam("all"))
         self.ui.openshare.clicked.connect(self._onOpenshare)
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
@@ -184,6 +184,9 @@ class ServerUI(QtWidgets.QDialog):
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
+        
+        self.screenshotwindow = ScreenshotWindow(self)
+        
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
 
@@ -275,7 +278,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.factory.clientslocked = False
                 icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png.png").as_posix()
                 self.ui.screenlock.setIcon(QIcon(icon))
-        self._onScreenshots("all")   # update screenshots right after un/lock
+        self.onScreenshots("all")   # update screenshots right after un/lock
 
     def _onOpenshare(self):
         startcommand = "runuser -u %s /usr/bin/dolphin %s &" % (USER, SHARE_DIRECTORY)
@@ -386,7 +389,7 @@ class ServerUI(QtWidgets.QDialog):
         file_path = file_path[0]
         return file_path
 
-    def _onScreenshots(self, who):
+    def onScreenshots(self, who):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
         self._show_workingIndicator(1000, "Screenhot Update")
@@ -404,7 +407,7 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(500, "Zeige deine IP an")
         show_ip()
 
-    def _onAbgabe(self, who):
+    def onAbgabe(self, who):
         """get SHARE folder from client"""
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
         self._startWorkingIndicator('Abgabe ...')
@@ -640,12 +643,8 @@ class ServerUI(QtWidgets.QDialog):
         self.DebugLog(msg, show_allways)
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
-        """
-        generates new List Item that displays the client screenshot
-        """
-        # existing_item = self.get_list_widget_by_client_name(client.clientName)
+        """ generates new List Item that displays the client screenshot """
         # die cID ist eindeutig
-
         existing_item = self.get_list_widget_by_client_ConID(client.clientConnectionID)
 
         if existing_item:  # just update screenshot
@@ -714,40 +713,26 @@ class ServerUI(QtWidgets.QDialog):
         self.heartbeat.updateClientHeartbeats()
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
-        try:
-            # if client reconnected remove from disconnected_list
-            self.factory.disconnected_list.remove(client.clientName)
-        except:
-            pass            # changed return to pass otherwise the screenshot is not updated
-
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
         # in case this is a reconnect - update clientConnectionID in order to address the correct connection
         existing_item.setID(client.clientConnectionID)
         existing_item.setDisabled()
-
-        try:
-            if self.screenshotwindow.client_connection_id == existing_item.pID:
-                self.screenshotwindow.oImage = QImage(screenshot_file_path)
-                # resize Image to widgets size
-                self.screenshotwindow.sImage = self.screenshotwindow.oImage.scaled(1200, 675, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-                self.screenshotwindow.palette = QPalette()
-                self.screenshotwindow.palette.setBrush(10, QBrush(self.screenshotwindow.sImage))  # 10 = Windowrole
-                self.screenshotwindow.setPalette(self.screenshotwindow.palette)
-
-        except:
-            pass
-
+        
+        
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
-        screenshotfilename = "%s.jpg" % client_connection_id
-        self.screenshotwindow = ScreenshotWindow(self, screenshotfilename, client_name, screenshot_file_path, client_connection_id)
+        self.screenshotwindow.setClientConnectionID(client_connection_id)
+        self.screenshotwindow.setClientname(client_name)
+        self.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
+        
+        self.screenshotwindow.updateUI()
         self.screenshotwindow.exec_()
 
     def _on_context_menu(self, client_connection_id, is_disabled):
         menu = QtWidgets.QMenu()
 
-        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self._onAbgabe(client_connection_id))
-        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self._onScreenshots(client_connection_id))
+        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self.onAbgabe(client_connection_id))
+        action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self.onScreenshots(client_connection_id))
         action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self._onSendFile(client_connection_id))
         action_4 = QtWidgets.QAction("Exam starten", menu, triggered=lambda: self._on_start_exam(client_connection_id))
         action_5 = QtWidgets.QAction("Exam beenden", menu, triggered=lambda: self._on_exit_exam(client_connection_id))

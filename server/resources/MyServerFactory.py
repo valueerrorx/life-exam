@@ -30,7 +30,6 @@ class MyServerFactory(protocol.ServerFactory):
         self.files_path = files_path
         self.reactor = reactor
         self.server_to_client = ServerToClient()  # type: ServerToClient
-        self.disconnected_list = []
         self.files = None
         self.clientslocked = False
         '''
@@ -47,8 +46,8 @@ class MyServerFactory(protocol.ServerFactory):
 
         self.examid = "Exam-%s" % mutual_functions.generatePin(3)
         self.window = ServerUI(self, splash, app)
-        self.lc = LoopingCall(lambda: self.window._onAbgabe("all"))
-        self.lcs = LoopingCall(lambda: self.window._onScreenshots("all"))
+        self.lc = LoopingCall(lambda: self.window.onAbgabe("all"))
+        self.lcs = LoopingCall(lambda: self.window.onScreenshots("all"))
 
         intervall = self.window.ui.ssintervall.value()
 
@@ -58,7 +57,7 @@ class MyServerFactory(protocol.ServerFactory):
         else:
             self.window.log("<b>Screenshot Intervall is set to 0 - Screenshotupdate deactivated</b>")
 
-        #  _onAbgabe kann durch lc.start(intevall) im intervall ausgeführt werden
+        #  onAbgabe() kann durch lc.start(intevall) im intervall ausgeführt werden
 
         # mutual_functions.checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         # starting multicast server here in order to provide "factory" information via broadcast

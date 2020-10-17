@@ -24,6 +24,7 @@ encoding//server/resources/MultcastLifeServer.py=utf-8
 encoding//server/resources/MyCustomWidget.py=utf-8
 encoding//server/resources/MyServerFactory.py=utf-8
 encoding//server/resources/MyServerProtocol.py=utf-8
+encoding//server/resources/ScreenshotWindow.py=utf-8
 encoding//server/ui/ServerUI.py=utf-8
 encoding//server/ui/threads/Beat.py=utf-8
 encoding//server/ui/threads/Heartbeat.py=utf-8

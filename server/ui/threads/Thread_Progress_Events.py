@@ -53,8 +53,7 @@ def client_lock_screen(parent, who):
     print("ProgressBar: %s" % parent.networkProgress.value() )
     if parent.networkProgress.value() == 0:
         # if there is an animation showing
-        parent.workinganimation.stop()
-
+        parent.workinganimation.stop()    
 
 def client_unlock_screen(parent, who):
     """ will be fired when client unlocks the screen """
