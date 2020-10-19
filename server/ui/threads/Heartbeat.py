@@ -25,7 +25,7 @@ class Heartbeat(QtCore.QThread):
         # eigene Liste für die clients mit heartbeat Versuchen
         self._heartbeats = []
 
-        # start after xs than every xs
+        # start after x sec than every x sec
         self.timer = PeriodicTimer(self, HEARTBEAT_START_AFTER, HEARTBEAT_INTERVALL, self.checkClients)
 
     def start(self, *args, **kwargs):

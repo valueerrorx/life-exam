@@ -35,6 +35,7 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
     def closeEvent(self, event):
         ''' window tries to close '''
         # event.ignore()
+        self.stack.close()
         pass
 
     def addIcon(self):

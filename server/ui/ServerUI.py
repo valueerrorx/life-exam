@@ -810,6 +810,11 @@ class ServerUI(QtWidgets.QDialog):
         self.log("Close-Event triggered")
         if not self.msg:
             self._onAbbrechen()
+            
+    def stopWidgetIconTimer(self):
+        """ every Client Widget has a running Timer > stop them all """
+        for widget in self.get_list_widget_items():
+            widget.close()
 
     def _onAbbrechen(self):  # Exit button
         self.msg = QtWidgets.QMessageBox()
@@ -824,6 +829,7 @@ class ServerUI(QtWidgets.QDialog):
             # Threads Shutdown
             # self.jobs.stop()
             self.heartbeat.stop()
+            self.stopWidgetIconTimer()
 
             # if in root mode than change log Files to student User
             self.log("Shuting down >")
@@ -852,8 +858,6 @@ class ServerUI(QtWidgets.QDialog):
             print("Client is dead %s, %s" % (conId, count))
             if c > MAX_HEARTBEAT_KICK:
                 self._removeClientWidget(conId)
-            
-            
 
     def request_heartbeat(self, who):
         """Heartbeat fired time to check the Heartbeat of client"""

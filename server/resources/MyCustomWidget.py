@@ -6,7 +6,6 @@ from pathlib import Path
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QSize
-from classes.OvelayIcons.OpenCVLib import OpenCVLib
 from classes.OvelayIcons.IconStack import IconStack
 
 
@@ -37,6 +36,10 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.iconStack.repaint_event.connect(self.repaint_event)
         
         self.show()
+        
+    def close(self):
+        """ stop Timer for Icons """
+        self.iconStack.close()
 
     def sizeHint(self):
         """ this is our default size """
@@ -164,11 +167,11 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def setFileReceivedOK(self):
         """ set all File received Icon """
-        pass
+        self.iconStack.addFileReceivedOK()
 
     def setFileReceivedERROR(self):
         """ set all File NOT Received icon """
-        pass
+        self.iconStack.addFileReceivedERROR()
     
     def setOffline(self):
         """ set Client Offline, due to missing heartbeats """

@@ -8,6 +8,8 @@ from classes.OvelayIcons.Icon import Icon
 from classes.OvelayIcons.OpenCVLib import OpenCVLib
 from PyQt5.QtCore import pyqtSignal, QObject
 from pathlib import Path
+import time
+from classes.OvelayIcons.PeriodicTimer import PeriodicTimer
 
 
 class Icons(Enum):
@@ -42,6 +44,7 @@ class IconStack(QObject):
         self.rootDir = Path(__file__).parent
         self.iconpath = self.rootDir.joinpath('overlay_icons')
         
+        # speichert Icon und timestamp ab
         self.icons = []
         self._loaded_icons = []
         self.pixmap = pixmap
@@ -54,6 +57,16 @@ class IconStack(QObject):
         # store the original pixmap
         if self.pixmap != None:
             self._original = self.pixmap.copy()
+        
+        # Icon Timeout for hidding Icons
+        self.hideIconsAfter = 20  # sec
+        # start after x sec than every x sec
+        self.timer = PeriodicTimer(self, 5, 4, self.timeoutIcons)
+        self.timer.first_start()
+        
+    def close(self):
+        """ closing """
+        self.timer.stop()
             
     def setPixmap(self, pixmap):
         self.pixmap = pixmap
@@ -69,6 +82,14 @@ class IconStack(QObject):
             icon = Icon(self.iconpath, i.value)
             icon.resizeTo(self.iconSize[0], self.iconSize[1])
             self._loaded_icons.append(icon)
+            
+    def getIcon(self, data):
+        """ returns from Array the Icon Part """
+        return data[0]
+    
+    def getTS(self, data):
+        """ returns from Array the TimestampPart Part """
+        return data[1]
 
     def _repaint(self):
         """ draw all Overlay Icons with OpenCV """
@@ -78,9 +99,9 @@ class IconStack(QObject):
             y = self.margin
     
             for i in self.icons:
-                x -= i.getWidth()
+                x -= self.getIcon(i).getWidth()
                 # place all icons from top right to the left
-                pixmap = self.cv.overlayIcon(pixmap, i.getCVImg(), x, y)
+                pixmap = self.cv.overlayIcon(pixmap, self.getIcon(i).getCVImg(), x, y)
                 x -= self.margin
                 
             if self.hasbanner:
@@ -97,10 +118,6 @@ class IconStack(QObject):
         del self.icons[:]
         self.icons = []
         self._repaint()
-        
-    def printArray(self, arr):
-        for i in arr:
-            print(i.getName())
 
     def add(self, icon):
         """ adds a icon to the stack and displays it """
@@ -109,7 +126,7 @@ class IconStack(QObject):
             if i.getName() == icon.value:
                 # make a full copy of that
                 icon = copy.deepcopy(i)
-                self.icons.append(icon)
+                self.icons.append([icon, time.time()])
                 break
         self._repaint()
         
@@ -117,9 +134,19 @@ class IconStack(QObject):
         """ removes a icon from the stack """
         for i in self.icons:
             # search the right one
-            if i.getName() == icon.value:
+            if self.getIcon(i).getName() == icon.value:
                 self.icons.remove(i)
                 break
+        self._repaint()
+        
+    def timeoutIcons(self):
+        """ Timer has made a tick, which Icons are to hide? """
+        now = time.time()
+        for i in self.icons:
+            # search the right one
+            delta = now - self.getTS(i)
+            if delta > self.hideIconsAfter:
+                self.icons.remove(i)
         self._repaint()
     
     def addExamIconON(self):
