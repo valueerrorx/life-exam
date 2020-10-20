@@ -251,8 +251,6 @@ class MyServerProtocol(basic.LineReceiver):
         ui.progress_thread.fireEvent_File_received(clientWidget)
         # filetransfer finished "UNLOCK" fileopertions
         self.factory.rawmode = False
-        
-        print(">>>>>>>>>>>>>>>>> FILE OK received MyServerProtokoll 255")
 
     def _get_file_request(self):
         """

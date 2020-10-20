@@ -48,7 +48,7 @@ class IconStack(QObject):
         self.icons = []
         self._loaded_icons = []
         self.pixmap = pixmap
-        self.iconSize = (64, 64)
+        self.iconSize = (24, 24)
         self.loadIcons()
         self.margin = margin
         self.hasbanner = False

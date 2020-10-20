@@ -189,6 +189,8 @@ class ServerUI(QtWidgets.QDialog):
         
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
+        mutual_functions.openFileManager("/home/student")
+    
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -352,7 +354,7 @@ class ServerUI(QtWidgets.QDialog):
                 clients.append(c)
                 receiver = c.id
 
-            self._startWorkingIndicator("%s wird an %s gesendet" % (os.path.basename(file_path), receiver))
+            # self._startWorkingIndicator("%s wird an %s gesendet" % (os.path.basename(file_path), receiver))
 
             # Waiting Thread
             self.progress_thread.setClients(clients)

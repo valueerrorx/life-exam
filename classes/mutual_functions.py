@@ -19,6 +19,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
     SHARE_DIRECTORY, USER
 import stat
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -311,5 +312,11 @@ def showDesktopMessage(msg):
 
 def openFileManager(path):
     """ cross OS """
-    if os.path.exists(path):
-        webbrowser.open('file:///' + path)
+    # MacOS
+    if sys.platform == 'darwin':
+        subprocess.check_call(['open', path])
+    elif sys.platform.startswith('linux'):
+        subprocess.check_call(['xdg-open', path])
+    elif sys.platform == 'win32':
+        subprocess.check_call(['explorer', path])
+    
