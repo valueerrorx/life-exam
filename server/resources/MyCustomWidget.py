@@ -28,6 +28,11 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.pID = client.clientConnectionID    # eg 5508
         self.ip = client.transport.hostname     # eg 192.168.1.10
         
+        self.image_width = 180
+        self.image_height = 101
+        self.widget_width = 204
+        self.widget_height = 133
+
         self.set_ui()
         self.setText('%s' % (client.clientName))
         
@@ -43,7 +48,7 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def sizeHint(self):
         """ this is our default size """
-        return QSize(self.image_width, self.image_height)
+        return QSize(self.widget_width, self.widget_height)
 
     def set_ui(self):
         """
@@ -52,22 +57,17 @@ class MyCustomWidget (QtWidgets.QWidget):
         - suche: self.mywidget > self
         - dontuseLabel löschen
         """
-        # do not delete, set it to correct values =================
-        # read them from QT Designer
-        self.image_width = 180
-        self.image_height = 101
-        # =========================================================
-        self.setGeometry(QtCore.QRect(0, 0, 204, 133))
+        self.setGeometry(QtCore.QRect(0, 0, self.widget_width, self.widget_height))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setMinimumSize(QtCore.QSize(196, 125))
-        self.setMaximumSize(QtCore.QSize(196, 125))
+        self.setMinimumSize(QtCore.QSize(self.image_width, self.image_height))
+        #self.setMaximumSize(QtCore.QSize(196, 125))
         self.setObjectName("mywidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
-        self.horizontalLayout.setContentsMargins(6, 6, 0, 0)
+        self.horizontalLayout.setContentsMargins(6, 6, 6, 6)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.content = QtWidgets.QWidget(self)
