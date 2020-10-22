@@ -16,7 +16,7 @@ def client_abgabe_done_exit_exam(parent, who):
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Abgabe-File ..." % item.getID())
     # show in Filemanager
-    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, item.getID()))
+    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
 
 
 def client_received_file_done(parent, clientWidget):
@@ -33,18 +33,19 @@ def client_received_file_done(parent, clientWidget):
 
 def client_abgabe_done(parent, who):
     """ will fired when Client has sent his Abgabe File """
+    # Checkbox
     onexit_cleanup_abgabe = parent.ui.exitcleanabgabe.checkState()
-
-    parent.networkProgress.decrement()
-    if parent.networkProgress.value() == 0:
-        # if there is an animation showing
-        parent.workinganimation.stop()
 
     # get from who the connectionID
     item = parent.get_list_widget_by_client_name(who)
     parent.log("Client %s has finished sending Abgabe-File, now exiting ..." % item.getID())
     # then send the exam exit signal
     parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe)
+    
+    parent.networkProgress.decrement()
+    if parent.networkProgress.value() == 0:
+        # if there is an animation showing
+        parent.workinganimation.stop()
 
 
 def client_lock_screen(parent, who):

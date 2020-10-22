@@ -189,7 +189,7 @@ class ServerUI(QtWidgets.QDialog):
         
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
-        mutual_functions.openFileManager("/home/student")
+        # mutual_functions.openFileManager("/home/student")
     
 
     def createClientsLabel(self):
@@ -459,7 +459,8 @@ class ServerUI(QtWidgets.QDialog):
 
         self._show_workingIndicator(4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
-
+        
+        # Checkbox
         cleanup_abgabe = self.ui.cleanabgabe.checkState()
         # create zip file of all examconfigs
         target_folder = EXAMCONFIG_DIRECTORY

@@ -4,8 +4,6 @@
 #
 # CLIENT FILE - STOP EXAM
 
-
-
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
@@ -21,7 +19,7 @@ DELSHARE=$1
 # Check if root and running exam #
 #--------------------------------#
 if ! [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
+    # kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
     sleep 2
     exit 0
 fi
@@ -49,26 +47,15 @@ stopIPtables(){
     sudo iptables -t raw -X
 }
 
-
-
-
-
-
 #--------------------------------#
 # ASK FOR CONFIRMATION           #
 #--------------------------------#
-
-
     kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
     if [ "$?" = 0 ]; then
         sleep 0
     else
         exit 1   #cancel
     fi;
-  
-
-
-
 
 #---------------------------------#
 # OPEN PROGRESSBAR DIALOG         #
@@ -77,10 +64,6 @@ stopIPtables(){
 progress=$(kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
 qdbus $progress Set "" maximum 7
 sleep 0.5
-
-
-
-
 
 
 #---------------------------------#
@@ -114,7 +97,6 @@ sleep 0.5
     qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
 
 
-
 #---------------------------------#
 # REMOVE EXAM LOCKFILE            #
 #---------------------------------#
@@ -123,8 +105,6 @@ sleep 0.5
     sudo cp $EXAMLOCKFILE $SHARE
     sudo rm $EXAMLOCKFILE
     sleep 0.5
-
-
   
   
 #---------------------------------#
@@ -136,7 +116,6 @@ then
     sudo rm -rf ${SHARE}*
     sudo rm -rf ${SHARE}.* 
 fi 
-    
 
 
 #---------------------------------#
@@ -146,11 +125,6 @@ qdbus $progress Set "" value 2
 #qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
 sleep 0.5
    # sudo umount -l $SHARE
-
-
-    
-    
-    
     
 
 #---------------------------------#
@@ -181,13 +155,6 @@ sleep 0.5
             # allow mounting again 
             sudo chmod 755 /media/ -R  
         fi
-
-        
-        
-     
-       
-    
-    
     
     
 #-------------------------------------------#
@@ -202,9 +169,6 @@ qdbus $progress setLabelText "Stoppe automatische Screenshots...."
     # entferne firewall einträge (standalone-exam mode advanced)
     #echo "#!/bin/sh -e" > /etc/rc.local
     #echo "exit 0" >> /etc/rc.local
-
-
-    
     
 
 #---------------------------------#
@@ -213,15 +177,9 @@ qdbus $progress setLabelText "Stoppe automatische Screenshots...."
 qdbus $progress Set "" value 5
 qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
 sleep 0.5
+stopIPtables
 
-    stopIPtables
-
     
-    
-    
-    
-    
-
 #---------------------------------#
 # REMOVE ROOT PASSWORD            #
 #---------------------------------#
@@ -231,16 +189,6 @@ qdbus $progress Set "" value 6
 
         # falls ein rootpasswort vom lehrer gesetzt wurde (standalone-exam mode advanced)
         #sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
 #----------------------------------------------#
@@ -271,28 +219,3 @@ qdbus $progress close
 #     kstart5 plasmashell &
 #     sleep 2
 #     kwin --replace &
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

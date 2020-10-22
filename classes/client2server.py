@@ -129,7 +129,8 @@ class ClientToServer:
         exitcleanup_abgabe = client.line_data_list[1]
         print(exitcleanup_abgabe)
         print("Stopping EXAM")
-        startcommand = "%s/scripts/stopexam.sh %s &" % (WORK_DIRECTORY, exitcleanup_abgabe)  # start as user even if the twistd daemon is run by root
+        # start as user even if the twistd daemon is run by root
+        startcommand = "%s/scripts/stopexam.sh %s &" % (WORK_DIRECTORY, exitcleanup_abgabe)  
         os.system(startcommand)  # start script
 
         return
