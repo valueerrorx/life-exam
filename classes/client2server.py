@@ -155,12 +155,9 @@ class ClientToServer:
                 client.sendFile(finalfilename, filetype)
 
             elif filetype == DataType.ABGABE.value:
-                # Abgabe nur senden, wenn ein EXAM gestartet wurde ansonsten Fake.zip File
-                # teste ob lock file exists
-
-                fakeit = not mutual_functions.lockFileExists()
-                finalfilename = self.prepare_abgabe(client, filename, fakeit)
-                print("Abgabe-File: %s" % finalfilename)
+                # zip Files and send it to the Teacher
+                finalfilename = self.prepare_abgabe(client, filename)
+                print("Files: %s" % finalfilename)
                 client.sendFile(finalfilename, filetype)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
@@ -180,24 +177,23 @@ class ClientToServer:
         print("SCREENSHOT IS PREPARED")
         return filename
 
-    def prepare_abgabe(self, client, filename, fake):
+    def prepare_abgabe(self, client, filename):
         """
-        Prepares Abgabe to be sent as zip archive
+        Prepares Files to be send as zip archive
         :param client: clientprotocol
         :param filename: filename of abgabe archive
-        :param fake: if no EXAM Mode was started, then create dummy zip File
         :return: filename
         """
-        if fake is False:
-            print("Abgabe IS Prepared ...")
-            client._triggerAutosave()
-            time.sleep(2)  # TODO: make autosave return that it is finished!
-            target_folder = SHARE_DIRECTORY
-            output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
-            shutil.make_archive(output_filename, 'zip', target_folder)  # create zip of folder
-        else:
-            print("No EXAM, Fake Abgabe IS Prepared ...")
-            mutual_functions.createFakeZipFile()
-            filename = "dummy"
+        print("Files are beeing zipped ...")
+        client.triggerAutosave()
+        
+        # TODO: make autosave return that it is finished!
+        time.sleep(2)
+        
+        target_folder = SHARE_DIRECTORY
+        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
+        # create zip of folder
+        shutil.make_archive(output_filename, 'zip', target_folder)  
 
-        return "%s.zip" % filename  # this is the filename of the zip file
+        # this is the filename of the zip file
+        return "%s.zip" % filename  

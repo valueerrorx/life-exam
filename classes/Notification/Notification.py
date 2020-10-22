@@ -156,7 +156,6 @@ class Notification(QObject):
             y = random.randrange(100, 800)
             self._notification.moveTo(x, y)
         else:
-            print("NO")
             self._notification.moveToDefaultPosition()
 
         self.startNotification_Signal.connect(self._showNotification)

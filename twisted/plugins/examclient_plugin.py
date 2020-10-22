@@ -38,6 +38,7 @@ from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 from pathlib import Path
+import pwd
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -173,31 +174,87 @@ class MyClientProtocol(basic.LineReceiver):
         ENDMSG macht diesen dann als deskotp message sichtbar
         """
         line_handler(self) if line_handler is not None else self.buffer.append(line)  # noqa
+        
+    def demote(self, user_name, user_uid, user_gid):
+        """Pass the function 'set_ids' to preexec_fn, rather than just calling
+        setuid and setgid. This will change the ids for that subprocess only"""
+        def set_ids():
+            print("starting")
+            print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
+            print (os.getgroups())
+            # initgroups must be run before we lose the privilege to set it!
+            os.initgroups(user_name, user_gid)
+            os.setgid(user_gid)
+            # this must be run last
+            os.setuid(user_uid)
+            print("finished demotion")
+            print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
+            print (os.getgroups())
+        return set_ids
+    
+    def runAndWaittoFinish(self, cmd):
+        """Runs a subprocess, and waits for it to finish"""
+        stderr = ""
+        stdout = ""
+        user_name = "student"
+        uid = pwd.getpwnam(user_name).pw_uid
+        guid = pwd.getpwnam(user_name).pw_gid
+        proc = subprocess.Popen(cmd, 
+                                shell=True, 
+                                # stdin=subprocess.PIPE, 
+                                stdout=subprocess.PIPE, 
+                                stderr=subprocess.PIPE, 
+                                # bufsize=0, 
+                                preexec_fn=self.demote(user_name, uid, guid),
+                                env={'env_keep': 'DBUS_SESSION_BUS_ADDRESS'}
+                                )
+        for line in iter(proc.stderr.readline, b''):
+            stderr += line.decode()
 
-    def _triggerAutosave(self):
+        for line in iter(proc.stdout.readline, b''):
+            stdout += line.decode()
+        # Wait for process to terminate and set the returncode attribute
+        proc.communicate()
+        
+        return [proc.returncode, stderr, stdout]
+    
+    def _getArrayAsString(self, arr):
+        string = ""
+        for val in arr:
+            string += val + " "
+        return string
+
+    def triggerAutosave(self):
         """
-        this function uses xdotool to find windows and trigger ctrl+s shortcut on them
+        this function uses xdotool to find windows and trigger ctrl + s shortcut on them
         which will show the save dialog the first time and silently save the document the next time
-        """
+        """        
         app_id_list = []
+        
         for app in SAVEAPPS:
-            if app == "calligrawords" or app == "calligrasheets" or app == "kate":  # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
+            # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
+            app_str = "Calligrawords/Calligrasheets/Kate"
+            if app == "calligrawords" or app == "calligrasheets" or app == "kate":  
                 if app == "kate":
                     savetrigger = "file_save_all"
                 else:
                     savetrigger = "file_save"
                 try:
                     command = "pidof %s" % (app)
-                    pids = subprocess.check_output(command, shell=True).decode().rstrip()
-                    print(pids)
-                    pids = pids.split(' ')
-                    print(pids)
+                    # data = [exitcode, err, out]
+                    data = self.runAndWaittoFinish(command)    
+                    # clean               
+                    p = data[2].replace('\n', '')
+                    pids = p.split(' ')
+                    print("%s Pids: %s" % (app_str, self._getArrayAsString(pids)))
                     for pid in pids:
                         qdbuscommand = "runuser -u %s -- qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
+                        qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (app, pid, app, savetrigger)
                         print(qdbuscommand)
-                        os.system(qdbuscommand)
+                        data = self.runAndWaittoFinish(qdbuscommand)
+                        print(data)
                 except:
-                    print("program not running")
+                    print("%s not running" % app_str)
 
             else:  # make a list of the other running apps
                 command = "xdotool search --name %s &" % (app)

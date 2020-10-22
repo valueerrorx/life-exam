@@ -37,6 +37,7 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
 from server.ui.threads.Thread_Progress import Thread_Progress
 from server.ui.threads.Heartbeat import Heartbeat
 from enum import Enum
+import pwd
 
 
 class MsgType(Enum):
@@ -410,7 +411,7 @@ class ServerUI(QtWidgets.QDialog):
     def onAbgabe(self, who):
         """get SHARE folder from client"""
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
-        self._startWorkingIndicator('Abgabe ...')
+        # self._startWorkingIndicator('Abgabe ...')
 
         clients = []
         if who == "all":

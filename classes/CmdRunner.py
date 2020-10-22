@@ -24,7 +24,13 @@ class CmdRunner():
         self._stderr = ""
         self._stdout = ""
 
-        proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0, preexec_fn=None)
+        proc = subprocess.Popen(cmd, 
+                                shell=True, 
+                                stdin=subprocess.PIPE, 
+                                stdout=subprocess.PIPE, 
+                                stderr=subprocess.PIPE, 
+                                bufsize=0, 
+                                preexec_fn=None)
         for line in iter(proc.stderr.readline, b''):
             self._stderr += line.decode()
 
@@ -73,5 +79,4 @@ class CmdRunner():
         def set_ids():
             os.setgid(user_gid)
             os.setuid(user_uid)
-
         return set_ids

@@ -14,7 +14,7 @@ def client_abgabe_done_exit_exam(parent, who):
     """ will fired when Client has sent his Abgabe File """
     # event fired in MyServerProtocol
     item = parent.get_list_widget_by_client_name(who)
-    logger.info("Client %s has finished sending Abgabe-File ..." % item.getID())
+    logger.info("Client %s has finished sending Files ..." % item.getID())
     # show in Filemanager
     mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
 
@@ -38,7 +38,7 @@ def client_abgabe_done(parent, who):
 
     # get from who the connectionID
     item = parent.get_list_widget_by_client_name(who)
-    parent.log("Client %s has finished sending Abgabe-File, now exiting ..." % item.getID())
+    parent.log("Client %s has finished sending Files, now exiting ..." % item.getID())
     # then send the exam exit signal
     parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe)
     

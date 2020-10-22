@@ -288,15 +288,6 @@ def lockFileExists():
         return False
 
 
-def createFakeZipFile():
-    """ Create an empty zip File, its a dummy """
-    my_file = Path(CLIENTZIP_DIRECTORY).joinpath('dummy')
-    # create dummy dir to zip
-    my_path = Path(CLIENTZIP_DIRECTORY).joinpath('dummydir')
-    my_path.mkdir()
-    shutil.make_archive(my_file, 'zip', my_path)
-
-
 def showDesktopMessage(msg):
     """uses a passivepopup to display messages from the daemon"""
     # message = "Exam Server: %s " % (msg)
