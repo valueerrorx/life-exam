@@ -174,39 +174,16 @@ class MyClientProtocol(basic.LineReceiver):
         ENDMSG macht diesen dann als deskotp message sichtbar
         """
         line_handler(self) if line_handler is not None else self.buffer.append(line)  # noqa
-        
-    def demote(self, user_name, user_uid, user_gid):
-        """Pass the function 'set_ids' to preexec_fn, rather than just calling
-        setuid and setgid. This will change the ids for that subprocess only"""
-        def set_ids():
-            print("starting")
-            print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
-            print (os.getgroups())
-            # initgroups must be run before we lose the privilege to set it!
-            os.initgroups(user_name, user_gid)
-            os.setgid(user_gid)
-            # this must be run last
-            os.setuid(user_uid)
-            print("finished demotion")
-            print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
-            print (os.getgroups())
-        return set_ids
     
     def runAndWaittoFinish(self, cmd):
         """Runs a subprocess, and waits for it to finish"""
         stderr = ""
         stdout = ""
-        user_name = "student"
-        uid = pwd.getpwnam(user_name).pw_uid
-        guid = pwd.getpwnam(user_name).pw_gid
         proc = subprocess.Popen(cmd, 
                                 shell=True, 
-                                # stdin=subprocess.PIPE, 
+                                stdin=subprocess.PIPE, 
                                 stdout=subprocess.PIPE, 
                                 stderr=subprocess.PIPE, 
-                                # bufsize=0, 
-                                preexec_fn=self.demote(user_name, uid, guid),
-                                env={'env_keep': 'DBUS_SESSION_BUS_ADDRESS'}
                                 )
         for line in iter(proc.stderr.readline, b''):
             stderr += line.decode()
@@ -248,15 +225,15 @@ class MyClientProtocol(basic.LineReceiver):
                     pids = p.split(' ')
                     print("%s Pids: %s" % (app_str, self._getArrayAsString(pids)))
                     for pid in pids:
-                        qdbuscommand = "runuser -u %s -- qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (USER, app, pid, app, savetrigger)
-                        qdbuscommand = "qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (app, pid, app, savetrigger)
-                        print(qdbuscommand)
-                        data = self.runAndWaittoFinish(qdbuscommand)
-                        print(data)
-                except:
+                        prefix = "sudo -E -u student -H"
+                        qdbus_command = "%s qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (prefix, app, pid, app, savetrigger)
+                        data = self.runAndWaittoFinish(qdbus_command)
+                except Exception as error:
                     print("%s not running" % app_str)
+                    print(error)
 
-            else:  # make a list of the other running apps
+            else:  
+                # make a list of the other running apps
                 command = "xdotool search --name %s &" % (app)
                 app_ids = subprocess.check_output(command, shell=True).decode().rstrip()
                 if app_ids:
@@ -264,6 +241,7 @@ class MyClientProtocol(basic.LineReceiver):
                     for app_id in app_ids:
                         app_id_list.append(app_id)
 
+        # trigger Auto Save via xdotool
         for application_id in app_id_list:  # try to invoke ctrl+s on the running apps
             command = "xdotool windowactivate %s && xdotool key ctrl+s &" % (application_id)
             os.system(command)

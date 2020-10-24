@@ -2,6 +2,7 @@ import subprocess
 import os
 
 ''' A Class for runing cmds with subprocess, also as a specific user '''
+import pwd
 class CmdRunner():
     def __init__(self):
         self._stderr = ""
@@ -38,10 +39,14 @@ class CmdRunner():
             self._stdout += line.decode()
         proc.communicate()
 
-    def runCmdasUID(self, cmd, uid, guid):
+    def runCmdasUser(self, cmd, user_name):
         ''' runs a command as a specific User'''
         self._stderr = ""
         self._stdout = ""
+        
+        user_name = "student"
+        uid = pwd.getpwnam(user_name).pw_uid
+        guid = pwd.getpwnam(user_name).pw_gid
 
         proc = subprocess.Popen(cmd,
                                 shell=True,
@@ -49,7 +54,9 @@ class CmdRunner():
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 bufsize=0,
-                                preexec_fn=self.demote(uid, guid))
+                                preexec_fn=self.demote(user_name, uid, guid)
+                                #env={'env_keep': ENV}
+                                )
         for line in iter(proc.stderr.readline, b''):
             self._stderr += line.decode()
 
@@ -73,10 +80,23 @@ class CmdRunner():
         cmd = ['id']
         return subprocess.check_output(cmd, preexec_fn=self.demote(1000, 1000))
 
-    def demote(self, user_uid, user_gid):
+    def demote(self, user_name, user_uid, user_gid):
         """Pass the function 'set_ids' to preexec_fn, rather than just calling
         setuid and setgid. This will change the ids for that subprocess only"""
         def set_ids():
-            os.setgid(user_gid)
-            os.setuid(user_uid)
+            try:
+                #print("starting")
+                #print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
+                #print (os.getgroups())
+                # initgroups must be run before we lose the privilege to set it!
+                os.initgroups(user_name, user_gid)
+                #print("initgroups")
+                os.setgid(user_gid)
+                # this must be run last
+                os.setuid(user_uid)
+                #print("finished demotion")
+                #print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
+                #print (os.getgroups())
+            except Exception as error:
+                print(error)            
         return set_ids

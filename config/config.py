@@ -26,7 +26,7 @@ MAX_HEARTBEAT_FAILS = 3     # maximum number of Heartbeats missing, until a Clie
 MAX_HEARTBEAT_KICK = 8      # maximum number of Heartbeats missing, until a Client is removed
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
-SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets']
+SAVEAPPS = ['calligrawords', 'calligrasheets', 'words', 'sheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()
