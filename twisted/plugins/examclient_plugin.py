@@ -210,7 +210,7 @@ class MyClientProtocol(basic.LineReceiver):
         app_id_list = []
         
         # wenn nichts mehr gefunden wird
-        wait_thread.fireEvent_Done()
+        wait_thread.fireEvent_Done() 
         
         
         for app in SAVEAPPS:
