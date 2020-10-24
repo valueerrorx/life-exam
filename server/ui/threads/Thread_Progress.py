@@ -18,7 +18,6 @@ class Thread_Progress(QtCore.QThread):
 
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
-        self.running = False
         self.parent = parent
         self.running = False
         self.clients = []

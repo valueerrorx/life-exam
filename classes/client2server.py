@@ -14,6 +14,8 @@ import os
 from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
 from time import sleep
+from classes.Thread_Wait import Thread_Wait, autosave_done
+
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -176,24 +178,39 @@ class ClientToServer:
         os.system(command)
         print("SCREENSHOT IS PREPARED")
         return filename
+    
+    def countFiles(self, dir):
+        """count number of files and dirs in directory"""
+        file_count = sum(len(files) for _, _, files in os.walk(r'dir'))
+        return file_count
 
     def prepare_abgabe(self, client, filename):
         """
-        Prepares Files to be send as zip archive
+        Prepares Files to be send as zip archive if there a files 
         :param client: clientprotocol
         :param filename: filename of abgabe archive
-        :return: filename
+        :return: filename or None
         """
+        # Waiting Thread
+        wait_thread = Thread_Wait(self)
+        # connect Events
+        wait_thread.finished_signal.connect(self.create_abgabe_zip(filename))
+        wait_thread.start()
         print("Files are beeing zipped ...")
-        client.triggerAutosave()
+        client.triggerAutosave(wait_thread)
         
         # TODO: make autosave return that it is finished!
-        time.sleep(2)
         
+        
+    def create_abgabe_zip(self, filename):
+        """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY
         output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
         # create zip of folder
-        shutil.make_archive(output_filename, 'zip', target_folder)  
-
-        # this is the filename of the zip file
-        return "%s.zip" % filename  
+        if self.countFiles(target_folder) > 0:
+            shutil.make_archive(output_filename, 'zip', target_folder)
+            # this is the filename of the zip file
+            return "%s.zip" % filename
+        else:
+            return None
+      

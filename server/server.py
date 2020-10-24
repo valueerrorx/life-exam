@@ -13,7 +13,6 @@ from time import time, sleep
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
-# print(sys.path)
 from version import __version__
 
 from config.logger import configure_logging

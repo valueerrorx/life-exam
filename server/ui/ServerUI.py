@@ -37,7 +37,6 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
 from server.ui.threads.Thread_Progress import Thread_Progress
 from server.ui.threads.Heartbeat import Heartbeat
 from enum import Enum
-import pwd
 
 
 class MsgType(Enum):

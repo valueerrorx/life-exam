@@ -201,12 +201,17 @@ class MyClientProtocol(basic.LineReceiver):
             string += val + " "
         return string
 
-    def triggerAutosave(self):
+    def triggerAutosave(self, wait_thread):
         """
         this function uses xdotool to find windows and trigger ctrl + s shortcut on them
         which will show the save dialog the first time and silently save the document the next time
+        :wait_thread: waits for an Event to trigger everything is done
         """        
         app_id_list = []
+        
+        # wenn nichts mehr gefunden wird
+        wait_thread.fireEvent_Done()
+        
         
         for app in SAVEAPPS:
             # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
