@@ -19,9 +19,9 @@ import zipfile
 import datetime
 
 from classes import mutual_functions
-from config.config import SHARE_DIRECTORY, SAVEAPPS, USER,\
+from config.config import SHARE_DIRECTORY, SAVEAPPS, \
     PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY,\
-    CLIENTFILES_DIRECTORY
+    CLIENTFILES_DIRECTORY, CLIENTZIP_DIRECTORY
 from config.enums import Command, DataType
 
 
@@ -38,7 +38,7 @@ from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 from pathlib import Path
-import pwd
+from twisted.internet.task import LoopingCall
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -55,6 +55,12 @@ class MyClientProtocol(basic.LineReceiver):
         self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
+        
+        # AutoSave open Apps Part ---------------------------------------------
+        # which Apps are allready triggered a autosave via xdotool
+        self.trigerdAutoSavedIDs = []
+        self.detectLoop = None
+        self.allSaved = False
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -190,72 +196,139 @@ class MyClientProtocol(basic.LineReceiver):
 
         for line in iter(proc.stdout.readline, b''):
             stdout += line.decode()
-        # Wait for process to terminate and set the returncode attribute
+        # Wait for process to terminate and set the return code attribute
         proc.communicate()
         
         return [proc.returncode, stderr, stdout]
     
+# Autotrigger Save Part -------------------------------------------------------------------
     def _getArrayAsString(self, arr):
         string = ""
         for val in arr:
             string += val + " "
         return string
-
-    def triggerAutosave(self, wait_thread):
+    
+    def _isTriggered(self, application_id):
+        """ is this ID allready autosav fired? """
+        found = False
+        for theid in self.trigerdAutoSavedIDs:
+            if(theid == application_id):
+                found = True
+                break
+        return found
+    
+    def _fireSaveApps(self, pids, app_id_list):
+        """ 
+        trigger dbus and xdotool to open apps
+        :pids: PIDs from DBus
+        :app_id_list: IDs from xdotool 
         """
-        this function uses xdotool to find windows and trigger ctrl + s shortcut on them
-        which will show the save dialog the first time and silently save the document the next time
-        :wait_thread: waits for an Event to trigger everything is done
-        """        
-        app_id_list = []
-        
-        # wenn nichts mehr gefunden wird
-        wait_thread.fireEvent_Done() 
-        
-        
         for app in SAVEAPPS:
-            # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
-            app_str = "Calligrawords/Calligrasheets/Kate"
-            if app == "calligrawords" or app == "calligrasheets" or app == "kate":  
+            if len(pids)>0:
                 if app == "kate":
                     savetrigger = "file_save_all"
                 else:
                     savetrigger = "file_save"
                 try:
-                    command = "pidof %s" % (app)
-                    # data = [exitcode, err, out]
-                    data = self.runAndWaittoFinish(command)    
-                    # clean               
-                    p = data[2].replace('\n', '')
-                    pids = p.split(' ')
-                    print("%s Pids: %s" % (app_str, self._getArrayAsString(pids)))
+                    print("dbus Pids: %s" % (self._getArrayAsString(pids)))
                     for pid in pids:
                         prefix = "sudo -E -u student -H"
                         qdbus_command = "%s qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (prefix, app, pid, app, savetrigger)
                         data = self.runAndWaittoFinish(qdbus_command)
                 except Exception as error:
-                    print("%s not running" % app_str)
                     print(error)
+            
+        # trigger Auto Save via xdotool but only ONE Time
+        if(len(app_id_list) > 0):
+            for application_id in app_id_list:  # try to invoke ctrl+s on the running apps
+                if(self._isTriggered(application_id) == False):
+                    command = "xdotool windowactivate %s && xdotool key ctrl+s &" % (application_id)
+                    os.system(command)
+                    print("ctrl+s sent to %s" % (application_id))
+                     
+                    #remember this id
+                    self.trigerdAutoSavedIDs.append(application_id)
+                else:
+                    print("ID %s allready in save State -waiting-" % application_id)
 
-            else:  
-                # make a list of the other running apps
+        
+    def _countOpenApps(self):
+        """ counts how much apps are open """
+        open_apps = 0
+        app_id_list = []
+        for app in SAVEAPPS:
+            # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
+            found = False
+            # DBus -------------------------------------
+            command = "pidof %s" % (app)
+            data = self.runAndWaittoFinish(command)    
+            # clean               
+            p = data[2].replace('\n', '')
+            pids = p.split(' ')
+            # check for empty data
+            finalPids = []
+            for item in pids:
+                if(len(item) > 0):
+                    finalPids.append(item)
+                    open_apps += 1  
+                    found = True
+                    print("> %s" % app)
+            
+            # i dont find it on DBus
+            if found ==False:
+                # xdotool -----------------------------------
                 command = "xdotool search --name %s &" % (app)
                 app_ids = subprocess.check_output(command, shell=True).decode().rstrip()
                 if app_ids:
                     app_ids = app_ids.split('\n')
                     for app_id in app_ids:
                         app_id_list.append(app_id)
+                    open_apps += 1
+                    print("xdo > %s" % app)
+        return [open_apps, finalPids, app_id_list] 
 
-        # trigger Auto Save via xdotool
-        for application_id in app_id_list:  # try to invoke ctrl+s on the running apps
-            command = "xdotool windowactivate %s && xdotool key ctrl+s &" % (application_id)
-            os.system(command)
-            print("ctrl+s sent to %s" % (application_id))
+    def _detectOpenApps(self, filename):
+        """ counts the open Apps """
+        #[open_apps, pids, app_ids]
+        data = self._countOpenApps()
+        count = int(data[0])
+        
+        print("Offene Apps: %s" % count)
+        self._fireSaveApps(data[1], data[2])
+        
+        if(count == 0):
+            # if there are no more open Apps
+            self.detectLoop.stop()
+            self.allSaved = True
+            finalname = self.create_abgabe_zip(filename)
+            self.client_to_server.setZipFileName(finalname)
 
-        # try the current active window too in order to catch other applications not in config.py
-        # command = "xdotool getactivewindow && xdotool key ctrl+s &"   #this is bad if you want to watch with console
-        # os.system(command)
-
+    def triggerAutosave(self, filename):
+        """
+        this function uses xdotool to find windows and trigger ctrl + s shortcut on them
+        which will show the save dialog the first time and silently save the document the next time
+        """
+        self.allSaved = False
+        # clear Array
+        del self.trigerdAutoSavedIDs[:]
+        self.trigerdAutoSavedIDs = []
+        self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename))
+        self.detectLoop.start(2)
+        
+            
+    def create_abgabe_zip(self, filename):
+        """Event Save done is ready, now create zip"""
+        target_folder = SHARE_DIRECTORY
+        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
+        # create zip of folder
+        if mutual_functions.countFiles(target_folder) > 0:
+            shutil.make_archive(output_filename, 'zip', target_folder)
+            # this is the filename of the zip file
+            return "%s.zip" % filename
+        else:
+            return None
+# Autotrigger Save Part END -------------------------------------------------------------------
+        
     def sendFile(self, filename, filetype):
         """send a file to the server"""
         # rebuild here just in case something changed (zip/screenshot created )

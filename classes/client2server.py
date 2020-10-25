@@ -6,15 +6,13 @@
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details.
 
-import time
-import shutil
 import sys
 from pathlib import Path
 import os
 from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
-    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, CLIENTZIP_DIRECTORY
+    CLIENTSCREENSHOT_DIRECTORY
 from time import sleep
-from classes.Thread_Wait import Thread_Wait, autosave_done
+from classes.Thread_Wait import Thread_Wait
 
 
 # add application root to python path for imports at position 0
@@ -35,6 +33,7 @@ class ClientToServer:
         self.client = ""
         # rootDir of Application
         self.rootDir = Path(__file__).parent.parent
+        self.zipFileName = None
 
     """
     student actions
@@ -136,6 +135,8 @@ class ClientToServer:
         os.system(startcommand)  # start script
 
         return
+    
+    def _sendZipFile(self, client, filename):
 
     def file_transfer_request(self, client):
         """
@@ -158,11 +159,25 @@ class ClientToServer:
 
             elif filetype == DataType.ABGABE.value:
                 # zip Files and send it to the Teacher
-                finalfilename = self.prepare_abgabe(client, filename)
-                print("Files: %s" % finalfilename)
-                client.sendFile(finalfilename, filetype)
+                self.prepare_abgabe(client, filename)
+                wait_thread = Thread_Wait(self)
+                wait
+                
+                wait for trigger ....
+                
+                if(self.zipFileName != None):
+                    print("Abgabe ZipFile: %s" % self.zipFileName)
+                    client.sendFile(self.zipFileName, filetype)
+                else:
+                    print("Abgabe: No Data to send!")
+                    #client.setLineMode()
+                    # print("Filetransfer finished, switched back to LineMode")
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
+            
+    def setZipFileName(self, name):
+        """ the name of the Zip File to send """
+        self.zipFileName = name
 
     """ prepare filetype """
     def prepare_screenshot(self, filename):
@@ -178,11 +193,6 @@ class ClientToServer:
         os.system(command)
         print("SCREENSHOT IS PREPARED")
         return filename
-    
-    def countFiles(self, dir):
-        """count number of files and dirs in directory"""
-        file_count = sum(len(files) for _, _, files in os.walk(r'dir'))
-        return file_count
 
     def prepare_abgabe(self, client, filename):
         """
@@ -191,26 +201,6 @@ class ClientToServer:
         :param filename: filename of abgabe archive
         :return: filename or None
         """
-        # Waiting Thread
-        wait_thread = Thread_Wait(self)
-        # connect Events
-        wait_thread.finished_signal.connect(self.create_abgabe_zip(filename))
-        wait_thread.start()
-        print("Files are beeing zipped ...")
-        client.triggerAutosave(wait_thread)
-        
-        # TODO: make autosave return that it is finished!
-        
-        
-    def create_abgabe_zip(self, filename):
-        """Event Save done is ready, now create zip"""
-        target_folder = SHARE_DIRECTORY
-        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
-        # create zip of folder
-        if self.countFiles(target_folder) > 0:
-            shutil.make_archive(output_filename, 'zip', target_folder)
-            # this is the filename of the zip file
-            return "%s.zip" % filename
-        else:
-            return None
-      
+        self.zipFileName = None # be sure
+        client.triggerAutosave(filename)
+    

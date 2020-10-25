@@ -10,7 +10,6 @@ import hashlib
 import logging
 import os
 import subprocess
-import webbrowser
 
 from pathlib import Path
 from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
@@ -310,4 +309,9 @@ def openFileManager(path):
         subprocess.check_call(['xdg-open', path])
     elif sys.platform == 'win32':
         subprocess.check_call(['explorer', path])
+        
+def countFiles(dir):
+        """count number of files and dirs in directory"""
+        file_count = sum(len(files) for _, _, files in os.walk(r'dir'))
+        return file_count
     
