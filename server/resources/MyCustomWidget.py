@@ -71,7 +71,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.content = QtWidgets.QWidget(self)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.content.sizePolicy().hasHeightForWidth())
