@@ -310,8 +310,16 @@ def openFileManager(path):
     elif sys.platform == 'win32':
         subprocess.check_call(['explorer', path])
         
-def countFiles(dir):
-        """count number of files and dirs in directory"""
-        file_count = sum(len(files) for _, _, files in os.walk(r'dir'))
-        return file_count
+def countFiles(path):
+    """count number of files and dirs in directory"""
+    files_count = 0
+    dir_count = 0
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in files:
+            print(os.path.join(root, name))
+        for name in dirs:
+            print(os.path.join(root, name))
+        files_count = len(files)
+        dir_count = len(dirs)
+    return [files_count, dir_count]
     

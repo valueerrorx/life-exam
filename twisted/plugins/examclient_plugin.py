@@ -256,6 +256,7 @@ class MyClientProtocol(basic.LineReceiver):
         """ counts how much apps are open """
         open_apps = 0
         app_id_list = []
+        finalPids = []
         for app in SAVEAPPS:
             # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
             found = False
@@ -266,13 +267,12 @@ class MyClientProtocol(basic.LineReceiver):
             p = data[2].replace('\n', '')
             pids = p.split(' ')
             # check for empty data
-            finalPids = []
             for item in pids:
                 if(len(item) > 0):
                     finalPids.append(item)
                     open_apps += 1  
                     found = True
-                    print("> %s" % app)
+                    # print("> %s" % app)
             
             # i dont find it on DBus
             if found ==False:
@@ -284,10 +284,10 @@ class MyClientProtocol(basic.LineReceiver):
                     for app_id in app_ids:
                         app_id_list.append(app_id)
                     open_apps += 1
-                    print("xdo > %s" % app)
+                    # print("xdo > %s" % app)
         return [open_apps, finalPids, app_id_list] 
 
-    def _detectOpenApps(self, filename):
+    def _detectOpenApps(self, filename, wait_thread):
         """ counts the open Apps """
         #[open_apps, pids, app_ids]
         data = self._countOpenApps()
@@ -302,8 +302,11 @@ class MyClientProtocol(basic.LineReceiver):
             self.allSaved = True
             finalname = self.create_abgabe_zip(filename)
             self.client_to_server.setZipFileName(finalname)
+            # fire Event "We are ready to send the file"
+            wait_thread.fireEvent_Done()
+            
 
-    def triggerAutosave(self, filename):
+    def triggerAutosave(self, filename, wait_thread):
         """
         this function uses xdotool to find windows and trigger ctrl + s shortcut on them
         which will show the save dialog the first time and silently save the document the next time
@@ -312,16 +315,18 @@ class MyClientProtocol(basic.LineReceiver):
         # clear Array
         del self.trigerdAutoSavedIDs[:]
         self.trigerdAutoSavedIDs = []
-        self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename))
-        self.detectLoop.start(2)
-        
+        self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename, wait_thread))
+        self.detectLoop.start(2)        
             
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY
         output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
         # create zip of folder
-        if mutual_functions.countFiles(target_folder) > 0:
+        print("Anzahl an Files in %s" % target_folder)
+        count = mutual_functions.countFiles(target_folder)
+        count = int(count[0])
+        if  count > 0:
             shutil.make_archive(output_filename, 'zip', target_folder)
             # this is the filename of the zip file
             return "%s.zip" % filename

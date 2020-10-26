@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 import os
 from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
-    CLIENTSCREENSHOT_DIRECTORY
+    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY
 from time import sleep
 from classes.Thread_Wait import Thread_Wait
 
@@ -136,8 +136,6 @@ class ClientToServer:
 
         return
     
-    def _sendZipFile(self, client, filename):
-
     def file_transfer_request(self, client):
         """
         Decides if a GET or a SEND operation needs to be dispatched and unboxes relevant attributes to be used in the actual sending/receiving functions
@@ -158,27 +156,29 @@ class ClientToServer:
                 client.sendFile(finalfilename, filetype)
 
             elif filetype == DataType.ABGABE.value:
-                # zip Files and send it to the Teacher
-                self.prepare_abgabe(client, filename)
-                wait_thread = Thread_Wait(self)
-                wait
+                wait_thread = Thread_Wait()
+                wait_thread.finished_signal.connect(lambda: self._sendZipFile(client, filetype))
+                wait_thread.start()
                 
-                wait for trigger ....
-                
-                if(self.zipFileName != None):
-                    print("Abgabe ZipFile: %s" % self.zipFileName)
-                    client.sendFile(self.zipFileName, filetype)
-                else:
-                    print("Abgabe: No Data to send!")
-                    #client.setLineMode()
-                    # print("Filetransfer finished, switched back to LineMode")
+                # zip Files send signal when done to _sendZipFile 
+                self.prepare_abgabe(client, filename, wait_thread)                
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
+            
+    def _sendZipFile(self, client, filetype):
+        """ signal received send the file """
+        if(self.zipFileName != None):
+            print("Abgabe ZipFile: %s" % self.zipFileName)
+            client.sendFile(self.zipFileName, filetype)
+        else:
+            print("Abgabe: No Data to send, because nothing in %s!" % (SHARE_DIRECTORY))
+            #client.setLineMode()
+            # print("Filetransfer finished, switched back to LineMode")
             
     def setZipFileName(self, name):
         """ the name of the Zip File to send """
         self.zipFileName = name
-
+    
     """ prepare filetype """
     def prepare_screenshot(self, filename):
         """
@@ -194,7 +194,7 @@ class ClientToServer:
         print("SCREENSHOT IS PREPARED")
         return filename
 
-    def prepare_abgabe(self, client, filename):
+    def prepare_abgabe(self, client, filename, wait_thread):
         """
         Prepares Files to be send as zip archive if there a files 
         :param client: clientprotocol
@@ -202,5 +202,5 @@ class ClientToServer:
         :return: filename or None
         """
         self.zipFileName = None # be sure
-        client.triggerAutosave(filename)
+        client.triggerAutosave(filename, wait_thread)
     

@@ -190,7 +190,6 @@ class ServerUI(QtWidgets.QDialog):
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
         # mutual_functions.openFileManager("/home/student")
-    
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """

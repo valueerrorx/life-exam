@@ -7,6 +7,8 @@ import zipfile
 import datetime
 import pwd
 import dbus
+from config.config import SHARE_DIRECTORY
+from classes import mutual_functions
 
 
 def write_dbus_env_OS():
@@ -169,11 +171,26 @@ def triggerAutosave():
         print(error)
         print("%s not running" % app_str)
 
-    
+  
+print("Anzahl an Files in %s" % SHARE_DIRECTORY)
+dir = SHARE_DIRECTORY
+files_count = 0
+dir_count = 0
+for root, dirs, files in os.walk(dir, topdown=False):
+    for name in files:
+        print(os.path.join(root, name))
+    for name in dirs:
+        print(os.path.join(root, name))
+    files_count = len(files)
+    dir_count = len(dirs)
+print(files_count)
 
-triggerAutosave()
+
+
+
 
 """
+triggerAutosave()
 print(os.environ)
 write_dbus_env_OS()
 print(os.environ)
