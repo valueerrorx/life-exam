@@ -61,7 +61,7 @@ class MyServerProtocol(basic.LineReceiver):
                 self.transport.getPeer().host, len(self.factory.server_to_client.clients)), MsgType.AllwaysDebug)
 
         if not self.refused:
-            self.factory.window._disableClientScreenshot(self)
+            self.factory.window.disableClientScreenshot(self)
             
 
     # twisted-Event: Data Received
@@ -104,27 +104,22 @@ class MyServerProtocol(basic.LineReceiver):
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)
 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
-                    """
-                    End of Exam
-                    """
+                    """ Request for all Data of a client """
                     # extract to unzipDIR / clientName / foldername without .zip (cut last four letters
                     # shutil.unpack_archive(file_path, extract_dir, 'tar')
-                    # python3 only but twisted RPC is not ported to python3 yet
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
+                    
+                    # checks if filename is taken and renames this file in order to make room for the userfolder
+                    mutual_functions.checkIfFileExists(user_dir)
 
-                    # was there an exam? if not, we will receive this dummy.zip file
-                    if self.line_data_list[2] != "dummy.zip":
-                        # checks if filename is taken and renames this file in order to make room for the userfolder
-                        mutual_functions.checkIfFileExists(user_dir)
+                    with zipfile.ZipFile(file_path, "r") as zip_ref:
+                        zip_ref.extractall(extract_dir)
+                    # fix filepermission of transferred file
+                    mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
 
-                        with zipfile.ZipFile(file_path, "r") as zip_ref:
-                            zip_ref.extractall(extract_dir)
-                        # fix filepermission of transferred file
-                        mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
-
-                        # delete zip file
-                        os.unlink(file_path)
+                    # delete zip file
+                    os.unlink(file_path)
 
                     # the network progress is allways handled
                     # Send Event to Wait Thread with Client Name

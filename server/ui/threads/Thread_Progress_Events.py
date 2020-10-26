@@ -15,8 +15,13 @@ def client_abgabe_done_exit_exam(parent, who):
     # event fired in MyServerProtocol
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Files ..." % item.getID())
-    # show in Filemanager
-    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
+    
+    parent.networkProgress.decrement()
+    if parent.networkProgress.value() <= 1:
+        # show in Filemanager
+        mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
+        # if there is an animation showing
+        parent.workinganimation.stop()
 
 
 def client_received_file_done(parent, clientWidget):
@@ -26,7 +31,7 @@ def client_received_file_done(parent, clientWidget):
     # set the status Icon
     clientWidget.setFileReceivedOK()
     parent.networkProgress.decrement()
-    if parent.networkProgress.value() == 0:
+    if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()
 
@@ -43,7 +48,7 @@ def client_abgabe_done(parent, who):
     parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe)
     
     parent.networkProgress.decrement()
-    if parent.networkProgress.value() == 0:
+    if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()
 
@@ -52,13 +57,13 @@ def client_lock_screen(parent, who):
     """ will be fired when client locks the screen """
     parent.networkProgress.decrement()
     # print("ProgressBar: %s" % parent.networkProgress.value() )
-    if parent.networkProgress.value() == 0:
+    if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()    
 
 def client_unlock_screen(parent, who):
     """ will be fired when client unlocks the screen """
     parent.networkProgress.decrement()
-    if parent.networkProgress.value() == 0:
+    if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()

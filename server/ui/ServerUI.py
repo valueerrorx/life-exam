@@ -420,11 +420,10 @@ class ServerUI(QtWidgets.QDialog):
 
         # Waiting Thread
         self.log("Waiting for Client to send Abgabe-Files")
-        self.progress_thread.setClients(clients)
+        
         if self.progress_thread:
             self.progress_thread.stop()
         self.progress_thread.start()
-
         self.networkProgress.show(len(clients))
 
         if self.factory.rawmode is True:
@@ -613,7 +612,7 @@ class ServerUI(QtWidgets.QDialog):
             self.logger.error("Can't delete client %s" % client_name)
             
 
-    def _disableClientScreenshot(self, client):
+    def disableClientScreenshot(self, client):
         self._show_workingIndicator(500, "Client Screenshot ausgeschaltet")
         client_name = client.clientName
         client_id = client.clientConnectionID

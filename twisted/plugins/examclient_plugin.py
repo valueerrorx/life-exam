@@ -288,7 +288,7 @@ class MyClientProtocol(basic.LineReceiver):
         return [open_apps, finalPids, app_id_list] 
 
     def _detectOpenApps(self, filename, wait_thread):
-        """ counts the open Apps """
+        """ counts the open Apps is called periodically by self.detectLoop """
         #[open_apps, pids, app_ids]
         data = self._countOpenApps()
         count = int(data[0])
@@ -296,7 +296,14 @@ class MyClientProtocol(basic.LineReceiver):
         print("Offene Apps: %s" % count)
         self._fireSaveApps(data[1], data[2])
         
-        if(count == 0):
+        # Fallback abort if user isn't closing apps
+        fallback_time = 5*60  # 5 min
+        
+        # alle 10 sec repeat Message
+        if wait_thread.getSeconds() % 10 == 0:
+            self.inform("Bitte alle Dateien speichern und die laufenden Programme schließen!", Notification_Type.Warning)
+        
+        if((count == 0) or (wait_thread.getSeconds() >= fallback_time)):
             # if there are no more open Apps
             self.detectLoop.stop()
             self.allSaved = True
@@ -304,6 +311,7 @@ class MyClientProtocol(basic.LineReceiver):
             self.client_to_server.setZipFileName(finalname)
             # fire Event "We are ready to send the file"
             wait_thread.fireEvent_Done()
+            wait_thread.stop()
             
 
     def triggerAutosave(self, filename, wait_thread):
@@ -316,7 +324,8 @@ class MyClientProtocol(basic.LineReceiver):
         del self.trigerdAutoSavedIDs[:]
         self.trigerdAutoSavedIDs = []
         self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename, wait_thread))
-        self.detectLoop.start(2)        
+        self.detectLoop.start(2)      
+        self.inform("Bitte alle Dateien speichern und die laufenden Programme schließen!", Notification_Type.Warning)
             
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
