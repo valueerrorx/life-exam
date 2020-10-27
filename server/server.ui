@@ -476,7 +476,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -865,7 +865,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>756</width>
+               <width>851</width>
                <height>936</height>
               </rect>
              </property>
@@ -987,6 +987,19 @@
                             </property>
                             <property name="text">
                              <string>Prüfungsname</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="spellcheck">
+                            <property name="focusPolicy">
+                             <enum>Qt::TabFocus</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">margin:0px; padding:0px; margin-top:5px; margin-left:0px;</string>
+                            </property>
+                            <property name="text">
+                             <string>Rechtschreibprüfung aktiviert?</string>
                             </property>
                            </widget>
                           </item>

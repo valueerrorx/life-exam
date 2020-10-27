@@ -37,6 +37,7 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
 from server.ui.threads.Thread_Progress import Thread_Progress
 from server.ui.threads.Heartbeat import Heartbeat
 from enum import Enum
+from classes.ConfigTools import ConfigTools
 
 
 class MsgType(Enum):
@@ -51,9 +52,15 @@ class ServerUI(QtWidgets.QDialog):
         :param app: the main QApplication
         """
         QtWidgets.QDialog.__init__(self)
+        # rootDir of Application
+        self.rootDir = Path(__file__).parent.parent.parent
+        
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
+        
+        path_to_yml = self.rootDir.joinpath('config/config_ui.yaml')
+        self.configUI = ConfigTools(path_to_yml)
 
         self.application = app
         self.splashscreen = splash
@@ -63,8 +70,6 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.setMessage("Loading UI")
 
         self.factory = factory     # type: MyServerFactory
-        # rootDir of Application
-        self.rootDir = Path(__file__).parent.parent.parent
 
         uifile = self.rootDir.joinpath('server/server.ui')
         self.ui = uic.loadUi(uifile)        # load UI
@@ -186,6 +191,11 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.show()
         
         self.screenshotwindow = ScreenshotWindow(self)
+        
+        # Set UI Values from config_ui.yml file
+        self.configUI.setConfig(self.ui)
+        
+      
         
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)

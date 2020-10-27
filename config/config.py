@@ -56,6 +56,5 @@ PRINTERCONFIG_DIRECTORY = "/etc/cups"
 
 PLASMACONFIG = os.path.join(EXAMCONFIG_DIRECTORY, "lockdown/plasma-EXAM")  # (this should be the config file that is then transferred to the clients and used for the exam desktop)
 
-
 # relative paths
 DATA_DIRECTORY = "./DATA"
