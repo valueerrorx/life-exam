@@ -8,18 +8,20 @@
 
 
 # dont forget the trailing slash - otherwise shell will think its a file
-USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+# logname seems to always deliver the current xsession user - no matter if you are using SUDO
+USER=$(logname)   
 HOME="/home/${USER}/"
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
-BACKUPDIR="${HOME}.life/unlockedbackup/" #absolute path in order to be accessible from all script locations
+#absolute path in order to be accessible from all script locations
+BACKUPDIR="${HOME}.life/unlockedbackup/"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-SHARE="${HOME}SHARE/"     #don't remove trailing slash.. we are working with that one on folders
+# don't remove trailing slash.. we are working with that one on folders
+SHARE="${HOME}SHARE/"     
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 DELSHARE=$1
 RUNNINGEXAM=0
-
 
 #--------------------------------#
 # Check if root and running exam #
@@ -65,10 +67,11 @@ function backupCurrentConfig(){
         cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
         cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
         cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
-        mv ${HOME}.config/libreoffice/4/user/autocorr/acor* ${BACKUPDIR}   # disable autoreplace 
-        sudo mv /usr/lib/libreoffice/share/autocorr/acor_de* ${BACKUPDIR}
-        sudo mv /usr/lib/libreoffice/share/autocorr/acor_en* ${BACKUPDIR}
-        sudo mv /usr/lib/libreoffice/share/autocorr/acor_fr* ${BACKUPDIR}
+        
+        
+        # disable autocorrection if checkbox is triggered
+        sh ./disable_autocorrection.sh
+        
         #chrome
         cp -a ${HOME}.config/google-chrome/Default/Preferences ${BACKUPDIR}
         sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership
@@ -186,24 +189,6 @@ function restartDesktop(){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #---------------------------------#
 # OPEN PROGRESSBAR DIALOG         #
 #---------------------------------#
@@ -293,16 +278,3 @@ playSound
 #qdbus $progress close
 restartDesktop
     
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-

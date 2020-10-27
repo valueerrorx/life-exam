@@ -1,5 +1,4 @@
 #!/bin/bash
-# last updated: 16.11.2018
 # unloads exam desktop
 #
 # CLIENT FILE - STOP EXAM
@@ -88,9 +87,8 @@ sleep 0.5
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
     
-    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   # enable autoreplace 
-    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/
-
+    # enable autocorrection if checkbox is triggered
+    sh ./enable_autocorrection.sh
     
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 
