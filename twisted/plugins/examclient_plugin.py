@@ -89,6 +89,7 @@ class MyClientProtocol(basic.LineReceiver):
         print(self.line_data_list)
         filename = self.line_data_list[3]
         cleanup_abgabe = self.line_data_list[5]
+        spellcheck = self.line_data_list[6]
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
@@ -107,8 +108,7 @@ class MyClientProtocol(basic.LineReceiver):
                 # initialize exam mode.. unzip and start exam
                 if self.line_data_list[2] == DataType.EXAM.value:
                     self.inform('Initializing Exam Mode ...')
-
-                    self._startExam(filename, file_path, cleanup_abgabe)
+                    self._startExam(filename, file_path, cleanup_abgabe, spellcheck)
 
                 elif self.line_data_list[2] == DataType.FILE.value:
                     if os.path.isfile(os.path.join(SHARE_DIRECTORY, filename)):
@@ -394,12 +394,11 @@ class MyClientProtocol(basic.LineReceiver):
         command = "chmod 775 /etc/cups -R &"
         os.system(command)
 
-    def _startExam(self, filename, file_path, cleanup_abgabe):
+    def _startExam(self, filename, file_path, cleanup_abgabe, spellcheck):
         """
         extracts the config folder and starts the startexam.sh script
         also sets a lock File to indicate that the EXAM started
         """
-
         # testClient running on the same machine
         if self.factory.options['host'] != "127.0.0.1":
             # create lock File
@@ -420,10 +419,11 @@ class MyClientProtocol(basic.LineReceiver):
             thisexamfile.write("\n")
             thisexamfile.write("%s:5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
 
-            command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscritp executable
+            command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscript executable
             os.system(command)
             time.sleep(2)
-            startcommand = "%s/startexam.sh %s &" % (EXAMCONFIG_DIRECTORY, cleanup_abgabe)  # start as user even if the twistd daemon is run by root
+            # start as user even if the twistd daemon is run by root
+            startcommand = "%s/startexam.sh %s &" % (EXAMCONFIG_DIRECTORY, cleanup_abgabe, spellcheck)  
             os.system(startcommand)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original

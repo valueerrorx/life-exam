@@ -470,6 +470,7 @@ class ServerUI(QtWidgets.QDialog):
         
         # Checkbox
         cleanup_abgabe = self.ui.cleanabgabe.checkState()
+        spellcheck = self.ui.spellcheck.checkState()
         # create zip file of all examconfigs
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
@@ -487,7 +488,7 @@ class ServerUI(QtWidgets.QDialog):
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
         # send line and file to all clients
-        server_to_client.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe)
+        server_to_client.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe, spellcheck)
 
     def _on_exit_exam(self, who):
         """
@@ -849,7 +850,7 @@ class ServerUI(QtWidgets.QDialog):
                 os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))
             
             # save the UI COnfig
-            self.configUI.save(self.ui)
+            self.configUI.saveConfig(self.ui)
 
             mutual_functions.deletePidFile()
             self.ui.close()
