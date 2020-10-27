@@ -56,4 +56,37 @@ class ConfigTools():
         ui.cleanabgabe.setChecked(value)
         value = self.getState(self.yml.get('ui').get('del_share_on_shutdown'))
         ui.exitcleanabgabe.setChecked(value)
+        
+    def addEntry(self, dict, sub, key, value):
+        dict[sub][key] = value
+        return dict
+        
+        
+    def save(self, ui):
+        """ save the Configuration of the UI """
+        data = {}
+        sub = "ui"
+        data[sub] = {}
+        data = self.addEntry(data, sub, "exam_name", ui.examlabeledit1.text())
+        data = self.addEntry(data, sub, "delivery_intervall", ui.aintervall.value())
+        data = self.addEntry(data, sub, "screenshot_intervall", ui.ssintervall.value())
+        # -----------
+        r = '0'
+        if ui.spellcheck.isChecked():
+            r = '1'
+        data = self.addEntry(data, sub, "spellcheck_on", r)
+        # -----------
+        r = '0'    
+        if ui.cleanabgabe.isChecked():
+            r = '1'
+        data = self.addEntry(data, sub, "del_share_on_startup", r)
+        # -----------
+        r = '0'
+        if ui.exitcleanabgabe.isChecked():
+            r = '1'
+        data = self.addEntry(data, sub, "del_share_on_shutdown", r)
+        
+        with open(self.path, 'w') as file:
+            yaml.dump(data, file, default_flow_style=False)
+        
     

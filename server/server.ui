@@ -999,7 +999,7 @@
                              <string notr="true">margin:0px; padding:0px; margin-top:5px; margin-left:0px;</string>
                             </property>
                             <property name="text">
-                             <string>Rechtschreibprüfung aktiviert?</string>
+                             <string>Rechtschreibprüfung aktivieren</string>
                             </property>
                            </widget>
                           </item>

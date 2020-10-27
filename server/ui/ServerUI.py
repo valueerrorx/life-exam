@@ -843,15 +843,18 @@ class ServerUI(QtWidgets.QDialog):
             self.stopWidgetIconTimer()
 
             # if in root mode than change log Files to student User
-            self.log("Shuting down >")
-            self.log("root?: uid: %s" % os.getuid())
+            self.log("Shuting down > root?: uid: %s" % os.getuid())
             if os.getuid() == 0:
                 # root has uid = 0
                 os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))
+            
+            # save the UI COnfig
+            self.configUI.save(self.ui)
 
             mutual_functions.deletePidFile()
             self.ui.close()
-            os._exit(0)  # otherwise only the gui is closed and connections are kept alive
+            # otherwise only the gui is closed and connections are kept alive
+            os._exit(0)  
         else:
             self.msg = False
 
