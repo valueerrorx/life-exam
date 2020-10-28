@@ -57,10 +57,10 @@ class ServerToClient:
                 print("server2client Error, clientID: %s, %s" % (client.clientConnectionID, line))
 
     """client instructions"""
-    def exit_exam(self, who, onexit_cleanup_abgabe="none"):
+    def exit_exam(self, who, onexit_cleanup_abgabe, spellcheck):
         if not self.clients:
             return False
-        line = "%s %s %s" % (Command.EXITEXAM.value, onexit_cleanup_abgabe, "%s")
+        line = "%s %s %s %s" % (Command.EXITEXAM.value, onexit_cleanup_abgabe, spellcheck, "%s")
         self.send_to_receivers(who, line)
         return True
 

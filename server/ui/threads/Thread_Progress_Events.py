@@ -40,12 +40,13 @@ def client_abgabe_done(parent, who):
     """ will fired when Client has sent his Abgabe File """
     # Checkbox
     onexit_cleanup_abgabe = parent.ui.exitcleanabgabe.checkState()
+    spellcheck = parent.ui.spellcheck.checkState()
 
     # get from who the connectionID
     item = parent.get_list_widget_by_client_name(who)
     parent.log("Client %s has finished sending Files, now exiting ..." % item.getID())
     # then send the exam exit signal
-    parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe)
+    parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe, spellcheck)
     
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:

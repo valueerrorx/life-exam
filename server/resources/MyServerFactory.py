@@ -44,7 +44,7 @@ class MyServerFactory(protocol.ServerFactory):
             self.pincode = DEBUG_PIN
             self.logger.info("DEBUGGING Mode")
 
-        self.examid = "Exam-%s" % mutual_functions.generatePin(3)
+        self.examid = self.createExamId()
         self.window = ServerUI(self, splash, app)
         self.lc = LoopingCall(lambda: self.window.onAbgabe("all"))
         self.lcs = LoopingCall(lambda: self.window.onScreenshots("all"))
@@ -62,6 +62,9 @@ class MyServerFactory(protocol.ServerFactory):
         # mutual_functions.checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         # starting multicast server here in order to provide "factory" information via broadcast
         self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
+        
+    def createExamId(self):
+        return "Exam-%s" % mutual_functions.generatePin(3)
 
     """
     https://twistedmatrix.com/documents/current/api/twisted.internet.protocol.Factory.html

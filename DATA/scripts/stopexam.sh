@@ -12,6 +12,7 @@ SHARE="${HOME}SHARE/"
 
 
 DELSHARE=$1
+SPELLCHECK=$2
 
 
 #--------------------------------#
@@ -87,13 +88,24 @@ sleep 0.5
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
     
-    # enable autocorrection if checkbox is triggered
-    sh ./enable_autocorrection.sh
-    
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 
     qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
 
+#---------------------------------#
+# Spell Checking                  #   
+#---------------------------------#
+
+if [[ ( $SPELLCHECK = "0" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
+then
+    # enable again autocorrection if checkbox is not
+    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   
+    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/ 
+else
+    # nothing to do, means nothing to copy back
+    # autocorrection was active
+fi   
+    
 
 #---------------------------------#
 # REMOVE EXAM LOCKFILE            #
