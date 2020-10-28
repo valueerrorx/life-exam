@@ -4,6 +4,7 @@
 import logging
 from twisted.internet.protocol import DatagramProtocol
 from config.config import DEBUG_PIN
+from classes import mutual_functions
 
 
 class MultcastLifeServer(DatagramProtocol):
@@ -29,8 +30,11 @@ class MultcastLifeServer(DatagramProtocol):
             serverinfo = self.factory.examid
             if(len(serverinfo)==0):
                 self.factory.examid = self.factory.createExamId()
-                serverinfo = self.factory.examid
+            else:
+                # User has entered a specific EXAM Id, add random Numbers
+                self.factory.examid = "%s-%s" % (self.factory.examid, mutual_functions.generatePin(3))
             
+            serverinfo = self.factory.examid
             message = "SERVER %s" % serverinfo
             self.transport.write(message.encode(), ("228.0.0.5", 8005))
 
