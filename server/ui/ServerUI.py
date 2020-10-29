@@ -405,6 +405,9 @@ class ServerUI(QtWidgets.QDialog):
     def onScreenshots(self, who):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
+        
+        # suspend Heartbeat during filetransfer
+        # self.suspendHeartbeats()
 
         if self.factory.rawmode is True:
             self.log("Waiting for ongoing file-transfers to finish ...")
