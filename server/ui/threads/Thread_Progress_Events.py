@@ -26,8 +26,8 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
             mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
         # if there is an animation showing
         parent.workinganimation.stop()
-    # start Heartbetas again
-    parent.startHeartbeats()
+    # resume Heartbeats again
+    parent.resumeHeartbeats()
 
 
 def client_received_file_done(parent, clientWidget):

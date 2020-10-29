@@ -33,7 +33,7 @@ class PeriodicTimer(QtCore.QThread):
                 self.running = True
                 self.timer.start()
         except Exception as e:
-            print("PeriodicTimer first_start failed %s" % (e.message))
+            print("PeriodicTimer first_start failed %s" % e)
             raise
     
     def run(self):
@@ -51,3 +51,4 @@ class PeriodicTimer(QtCore.QThread):
         if self.timer:
             self.timer.cancel()
         self.running = False
+        self.is_started = False

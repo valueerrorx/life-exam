@@ -36,13 +36,13 @@ class Heartbeat(QtCore.QThread):
     def __del__(self):
         self.wait()
         
-    def suspendTimer(self):
+    def suspend(self):
         """ deactivate the Tick Timer """
-        self.timer.first_start()
+        self.timer.stop()
     
-    def resumeTimer(self):
+    def resume(self):
         """ resume the Tick Timer """
-        self.timer.start()
+        self.timer.first_start()
 
     def get_list_widget_items(self):
         """
@@ -104,6 +104,7 @@ class Heartbeat(QtCore.QThread):
             return False
 
     def stop(self):
+        """ stop this Thread """
         self.running = False
         self.timer.stop()
         self.parent.log("Heartbeat Thread stopped ...")

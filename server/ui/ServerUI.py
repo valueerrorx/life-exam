@@ -419,23 +419,24 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(500, "Zeige deine IP an")
         show_ip()
         
-    def stopHeartbeats(self):
-        self.heartbeat.stop()
-        self.log("Heartbeats STOPPED")
+    def suspendHeartbeats(self):
+        """ suspend Heartbeats until resumed"""
+        self.heartbeat.suspend()
+        self.log("Heartbeats PAUSE")
         
-    def startHeartbeats(self):
-        self.heartbeat.start()
-        self.log("Heartbeats STARTED")
-        
-
+    def resumeHeartbeats(self):
+        """ if Heartbeats suspended, resume them """
+        self.heartbeat.resume()
+        self.log("Heartbeats RESUMED")
+    
     def onAbgabe(self, who, auto):
         """
         get SHARE folder from client
         :who: client or all
         :auto: True/False is this a AutoAbgabe Event?
         """
-        # stop Heartbeat during filetransfer
-        self.stopHeartbeats()
+        # suspend Heartbeat during filetransfer
+        self.suspendHeartbeats()
         # manual triggered?
         self.autoAbgabe = auto
         
@@ -907,6 +908,5 @@ class ServerUI(QtWidgets.QDialog):
 
     def request_heartbeat(self, who):
         """Heartbeat fired time to check the Heartbeat of client"""
-        print("HP REquest")
         server_to_client = self.factory.server_to_client
         server_to_client.request_heartbeat(who)
