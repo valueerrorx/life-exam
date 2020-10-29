@@ -21,6 +21,7 @@ EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
 SHARE="${HOME}SHARE/"     
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 DELSHARE=$1
+SPELLCHECK=$2
 RUNNINGEXAM=0
 
 #--------------------------------#
@@ -68,9 +69,18 @@ function backupCurrentConfig(){
         cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
         cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
         
-        
-        # disable autocorrection if checkbox is triggered
-        sh ./disable_autocorrection.sh
+        # Spell Checking 
+        if [[ ( $SPELLCHECK = "0" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
+        then
+            # disabel autocorrection if checkbox is not
+            mv ${HOME}.config/libreoffice/4/user/autocorr/acor* ${BACKUPDIR}
+            sudo mv /usr/lib/libreoffice/share/autocorr/acor_de* ${BACKUPDIR}
+            sudo mv /usr/lib/libreoffice/share/autocorr/acor_en* ${BACKUPDIR}
+            sudo mv /usr/lib/libreoffice/share/autocorr/acor_fr* ${BACKUPDIR} 
+        else
+            # nothing to do, means nothing to copy back
+            # autocorrection was active
+        fi   
         
         #chrome
         cp -a ${HOME}.config/google-chrome/Default/Preferences ${BACKUPDIR}
