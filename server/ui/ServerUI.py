@@ -22,8 +22,8 @@ from classes.mutual_functions import get_file_list, checkIP
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
-from PyQt5.Qt import QRegExpValidator, QFileDialog, Qt
-from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QImage, QBrush, QCursor
+from PyQt5.Qt import QRegExpValidator, QFileDialog
+from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QCursor
 from classes.HTMLTextExtractor import html_to_text
 
 from classes import mutual_functions
@@ -91,7 +91,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
-        self.ui.abgabe.clicked.connect(lambda: self.onAbgabe("all"))
+        self.ui.abgabe.clicked.connect(lambda: self.onAbgabe("all", False))
         self.ui.screenshots.clicked.connect(lambda: self.onScreenshots("all"))
         self.ui.startexam.clicked.connect(lambda: self._on_start_exam("all"))
         self.ui.openshare.clicked.connect(self._onOpenshare)
@@ -99,6 +99,9 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
 
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
+        # is Auto Abgabe triggered
+        self.autoAbgabe = False
+        
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
         self.ui.exitexam.clicked.connect(lambda: self._on_exit_exam("all"))
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
@@ -415,9 +418,27 @@ class ServerUI(QtWidgets.QDialog):
     def _onShowIP(self):
         self._show_workingIndicator(500, "Zeige deine IP an")
         show_ip()
+        
+    def stopHeartbeats(self):
+        self.heartbeat.stop()
+        self.log("Heartbeats STOPPED")
+        
+    def startHeartbeats(self):
+        self.heartbeat.start()
+        self.log("Heartbeats STARTED")
+        
 
-    def onAbgabe(self, who):
-        """get SHARE folder from client"""
+    def onAbgabe(self, who, auto):
+        """
+        get SHARE folder from client
+        :who: client or all
+        :auto: True/False is this a AutoAbgabe Event?
+        """
+        # stop Heartbeat during filetransfer
+        self.stopHeartbeats()
+        # manual triggered?
+        self.autoAbgabe = auto
+        
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
         # self._startWorkingIndicator('Abgabe ...')
 
@@ -573,22 +594,32 @@ class ServerUI(QtWidgets.QDialog):
             startcommand = "exec %s start &" % (scriptfile)
             os.system(startcommand)
             self.ui.testfirewall.setText("Stoppe Firewall")
+            
+    def stopAutoAbgabe(self):
+        if self.factory.lc.running:
+            self.factory.lc.stop()
+        
+    def startAutoAbgabe(self):
+        intervall = self.ui.aintervall.value()
+        if intervall != 0:
+            minute_intervall = intervall * 60
+            self.factory.lc.start(minute_intervall)
 
     def _onAutoabgabe(self):
         self._show_workingIndicator(500)
-        intervall = self.ui.aintervall.value()
-        minute_intervall = intervall * 60  # minuten nicht sekunden
         if self.factory.lc.running:
             icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()
             self.ui.autoabgabe.setIcon(QIcon(icon))
-            self.factory.lc.stop()
             self.log("<b>Auto-Submission deactivated </b>")
+            self.stopAutoAbgabe()
             return
+        
+        intervall = self.ui.aintervall.value()
         if intervall != 0:
             icon = self.rootDir.joinpath("pixmaps/chronometer.png").as_posix()
             self.ui.autoabgabe.setIcon(QIcon(icon))
             self.log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
-            self.factory.lc.start(minute_intervall)
+            self.startAutoAbgabe()
         else:
             self.log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
             
@@ -738,7 +769,7 @@ class ServerUI(QtWidgets.QDialog):
     def _on_context_menu(self, client_connection_id, is_disabled):
         menu = QtWidgets.QMenu()
 
-        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self.onAbgabe(client_connection_id))
+        action_1 = QtWidgets.QAction("Abgabe holen", menu, triggered=lambda: self.onAbgabe(client_connection_id, False))
         action_2 = QtWidgets.QAction("Screenshot updaten", menu, triggered=lambda: self.onScreenshots(client_connection_id))
         action_3 = QtWidgets.QAction("Datei senden", menu, triggered=lambda: self._onSendFile(client_connection_id))
         action_4 = QtWidgets.QAction("Exam starten", menu, triggered=lambda: self._on_start_exam(client_connection_id))
@@ -876,5 +907,6 @@ class ServerUI(QtWidgets.QDialog):
 
     def request_heartbeat(self, who):
         """Heartbeat fired time to check the Heartbeat of client"""
+        print("HP REquest")
         server_to_client = self.factory.server_to_client
         server_to_client.request_heartbeat(who)

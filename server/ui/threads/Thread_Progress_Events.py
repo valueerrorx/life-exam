@@ -10,18 +10,24 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def client_abgabe_done_exit_exam(parent, who):
-    """ will fired when Client has sent his Abgabe File """
+def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
+    """ 
+    will fired when Client has sent his Abgabe File 
+    :autoAbgabe: 1/0 is that a AutoAbgabe event? 
+    """
     # event fired in MyServerProtocol
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Files ..." % item.getID())
     
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
-        # show in Filemanager
-        mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
+        # show in Filemanager only if we manually trigger Abgabe
+        if autoAbgabe == '0':
+            mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
         # if there is an animation showing
         parent.workinganimation.stop()
+    # start Heartbetas again
+    parent.startHeartbeats()
 
 
 def client_received_file_done(parent, clientWidget):

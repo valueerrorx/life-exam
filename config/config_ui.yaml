@@ -2,6 +2,6 @@ ui:
   del_share_on_shutdown: '0'
   del_share_on_startup: '1'
   delivery_intervall: '5'
-  exam_name: Gurke
+  exam_name: ''
   screenshot_intervall: '20'
   spellcheck_on: '1'

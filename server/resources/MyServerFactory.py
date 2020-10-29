@@ -46,7 +46,7 @@ class MyServerFactory(protocol.ServerFactory):
 
         self.examid = self.createExamId()
         self.window = ServerUI(self, splash, app)
-        self.lc = LoopingCall(lambda: self.window.onAbgabe("all"))
+        self.lc = LoopingCall(lambda: self.window.onAbgabe("all", True))
         self.lcs = LoopingCall(lambda: self.window.onScreenshots("all"))
 
         intervall = self.window.ui.ssintervall.value()

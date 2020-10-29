@@ -124,8 +124,16 @@ class MyServerProtocol(basic.LineReceiver):
                     # the network progress is allways handled
                     # Send Event to Wait Thread with Client Name
                     ui = self.factory.window
+                    
+                    # Flags to String
+                    aA = '0'
+                    if ui.autoAbgabe:
+                        aA = '1'
+                        
+                    print("Autoabgabe: %s" % (aA))
+                    
                     if ui.progress_thread:
-                        ui.progress_thread.fireEvent_Abgabe_finished(self.line_data_list[4])
+                        ui.progress_thread.fireEvent_Abgabe_finished(self.line_data_list[4], aA)
 
             else:  # wrong file hash
                 os.unlink(file_path)
@@ -145,7 +153,8 @@ class MyServerProtocol(basic.LineReceiver):
                     msg = 'Failed transfers: %s' % (self.filetransfer_fail_count)
                     self.factory.window.log(msg)
                     self.logger.info(msg)
-                    self.factory.window.onAbgabe(self.clientConnectionID)
+                    # True means AutoAbgabe
+                    self.factory.window.onAbgabe(self.clientConnectionID, True)
                 else:
                     self.filetransfer_fail_count = 0
 

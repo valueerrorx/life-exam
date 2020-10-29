@@ -19,6 +19,7 @@ class PeriodicTimer(QtCore.QThread):
         self.is_started = False
         self.args = args
         self.kwargs = kwargs
+        self.setObjectName("PeriodicTimer")
 
     def __del__(self):
         self.wait()
@@ -34,7 +35,7 @@ class PeriodicTimer(QtCore.QThread):
         except Exception as e:
             print("PeriodicTimer first_start failed %s" % (e.message))
             raise
-
+    
     def run(self):
         # if not stopped start again
         if self.running:

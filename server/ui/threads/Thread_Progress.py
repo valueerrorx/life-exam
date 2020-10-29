@@ -11,7 +11,7 @@ from server.resources.MyCustomWidget import MyCustomWidget
 
 class Thread_Progress(QtCore.QThread):
     """ a Thread that controlls the progressbar, if clients are contacted """
-    client_finished = pyqtSignal(QDialog, str)
+    client_finished = pyqtSignal(QDialog, str, str)
     client_received_file = pyqtSignal(QDialog, MyCustomWidget)
     client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
     client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
@@ -35,9 +35,9 @@ class Thread_Progress(QtCore.QThread):
         if len(self.clients) > 0:
             self.client_unlock_screen.emit(self.parent, who)
 
-    def fireEvent_Abgabe_finished(self, who):
+    def fireEvent_Abgabe_finished(self, who, autoAbgabe):
         """ client has sended his Files """
-        self.client_finished.emit(self.parent, who)
+        self.client_finished.emit(self.parent, who, autoAbgabe)
 
     def fireEvent_File_received(self, clientWidget):
         """ client has received a file """
@@ -81,8 +81,6 @@ class Thread_Progress(QtCore.QThread):
         self.running = True
         while(self.running):
             time.sleep(0.01)
-
-        return 0
 
     def restart(self, clients):
         """ clears all clients and restarts the Thread """

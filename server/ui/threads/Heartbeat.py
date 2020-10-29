@@ -20,7 +20,6 @@ class Heartbeat(QtCore.QThread):
         self.parent = parent
         self.setObjectName("Heartbeat")
         self.running = False
-        self.running = False
         self._clients = parent.ui.listWidget
         # eigene Liste für die clients mit heartbeat Versuchen
         self._heartbeats = []
@@ -36,6 +35,14 @@ class Heartbeat(QtCore.QThread):
 
     def __del__(self):
         self.wait()
+        
+    def suspendTimer(self):
+        """ deactivate the Tick Timer """
+        self.timer.first_start()
+    
+    def resumeTimer(self):
+        """ resume the Tick Timer """
+        self.timer.start()
 
     def get_list_widget_items(self):
         """
