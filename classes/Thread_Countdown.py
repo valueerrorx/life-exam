@@ -7,15 +7,16 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 
 
-class Thread_Wait(QtCore.QThread):
-    """ a Thread that waits for some reason """
+class Thread_Countdown(QtCore.QThread):
+    """ a Thread that counts down some time """
     finished_signal = pyqtSignal()
 
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
         self.parent = parent
         self.running = False
-        self.setObjectName("Wait Thread")
+        self.time = 5
+        self.setObjectName("Countdown Thread")
         
         # count the seconds
         self.count = 0
@@ -26,9 +27,10 @@ class Thread_Wait(QtCore.QThread):
     def stop(self):
         """ stop the running thread """
         self.running = False
-        
-    def fireEvent_Done(self):
-        self.finished_signal.emit()
+    
+    def setTime(self, t):
+        """ set Time in seconds """
+        self.time = t       
         
     def getSeconds(self):
         """ how many seconds are we running? """
@@ -39,5 +41,7 @@ class Thread_Wait(QtCore.QThread):
         while(self.running):
             time.sleep(1)
             self.count += 1
-
+            if(self.count == self.time):
+                print("XXXXXXXXXXXXXXXXXXXXXXX")
+                self.finished_signal.emit()
         return 0

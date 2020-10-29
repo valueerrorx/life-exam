@@ -9,7 +9,7 @@ from pathlib import Path
 
 from classes.Observers import Observers
 from config.config import EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
-    WORK_DIRECTORY, SERVER_PORT, DEBUG_PIN, DEBUG_ID, USER
+    WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission
 
@@ -19,6 +19,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 from classes.CmdRunner import CmdRunner
 import psutil
+from classes.Thread_Countdown import Thread_Countdown
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -85,9 +86,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         # detect changing of userdata, only needed if debugging is active
         self.inputs_changed = False
 
-        self.checkConnectionInfo()
+        self.checkConnectionInfo_and_CloseIt()
 
-    def checkConnectionInfo(self):
+    def checkConnectionInfo_and_CloseIt(self):
         '''is there an active connection Info on desktop? > close it'''
         pid_file = Path(WORK_DIRECTORY).joinpath('connection.pid')
         if pid_file.is_file():
@@ -197,12 +198,18 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             else:
                 self.ui.close()
 
-                # show Connected Information
+                # show Connected Information -------------------
                 path = os.path.join(self.rootDir, "classes/ConnectionStatus/ConnectionStatusDispatcher.py")
                 exam = self.ui.serverdropdown.currentText()
                 # 1 = connected
                 cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
                 os.system(cmd)
+                
+                # hide Connected Info after 5min ...
+                countdown_thread = Thread_Countdown()
+                countdown_thread.setTime(5)
+                countdown_thread.finished_signal.connect(self.checkConnectionInfo_and_CloseIt)
+                countdown_thread.start()
 
                 # clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 # make sure only one client instance is running per client

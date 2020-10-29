@@ -12,6 +12,7 @@ class MultcastLifeServer(DatagramProtocol):
     def __init__(self, factory):
         self.factory = factory
         self.logger = logging.getLogger(__name__)
+        self.randomNumbersAdded = False
 
     def startProtocol(self):
         """Called after protocol has started listening. """
@@ -32,8 +33,10 @@ class MultcastLifeServer(DatagramProtocol):
                 self.factory.examid = self.factory.createExamId()
             else:
                 # User has entered a specific EXAM Id, add random Numbers
-                self.factory.examid = "%s-%s" % (self.factory.examid, mutual_functions.generatePin(3))
-            
+                if self.randomNumbersAdded == False:
+                    self.factory.examid = "%s-%s" % (self.factory.examid, mutual_functions.generatePin(3))
+
+            self.randomNumbersAdded = True            
             serverinfo = self.factory.examid
             message = "SERVER %s" % serverinfo
             self.transport.write(message.encode(), ("228.0.0.5", 8005))
