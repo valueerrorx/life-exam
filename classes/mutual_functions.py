@@ -193,6 +193,11 @@ def prepareDirectories():
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)
+    
+    # clean Log Files
+    cmd = "find %s -maxdepth 1 -type f -name \"*.log.*\" -delete" % (WORK_DIRECTORY)
+    print(cmd)
+    os.system(copycommand)
 
 
 def fixFilePermissions(folder):

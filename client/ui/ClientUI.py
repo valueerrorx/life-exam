@@ -19,7 +19,6 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 from classes.CmdRunner import CmdRunner
 import psutil
-from classes.Thread_Countdown import Thread_Countdown
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -204,12 +203,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # 1 = connected
                 cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
                 os.system(cmd)
-                
-                # hide Connected Info after 5min ...
-                countdown_thread = Thread_Countdown()
-                countdown_thread.setTime(5)
-                countdown_thread.finished_signal.connect(self.checkConnectionInfo_and_CloseIt)
-                countdown_thread.start()
 
                 # clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
                 # make sure only one client instance is running per client

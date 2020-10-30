@@ -35,6 +35,9 @@ class Thread_Countdown(QtCore.QThread):
     def getSeconds(self):
         """ how many seconds are we running? """
         return self.count
+    
+    def fireEvent(self):
+        self.finished_signal.emit()
 
     def run(self):
         self.running = True
@@ -42,6 +45,6 @@ class Thread_Countdown(QtCore.QThread):
             time.sleep(1)
             self.count += 1
             if(self.count == self.time):
-                print("XXXXXXXXXXXXXXXXXXXXXXX")
-                self.finished_signal.emit()
-        return 0
+                self.fireEvent()
+                self.running = False  
+        return

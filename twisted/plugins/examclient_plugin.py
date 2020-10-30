@@ -39,6 +39,8 @@ from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 from pathlib import Path
 from twisted.internet.task import LoopingCall
+from classes.Thread_Countdown import Thread_Countdown
+import psutil
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -70,6 +72,8 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
         self.inform('Authentication with server ...')
+        
+        self.hideConnectedInformation()
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
@@ -442,7 +446,17 @@ class MyClientProtocol(basic.LineReceiver):
 
         cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s" &' % (self.notification_path, stype, msg)
         os.system(cmd)
-
+        
+    def hideConnectedInformation(self):
+        """ hide Connected Info after 5min ... """
+        countdown_thread = Thread_Countdown()
+        countdown_thread.setTime(5)
+        #countdown_thread.finished_signal.connect(self.checkConnectionInfo_and_CloseIt)
+        #countdown_thread.start()
+        
+        #/home/student/.life/applications/life-exam/classes/ConnectionStatus/ConnectionStatusDispatcher.py
+        
+    
 
 class MyClientFactory(protocol.ReconnectingClientFactory):
     # ReconnectingClientFactory tries to reconnect automatically if connection fails

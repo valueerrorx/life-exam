@@ -9,6 +9,9 @@ import pwd
 import dbus
 from config.config import SHARE_DIRECTORY
 from classes import mutual_functions
+from classes.Thread_Countdown import Thread_Countdown
+from time import sleep
+from classes.psUtil import PsUtil
 
 
 def write_dbus_env_OS():
@@ -171,7 +174,7 @@ def triggerAutosave():
         print(error)
         print("%s not running" % app_str)
 
-  
+"""  
 print("Anzahl an Files in %s" % SHARE_DIRECTORY)
 dir = SHARE_DIRECTORY
 files_count = 0
@@ -184,10 +187,20 @@ for root, dirs, files in os.walk(dir, topdown=False):
     files_count = len(files)
     dir_count = len(dirs)
 print(files_count)
+"""
 
+"""
+def gurke(msg):
+    print("Yeahhh %s" % msg)
+    pass
 
-
-
+countdown_thread = Thread_Countdown()
+countdown_thread.setTime(5)
+countdown_thread.finished_signal.connect()
+countdown_thread.start()
+sleep(10)
+sleep(20)
+"""
 
 """
 triggerAutosave()
@@ -204,3 +217,10 @@ print(export_to_shell())
 
                                                                                  
   
+util = PsUtil()
+pid = util.GetProcessByName("Test")
+print(pid)
+
+
+
+
