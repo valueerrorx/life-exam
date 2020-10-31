@@ -2,30 +2,42 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 
-import time
 from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal
-
+from threading import Timer
 
 class Thread_Countdown(QtCore.QThread):
-    """ a Thread that counts down some time """
-    finished_signal = pyqtSignal()
-
-    def __init__(self, parent=None):
+    """ 
+    a Thread that counts down some time
+    you had to manually stop this thread! 
+    :time: in Seconds after that the Timer is fireing event func
+    """
+    def __init__(self, parent, time, func, *args, **kwargs):
         QtCore.QThread.__init__(self, parent)
         self.parent = parent
+        self.timer = None
+        self.func = func
         self.running = False
-        self.time = 5
-        self.setObjectName("Countdown Thread")
+        self.args = args
+        self.kwargs = kwargs
         
-        # count the seconds
-        self.count = 0
+        self.setObjectName("Countdown Thread")
+        self.time = time
 
     def __del__(self):
         self.wait()
         
+    def start(self):
+        self.timer = Timer(self.time, self.run)
+        self.running = True
+        self.timer.start()
+        
     def stop(self):
-        """ stop the running thread """
+        """
+        cancel current timer in case failed it's still OK
+        if already stopped doesn't matter to stop again
+        """
+        if self.timer:
+            self.timer.cancel()
         self.running = False
     
     def setTime(self, t):
@@ -36,15 +48,5 @@ class Thread_Countdown(QtCore.QThread):
         """ how many seconds are we running? """
         return self.count
     
-    def fireEvent(self):
-        self.finished_signal.emit()
-
     def run(self):
-        self.running = True
-        while(self.running):
-            time.sleep(1)
-            self.count += 1
-            if(self.count == self.time):
-                self.fireEvent()
-                self.running = False  
-        return
+        self.func(*self.args, **self.kwargs)

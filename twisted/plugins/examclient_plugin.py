@@ -40,7 +40,7 @@ from twisted.application.service import IServiceMaker
 from pathlib import Path
 from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
-import psutil
+from classes.psUtil import PsUtil
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -449,12 +449,20 @@ class MyClientProtocol(basic.LineReceiver):
         
     def hideConnectedInformation(self):
         """ hide Connected Info after 5min ... """
-        countdown_thread = Thread_Countdown()
-        countdown_thread.setTime(5)
-        #countdown_thread.finished_signal.connect(self.checkConnectionInfo_and_CloseIt)
-        #countdown_thread.start()
+        # time in sec
+        countdown_thread = Thread_Countdown(None, 5*60, self.checkConnectionInfo_and_CloseIt)    
+        countdown_thread.start()
         
-        #/home/student/.life/applications/life-exam/classes/ConnectionStatus/ConnectionStatusDispatcher.py
+    def checkConnectionInfo_and_CloseIt(self):
+        """ close all Connection Processes """
+        print("Killing all ConnectionInformation Processes")
+        processUtil = PsUtil()
+        pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
+        print(pids)
+        for p in pids:
+            pid = int(p[0])
+            processUtil.killProcess(pid)
+
         
     
 

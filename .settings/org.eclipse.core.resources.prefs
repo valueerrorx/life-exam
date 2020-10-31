@@ -10,6 +10,7 @@ encoding//classes/OvelayIcons/Icon.py=utf-8
 encoding//classes/OvelayIcons/IconStack.py=utf-8
 encoding//classes/OvelayIcons/OpenCVLib.py=utf-8
 encoding//classes/OvelayIcons/OvelayIconsTest.py=utf-8
+encoding//classes/OvelayIcons/PeriodicTimer.py=utf-8
 encoding//classes/Splashscreen/SplashScreen.py=utf-8
 encoding//classes/Thread_Countdown.py=utf-8
 encoding//classes/Thread_Wait.py=utf-8

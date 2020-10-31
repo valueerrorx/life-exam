@@ -12,6 +12,7 @@ from classes import mutual_functions
 from classes.Thread_Countdown import Thread_Countdown
 from time import sleep
 from classes.psUtil import PsUtil
+import psutil
 
 
 def write_dbus_env_OS():
@@ -217,9 +218,21 @@ print(export_to_shell())
 
                                                                                  
   
-util = PsUtil()
-pid = util.GetProcessByName("Test")
+processUtil = PsUtil()
+pid = processUtil.GetProcessByName("Test")
 print(pid)
+
+#/home/student/.life/applications/life-exam/classes/ConnectionStatus/ConnectionStatusDispatcher.py
+pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
+for p in pids:
+    print("%s %s" % (p[0], p[1]))
+    
+def event():
+    print("hallo")
+
+countdown_thread = Thread_Countdown(None, 5, event)    
+countdown_thread.start()
+sleep(20)
 
 
 

@@ -19,6 +19,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 from classes.CmdRunner import CmdRunner
 import psutil
+from classes.psUtil import PsUtil
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -89,24 +90,11 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
     def checkConnectionInfo_and_CloseIt(self):
         '''is there an active connection Info on desktop? > close it'''
-        pid_file = Path(WORK_DIRECTORY).joinpath('connection.pid')
-        if pid_file.is_file():
-            # file exists
-            file = open(pid_file, "r")
-            pid = file.read()
-            self.closeDialog(pid)
-
-    def closeDialog(self, pid):
-        """kill the old running Process"""
-        PID = int(pid)
-        if psutil.pid_exists(PID):
-            try:
-                p = psutil.Process(PID)
-                p.terminate()  # or p.kill()
-                return True
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                self.logger.info("PsUtils cant kill process %s ..." % PID)
-                return False
+        processUtil = PsUtil()
+        pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
+        for p in pids:
+            pid = int(p[0])
+            processUtil.killProcess(pid)
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:

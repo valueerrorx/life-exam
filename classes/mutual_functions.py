@@ -196,8 +196,7 @@ def prepareDirectories():
     
     # clean Log Files
     cmd = "find %s -maxdepth 1 -type f -name \"*.log.*\" -delete" % (WORK_DIRECTORY)
-    print(cmd)
-    os.system(copycommand)
+    os.system(cmd)
 
 
 def fixFilePermissions(folder):
