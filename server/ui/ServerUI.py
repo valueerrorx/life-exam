@@ -294,8 +294,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.ui.screenlock.setIcon(QIcon(icon))
 
     def _onOpenshare(self):
-        startcommand = "runuser -u %s /usr/bin/dolphin %s &" % (USER, SHARE_DIRECTORY)
-        os.system(startcommand)
+        mutual_functions.openFileManager(SHARE_DIRECTORY)
 
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit1.text()

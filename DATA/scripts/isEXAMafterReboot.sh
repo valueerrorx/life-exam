@@ -1,7 +1,7 @@
 #!/bin/bash
 # last updated: 16.01.2020
-# is there a running EXAM after CLient Reboot
-# maybe the the EXAM wasnt shutdown properly
+# is there a running EXAM after Client Reboot
+# maybe the the EXAM wasn't shutdown properly
 #
 # place a link in .profile of the student
 #

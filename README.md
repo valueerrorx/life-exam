@@ -80,7 +80,7 @@ Defaults    env_keep += "XAUTHORITY KDE_FULL_SESSION"
 and PYTHONPATH to your */etc/environment*
 
 ```bash
-PYTHONPATH=".:/home/student/.life/applications/life-exam"
+PYTHONPATH="/home/student/.life/applications/life-exam"
 ```
 
 ![Image of life-exam](http://life-edu.eu/images/exam2.gif)

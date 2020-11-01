@@ -17,7 +17,6 @@ encoding//classes/Thread_Wait.py=utf-8
 encoding//classes/client2server.py=utf-8
 encoding//classes/mutual_functions.py=utf-8
 encoding//classes/server2client.py=utf-8
-encoding//classes/systemTools.py=utf-8
 encoding//client/client.py=utf-8
 encoding//client/resources/MulticastLifeClient.py=utf-8
 encoding//client/resources/lockscreen.py=utf-8
