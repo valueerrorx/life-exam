@@ -91,7 +91,7 @@ class MyClientProtocol(basic.LineReceiver):
             
     def _getIndex(self, index, data):
         """ try except Index from Array """
-        try
+        try:
             return data[index]
         except IndexError:
             return None
