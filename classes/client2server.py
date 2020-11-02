@@ -34,10 +34,13 @@ class ClientToServer:
         # rootDir of Application
         self.rootDir = Path(__file__).parent.parent
         self.zipFileName = None
-
-    """
-    student actions
-    """
+    
+    def _getIndex(self, index, data):
+        """ try except Index from Array """
+        try:
+            return data[index]
+        except IndexError:
+            return None
 
     def end_msg(self, client):
         """
@@ -127,13 +130,13 @@ class ClientToServer:
         :param client: ClientProtocol
         :return:
         """
-        exitcleanup_abgabe = client.line_data_list[1]
-        spellcheck =  client.line_data_list[2]
+        exitcleanup_abgabe = self._getIndex(1, client.line_data_list)
+        spellcheck =  self._getIndex(2, client.line_data_list)
         print("Stopping EXAM")
         # start as user even if the twistd daemon is run by root
         startcommand = "%s/scripts/stopexam.sh %s %s &" % (WORK_DIRECTORY, exitcleanup_abgabe, spellcheck)
         print(startcommand)   
-        # os.system(startcommand)  # start script
+        os.system(startcommand)  # start script
 
         return
     

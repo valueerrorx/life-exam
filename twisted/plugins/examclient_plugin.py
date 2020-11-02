@@ -41,7 +41,6 @@ from pathlib import Path
 from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
-from _ast import Try
 
 
 class MyClientProtocol(basic.LineReceiver):

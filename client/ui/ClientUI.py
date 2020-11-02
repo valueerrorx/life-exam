@@ -17,8 +17,6 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5 import QtWidgets, uic
 
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
-from classes.CmdRunner import CmdRunner
-import psutil
 from classes.psUtil import PsUtil
 
 
@@ -40,7 +38,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.completerlist = []
         self._initUi()
         prepareDirectories()
-        self.cmdRunner = CmdRunner()
 
     def _initUi(self):
         # Register self to Global Observer List Object
