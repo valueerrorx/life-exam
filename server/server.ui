@@ -719,6 +719,9 @@
                        <height>32</height>
                       </size>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                      <property name="flat">
                       <bool>true</bool>
                      </property>
@@ -743,7 +746,7 @@
                      </property>
                      <property name="icon">
                       <iconset>
-                       <normaloff>../pixmaps/addgroup.png</normaloff>../pixmaps/addgroup.png</iconset>
+                       <normaloff>../pixmaps/folder.png</normaloff>../pixmaps/folder.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>

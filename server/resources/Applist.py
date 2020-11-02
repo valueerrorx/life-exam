@@ -15,7 +15,7 @@ from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN
 from classes.CmdRunner import CmdRunner
-
+from re import search
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
@@ -85,9 +85,7 @@ def create_pattern(data):
 
 
 def remove_duplicates(other_applist):
-    """
-    find and remove Duplicates in this AppArray
-    """
+    """ find and remove Duplicates in this AppArray """
     seen = set()
     newlist = []
     for item in other_applist:
@@ -97,12 +95,31 @@ def remove_duplicates(other_applist):
             seen.add(t)
     return newlist
 
+def cleanUp(applist):
+    """ clean Up Apps
+    Geogebra only with Chrome, filter out the Rest
+    Kate new Window (english) 
+    """
+    newlist = []
+    for item in applist:
+        if search("kate", item[2], re.IGNORECASE):  #noqa
+            if search("new session", item[2], re.IGNORECASE) == None:
+                if search("neues fenster", item[2], re.IGNORECASE) == None:
+                    newlist.append(item)
+                    
+        else:   
+            if search("geog", item[2], re.IGNORECASE):  #noqa
+                # possible Geogebra
+                if search("chrome", item[0], re.IGNORECASE):  #noqa
+                    # thats it
+                    newlist.append(item)
+            else:
+                # other apps
+                newlist.append(item)
+    return newlist
 
 def create_app_ranking(applist):
-    """
-    Important Apps moving to the top
-    delete Kate new Window App
-    """
+    """ Important Apps moving to the top """
     final_applist = []
     other_applist = []
     yml = load_yml()
@@ -118,6 +135,7 @@ def create_app_ranking(applist):
             else:
                 other_applist.append(app)
     other_applist = remove_duplicates(other_applist)
+    
     # other_applist sortieren
     other_applist.sort()
     return final_applist + other_applist
@@ -205,6 +223,10 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
                     thisapp[3] = fields[1]
 
         applist.append(thisapp)
+        
+    
+    # clean problems
+    applist = cleanUp(applist)
 
     # sort applist and put most used apps on top
     final_applist = create_app_ranking(applist)
