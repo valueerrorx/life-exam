@@ -434,8 +434,7 @@ class MyClientProtocol(basic.LineReceiver):
             os.system(command)
             time.sleep(2)
             # start as user even if the twistd daemon is run by root
-            command = "%s/startexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, cleanup_abgabe, spellcheck)
-            print(command)  
+            command = "sudo %s/startexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, cleanup_abgabe, spellcheck)
             os.system(command)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original
