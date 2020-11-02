@@ -101,9 +101,6 @@ then
     # enable again autocorrection if checkbox is not
     cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   
     sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/ 
-else
-    # nothing to do, means nothing to copy back
-    # autocorrection was active
 fi   
     
 

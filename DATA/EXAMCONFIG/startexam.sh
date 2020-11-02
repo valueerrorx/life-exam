@@ -1,10 +1,10 @@
 #!/bin/bash
-# last updated: 13.11.2019
+# last updated: 2.11.2020
 # loads exam desktop configuration
 #
 # CLIENT FILE - START EXAM
 #
-# dieses Skript erwartet 1 Parameter:    <delshare>  
+# dieses Skript erwartet Parameter:    <delshare>, <spellcheck>
 
 
 # dont forget the trailing slash - otherwise shell will think its a file
@@ -77,10 +77,7 @@ function backupCurrentConfig(){
             sudo mv /usr/lib/libreoffice/share/autocorr/acor_de* ${BACKUPDIR}
             sudo mv /usr/lib/libreoffice/share/autocorr/acor_en* ${BACKUPDIR}
             sudo mv /usr/lib/libreoffice/share/autocorr/acor_fr* ${BACKUPDIR} 
-        else
-            # nothing to do, means nothing to copy back
-            # autocorrection was active
-        fi   
+        fi  
         
         #chrome
         cp -a ${HOME}.config/google-chrome/Default/Preferences ${BACKUPDIR}
