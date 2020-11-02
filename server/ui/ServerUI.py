@@ -339,6 +339,9 @@ class ServerUI(QtWidgets.QDialog):
         who = connection ID or 'all'
         """
         server_to_client = self.factory.server_to_client
+        
+        # suspend Heartbeat during filetransfer
+        self.suspendHeartbeats()
 
         # check if server is already in rawmode (ongoing filetransfer)
         if self.factory.rawmode is True:

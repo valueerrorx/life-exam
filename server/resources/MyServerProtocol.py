@@ -41,7 +41,6 @@ class MyServerProtocol(basic.LineReceiver):
 
     # twisted-Event: A Connection is lost
     def connectionLost(self, reason):  # noqa
-        self.logger.warning("ConnectionLost")
         """
         maybe give it another try if connection closed unclean? ping it ? send custom keepalive? or even a reconnect call?
         """

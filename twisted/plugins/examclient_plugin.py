@@ -41,6 +41,7 @@ from pathlib import Path
 from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
+from _ast import Try
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -71,7 +72,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.line_data_list = ()
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
-        self.inform('Authentication with server ...')
+        self.inform('Authenticated with server ...')
         
         self.hideConnectedInformation()
 
@@ -87,13 +88,20 @@ class MyClientProtocol(basic.LineReceiver):
             command = "%s/client/client.py &" % (self.rootDir)
             os.system(command)
             os._exit(1)
+            
+    def _getIndex(self, index, data):
+        """ try except Index from Array """
+        try
+            return data[index]
+        except IndexError:
+            return None
 
     def rawDataReceived(self, data):
         """ twisted-Event: Data received > what should i do? """
-        print(self.line_data_list)
-        filename = self.line_data_list[3]
-        cleanup_abgabe = self.line_data_list[5]
-        spellcheck = self.line_data_list[6]
+        filename = self._getIndex(3, self.line_data_list)
+        cleanup_abgabe = self._getIndex(5, self.line_data_list)
+        spellcheck = self._getIndex(6, self.line_data_list)
+        
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
