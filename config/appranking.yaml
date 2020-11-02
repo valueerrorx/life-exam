@@ -7,8 +7,12 @@ apps:
    '2':
       - libreOffice writer
       - libreOffice calc
+      - only office
+      - firefox
+      - chrome
    '3':
       - kate
+      - brackets
       - kcalc
       - calligra words
       - musescore
