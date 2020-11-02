@@ -189,17 +189,10 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
                 os.system(cmd)
 
-                # clientkillscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
-                # make sure only one client instance is running per client
-                # cmd = "bash %s %s" % (clientkillscript, 'client')
-                # self.cmdRunner.runCmd(cmd)
-
-                # self.logger.info("Terminated old running twisted Client")
-
                 # moved this to workdirectory because configdirectory is overwritten on exam start
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
                 try:
-                    openednamefile = open(namefile, 'w+')  # erstelle die datei neu
+                    openednamefile = open(namefile, 'w+')  # create new file
                     openednamefile.write("%s" % (ID))
                     changePermission(namefile, "777")
                 except IOError:

@@ -38,6 +38,7 @@ from server.ui.threads.Thread_Progress import Thread_Progress
 from server.ui.threads.Heartbeat import Heartbeat
 from enum import Enum
 from classes.ConfigTools import ConfigTools
+from classes.Thread_Countdown import Thread_Countdown
 
 
 class MsgType(Enum):
@@ -478,8 +479,10 @@ class ServerUI(QtWidgets.QDialog):
         ZIP examconfig folder
         send configuration-zip to clients - unzip there
         invoke startexam.sh file on clients
-
         """
+        #HB aus
+        self.suspendHeartbeats()
+        
         self._show_workingIndicator(500, "Starte die Prüfung")
         server_to_client = self.factory.server_to_client
 
@@ -516,6 +519,11 @@ class ServerUI(QtWidgets.QDialog):
 
         # send line and file to all clients
         server_to_client.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe, spellcheck)
+        
+        # wait until all Clients started, then activate Heartbeats again
+        # time in sec
+        countdown_thread = Thread_Countdown(None, 5*60, self.resumeHeartbeats())    
+        countdown_thread.start()
 
     def _on_exit_exam(self, who):
         """

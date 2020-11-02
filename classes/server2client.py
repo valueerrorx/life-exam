@@ -104,12 +104,13 @@ class ServerToClient:
         return True
 
     """client file transfer (send to client)"""
-    def send_file(self, file_path, who, datatype, cleanup_abgabe="none"):
+    def send_file(self, file_path, who, datatype, cleanup_abgabe, spellcheck):
         """
         Dispatches Method to prepare requested file transfer and sends file
         :param file_path: absolute filepath
         :param who: all or client id
-        :param args: (cleanup_abgabe) for exam mode
+        :param cleanup_abgabe: del Files on Startup
+        :param spellcheck: is Spellcheck on?
         """
         if file_path:
             filename = ntpath.basename(file_path)  # get filename without path

@@ -434,8 +434,9 @@ class MyClientProtocol(basic.LineReceiver):
             os.system(command)
             time.sleep(2)
             # start as user even if the twistd daemon is run by root
-            startcommand = "%s/startexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, cleanup_abgabe, spellcheck)  
-            os.system(startcommand)  # start script
+            print(command)
+            command = "%s/startexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, cleanup_abgabe, spellcheck)  
+            os.system(command)  # start script
         else:
             return  # running on the same machine.. do not start exam mode / do not copy zip content over original
 
@@ -502,7 +503,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     # twisted Method
-    def startedConnecting(self, connector):
+    def startedConnecting(self, connector):  #noqa
         # Reconnection delays resetting
         self.resetDelay()
 
