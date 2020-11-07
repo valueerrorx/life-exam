@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from configobj import ConfigObj
-import subprocess
 from pathlib import Path
-from config.config import *
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
+from config.config import PLASMACONFIG, USER_HOME_DIR
+import subprocess
 
 
 def findApps(applistwidget, appview):
@@ -143,7 +143,11 @@ def saveProfile(applistwidget, appview):
     writes the plasmaconfig file
     """
 
-    # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")   # (this should be the config file that is then transferred to the clients and used for the exam desktop)
+    # this should be the config file that is then transferred to the clients and used for the exam desktop
+    # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")
+    
+    
+    #launchers = applications:chrome-bnbaboaihhkjoaolfnfoablhllahjnee-Default.desktop,applications:io.github.wxmaxima_developers.wxMaxima.desktop,applications:libreoffice-calc.desktop,applications:libreoffice-writer.desktop,applications:firefox.desktop,applications:google-chrome.desktop,applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:org.kde.calligrawords.desktop,applications:org.kde.dolphin.desktop   
 
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')

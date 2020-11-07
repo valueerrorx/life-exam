@@ -894,7 +894,7 @@ class ServerUI(QtWidgets.QDialog):
                 # root has uid = 0
                 os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))
             
-            # save the UI COnfig
+            # save the UI Config
             self.configUI.saveConfig(self.ui)
 
             mutual_functions.deletePidFile()
