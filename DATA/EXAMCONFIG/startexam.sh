@@ -169,7 +169,7 @@ function blockAdditionalFeatures(){
         #(this would immediately kill the flashdrive installation)
     fi
     
-    sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  verbieten
+    # sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  verbieten
     sudo chmod 644 /usr/bin/xterm
     sudo chmod 644 /usr/bin/konsole
 
