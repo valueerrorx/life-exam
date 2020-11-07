@@ -6,6 +6,7 @@
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
+FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
 BACKUPDIR="${HOME}.life/unlockedbackup/" 
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 SHARE="${HOME}SHARE/"
@@ -20,7 +21,7 @@ SPELLCHECK=$2
 #--------------------------------#
 if ! [ -f "$EXAMLOCKFILE" ];then
     # kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
-    sleep 2
+    #sleep 2
     exit 0
 fi
 
@@ -105,12 +106,13 @@ fi
     
 
 #---------------------------------#
-# REMOVE EXAM LOCKFILE            #
+# REMOVE EXAM LOCK FILES          #
 #---------------------------------#
     # sichere exam start und end infos
     date >> $EXAMLOCKFILE
     sudo cp $EXAMLOCKFILE $SHARE
     sudo rm $EXAMLOCKFILE
+    sudo rm $FIRSTSTARTFILE
     sleep 0.5
   
   

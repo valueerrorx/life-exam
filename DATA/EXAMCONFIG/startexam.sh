@@ -17,6 +17,7 @@ CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
 BACKUPDIR="${HOME}.life/unlockedbackup/"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
+FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
 # don't remove trailing slash.. we are working with that one on folders
 SHARE="${HOME}SHARE/"     
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
@@ -132,8 +133,12 @@ function mountShare(){
 
 function createLockFile(){
     touch $EXAMLOCKFILE
+    touch $FIRSTSTARTFILE
+    echo "1" >> $FIRSTSTARTFILE
     # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
-    sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
+    # twistd runs as root - fix permissions
+    sudo chown ${USER}:${USER} $EXAMLOCKFILE
+    sudo chown ${USER}:${USER} $FIRSTSTARTFILE
 }
 
 

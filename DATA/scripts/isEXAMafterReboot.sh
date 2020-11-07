@@ -11,14 +11,23 @@
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
+FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
 
 #--------------------------------#
-# Check if root and running exam #
+# Check running exam             #
 #--------------------------------#
 
 if [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox 'Found an Exam - stopping it right now!' --title 'Exam is running'
-    sleep 2
-    ${HOME}.life/EXAM/scripts/stopexam.sh
-    exit 0
+    # at the first startup we have a Startup Lock File too > we dont stop EXAM
+    if [ -f "$FIRSTSTARTFILE" ];then
+        # read first line
+        echo "First Startup of LIFE EXAM, we do nothing"
+        # Exam has startet, remove first Startup File
+        rm $FIRSTSTARTFILE
+    else
+        kdialog  --msgbox 'Found an running Exam - stopping it right now!' --title 'Exam is running'
+        sleep 2
+        sudo ${HOME}.life/EXAM/scripts/stopexam.sh
+        exit 0
+    fi
 fi
