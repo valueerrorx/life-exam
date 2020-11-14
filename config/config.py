@@ -1,17 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Copyright (C) 2017 Thomas Michael Weissel
-#
-# This software may be modified and distributed under the terms
-# of the GPLv3 license.  See the LICENSE file for details.
-
 import os
 import subprocess
-
-
-SERVER_IP = "localhost"
-SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
 # Debugging Stuff, set Name of Client and a fix Pin Code
 # set both empty, then we are NOT debugging
@@ -19,14 +9,24 @@ DEBUG_ID = "TestUser"
 DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
+# these apps will try to autosave your work before "abgabe" via xdotool or qdbus
+SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
+
+# what is the name of the starter for Geogebra running inside Chrome
+GEOGEBRA_CHROME_APP = "chrome-bnbaboaihhkjoaolfnfoablhllahjnee-Default.desktop"
+
+
+
+# DON'T CHANGE ==========================================================================================================
+SERVER_IP = "localhost"
+SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)
+
 # Heartbeat Section
 HEARTBEAT_INTERVALL = 10     # sec
 HEARTBEAT_START_AFTER = 5   # sec
 MAX_HEARTBEAT_FAILS = 3     # maximum number of Heartbeats missing, until a Client is marked as offline
 MAX_HEARTBEAT_KICK = 8      # maximum number of Heartbeats missing, until a Client is removed
 
-# these apps will try to autosave your work before "abgabe" via xdotool or qdbus
-SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()

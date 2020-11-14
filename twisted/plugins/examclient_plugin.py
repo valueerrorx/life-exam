@@ -42,7 +42,6 @@ from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
 
-
 class MyClientProtocol(basic.LineReceiver):
     def __init__(self, factory, appDir):
         self.factory = factory
@@ -516,7 +515,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
 Um diese Datei als twisted plugin mit twistd -l client.log --pidfile client.pid examclient -p PORT -h HOST starten zu können
 muss die ClientFactory im Service (MyServiceMaker) gestartet werden
 tapname ist der name des services
-damit twistd dieses überallfindet sollte das stammverzeichnis im pythonpath eingetragen werden
+damit twistd dieses überall findet sollte das Stammverzeichnis im pythonpath eingetragen werden
 
 export PYTHONPATH=".:/pathto/life-exam-controlcenter:$PYTHONPATH"
 """

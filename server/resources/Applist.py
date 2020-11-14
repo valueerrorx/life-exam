@@ -13,7 +13,8 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
-from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN
+from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN,\
+    GEOGEBRA_CHROME_APP
 from classes.CmdRunner import CmdRunner
 from re import search
 
@@ -48,11 +49,24 @@ def findApps(applistwidget, appview, app):
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
 
+    # now we have pathes to desktop files, like /usr/share/applications/org.hydrogenmusic.Hydrogen.desktop
+    # because in applications there are e.g. chrome apps we had to add them too, even they are not
+    # listet in kbuildsycoca5
+    desktop_files_list = addApplications(desktop_files_list)
     desktop_files_list = clearDoubles(desktop_files_list)
     app.processEvents()
     listInstalledApplications(applistwidget, desktop_files_list, appview)
     app.processEvents()
 
+
+def addApplications(apps):
+    """add everything from ~/.local/share/applications/ """
+    path = "/home/student/.local/share/applications/"
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in files:   
+            apps.append(os.path.join(root, name))
+    return apps
+    
 
 def clearDoubles(apps):
     """delete doubles, because they can be in global menue or local at the same time"""
@@ -96,26 +110,36 @@ def remove_duplicates(other_applist):
     return newlist
 
 def cleanUp(applist):
-    """ clean Up Apps
+    """ 
+    clean Up Apps
     Geogebra only with Chrome, filter out the Rest
     Kate new Window (english) 
     """
     newlist = []
     for item in applist:
-        if search("kate", item[2], re.IGNORECASE):  #noqa
-            if search("new session", item[2], re.IGNORECASE) == None:
-                if search("neues fenster", item[2], re.IGNORECASE) == None:
-                    newlist.append(item)
-                    
-        else:   
-            if search("geog", item[2], re.IGNORECASE):  #noqa
-                # possible Geogebra
+        # we use Geogebra within Chrome, so exclude normal Geogebra
+        if search("geog", item[0], re.IGNORECASE):  #noqa
+            #print(item)
+            pass
+        else:
+            if search("kate", item[2], re.IGNORECASE):  #noqa
+                if search("new session", item[2], re.IGNORECASE) == None:
+                    if search("neues fenster", item[2], re.IGNORECASE) == None:
+                        newlist.append(item)                    
+            else:   
+                # geogebra is an self made desktop starter within chrome > add it
+                # chrome-bnbaboaihhkjoaolfnfoablhllahjnee-Default.desktop
                 if search("chrome", item[0], re.IGNORECASE):  #noqa
-                    # thats it
+                    # normal Chrome we add
+                    if search("/usr/share/applications/google-chrome", item[0], re.IGNORECASE):  #noqa
+                        newlist.append(item)
+                    if search(GEOGEBRA_CHROME_APP, item[0], re.IGNORECASE):  #noqa 
+                        newlist.append(item)
+                else:
+                    # other apps
                     newlist.append(item)
-            else:
-                # other apps
-                newlist.append(item)
+    
+    
     return newlist
 
 def create_app_ranking(applist):
@@ -149,6 +173,10 @@ def makeFilenameSafe(filename):
     ''' If Filename has spaces, then escape them '''
     _to_esc = re.compile(r'\s')
     return _to_esc.sub(_esc_char, filename)
+
+def _printArray(data):
+    for item in data:
+        print(item)
 
 
 def fallbackIcon(APP):
@@ -192,7 +220,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
 
     cmdRunner = CmdRunner()
-    # print(desktop_files_list)
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
         desktop_filename = desktop_filename[2]
