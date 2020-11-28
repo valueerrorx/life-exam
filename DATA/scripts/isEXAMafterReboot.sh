@@ -25,9 +25,14 @@ if [ -f "$EXAMLOCKFILE" ];then
         # Exam has startet, remove first Startup File
         rm $FIRSTSTARTFILE
     else
-        kdialog  --msgbox 'Found an running Exam - stopping it right now!' --title 'Exam is running'
+        # kdialog  --msgbox 'Found an running Exam - stopping it right now!' --title 'Exam is running'
         sleep 2
-        sudo ${HOME}.life/EXAM/scripts/stopexam.sh
+        # reading Config Data from lock File
+        CLEAN='sed -n '2p' < $EXAMLOCKFILE'
+        SPELL='sed -n '4p' < $EXAMLOCKFILE'
+        # needs 2 parameter cleanup_abgabe and spellcheck
+        
+        sudo ${HOME}.life/EXAM/scripts/stopexam.sh $CLEAN $SPELL
         exit 0
     fi
 fi

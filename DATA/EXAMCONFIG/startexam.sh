@@ -135,7 +135,12 @@ function createLockFile(){
     touch $EXAMLOCKFILE
     touch $FIRSTSTARTFILE
     echo "1" >> $FIRSTSTARTFILE
-    # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
+    # write some Data to lock file
+    echo  "Delete Share:" > $EXAMLOCKFILE
+    echo  $DELSHARE >> $EXAMLOCKFILE
+    echo  "Spellcheck:" >> $EXAMLOCKFILE
+    echo  $SPELLCHECK >> $EXAMLOCKFILE
+    
     # twistd runs as root - fix permissions
     sudo chown ${USER}:${USER} $EXAMLOCKFILE
     sudo chown ${USER}:${USER} $FIRSTSTARTFILE

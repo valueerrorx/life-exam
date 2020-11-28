@@ -126,7 +126,8 @@ class ClientToServer:
         return
 
     def exitExam(self, client):
-        """start stopexam.sh
+        """
+        start stopexam.sh
         :param client: ClientProtocol
         :return:
         """
@@ -136,7 +137,7 @@ class ClientToServer:
         # start as user even if the twistd daemon is run by root
         startcommand = "%s/scripts/stopexam.sh %s %s &" % (WORK_DIRECTORY, exitcleanup_abgabe, spellcheck)
         print(startcommand)   
-        os.system(startcommand)  # start script
+        os.system(startcommand)  
 
         return
     
