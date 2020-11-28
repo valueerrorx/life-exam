@@ -30,7 +30,8 @@ if [ -f "$EXAMLOCKFILE" ];then
         # reading Config Data from lock File
         CLEAN=$(sed -n '2p' < $EXAMLOCKFILE)
         SPELL=$(sed -n '4p' < $EXAMLOCKFILE)
-        if [[ "$SPELL" == "None" ]]; then
+        if [[ "$SPELL" == "None" ]]
+        then
             SPELL=0
         fi
         # parameters cleanup_abgabe spellcheck skip dialogs=1
