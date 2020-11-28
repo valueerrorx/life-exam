@@ -72,7 +72,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.ui.serverip.hide()
         self.ui.keyPressEvent = self.newOnkeyPressEvent
 
-        char_regex = QRegExp("[a-z-A-Z\-_]+")   # only allow specif characters in textfields
+        char_regex = QRegExp(r"[a-z-A-Z\-_]+")   # only allow specif characters in textfields
         char_validator = QRegExpValidator(char_regex)
         self.ui.studentid.setValidator(char_validator)
 

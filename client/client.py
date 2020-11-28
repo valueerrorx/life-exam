@@ -9,6 +9,8 @@
 import sys
 import os
 from pathlib import Path
+import fcntl
+import atexit
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -24,9 +26,36 @@ sys.path.insert(0, application_path)
 import qt5reactor
 from PyQt5 import QtWidgets
 
+""" prevent to start client twice """
+def lockFile(lockfile):
+    fp = open(lockfile, 'w')  # create a new one
+    try:
+        fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # the file has been locked
+        success = True 
+    except IOError:
+        success = False
+    fp.close() 
+    return success
+
+""" at client shutdown, delete the lock File """
+def cleanUpLockFile(file):
+    if os.path.exists(file):
+        os.remove(file)
+
+
 if __name__ == '__main__':
     # Set the Logging
     rootdir = Path(__file__).parent.parent.as_posix()
+    
+    FILE_NAME = "started_client.lock"
+    # do not start twice
+    if os.path.exists(FILE_NAME):
+        print("Don't start the Client twice ... exit") 
+        sys.exit(0)
+    print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
+    atexit.register(cleanUpLockFile, FILE_NAME)
+    
     configure_logging(False)       # True is Server
 
     app = QtWidgets.QApplication(sys.argv)
