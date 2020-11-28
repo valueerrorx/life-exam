@@ -15,6 +15,14 @@ SHARE="${HOME}SHARE/"
 DELSHARE=$1
 SPELLCHECK=$2
 
+# skipping kdialogs
+SKIPDIALOGS=0
+
+if [[ -n $3 ]]; then
+    SKIPDIALOGS=1
+fi
+
+
 
 #--------------------------------#
 # Check if root and running exam #
@@ -26,7 +34,10 @@ if ! [ -f "$EXAMLOCKFILE" ];then
 fi
 
 if [ "$(id -u)" != "0" ]; then
-    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
+    if [[ ( $SKIPDIALOGS = 0 ) ]] 
+    then
+        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
+    fi
     exit 0
 fi
 
@@ -51,7 +62,10 @@ stopIPtables(){
 #--------------------------------#
 # ASK FOR CONFIRMATION           #
 #--------------------------------#
-    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
+    if [[ ( $SKIPDIALOGS = 0 ) ]] 
+    then
+        kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
+    fi
     if [ "$?" = 0 ]; then
         sleep 0
     else

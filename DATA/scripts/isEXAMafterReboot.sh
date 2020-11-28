@@ -33,11 +33,11 @@ if [ -f "$EXAMLOCKFILE" ];then
         if [[ "$SPELL" == "None" ]]; then
             SPELL=0
         fi
-        # needs 2 parameter cleanup_abgabe and spellcheck
+        # parameters cleanup_abgabe spellcheck skip dialogs=1
         echo $CLEAN
         echo $SPELL
         
-        sudo ${HOME}.life/EXAM/scripts/stopexam.sh $CLEAN $SPELL
+        sudo ${HOME}.life/EXAM/scripts/stopexam.sh $CLEAN $SPELL 1
         exit 0
     fi
 fi
