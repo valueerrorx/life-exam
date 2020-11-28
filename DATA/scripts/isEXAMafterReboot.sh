@@ -28,9 +28,14 @@ if [ -f "$EXAMLOCKFILE" ];then
         # kdialog  --msgbox 'Found an running Exam - stopping it right now!' --title 'Exam is running'
         sleep 2
         # reading Config Data from lock File
-        CLEAN='sed -n '2p' < $EXAMLOCKFILE'
-        SPELL='sed -n '4p' < $EXAMLOCKFILE'
+        CLEAN=$(sed -n '2p' < $EXAMLOCKFILE)
+        SPELL=$(sed -n '4p' < $EXAMLOCKFILE)
+        if [[ "$SPELL" == "None" ]]; then
+            SPELL=0
+        fi
         # needs 2 parameter cleanup_abgabe and spellcheck
+        echo $CLEAN
+        echo $SPELL
         
         sudo ${HOME}.life/EXAM/scripts/stopexam.sh $CLEAN $SPELL
         exit 0
