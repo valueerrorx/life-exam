@@ -41,6 +41,7 @@ from pathlib import Path
 from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
+import sys
 
 class MyClientProtocol(basic.LineReceiver):
     def __init__(self, factory, appDir):
@@ -85,7 +86,7 @@ class MyClientProtocol(basic.LineReceiver):
         if self.factory.failcount > 2:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
             command = "%s/client/client.py &" % (self.rootDir)
             os.system(command)
-            os._exit(1)
+            sys.exit(1)
             
     def _getIndex(self, index, data):
         """ try except Index from Array """
@@ -244,8 +245,8 @@ class MyClientProtocol(basic.LineReceiver):
                     for pid in pids:
                         prefix = "sudo -E -u student -H"
                         qdbus_command = "%s qdbus org.kde.%s-%s /%s/MainWindow_1/actions/%s trigger" % (prefix, app, pid, app, savetrigger)
-                        data = self.runAndWaittoFinish(qdbus_command)
-                except Exception as error:
+                        data = self.runAndWaittoFinish(qdbus_command)  # noqa
+                except Exception as error:  # noqa
                     print(error)
             
         # trigger Auto Save via xdotool but only ONE Time
@@ -496,7 +497,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
             command = "%s/client/client.py &" % (self.rootDir)
             print(command)
             os.system(command)
-            os._exit(1)
+            sys.exit(1)
 
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 

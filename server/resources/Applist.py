@@ -62,7 +62,7 @@ def findApps(applistwidget, appview, app):
 def addApplications(apps):
     """add everything from ~/.local/share/applications/ """
     path = "/home/student/.local/share/applications/"
-    for root, dirs, files in os.walk(path, topdown=False):
+    for root, dirs, files in os.walk(path, topdown=False):  # noqa
         for name in files:   
             apps.append(os.path.join(root, name))
     return apps
@@ -72,7 +72,7 @@ def clearDoubles(apps):
     """delete doubles, because they can be in global menue or local at the same time"""
     # using list comprehension to remove duplicated from list
     res = []
-    [res.append(x) for x in apps if x not in res]
+    [res.append(x) for x in apps if x not in res]  # noqa
     return res
 
 
@@ -123,8 +123,8 @@ def cleanUp(applist):
             pass
         else:
             if search("kate", item[2], re.IGNORECASE):  #noqa
-                if search("new session", item[2], re.IGNORECASE) == None:
-                    if search("neues fenster", item[2], re.IGNORECASE) == None:
+                if search("new session", item[2], re.IGNORECASE) == None:  # noqa
+                    if search("neues fenster", item[2], re.IGNORECASE) == None:  # noqa
                         newlist.append(item)                    
             else:   
                 # geogebra is an self made desktop starter within chrome > add it

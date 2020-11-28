@@ -22,7 +22,7 @@ from classes.psUtil import PsUtil
 
 class ClientDialog(QtWidgets.QDialog, Observers):
 
-    def __init__(self):
+    def __init__(self):  # noqa
         QtWidgets.QDialog.__init__(self)
 
         self.logger = logging.getLogger(__name__)
@@ -148,7 +148,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # print("Update: %s %s" % (ID, PIN))
 
     def _on_offline_exam(self):
-        self.msg = QtWidgets.QMessageBox()
+        self.msg = QtWidgets.QMessageBox()  # noqa
         self.msg.setIcon(QtWidgets.QMessageBox.Information)
         self.msg.setText("Wollen sie in den abgesicherten Exam Modus wechseln?")
         self.msg.setDetailedText("Die automatische Abgabe,\nScreenlock, senden und empfangen von Dateien\nund andere Funktionen sind in diesem Modus nicht verfügbar.")
@@ -163,7 +163,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             startcommand = "%s/startexam.sh &" % (EXAMCONFIG_DIRECTORY)  # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
-            self.msg = False
+            self.msg = False  # noqa
 
     def _on_offline_exam_exit(self):
         startcommand = "%s/stopexam.sh &" % (SCRIPTS_DIRECTORY)
@@ -223,7 +223,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             palettedefault = item.palette()
             palettedefault.setColor(item.backgroundRole(), QColor(255, 255, 255))
             item.setPalette(palettedefault)
-        self.inputs_changed = True
+        self.inputs_changed = True  # noqa
 
     def _updateServerlist(self):
         """updates the dropdownmenu if new servers are found"""
