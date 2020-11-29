@@ -106,11 +106,14 @@ function loadExamConfig(){
     sudo chown -R ${USER}:${USER} ${HOME}.local/ &
 }
 
+function copyDesktopStuff(){
+    #Copy Desktop Starter (Stop Exam) to Desktop = SHARE
+    cp  $SCRIPTDIR/STOP.desktop $SHARE
+    sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
+}
 
 function mountShare(){
     mkdir $SHARE > /dev/null 2>&1
-    #Copy Desktop Starter (Stop Exam) to Desktop = SHARE
-    cp  $SCRIPTDIR/STOP.desktop $SHARE
     
     sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
     CURRENTUID=$(id -u ${USER})
@@ -265,6 +268,8 @@ qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.2
 
 createLockFile
+
+copyDesktopStuff
     
     
     
