@@ -14,11 +14,10 @@ import atexit
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
-# Logging System 
-from config.logger import configure_logging
 
 from client.ui.ClientUI import ClientDialog
 from client.resources.MulticastLifeClient import MulticastLifeClient
+from config.logger import configure_logging
 
 application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, application_path)
