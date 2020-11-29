@@ -51,6 +51,7 @@ if __name__ == '__main__':
     # do not start twice
     if os.path.exists(FILE_NAME):
         print("Don't start the Client twice ... exit") 
+        print(FILE_NAME)
         sys.exit(0)
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
