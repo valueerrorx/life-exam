@@ -44,10 +44,8 @@ def cleanUpLockFile(file):
 
 
 if __name__ == '__main__':
-    # Set the Logging
-    rootdir = Path(__file__).parent.parent.as_posix()
-    
-    FILE_NAME = "started_client.lock"
+    rootDir = Path(__file__).parent.parent.as_posix()   
+    FILE_NAME = uifile = rootDir.joinpath("started_client.lock")
     # do not start twice
     if os.path.exists(FILE_NAME):
         print("Don't start the Client twice ... exit") 
