@@ -44,7 +44,7 @@ def cleanUpLockFile(file):
 
 
 if __name__ == '__main__':
-    rootDir = Path(__file__).parent.parent.as_posix()   
+    rootDir = Path(__file__).parent.parent   
     FILE_NAME = uifile = rootDir.joinpath("started_client.lock")
     # do not start twice
     if os.path.exists(FILE_NAME):
