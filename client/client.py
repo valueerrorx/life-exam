@@ -45,11 +45,11 @@ def cleanUpLockFile(file):
 
 if __name__ == '__main__':
     rootDir = Path(__file__).parent.parent   
-    FILE_NAME = uifile = rootDir.joinpath("started_client.lock")
+    FILE_NAME = uifile = rootDir.joinpath("client/started_client.lock")
     # do not start twice
     if os.path.exists(FILE_NAME):
         print("Don't start the Client twice ... exit") 
-        print(FILE_NAME)
+        cleanUpLockFile(FILE_NAME)
         sys.exit(0)
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
