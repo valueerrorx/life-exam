@@ -2,7 +2,7 @@
 [Desktop Entry]
 Comment[de_DE]=
 Comment=
-Exec=~/.life/EXAM/scripts/isRunning-EXAM-STOP.sh
+Exec=/home/student/.life/EXAM/scripts/isRunning-EXAM-STOP.sh
 GenericName[de_DE]=Beende die Prüfungsumgebung
 GenericName=Beende die Prüfungsumgebung
 Icon=/home/student/.life/EXAM/scripts/stop.svg
