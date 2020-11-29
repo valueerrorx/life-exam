@@ -22,7 +22,7 @@ from classes.psUtil import PsUtil
 
 class ClientDialog(QtWidgets.QDialog, Observers):
 
-    def __init__(self):  # noqa
+    def __init__(self):  # noqa 
         QtWidgets.QDialog.__init__(self)
 
         self.logger = logging.getLogger(__name__)
