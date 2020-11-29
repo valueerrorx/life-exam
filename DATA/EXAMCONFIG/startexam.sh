@@ -289,7 +289,7 @@ runAutostartScripts
 qdbus $progress Set "" value 7
 qdbus $progress setLabelText "Sperre Systemdateien...."
    
-blockAdditionalFeatures
+# blockAdditionalFeatures
 
    
 #---------------------------------#
