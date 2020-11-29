@@ -1,0 +1,20 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment[de_DE]=
+Comment=
+Exec=~/.life/EXAM/scripts/isRunning-EXAM-STOP.sh
+GenericName[de_DE]=Beende die Prüfungsumgebung
+GenericName=Beende die Prüfungsumgebung
+Icon=/home/student/.life/EXAM/scripts/stop.svg
+MimeType=
+Name[de_DE]=Beenden
+Name=Beenden
+Path[$e]=$HOME/.life/EXAM/scripts/
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
