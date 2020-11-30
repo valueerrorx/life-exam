@@ -20,7 +20,6 @@ FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
 echo ${HOME}.life/EXAM/scripts/stopexam.sh
 
 if [ -f "$EXAMLOCKFILE" ];then
-    echo "1"
     # at the first startup we have a Startup Lock File too > we dont stop EXAM
     if [ -f "$FIRSTSTARTFILE" ];then
         # read first line
@@ -29,13 +28,12 @@ if [ -f "$EXAMLOCKFILE" ];then
         rm $FIRSTSTARTFILE
     else
         # kdialog  --msgbox 'Found an running Exam - stopping it right now!' --title 'Exam is running'
-        echo "2"
         sleep 2
         # reading Config Data from lock File
         CLEAN=$(sed -n '2p' < $EXAMLOCKFILE)
         SPELL=$(sed -n '4p' < $EXAMLOCKFILE)
-        if [[ "$SPELL" == "None" ]]
-        then
+        # da ????
+        if ["$SPELL" == "None"];then
             SPELL=0
         fi
         # parameters cleanup_abgabe spellcheck skip dialogs=1

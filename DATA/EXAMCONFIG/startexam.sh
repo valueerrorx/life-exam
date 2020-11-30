@@ -32,13 +32,14 @@ RUNNINGEXAM=0
 #    kdialog  --msgbox "You need root privileges - Otherwise can't sudo some stuff!" --title 'Starting Exam' 
 #    exit 1
 #fi
-if [ -f "$EXAMLOCKFILE" ];then
-    kdialog  --msgbox "Desktop is about to reload! \nYou need to SAVE your work BEFORE you click OK on this dialog.\n\nYou have been warned!"  --title 'Starting Exam'
-    RUNNINGEXAM=1
-fi
-if [ -f "/etc/kde5rc" ];then
-    RUNNINGEXAM=1
-fi
+#if [ -f "$EXAMLOCKFILE" ];then
+#    kdialog  --msgbox "Desktop is about to reload! \nYou need to SAVE your work BEFORE you click OK on this dialog.\n\nYou have been warned!"  --title 'Starting Exam'
+#    RUNNINGEXAM=1
+#fi
+kdialog  --msgbox "Desktop is about to reload! \nYou need to SAVE your work BEFORE you click OK on this dialog.\n\nYou have been warned!"  --title 'Starting Exam'
+#if [ -f "/etc/kde5rc" ];then
+#    RUNNINGEXAM=1
+#fi
 if [ ! -d "$BACKUPDIR" ];then
     mkdir -p $BACKUPDIR
 fi
@@ -221,6 +222,15 @@ qdbus $progress Set "" maximum 8
 sleep 0.2
 
 #---------------------------------#
+# CREATE EXAM LOCK FILE           #
+#---------------------------------#
+qdbus $progress Set "" value 5
+qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
+sleep 0.2
+
+createLockFile
+
+#---------------------------------#
 # INITIALIZE FIREWALL             #
 #---------------------------------#
 qdbus $progress Set "" value 1
@@ -257,20 +267,12 @@ qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE
 sleep 0.2
 
 mountShare
-
     
-    
-#---------------------------------#
-# CREATE EXAM LOCK FILE           #
-#---------------------------------#
-qdbus $progress Set "" value 5
-qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
-sleep 0.2
 
-createLockFile
-
+#---------------------------------#
+# DESKTOP STUFF                   #
+#---------------------------------#
 copyDesktopStuff
-    
     
     
 #---------------------------------#
