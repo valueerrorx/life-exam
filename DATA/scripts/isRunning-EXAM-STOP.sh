@@ -17,8 +17,6 @@ FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
 # Check running exam             #
 #--------------------------------#
 
-echo ${HOME}.life/EXAM/scripts/stopexam.sh
-
 if [ -f "$EXAMLOCKFILE" ];then
     # at the first startup we have a Startup Lock File too > we dont stop EXAM
     if [ -f "$FIRSTSTARTFILE" ];then
@@ -40,7 +38,7 @@ if [ -f "$EXAMLOCKFILE" ];then
         echo $CLEAN
         echo $SPELL
         
-        sudo ${HOME}.life/EXAM/scripts/stopexam.sh $CLEAN $SPELL 1
+        sudo ${HOME}.life/applications/life-exam/DATA/scripts/stopexam.sh $CLEAN $SPELL 1
         exit 0
     fi
 fi
