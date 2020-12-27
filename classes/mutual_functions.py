@@ -188,8 +188,11 @@ def prepareDirectories():
         # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes
         # but always provide a new copy of startexam.sh (will be updated more frequently)
         logger.info("Old examconfig found - keeping old config")  # friendly reminder to the devs ;-)
+        logger.info("If you have newer LockDOWN Data, delete ~/.life/applications/life-exam/DATA/EXAMCONFIG/ manually")
         copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (rootDir, EXAMCONFIG_DIRECTORY)
         os.system(copycommand2)
+    # Copy STOP.desktop File to right place
+    sdfsdgdfgdfhd
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)

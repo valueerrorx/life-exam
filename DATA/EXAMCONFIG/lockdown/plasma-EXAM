@@ -163,10 +163,14 @@ PreloadWeight = 26
 localPath = /home/student/.local/share/plasma_icons/Exam Student.desktop
 url = file:///home/student/.local/share/applications/Exam Student.desktop
 
-[Containments][22][Applets][45][Configuration]
+[Containments][22][Applets][46]
+immutability = 1
+plugin = org.kde.plasma.icon
+
+[Containments][22][Applets][46][Configuration]
 PreloadWeight = 27
-localPath = ~/.life/EXAM/EXAMCONFIG/STOP.desktop
-url = file://~/.life/EXAM/EXAMCONFIG/STOP.desktop
+localPath = /home/student/.life/EXAM/EXAMCONFIG/lockdown/STOP.desktop
+url = file:///home/student/.local/share/applications/STOP.desktop
 
 [Containments][22][ConfigDialog]
 DialogHeight = 611
