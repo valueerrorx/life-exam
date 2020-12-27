@@ -87,9 +87,6 @@ function backupCurrentConfig(){
 }
 
 function loadExamConfig(){
-    # first copy all scripts form life-dev Dir to LOCKDOWNDIR
-    cp -ar ${HOME}.life/applications/life-exam/DATA/EXAMCONFIG/ ${HOME}.life/EXAM/
-
     # do your job
     cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc    #load minimal plasma config for exam 
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
