@@ -106,13 +106,6 @@ function loadExamConfig(){
     sudo chown -R ${USER}:${USER} ${HOME}.local/ &
 }
 
-function copyDesktopStuff(){
-    # not used
-    #Copy Desktop Starter (Stop Exam) to Desktop = SHARE
-    # cp -a ${LOCKDOWNDIR}STOP.desktop $SHARE
-    # sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
-}
-
 function mountShare(){
     mkdir $SHARE > /dev/null 2>&1
     
