@@ -165,8 +165,8 @@ url = file:///home/student/.local/share/applications/Exam Student.desktop
 
 [Containments][22][Applets][45][Configuration]
 PreloadWeight = 27
-localPath = /home/student/Downloads/LIFE-DEV/life-exam/DATA/scripts/STOP.desktop
-url = file:///home/student/Downloads/LIFE-DEV/life-exam/DATA/scripts/STOP.desktop
+localPath = ~/.life/EXAM/EXAMCONFIG/STOP.desktop
+url = file://~/.life/EXAM/EXAMCONFIG/STOP.desktop
 
 [Containments][22][ConfigDialog]
 DialogHeight = 611

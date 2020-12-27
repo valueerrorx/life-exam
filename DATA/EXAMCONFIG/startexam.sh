@@ -107,9 +107,10 @@ function loadExamConfig(){
 }
 
 function copyDesktopStuff(){
+    # not used
     #Copy Desktop Starter (Stop Exam) to Desktop = SHARE
-    cp  $SCRIPTDIR/STOP.desktop $SHARE
-    sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
+    # cp -a ${LOCKDOWNDIR}STOP.desktop $SHARE
+    # sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
 }
 
 function mountShare(){
