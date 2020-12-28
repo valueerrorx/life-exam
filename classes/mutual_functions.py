@@ -147,7 +147,7 @@ def deleteFolderContent(folder):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
-        except Exception as e:
+        except Exception as e:  # noqa
             logger.error(e)
 
 def loadOldPlasmaConfig():
@@ -155,7 +155,7 @@ def loadOldPlasmaConfig():
     if Path(PLASMACONFIG).is_file():
         try:
             return ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
-        except Exception as e:
+        except Exception as e:  # noqa
             logger.error(e)
     else:
         return None

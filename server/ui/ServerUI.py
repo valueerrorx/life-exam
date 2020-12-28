@@ -132,7 +132,7 @@ class ServerUI(QtWidgets.QDialog):
 
         num_regex = QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
-        ip_regex = QRegExp("[0-9\._]+")
+        ip_regex = QRegExp("[0-9\._]+")  # noqa
         ip_validator = QRegExpValidator(ip_regex)
 
         self.ui.firewall1.setValidator(ip_validator)
@@ -641,7 +641,7 @@ class ServerUI(QtWidgets.QDialog):
         item = self.get_list_widget_by_client_ConID(con_id)
         if item:
             Qitem = self.get_QListWidgetItem_by_client_id(con_id)
-            sip.delete(Qitem)
+            sip.delete(Qitem) # noqa
             # remove client widget no matter if client still is connected or not
             msg = 'Connection to client <b> %s </b> has been <b>removed</b>.' % (item.getName())
             self.log(html_to_text(msg))
@@ -752,7 +752,7 @@ class ServerUI(QtWidgets.QDialog):
 
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientConnectionID, False))
-        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
+        widget.mouseDoubleClickEvent = lambda: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
 
         # important!
         itemN.setSizeHint(widget.sizeHint())
@@ -899,7 +899,7 @@ class ServerUI(QtWidgets.QDialog):
             mutual_functions.deletePidFile()
             self.ui.close()
             # otherwise only the gui is closed and connections are kept alive
-            os._exit(0)  
+            os._exit(0)  # noqa
         else:
             self.msg = False
 

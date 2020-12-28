@@ -71,8 +71,8 @@ class MyServerFactory(protocol.ServerFactory):
     """
     # twisted Method
     def buildProtocol(self, addr):  # noqa
-        return MyServerProtocol(self)
         """
         wird bei einer eingehenden client connection aufgerufen
         erstellt ein object der Klasse MyServerProtocol für jede connection und übergibt self (die factory)
         """
+        return MyServerProtocol(self)
