@@ -83,7 +83,7 @@ DialogWidth = 720
 groupingStrategy = 0
 maxStripes = 1
 wheelEnabled = false
-launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
+launchers = applications:chrome-bnbaboaihhkjoaolfnfoablhllahjnee-Default.desktop,applications:google-chrome.desktop,applications:firefox.desktop,applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:org.kde.calligrawords.desktop
 
 [Containments][2][Applets][50]
 immutability = 1
