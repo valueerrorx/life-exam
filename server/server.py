@@ -10,6 +10,7 @@ import sys
 import logging
 from pathlib import Path
 from time import time, sleep
+from classes import mutual_functions
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -18,7 +19,6 @@ from version import __version__
 from config.logger import configure_logging
 from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
 
-import classes.mutual_functions as mutual_functions
 from server.resources.MyServerFactory import MyServerFactory
 from classes.Splashscreen.SplashScreen import SplashScreen
 

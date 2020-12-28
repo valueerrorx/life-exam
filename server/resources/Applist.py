@@ -334,8 +334,8 @@ def saveProfile(applistwidget, appview):
     writes the plasmaconfig file
     """
 
-    # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")   # (this should be the config file that is then transferred to the clients and used for the exam desktop)
-
+    # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")   
+    # this should be the config file that is then transferred to the clients and used for the exam desktop
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
 

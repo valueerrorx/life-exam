@@ -16,9 +16,10 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER
+    SHARE_DIRECTORY, USER, PLASMACONFIG
 import stat
 import sys
+from configobj import ConfigObj
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +150,55 @@ def deleteFolderContent(folder):
         except Exception as e:
             logger.error(e)
 
+def loadOldPlasmaConfig():
+    """ the old plasma Config is loaded for backup"""
+    if Path(PLASMACONFIG).is_file():
+        try:
+            return ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        except Exception as e:
+            logger.error(e)
+    else:
+        return None
+    
+def updatePlasmaConfig(oldConfig):
+    """ Update plasma Config with previously stored Data"""
+    # stored Apps are here
+    """
+    e.g.
+    [Containments][2][Applets][5][Configuration][General]
+    launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
+    """
+    launchers = None
+    for item in oldConfig.keys():
+        if item.find('Configuration][General') != -1:
+            section = oldConfig[item]
+            try:
+                launchers = section["launchers"]
+            except KeyError:
+                continue
+    
+    if launchers != None:
+        # Create new Config File 
+        config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        
+        # read actual File
+        plasma = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        for item in plasma:
+            if item.find('Configuration][General') != -1:
+                section = plasma[item]
+                try:
+                    dummy = section["launchers"]
+                    # here we are doing the Update
+                    config[item] = plasma[item]
+                    config[item]["launchers"] = launchers
+                except KeyError:
+                    continue
+            else:
+                # just copy top new Config
+                config[item] = plasma[item]
+        # write new plasmaconfig
+        config.write()
+
 
 def prepareDirectories():
     # rootDir of Application
@@ -178,21 +228,20 @@ def prepareDirectories():
 
     copycommand = "cp -r %s/DATA/scripts %s" % (rootDir, WORK_DIRECTORY)
     os.system(copycommand)
+    
+    # Manage old Configuration, that means, all stored stuff
+    oldPlasmaConfig = loadOldPlasmaConfig()
 
-    if not os.path.exists(EXAMCONFIG_DIRECTORY):  # this is important to NOT overwrite an already customized exam desktop stored in the workdirectory on the server
-        logger.info("Copying default examconfig to workdirectory")
-        copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (rootDir, WORK_DIRECTORY)
-        os.system(copycommand)
-    else:
-        # leave the EXAM-A-IPS.DB alone - it stores firewall information which must not be reset on every update
-        # leave lockdown folder (plasma-EXAM, etc.) as it is to preserve custom changes
-        # but always provide a new copy of startexam.sh (will be updated more frequently)
-        logger.info("Old examconfig found - keeping old config")  # friendly reminder to the devs ;-)
-        logger.info("If you have newer LockDOWN Data, delete ~/.life/applications/life-exam/DATA/EXAMCONFIG/ manually")
-        copycommand2 = "cp -r %s/DATA/EXAMCONFIG/startexam.sh %s" % (rootDir, EXAMCONFIG_DIRECTORY)
-        os.system(copycommand2)
-    # Copy STOP.desktop File to right place
-    sdfsdgdfgdfhd
+    logger.info("Copying default EXAM Config to workdirectory")
+    # empty Dir
+    copycommand = "rm -r %s/EXAMCONFIG" % (WORK_DIRECTORY)
+    os.system(copycommand)
+    # Copy All Stuff
+    copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (rootDir, WORK_DIRECTORY)
+    os.system(copycommand)
+    
+    # update with old Configuration Data
+    updatePlasmaConfig(oldPlasmaConfig)
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)

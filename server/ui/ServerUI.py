@@ -26,8 +26,6 @@ from PyQt5.Qt import QRegExpValidator, QFileDialog
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QCursor
 from classes.HTMLTextExtractor import html_to_text
 
-from classes import mutual_functions
-
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
 from server.ui.NetworkProgressBar import NetworkProgressBar
@@ -39,6 +37,7 @@ from server.ui.threads.Heartbeat import Heartbeat
 from enum import Enum
 from classes.ConfigTools import ConfigTools
 from classes.Thread_Countdown import Thread_Countdown
+from classes import mutual_functions
 
 
 class MsgType(Enum):
