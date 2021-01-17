@@ -1,25 +1,29 @@
 #!/bin/bash
-# last updated: 13.11.2019
+# last updated: 2.11.2020
 # loads exam desktop configuration
 #
 # CLIENT FILE - START EXAM
 #
-# dieses Skript erwartet 1 Parameter:    <delshare>  
+# dieses Skript erwartet Parameter:    <delshare>, <spellcheck>
 
 
 # dont forget the trailing slash - otherwise shell will think its a file
-USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
+# logname seems to always deliver the current xsession user - no matter if you are using SUDO
+USER=$(logname)   
 HOME="/home/${USER}/"
 IPSFILE="${HOME}.life/EXAM/EXAMCONFIG/EXAM-A-IPS.DB"
 CONFIGDIR="${HOME}.life/EXAM/EXAMCONFIG/"
-BACKUPDIR="${HOME}.life/unlockedbackup/" #absolute path in order to be accessible from all script locations
+#absolute path in order to be accessible from all script locations
+BACKUPDIR="${HOME}.life/unlockedbackup/"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-SHARE="${HOME}SHARE/"     #don't remove trailing slash.. we are working with that one on folders
+FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
+# don't remove trailing slash.. we are working with that one on folders
+SHARE="${HOME}SHARE/"     
 SCRIPTDIR="${HOME}.life/EXAM/scripts/"
 DELSHARE=$1
+SPELLCHECK=$2
 RUNNINGEXAM=0
-
 
 #--------------------------------#
 # Check if root and running exam #
@@ -46,13 +50,14 @@ fi
 # FUNCTIONS                       #
 #---------------------------------#
     
+function start   
 function startFireWall(){
     sudo ${SCRIPTDIR}exam-firewall.sh start &
 }
 
 
 function backupCurrentConfig(){
-    if [[ ( $RUNNINGEXAM = "0" ) ]]  #be careful not to store locked config instead of unlocked config here
+    if [[ ( $RUNNINGEXAM = "0") ]]  #be careful not to store locked config instead of unlocked config here
     then
         #kde
         cp -a ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUPDIR}   #main desktop applets config file
@@ -65,10 +70,17 @@ function backupCurrentConfig(){
         cp -a ${HOME}.config/dolphinrc ${BACKUPDIR}    
         cp -a ${HOME}.config/user-dirs.dirs ${BACKUPDIR}  #default directories for documents music etc.
         cp -a ${HOME}.config/mimeapps.list ${BACKUPDIR}
-        mv ${HOME}.config/libreoffice/4/user/autocorr/acor* ${BACKUPDIR}   # disable autoreplace 
-        sudo mv /usr/lib/libreoffice/share/autocorr/acor_de* ${BACKUPDIR}
-        sudo mv /usr/lib/libreoffice/share/autocorr/acor_en* ${BACKUPDIR}
-        sudo mv /usr/lib/libreoffice/share/autocorr/acor_fr* ${BACKUPDIR}
+        
+        # Spell Checking 
+        if [[ ( $SPELLCHECK = "0") ]]     #checkbox sends 0 for unchecked and 2 for checked
+        then
+            # disabel autocorrection if checkbox is not
+            mv ${HOME}.config/libreoffice/4/user/autocorr/acor* ${BACKUPDIR}
+            sudo mv /usr/lib/libreoffice/share/autocorr/acor_de* ${BACKUPDIR}
+            sudo mv /usr/lib/libreoffice/share/autocorr/acor_en* ${BACKUPDIR}
+            sudo mv /usr/lib/libreoffice/share/autocorr/acor_fr* ${BACKUPDIR} 
+        fi  
+        
         #chrome
         cp -a ${HOME}.config/google-chrome/Default/Preferences ${BACKUPDIR}
         sudo chown -R ${USER}:${USER} ${BACKUPDIR}  # twistd runs as root - fix ownership
@@ -76,6 +88,7 @@ function backupCurrentConfig(){
 }
 
 function loadExamConfig(){
+    # do your job
     cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc    #load minimal plasma config for exam 
     cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
     cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
@@ -88,16 +101,21 @@ function loadExamConfig(){
     
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
 
-    #LOCK DOWN
-    sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
-    sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
     sudo chown -R ${USER}:${USER} ${HOME}.config/ &    # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/ &
 }
 
 
+function loadKioskSettings(){
+    #LOCK DOWN
+    sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
+    sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
+}
+
+
 function mountShare(){
     mkdir $SHARE > /dev/null 2>&1
+    
     sudo chown -R ${USER}:${USER} $SHARE   # twistd runs as root - fix permissions
     CURRENTUID=$(id -u ${USER})
     sudo mount -o umask=002,uid=${CURRENTUID},gid=${CURRENTUID} /dev/disk/by-label/SHARE $SHARE
@@ -122,8 +140,17 @@ function mountShare(){
 
 function createLockFile(){
     touch $EXAMLOCKFILE
-    # echo $SUBJECT > $EXAMLOCKFILE   # write subject into lockfile in order to read from it when the exam desktop should be stored
-    sudo chown ${USER}:${USER} $EXAMLOCKFILE      # twistd runs as root - fix permissions
+    touch $FIRSTSTARTFILE
+    echo "1" >> $FIRSTSTARTFILE
+    # write some Data to lock file
+    echo  "Delete Share:" > $EXAMLOCKFILE
+    echo  $DELSHARE >> $EXAMLOCKFILE
+    echo  "Spellcheck:" >> $EXAMLOCKFILE
+    echo  $SPELLCHECK >> $EXAMLOCKFILE
+    
+    # twistd runs as root - fix permissions
+    sudo chown ${USER}:${USER} $EXAMLOCKFILE
+    sudo chown ${USER}:${USER} $FIRSTSTARTFILE
 }
 
 
@@ -159,7 +186,7 @@ function blockAdditionalFeatures(){
         #(this would immediately kill the flashdrive installation)
     fi
     
-    sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  verbieten
+    # sudo chmod 644 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  verbieten
     sudo chmod 644 /usr/bin/xterm
     sudo chmod 644 /usr/bin/konsole
 
@@ -183,25 +210,8 @@ function restartDesktop(){
    # FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - 
    # kde devs haben das bis jetzt noch nicht implementiert
     pkill -f Xorg
+   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #---------------------------------#
@@ -211,6 +221,15 @@ function restartDesktop(){
 progress=$(kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
 qdbus $progress Set "" maximum 8
 sleep 0.2
+
+#---------------------------------#
+# CREATE EXAM LOCK FILE           #
+#---------------------------------#
+qdbus $progress Set "" value 5
+qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
+sleep 0.2
+
+createLockFile
 
 #---------------------------------#
 # INITIALIZE FIREWALL             #
@@ -249,18 +268,12 @@ qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE
 sleep 0.2
 
 mountShare
+    
 
-    
-    
 #---------------------------------#
-# CREATE EXAM LOCK FILE           #
+# DESKTOP STUFF                   #
 #---------------------------------#
-qdbus $progress Set "" value 5
-qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
-sleep 0.2
-
-createLockFile
-    
+# copyDesktopStuff
     
     
 #---------------------------------#
@@ -279,9 +292,19 @@ runAutostartScripts
 qdbus $progress Set "" value 7
 qdbus $progress setLabelText "Sperre Systemdateien...."
    
-blockAdditionalFeatures
+# blockAdditionalFeatures
 
-   
+
+#--------------------------------------------------------#
+# LOCK DESKTOP CONFIG (rightclick, krunner, toolbars )   #
+#--------------------------------------------------------#
+qdbus $progress Set "" value 8
+qdbus $progress setLabelText "Sperre Desktop"
+  
+#loadKioskSettings
+  
+  
+  
 #---------------------------------#
 # FINISH - RESTART DESKTOP        #
 #---------------------------------#
@@ -290,19 +313,6 @@ qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...
 Starte Desktop neu!"
 
 playSound
-#qdbus $progress close
+qdbus $progress close
 restartDesktop
     
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
