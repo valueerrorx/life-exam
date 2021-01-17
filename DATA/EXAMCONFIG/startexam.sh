@@ -1,5 +1,5 @@
 #!/bin/bash
-# last updated: 2.11.2020
+# last updated: 17.01.2021
 # loads exam desktop configuration
 #
 # CLIENT FILE - START EXAM
@@ -200,9 +200,9 @@ function blockAdditionalFeatures(){
 
 
 function playSound(){
-    amixer -D pulse sset Master 90% > /dev/null 2>&1
-    pactl set-sink-volume 0 90%
-    paplay /usr/share/sounds/KDE-Sys-Question.ogg
+    sudo -u ${USER} amixer -D pulse sset Master 90% > /dev/null 2>&1
+    sudo -u ${USER} pactl set-sink-volume 0 90%
+    sudo -u ${USER} paplay /usr/share/sounds/Oxygen-Sys-Question.ogg
 }
 
 
@@ -218,25 +218,25 @@ function restartDesktop(){
 # OPEN PROGRESSBAR DIALOG         #
 #---------------------------------#
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
-progress=$(kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
-qdbus $progress Set "" maximum 8
-sleep 0.2
+progress=$(sudo -u ${USER} kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
+sudo -u ${USER} qdbus $progress Set "" maximum 9
+sleep 0.1
 
 #---------------------------------#
 # CREATE EXAM LOCK FILE           #
 #---------------------------------#
-qdbus $progress Set "" value 5
-qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
-sleep 0.2
+sudo -u ${USER} qdbus $progress Set "" value 1
+sudo -u ${USER} qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
+sleep 0.1
 
 createLockFile
 
 #---------------------------------#
 # INITIALIZE FIREWALL             #
 #---------------------------------#
-qdbus $progress Set "" value 1
-qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
-sleep 0.2
+sudo -u ${USER} qdbus $progress Set "" value 2
+sudo -u ${USER} qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
+sleep 0.1
 
 startFireWall  
 
@@ -244,18 +244,18 @@ startFireWall
 #---------------------------------#
 # BACKUP CURRENT DESKTOP CONFIG   #
 #---------------------------------#
-qdbus $progress Set "" value 2
-qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
-sleep 0.2
+sudo -u ${USER} qdbus $progress Set "" value 3
+sudo -u ${USER} qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
+sleep 0.1
 
 backupCurrentConfig
 
 #---------------------------------#
 # LOAD EXAM CONFIG                #
 #---------------------------------#
-qdbus $progress Set "" value 3
-qdbus $progress setLabelText "Lade Exam Desktop...."
-sleep 0.2
+sudo -u ${USER} qdbus $progress Set "" value 4
+sudo -u ${USER} qdbus $progress setLabelText "Lade Exam Desktop...."
+sleep 0.1
 
 loadExamConfig
 
@@ -263,9 +263,9 @@ loadExamConfig
 #---------------------------------#
 # MOUNT SHARE                     #
 #---------------------------------#
-qdbus $progress Set "" value 4
-qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
-sleep 0.2
+sudo -u ${USER} qdbus $progress Set "" value 5
+sudo -u ${USER} qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
+sleep 0.1
 
 mountShare
     
@@ -279,9 +279,9 @@ mountShare
 #---------------------------------#
 # COPY AUTOSTART SCRIPTS          #
 #---------------------------------#
-qdbus $progress Set "" value 6
-qdbus $progress setLabelText "Starte automatische Screenshots...."
-sleep 0.2
+sudo -u ${USER} qdbus $progress Set "" value 6
+sudo -u ${USER} qdbus $progress setLabelText "Starte automatische Screenshots...."
+sleep 0.1
 
 runAutostartScripts
 
@@ -289,8 +289,8 @@ runAutostartScripts
 #--------------------------------------------------------#
 # BLOCK ADDITIONAL FEATURES (menuedit, usbmount, etc.)   #
 #--------------------------------------------------------#
-qdbus $progress Set "" value 7
-qdbus $progress setLabelText "Sperre Systemdateien...."
+sudo -u ${USER} qdbus $progress Set "" value 7
+sudo -u ${USER} qdbus $progress setLabelText "Sperre Systemdateien...."
    
 # blockAdditionalFeatures
 
@@ -298,8 +298,8 @@ qdbus $progress setLabelText "Sperre Systemdateien...."
 #--------------------------------------------------------#
 # LOCK DESKTOP CONFIG (rightclick, krunner, toolbars )   #
 #--------------------------------------------------------#
-qdbus $progress Set "" value 8
-qdbus $progress setLabelText "Sperre Desktop"
+sudo -u ${USER} qdbus $progress Set "" value 8
+sudo -u ${USER} qdbus $progress setLabelText "Sperre Desktop"
   
 #loadKioskSettings
   
@@ -308,11 +308,11 @@ qdbus $progress setLabelText "Sperre Desktop"
 #---------------------------------#
 # FINISH - RESTART DESKTOP        #
 #---------------------------------#
-qdbus $progress Set "" value 8
-qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...  
+sudo -u ${USER} qdbus $progress Set "" value 9
+sudo -u ${USER} qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...  
 Starte Desktop neu!"
 
 playSound
-qdbus $progress close
+sudo -u ${USER} qdbus $progress close
 restartDesktop
     

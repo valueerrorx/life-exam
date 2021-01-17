@@ -109,7 +109,7 @@ class ServerUI(QtWidgets.QDialog):
       
         if self.factory.lcs.running:
             self.factory.lcs.stop()
-        if intervall is not 0:
+        if intervall != 0:
             self.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
             self.factory.lcs.start(intervall)
         else:
@@ -276,7 +276,7 @@ class ServerUI(QtWidgets.QDialog):
         """get SHARE folder"""
         self._workingIndicator(True, 500)
         self.log('<b>Requesting Client Folder SHARE </b>')
-        itime = 2000 if who is 'all' else 1000
+        itime = 2000 if who == 'all' else 1000
         self._workingIndicator(True, itime)
 
         if self.factory.rawmode == True:
@@ -399,7 +399,7 @@ class ServerUI(QtWidgets.QDialog):
                 if mutual_functions.checkIP(ip):
                     thisexamfile = open(ipstore, 'a+')  # anhängen
                     number += 1
-                    if number is not 1:  # zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
+                    if number != 1:  # zeilenumbruch einfügen ausser vor erster zeile (keine leerzeilen in der datei erlaubt)
                         thisexamfile.write("\n")
                     thisexamfile.write("%s:%s" %(ip,port) )
                 else:
@@ -425,7 +425,7 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lc.stop()
             self.log("<b>Auto-Submission deactivated </b>")
             return
-        if intervall is not 0:
+        if intervall != 0:
             self.ui.autoabgabe.setIcon(QIcon(os.path.join(APP_DIRECTORY,'pixmaps/chronometer.png')))
             self.log("<b>Activated Auto-Submission every %s minutes </b>" % (str(intervall)))
             self.factory.lc.start(minute_intervall)
@@ -918,7 +918,7 @@ class MyServerFactory(protocol.ServerFactory):
         
         intervall = self.window.ui.ssintervall.value()
 
-        if intervall is not 0:
+        if intervall != 0:
             self.window.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
             self.lcs.start(intervall)
         else:
