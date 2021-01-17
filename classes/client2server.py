@@ -195,6 +195,7 @@ class ClientToServer:
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, SHOT)
         screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename)
         command = "%s %s" % (scriptfile, screenshotfile)
+        print(command)
         os.system(command)
         print("SCREENSHOT IS PREPARED")
         return filename

@@ -100,12 +100,17 @@ function loadExamConfig(){
     
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
 
-    #LOCK DOWN
-    sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
-    sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
     sudo chown -R ${USER}:${USER} ${HOME}.config/ &    # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/ &
 }
+
+
+function loadKioskSettings(){
+    #LOCK DOWN
+    sudo cp ${LOCKDOWNDIR}kde5rc-EXAM /etc/kde5rc   #this is responsible for the KIOSK settings (main lock file)
+    sudo chmod 644 /etc/kde5rc     #this is necessary if the script is run form twistd plugin as root
+}
+
 
 function mountShare(){
     mkdir $SHARE > /dev/null 2>&1
@@ -204,6 +209,7 @@ function restartDesktop(){
    # FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - 
    # kde devs haben das bis jetzt noch nicht implementiert
     pkill -f Xorg
+   
 }
 
 
@@ -287,7 +293,17 @@ qdbus $progress setLabelText "Sperre Systemdateien...."
    
 # blockAdditionalFeatures
 
-   
+
+#--------------------------------------------------------#
+# LOCK DESKTOP CONFIG (rightclick, krunner, toolbars )   #
+#--------------------------------------------------------#
+qdbus $progress Set "" value 8
+qdbus $progress setLabelText "Sperre Desktop"
+  
+#loadKioskSettings
+  
+  
+  
 #---------------------------------#
 # FINISH - RESTART DESKTOP        #
 #---------------------------------#
