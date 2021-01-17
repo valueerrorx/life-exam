@@ -50,7 +50,7 @@ fi
 # FUNCTIONS                       #
 #---------------------------------#
     
-function start   
+    
 function startFireWall(){
     sudo ${SCRIPTDIR}exam-firewall.sh start &
 }
