@@ -1,5 +1,5 @@
 #!/bin/bash
-# last updated: 16.11.2018
+# last updated: 17.01.2021
 # unloads exam desktop
 #
 # CLIENT FILE - STOP EXAM
@@ -74,9 +74,9 @@ stopIPtables(){
 # OPEN PROGRESSBAR DIALOG         #
 #---------------------------------#
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
-progress=$(kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
-qdbus $progress Set "" maximum 7
-sleep 0.5
+progress=$(sudo -u ${USER} kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
+sudo -u ${USER} qdbus $progress Set "" maximum 7
+sleep 0.1
 
 
 
@@ -86,9 +86,9 @@ sleep 0.5
 #---------------------------------#
 # RESTORE PREVIOUS DESKTOP CONFIG #
 #---------------------------------#
-qdbus $progress Set "" value 1
-qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
-sleep 0.5
+sudo -u ${USER} qdbus $progress Set "" value 1
+sudo -u ${USER} qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
+sleep 0.1
 
     sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
 
@@ -111,7 +111,7 @@ sleep 0.5
     
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 
-    qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
+    sudo -u ${USER} qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
 
 
 
@@ -122,7 +122,7 @@ sleep 0.5
     date >> $EXAMLOCKFILE
     sudo cp $EXAMLOCKFILE $SHARE
     sudo rm $EXAMLOCKFILE
-    sleep 0.5
+    sleep 0.1
 
 
   
@@ -131,7 +131,7 @@ sleep 0.5
 # CLEAN  SHARE                    #   
 #---------------------------------#
 
-if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
+if [[ ( $DELSHARE = "2") ]]     #checkbox sends 0 for unchecked and 2 for checked
 then
     sudo rm -rf ${SHARE}*
     sudo rm -rf ${SHARE}.* 
@@ -142,9 +142,9 @@ fi
 #---------------------------------#
 # UMOUNT SHARE                    #    SHARE is now permanently mounted on life sticks
 #---------------------------------#
-qdbus $progress Set "" value 2
+sudo -u ${USER} qdbus $progress Set "" value 2
 #qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
-sleep 0.5
+sleep 0.1
    # sudo umount -l $SHARE
 
 
@@ -156,9 +156,9 @@ sleep 0.5
 #---------------------------------#
 # UNLOCK SYSTEM FILES             #
 #---------------------------------#
-qdbus $progress Set "" value 3
-qdbus $progress setLabelText "Systemdateien werden entsperrt...."
-sleep 0.5
+sudo -u ${USER} qdbus $progress Set "" value 3
+sudo -u ${USER} qdbus $progress setLabelText "Systemdateien werden entsperrt...."
+sleep 0.1
 
 #         sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
         sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
@@ -193,8 +193,8 @@ sleep 0.5
 #-------------------------------------------#
 # STOP AUTO SCREENSHOTS AND AUTO FIREWALL   #
 #-------------------------------------------#
-qdbus $progress Set "" value 4
-qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
+sudo -u ${USER} qdbus $progress Set "" value 4
+sudo -u ${USER} qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
    
     rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
     sudo killall auto-screenshot.sh && sudo pkill -f auto-screenshot
@@ -210,9 +210,9 @@ qdbus $progress setLabelText "Stoppe automatische Screenshots...."
 #---------------------------------#
 # STOP FIREWALL                   #
 #---------------------------------#
-qdbus $progress Set "" value 5
-qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
-sleep 0.5
+sudo -u ${USER} qdbus $progress Set "" value 5
+sudo -u ${USER} qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
+sleep 0.1
 
     stopIPtables
 
@@ -225,7 +225,7 @@ sleep 0.5
 #---------------------------------#
 # REMOVE ROOT PASSWORD            #
 #---------------------------------#
-qdbus $progress Set "" value 6
+sudo -u ${USER} qdbus $progress Set "" value 6
 #qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
     
 
@@ -246,15 +246,15 @@ qdbus $progress Set "" value 6
 #----------------------------------------------#
 # FINISH - RESTART AND LOAD DEFAULT DESKTOP    #
 #----------------------------------------------#
-qdbus $progress Set "" value 7
-qdbus $progress setLabelText "Prüfungsumgebung angehalten...  
+sudo -u ${USER} qdbus $progress Set "" value 7
+sudo -u ${USER} qdbus $progress setLabelText "Prüfungsumgebung angehalten...  
 Starte Desktop neu!"
-sleep 4
-qdbus $progress close
+sleep 0.5
+sudo -u ${USER} qdbus $progress close
 
-    amixer -D pulse sset Master 90% > /dev/null 2>&1
-    pactl set-sink-volume 0 90%
-    paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
+    sudo -u ${USER} amixer -D pulse sset Master 90% > /dev/null 2>&1
+    sudo -u ${USER} pactl set-sink-volume 0 90%
+    sudo -u ${USER} paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
     
     pkill -f Xorg

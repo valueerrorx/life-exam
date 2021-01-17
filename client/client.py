@@ -138,7 +138,7 @@ class ClientDialog(QtWidgets.QDialog):
                 list(getPlugins(IPlugin))
 
                 #pkXexec is used here (a short "life" bashscript that uses pkexec but sets a lot of environment variables)
-                command = "sudo twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
+                command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s &" % (
                     WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN)
                 print(command)
                 os.system(command)
