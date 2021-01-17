@@ -124,10 +124,13 @@ class ConnectionStatus(QMainWindow):
         file = os.path.join(self.workdir, 'connection.pid')
         pid = str(os.getpid())
 
-        f = open(file, 'w+')
-        f.write(pid)
-        f.close()
-        self._changePermission(file, "777")
+        try:
+            f = open(file, 'w+')
+            f.write(pid)
+            f.close()
+            self._changePermission(file, "777")
+        except FileNotFoundError:
+            self.logger.error("Cannot write to %s ..." % file)
 
     def _changePermission(self, path, octal):
         st = os.stat(path)
@@ -138,7 +141,10 @@ class ConnectionStatus(QMainWindow):
     def _delPID(self):
         """ delete the PID File"""
         file = os.path.join(self.workdir, 'connection.pid')
-        os.remove(file)
+        try:
+            os.remove(file)
+        except FileNotFoundError:
+            pass
 
     def _checkPID(self):
         """
@@ -148,9 +154,12 @@ class ConnectionStatus(QMainWindow):
         my_file = Path(self.workdir).joinpath('connection.pid')
         if my_file.is_file():
             # file exists
-            file = open(my_file, "r")
-            pid = file.read()
-            self.closeDialog(pid)
+            try:
+                file = open(my_file, "r")
+                pid = file.read()
+                self.closeDialog(pid)
+            except FileNotFoundError:
+                self.logger.error("Cannot read file %s ..." % my_file)
         else:
             return None
 

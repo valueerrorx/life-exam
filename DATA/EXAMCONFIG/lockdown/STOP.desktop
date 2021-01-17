@@ -2,14 +2,14 @@
 [Desktop Entry]
 Comment[de_DE]=
 Comment=
-Exec=/home/student/.life/EXAM/scripts/isRunning-EXAM-STOP.sh
+Exec=/home/student/.life/EXAM/EXAMCONFIG/lockdown/stopexam.sh
 GenericName[de_DE]=Beende die Prüfungsumgebung
 GenericName=Beende die Prüfungsumgebung
-Icon=/home/student/.life/EXAM/scripts/stop.svg
+Icon=/home/student/.life/EXAM/EXAMCONFIG/lockdown/stop.svg
 MimeType=
 Name[de_DE]=Beenden
 Name=Beenden
-Path[$e]=$HOME/.life/EXAM/scripts/
+Path[$e]=$HOME/.life/EXAM/EXAMCONFIG/lockdown/
 StartupNotify=true
 Terminal=false
 TerminalOptions=

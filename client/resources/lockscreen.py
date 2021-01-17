@@ -54,29 +54,24 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
 
     def dragEnterEvent(self, event):
         event.ignore()
-        pass
 
     def dragMoveEvent(self, event):
         event.ignore()
-        pass
 
     def mouseReleaseEvent(self, event):
         event.ignore()
-        pass
 
     def mouseMoveEvent(self, event):
         event.ignore()
-        pass
 
     def moveEvent(self, event):
         self.move(0, 0)
         event.ignore()
-        pass
 
     def closeEvent(self, event):
         ''' window tries to close '''
         # now stay active unless client kills the process, also locks all ALt+F4 Keys etc.
-        event.ignore()
+        # event.ignore()
 
 
 if __name__ == "__main__":

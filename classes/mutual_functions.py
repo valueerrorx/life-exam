@@ -16,7 +16,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER, PLASMACONFIG
+    SHARE_DIRECTORY, USER, PLASMACONFIG, USER_HOME_DIR
 import stat
 import sys
 from configobj import ConfigObj
@@ -198,7 +198,16 @@ def updatePlasmaConfig(oldConfig):
                 config[item] = plasma[item]
         # write new plasmaconfig
         config.write()
-
+        
+def copyDesktopStarter(rootDir):
+    """copy the EXAM Desktop Starter to correct place"""
+    shareApps = "%s/.local/share/applications/" % USER_HOME_DIR
+    sharePlasma = "%s/.local/share/plasma_icons/" % USER_HOME_DIR
+    
+    copycommand = "cp -a %s/DATA/starter/* %s" % (rootDir, shareApps)
+    os.system(copycommand)
+    copycommand = "cp -a %s/DATA/starter/* %s" % (rootDir, sharePlasma)
+    os.system(copycommand)
 
 def prepareDirectories():
     # rootDir of Application
@@ -242,6 +251,9 @@ def prepareDirectories():
     
     # update with old Configuration Data
     updatePlasmaConfig(oldPlasmaConfig)
+    
+    # copy Desktop Starter
+    copyDesktopStarter(rootDir)
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)
@@ -301,11 +313,13 @@ def changePermission(path, octal):
 def writePidFile():
     file = os.path.join(WORK_DIRECTORY, 'server.pid')
     pid = str(os.getpid())
-
-    f = open(file, 'w+')
-    f.write(pid)
-    f.close()
-    changePermission(file, "777")
+    try:
+        f = open(file, 'w+')
+        f.write(pid)
+        f.close()
+        changePermission(file, "777")
+    except FileNotFoundError:
+        logger.error("Cannot create File %s" % file)
 
 
 def checkPidFile(pid_type):
@@ -328,10 +342,13 @@ def writeLockFile():
     """ lock File indicates that client has started EXAM Mode """
     file = os.path.join(WORK_DIRECTORY, 'client.lock')
 
-    f = open(file, 'w+')
-    f.write("Client has started EXAM Mode")
-    f.close()
-    changePermission(file, "777")
+    try:
+        f = open(file, 'w+')
+        f.write("Client has started EXAM Mode")
+        f.close()
+        changePermission(file, "777")
+    except FileNotFoundError:
+        logger.error("Cannot create File %s" % file)
 
 
 def lockFileExists():

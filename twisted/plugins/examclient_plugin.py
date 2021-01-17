@@ -346,12 +346,14 @@ class MyClientProtocol(basic.LineReceiver):
         print("Anzahl an Files in %s" % target_folder)
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])
+        #create Zip File
+        shutil.make_archive(output_filename, 'zip', target_folder)
         if  count > 0:
-            shutil.make_archive(output_filename, 'zip', target_folder)
             # this is the filename of the zip file
             return "%s.zip" % filename
         else:
-            return None
+            # create empty Zip File
+            return "%s-%s.zip" % (filename, "Empty")
 # Autotrigger Save Part END -------------------------------------------------------------------
         
     def sendFile(self, filename, filetype):

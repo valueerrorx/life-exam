@@ -72,7 +72,10 @@ class MyServerProtocol(basic.LineReceiver):
         # print('Receiving file chunk (%d KB)' % (len(data)/1024))
 
         if not self.file_handler:
-            self.file_handler = open(file_path, 'wb')
+            try:
+                self.file_handler = open(file_path, 'wb')
+            except FileNotFoundError:
+                logger.error("Cannot create File %s" % file_path)
 
         if data.endswith(b'\r\n'):  # Last chunk
             data = data[:-2]
@@ -111,9 +114,10 @@ class MyServerProtocol(basic.LineReceiver):
                     
                     # checks if filename is taken and renames this file in order to make room for the userfolder
                     mutual_functions.checkIfFileExists(user_dir)
-
-                    with zipfile.ZipFile(file_path, "r") as zip_ref:
-                        zip_ref.extractall(extract_dir)
+                    
+                    if os.path.isfile(file_path):
+                        with zipfile.ZipFile(file_path, "r") as zip_ref:
+                            zip_ref.extractall(extract_dir)
                     # fix filepermission of transferred file
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
 

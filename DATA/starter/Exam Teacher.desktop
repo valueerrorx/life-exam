@@ -1,0 +1,20 @@
+[Desktop Entry]
+Comment[de_AT]=
+Comment=
+Exec=/home/student/.life/applications/life-exam/server/server.py
+GenericName[de_AT]=
+GenericName=
+Icon=/home/student/.life/applications/life-exam/pixmaps/life_teacher.svg
+MimeType=
+Name[de_AT]=Exam Teacher
+Name=Exam Teacher
+NoDisplay=false
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
