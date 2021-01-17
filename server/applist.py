@@ -164,7 +164,7 @@ def saveProfile(applistwidget, appview):
         taskmanagersections = []
         for section in config:
             try:
-                if config[section]["plugin"] == "org.kde.plasma.taskmanager":
+                if config[section]["plugin"] == "org.kde.plasma.icontasks":
                     taskmanagersections.append(section)  # don't save the actual section.. just the name of the section
             except:
                 continue
@@ -245,7 +245,7 @@ def get_activated_apps():
         taskmanagersections = []
         for section in config:
             try:
-                if config[section]["plugin"] == "org.kde.plasma.taskmanager":
+                if config[section]["plugin"] == "org.kde.plasma.icontasks":
                     taskmanagersections.append(section)  # don't save the actual section.. just the name of the section
             except:
                 continue
