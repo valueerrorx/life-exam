@@ -51,7 +51,7 @@ class ServerToClient:
         if not self.clients:
             return False
         line = "%s %s %s" % (Command.EXITEXAM.value, onexit_cleanup_abgabe, "%s")
-        if who is "all":
+        if who == "all":
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
@@ -63,7 +63,7 @@ class ServerToClient:
         if not self.clients:
             return False
         line = "%s %s" % (Command.LOCK.value, "%s")
-        if who is "all":
+        if who == "all":
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
@@ -75,7 +75,7 @@ class ServerToClient:
         if not self.clients:
             return False
         line = "%s %s" % (Command.UNLOCK.value, "%s")
-        if who is "all":
+        if who == "all":
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
@@ -92,7 +92,7 @@ class ServerToClient:
             return False
 
         line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, "%s")
-        if who is "all":
+        if who == "all":
             self.broadcast_line(line)
         else:
             client = self.get_client(who)
@@ -107,7 +107,7 @@ class ServerToClient:
         filename = "Abgabe-%s-%s" % (datetime.datetime.now().strftime("%H-%M-%S"), "%s")
         line = "%s %s %s %s none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.ABGABE.value, filename)
         
-        if who is "all":
+        if who == "all":
             self.broadcast_line(line)
         else:
             client = self.get_client(who)          
@@ -135,7 +135,7 @@ class ServerToClient:
             file_size = os.path.getsize(file_path)
             md5_hash = mutual_functions.get_file_md5_hash(file_path)
 
-            if who is 'all':
+            if who == 'all':
                 self.broadcast_file(file_path, filename, md5_hash, datatype, cleanup_abgabe)
             else:
                 client = self.get_client(who)
