@@ -172,7 +172,7 @@ class ClientToServer:
             
     def _sendZipFile(self, client, filetype):
         """ signal received send the file """
-        if search("-Empty", self.zipFileName, re.IGNORECASE) == None:  #noqa
+        if "-Empty".lower() not in self.zipFileName.lower():
             print("Abgabe ZipFile: %s" % self.zipFileName)
             client.sendFile(self.zipFileName, filetype)
         else:            
