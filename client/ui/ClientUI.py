@@ -7,20 +7,22 @@ import time
 
 from pathlib import Path
 
-from classes.Observers import Observers
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import QRegExp, Qt
+from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
+
+
 from config.config import EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
     WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
+    
+from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission
-
-from PyQt5.QtCore import QRegExp, Qt
-from PyQt5 import QtWidgets, uic
-
-from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 from classes.psUtil import PsUtil
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
+    """ A dialog """
 
     def __init__(self):  # noqa 
         QtWidgets.QDialog.__init__(self)
@@ -51,6 +53,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
         iconfile = self.rootDir.joinpath('pixmaps/windowicon.png').as_posix()
         self.ui.setWindowIcon(QIcon(iconfile))
+
         # only debug if DEBUG_PIN is not ""
         if DEBUG_PIN != "":
             self.ui.setWindowTitle(".: DEBUG MODE :. - LiFE Exam - .: DEBUG MODE :.")

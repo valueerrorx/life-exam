@@ -11,8 +11,13 @@ disable=bare-except,
     invalid-name,
     singleton-comparison,
     line-too-long,
-    trailing-whitespace,
     missing-module-docstring,
     logging-not-lazy,
-    pointless-string-statement
+    pointless-string-statement,
+    inconsistent-return-statements,
+    no-self-use,
+    missing-function-docstring,
+    broad-except,
+    unnecessary-lambda,
+    too-many-instance-attributes
 

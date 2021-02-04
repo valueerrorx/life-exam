@@ -1,14 +1,16 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
+import os
+import stat
+import psutil
+
 from pathlib import Path
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QGuiApplication
-import os
-import stat
-import psutil
 from PyQt5.QtWidgets import QMainWindow
+from classes.psUtil import PsUtil
 
 
 class ConnectionStatus(QMainWindow):
@@ -16,6 +18,8 @@ class ConnectionStatus(QMainWindow):
     def __init__(self, workingdir, parent=None):
         super(ConnectionStatus, self).__init__(parent)
         self.initUI(workingdir)
+        self.serverid = -1
+        self.workdir = -1
 
     def initUI(self, workingdir):
         self.rootDir = Path(__file__).parent
@@ -35,7 +39,7 @@ class ConnectionStatus(QMainWindow):
 
         self.ui.icon.enterEvent = lambda event: self.enterEvent(event)
 
-        self.msgpattern = "%s\n%s"
+        self.msgpattern = "%s\n%s" 
         self.serverid = "None"
         self.workdir = workingdir
         # terminate existing ConnectionStatus
@@ -59,13 +63,13 @@ class ConnectionStatus(QMainWindow):
             # print(event.pos())
             event.ignore()
             return
-        elif event.buttons() == QtCore.Qt.LeftButton:
+        if event.buttons() == QtCore.Qt.LeftButton:
             # maybe hide the Status Icon
             # print("Left click drag")
             self.hide()
             event.ignore()
             return
-        elif event.buttons() == QtCore.Qt.RightButton:
+        if event.buttons() == QtCore.Qt.RightButton:
             # print("Right click drag")
             event.ignore()
             return
@@ -73,10 +77,21 @@ class ConnectionStatus(QMainWindow):
     def show(self):
         """ show it """
         # self.ticker.start()
-        self.ui.show()
+        
+        # only if twistd is running
+        processUtil = PsUtil()
+        pid = processUtil.GetProcessByName("twistd3")
+        print(pid)
+        if len(pid) > 0:
+            # twistd is running
+            self.ui.show()
 
     def hide(self):
         """ show it """
+        # only if twidtd is running
+        
+        
+        
         self.ui.hide()
 
     def _onAbbrechen(self):
@@ -85,7 +100,7 @@ class ConnectionStatus(QMainWindow):
         self.close()
 
     def setType(self, typ):
-        if (typ == 1) or (typ == "1"):
+        if typ in (1, "1"):
             self.setIcon("connected.png")
             self._setMessage("connected")
         else:

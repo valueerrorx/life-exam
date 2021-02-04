@@ -30,7 +30,7 @@ def lockFile(lockfile):
     try:
         fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
         # the file has been locked
-        success = True 
+        success = True
     except IOError:
         success = False
     fp.close() 

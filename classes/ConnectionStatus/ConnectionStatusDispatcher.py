@@ -8,10 +8,12 @@ from config.config import WORK_DIRECTORY
 
 
 def close_app():
+    """Close it"""
     QApplication.quit()
 
 
 def printhelp():
+    """Help Text"""
     msg = '''
 python3 ConnectionStatusDispatcher.py type server
     type = 1 ... connected else NOT connected

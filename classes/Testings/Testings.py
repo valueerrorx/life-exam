@@ -1,18 +1,11 @@
 #! /usr/bin/env python3
 
 import os
-import shutil
 import subprocess
-import zipfile
-import datetime
 import pwd
-import dbus
-from config.config import SHARE_DIRECTORY
-from classes import mutual_functions
-from classes.Thread_Countdown import Thread_Countdown
-from time import sleep
-from classes.psUtil import PsUtil
 import psutil
+from classes.psUtil import PsUtil
+
 
 
 def write_dbus_env_OS():
@@ -151,13 +144,11 @@ def triggerAutosave():
     this function uses xdotool to find windows and trigger ctrl + s shortcut on them
     which will show the save dialog the first time and silently save the document the next time
     """        
-    app_id_list = []
-    
     
     # these programs are qdbus enabled therefore we can trigger "save" directly from commandline
     app_str = "Calligrawords/Calligrasheets/Kate"
     savetrigger = "file_save"
-    app="calligrawords"
+    app = "calligrawords"
     try:
         command = "pidof %s" % (app)
         # data = [exitcode, err, out]
@@ -230,10 +221,19 @@ for p in pids:
 def event():
     print("hallo")
 
-countdown_thread = Thread_Countdown(None, 5, event)    
-countdown_thread.start()
-sleep(20)
+#countdown_thread = Thread_Countdown(None, 5, event)    
+#countdown_thread.start()
+#sleep(2)
 
+name = "twistd3"
+cmdline = None
+for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+    if name.lower() in proc.name().lower():
+        print(proc)
+        
+print("----------")
 
+pid = processUtil.GetProcessByName("twistd3")
+print(pid)
 
 

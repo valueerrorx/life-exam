@@ -1,9 +1,9 @@
 import psutil
-from re import search
 
 
 class PsUtil():
-    ''' Library for psutil '''
+    """ Library for psutil """
+    
     def _closePID(self, pid):
         """kill the old running Process"""
         PID = int(pid)
@@ -17,15 +17,13 @@ class PsUtil():
                 return False
 
     def _searchInArray(self, arr, pattern):
-        """ RegEx serach within Array """
+        """ Search within Array """
         found = False
         for item in arr:
-            if search(pattern, item):
+            if pattern.lower() in item.lower():
                 found = True
                 break
         return found
-            
-        
 
     def GetProcessByName(self, name, cmdline=None):
         """ 
@@ -36,13 +34,15 @@ class PsUtil():
         processlist = []
         for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
             try:
-                if search(name, proc.name()):
-                    if(cmdline is not None):
+                if name.lower() in proc.name().lower():
+                    if cmdline is not None:
                         cmdl = proc.cmdline()
                         if self._searchInArray(cmdl, cmdline):
-                            # print(cmdl)
                             data = ["%s" % proc.pid, "%s" % proc.name()]
                             processlist.append(data)
+                    else:
+                        data = ["%s" % proc.pid, "%s" % proc.name()]
+                        processlist.append(data)
             except Exception as e:
                 print(e)
         return processlist 

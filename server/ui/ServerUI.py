@@ -5,9 +5,9 @@ import logging
 import datetime
 import os
 import shutil
-import sip
 from time import sleep
 from pathlib import Path
+import sip
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -609,10 +609,12 @@ class ServerUI(QtWidgets.QDialog):
             self.ui.testfirewall.setText("Stoppe Firewall")
             
     def stopAutoAbgabe(self):
+        """stop Auto Abgabe"""
         if self.factory.lc.running:
             self.factory.lc.stop()
         
     def startAutoAbgabe(self):
+        """start Auto Abgabe"""
         intervall = self.ui.aintervall.value()
         if intervall != 0:
             minute_intervall = intervall * 60
@@ -641,7 +643,7 @@ class ServerUI(QtWidgets.QDialog):
         item = self.get_list_widget_by_client_ConID(con_id)
         if item:
             Qitem = self.get_QListWidgetItem_by_client_id(con_id)
-            sip.delete(Qitem) # noqa
+            sip.delete(Qitem)  # noqa
             # remove client widget no matter if client still is connected or not
             msg = 'Connection to client <b> %s </b> has been <b>removed</b>.' % (item.getName())
             self.log(html_to_text(msg))
