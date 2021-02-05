@@ -8,22 +8,24 @@
 
 import sys
 import logging
+
+import qt5reactor
 from pathlib import Path
-from time import time, sleep
 from classes import mutual_functions
+
+from PyQt5 import QtWidgets
+from classes.Splashscreen.SplashScreen import SplashScreen
+from time import time, sleep
+from version import __version__
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
-from version import __version__
 
 from config.logger import configure_logging
 from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
 
 from server.resources.MyServerFactory import MyServerFactory
-from classes.Splashscreen.SplashScreen import SplashScreen
 
-from PyQt5 import QtWidgets
-import qt5reactor
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
@@ -36,8 +38,9 @@ if __name__ == '__main__':
     splash.setImage("img/LIFE.jpg")
     splash.show()
     splash.update()
-    while time() - start < 1:
-        sleep(0.001)
+    app.processEvents()
+    while time() - start < 2:
+        sleep(0.1)
         app.processEvents()
 
     # Set the Logging

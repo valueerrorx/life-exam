@@ -39,7 +39,7 @@ class ConnectionStatus(QMainWindow):
 
         self.ui.icon.enterEvent = lambda event: self.enterEvent(event)
 
-        self.msgpattern = "%s\n%s" 
+        self.msgpattern = "%s\n%s"
         self.serverid = "None"
         self.workdir = workingdir
         # terminate existing ConnectionStatus
@@ -59,18 +59,13 @@ class ConnectionStatus(QMainWindow):
 
     def _MouseEvent(self, event):
         if event.buttons() == QtCore.Qt.NoButton:
-            # print("Simple mouse motion")
-            # print(event.pos())
             event.ignore()
             return
         if event.buttons() == QtCore.Qt.LeftButton:
-            # maybe hide the Status Icon
-            # print("Left click drag")
             self.hide()
             event.ignore()
             return
         if event.buttons() == QtCore.Qt.RightButton:
-            # print("Right click drag")
             event.ignore()
             return
 
@@ -88,10 +83,6 @@ class ConnectionStatus(QMainWindow):
 
     def hide(self):
         """ show it """
-        # only if twidtd is running
-        
-        
-        
         self.ui.hide()
 
     def _onAbbrechen(self):

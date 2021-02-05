@@ -17,14 +17,14 @@ from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
     get_primary_ip
 from version import __version__
+from enum import Enum
 
-from classes.mutual_functions import get_file_list, checkIP
+
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
 from PyQt5.Qt import QRegExpValidator, QFileDialog
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QCursor
-from classes.HTMLTextExtractor import html_to_text
 
 from server.resources.MyCustomWidget import MyCustomWidget
 from server.resources.ScreenshotWindow import ScreenshotWindow
@@ -34,10 +34,11 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
     client_unlock_screen
 from server.ui.threads.Thread_Progress import Thread_Progress
 from server.ui.threads.Heartbeat import Heartbeat
-from enum import Enum
 from classes.ConfigTools import ConfigTools
 from classes.Thread_Countdown import Thread_Countdown
 from classes import mutual_functions
+from classes.HTMLTextExtractor import html_to_text
+from classes.mutual_functions import get_file_list, checkIP
 
 
 class MsgType(Enum):
@@ -192,14 +193,12 @@ class ServerUI(QtWidgets.QDialog):
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
-        
+
         self.screenshotwindow = ScreenshotWindow(self)
-        
+
         # Set UI Values from config_ui.yml file
         self.configUI.setConfig(self.ui)
-        
-      
-        
+
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
         # mutual_functions.openFileManager("/home/student")
@@ -229,7 +228,7 @@ class ServerUI(QtWidgets.QDialog):
             self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
-            if not server_to_client.clients:        # check if there are clients connected
+            if not server_to_client.clients:       # check if there are clients connected
                 self.log("No clients connected")
                 return
             self.factory.rawmode = True  # ready for filetransfer - LOCK all other fileoperations
@@ -803,7 +802,6 @@ class ServerUI(QtWidgets.QDialog):
 
         cursor = QCursor()
         menu.exec_(cursor.pos())
-        return
 
     def get_list_widget_items(self):
         """

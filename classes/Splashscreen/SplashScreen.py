@@ -17,6 +17,9 @@ class SplashScreen(QSplashScreen):
 
     def __init__(self):
         QSplashScreen.__init__(self, QtGui.QPixmap(), QtCore.Qt.WindowStaysOnTopHint)
+        # important
+        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.setEnabled(False)
 
         self.rootDir = Path(__file__).parent
 
@@ -75,6 +78,7 @@ class SplashScreen(QSplashScreen):
         if self.image is None:
             raise ValueError('Specify an Image via SplashScreen::setImage()')
         return QSplashScreen.show(self, *args, **kwargs)
+        
 
     def setMessage(self, msg):
         self.message.setText("%s ..." % (msg))
@@ -113,7 +117,7 @@ class SplashScreen(QSplashScreen):
         img = self.cv.QImage2MAT(Qimg)
         resized = self.cv.resizeTo(img, new_w, new_h)
         return self.cv.MAT2QPixmap(resized)
-
+    
     def setVersion(self, version):
         """ adds a Version Number and updates the image """
         self.version = "Version: %s" % version

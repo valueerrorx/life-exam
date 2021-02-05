@@ -20,7 +20,6 @@ from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission
 from classes.psUtil import PsUtil
 
-
 class ClientDialog(QtWidgets.QDialog, Observers):
     """ A dialog """
 

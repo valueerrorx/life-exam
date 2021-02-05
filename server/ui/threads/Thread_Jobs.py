@@ -20,7 +20,6 @@ class Thread_Jobs(QtCore.QThread):
         self.parent = parent
         self.setObjectName("Jobs")
         self.running = False
-        self.running = False
         self._jobs = []
         # start after xs than every xs
         self.timer = PeriodicTimer(1, 1, self.checkJobs)
@@ -47,10 +46,7 @@ class Thread_Jobs(QtCore.QThread):
         print("Job")
 
     def isAlive(self):
-        if self.running:
-            return True
-        else:
-            return False
+        return self.running
 
     def stop(self):
         self.timer.stop()

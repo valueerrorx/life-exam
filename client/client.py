@@ -11,8 +11,6 @@ import os
 from pathlib import Path
 import fcntl
 import atexit
-from PyQt5 import QtWidgets
-import qt5reactor
 
 # add application root to python path for imports at position 0
 rootPath = Path(__file__).parent.parent.as_posix()
@@ -22,6 +20,9 @@ sys.path.insert(0, rootPath)
 from client.ui.ClientUI import ClientDialog
 from client.resources.MulticastLifeClient import MulticastLifeClient
 from config.logger import configure_logging
+
+from PyQt5 import QtWidgets
+import qt5reactor
 
 
 """ prevent to start client twice """

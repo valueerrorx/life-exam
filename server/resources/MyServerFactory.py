@@ -1,13 +1,9 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from twisted.internet import protocol
-from twisted.internet.task import LoopingCall
-
 import sys
 import logging
 from pathlib import Path
-from server.resources.MyServerProtocol import MyServerProtocol
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.parent.as_posix())
@@ -18,6 +14,13 @@ from server.ui.ServerUI import ServerUI
 from config.config import DEBUG_PIN
 from classes.server2client import ServerToClient
 from classes import mutual_functions
+
+from twisted.internet import protocol
+from twisted.internet.task import LoopingCall
+
+from server.resources.MyServerProtocol import MyServerProtocol
+
+
 
 
 class MyServerFactory(protocol.ServerFactory):
@@ -62,7 +65,7 @@ class MyServerFactory(protocol.ServerFactory):
         # mutual_functions.checkFirewall(self.window.get_firewall_adress_list())  # deactivates all iptable rules if any
         # starting multicast server here in order to provide "factory" information via broadcast
         self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
-        
+
     def createExamId(self):
         return "Exam-%s" % mutual_functions.generatePin(3)
 
