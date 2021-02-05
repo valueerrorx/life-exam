@@ -19,5 +19,9 @@ disable=bare-except,
     missing-function-docstring,
     broad-except,
     unnecessary-lambda,
-    too-many-instance-attributes
+    too-many-instance-attributes,
+    wrong-import-order,
+    too-many-public-methods,
+    no-else-return,
+    too-many-statements
 
