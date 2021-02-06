@@ -12,8 +12,9 @@ DEBUG_SHOW_NETWORKTRAFFIC = True
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
 
-# what is the name of the starter for Geogebra running inside Chrome
-GEOGEBRA_CHROME_APP = "chrome-bnbaboaihhkjoaolfnfoablhllahjnee-Default.desktop"
+# which apps are forbidden in EXAM
+BLACKLIST_APPS = ["geogebra", "LIFE Student", "LIFE Teacher", "EXAM"]
+
 
 
 

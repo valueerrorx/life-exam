@@ -14,9 +14,8 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN,\
-    GEOGEBRA_CHROME_APP
+    BLACKLIST_APPS
 from classes.CmdRunner import CmdRunner
-from re import search
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
@@ -56,7 +55,6 @@ def findApps(applistwidget, appview, app):
     desktop_files_list = clearDoubles(desktop_files_list)
     app.processEvents()
     listInstalledApplications(applistwidget, desktop_files_list, appview)
-    app.processEvents()
 
 
 def addApplications(apps):
@@ -112,34 +110,40 @@ def remove_duplicates(other_applist):
 def cleanUp(applist):
     """ 
     clean Up Apps
-    Geogebra only with Chrome, filter out the Rest
-    Kate new Window (english) 
+    filter out:
+        Geogebra App alone
+        Kate new Window (english)
+        Empty Names 
     """
     newlist = []
     for item in applist:
-        # we use Geogebra within Chrome, so exclude normal Geogebra
-        if search("geog", item[0], re.IGNORECASE):  #noqa
-            #print(item)
-            pass
-        else:
-            if search("kate", item[2], re.IGNORECASE):  #noqa
-                if search("new session", item[2], re.IGNORECASE) == None:  # noqa
-                    if search("neues fenster", item[2], re.IGNORECASE) == None:  # noqa
-                        newlist.append(item)                    
-            else:   
-                # geogebra is an self made desktop starter within chrome > add it
-                # chrome-bnbaboaihhkjoaolfnfoablhllahjnee-Default.desktop
-                if search("chrome", item[0], re.IGNORECASE):  #noqa
-                    # normal Chrome we add
-                    if search("/usr/share/applications/google-chrome", item[0], re.IGNORECASE):  #noqa
+        # we use Geogebra within Browser, so exclude normal Geogebra
+        blocked = False
+        for blackapp in BLACKLIST_APPS:
+            if blackapp.lower() in item[0].lower():
+                if DEBUG_PIN != "":
+                    print("BLOCKed App: %s" % item)
+                blocked = True
+                break
+                
+        if blocked == False:
+            if "userapp-Firefox".lower() in item[1].lower():
+                continue
+            
+            if "eclipse".lower() in item[2].lower():
+                continue
+            
+            if "kate" in item[2].lower():
+                if "new session" not in item[2].lower():
+                    if "neues fenster" not in item[2].lower():
                         newlist.append(item)
-                    if search(GEOGEBRA_CHROME_APP, item[0], re.IGNORECASE):  #noqa 
-                        newlist.append(item)
-                else:
-                    # other apps
+            else:
+                # other apps
+                # Empty Name filter it out
+                if len(item[2]) > 0:
                     newlist.append(item)
     
-    
+    # _printArray(newlist)
     return newlist
 
 def create_app_ranking(applist):
@@ -162,7 +166,7 @@ def create_app_ranking(applist):
     
     # other_applist sortieren
     other_applist.sort()
-    return final_applist + other_applist
+    return remove_duplicates(final_applist + other_applist)
 
 
 def _esc_char(match):
@@ -250,7 +254,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
                     thisapp[3] = fields[1]
 
         applist.append(thisapp)
-        
     
     # clean problems
     applist = cleanUp(applist)
@@ -259,6 +262,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     final_applist = create_app_ranking(applist)
     # what apps are activated and stored in OLD Config?
     activated_apps = get_activated_apps()
+    
 
     # clear appview first
     thislayout = appview.layout()
@@ -339,12 +343,13 @@ def saveProfile(applistwidget, appview):
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
 
-        # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case)
-        taskmanagersections = []
+        # Taskbar Launchers search for launchers= entry
+        taskbarsection = []
         for section in config:
             try:
-                if config[section]["plugin"] == "org.kde.plasma.taskmanager":
-                    taskmanagersections.append(section)  # don't save the actual section.. just the name of the section
+                # try this entry
+                test = config[section]["launchers"]                
+                taskbarsection.append(section)  
             except:
                 continue
 
@@ -383,14 +388,12 @@ def saveProfile(applistwidget, appview):
     appstring = ""
 
     # prepare config section for the taskmanager applet
-    for targetsection in taskmanagersections:
-        launchers_section = "%s][Configuration][General" % (targetsection)
-
+    for targetsection in taskbarsection:
         try:
-            config[launchers_section]["launchers"] = ''
+            config[targetsection]["launchers"] = ''
         except KeyError:   # key does not exist..  no pinned applications yet
-            config[launchers_section] = {}
-            config[launchers_section]["launchers"] = ''  # create section(key)
+            config[targetsection] = {}
+            config[targetsection]["launchers"] = ''  # create section(key)
 
         if len(apps_activated) > 0:
             for app in apps_activated:
@@ -399,9 +402,9 @@ def saveProfile(applistwidget, appview):
                 else:
                     appstring = "%s,applications:%s" % (appstring, app)
 
-            config[launchers_section]["launchers"] = appstring
+            config[targetsection]["launchers"] = appstring
         else:  # prevent empty desktop - add geogebra
-            config[launchers_section]["launchers"] = "applications:geogebra.desktop"
+            config[targetsection]["launchers"] = "applications:geogebra.desktop"
 
     # write new plasmaconfig
     config.filename = str(PLASMACONFIG)
@@ -415,31 +418,30 @@ def get_activated_apps():
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG), list_values=False)
 
-        # find section for taskmanager (sections - because plasma could contain more than one taskmanager - just in case)
-        taskmanagersections = []
+        # Taskbar Launchers search for launchers= entry
+        taskbarsection = []
         for section in config:
             try:
-                if config[section]["plugin"] == "org.kde.plasma.taskmanager":
-                    taskmanagersections.append(section)  # don't save the actual section.. just the name of the section
+                # try this entry
+                test = config[section]["launchers"]                
+                taskbarsection.append(section)  
             except:
                 continue
 
         # get activated apps
-        for targetsection in taskmanagersections:
-            launchers_section = "%s][Configuration][General" % (targetsection)
-
+        for targetsection in taskbarsection:
             try:
-                activate_apps_string = config[launchers_section]["launchers"]
+                activate_apps_string = config[targetsection]["launchers"]
             except KeyError:   # key does not exist..  no pinned applications yet
-                config[launchers_section] = {}
+                config[targetsection] = {}
                 # create section(key)
-                config[launchers_section]["launchers"] = ""
+                config[targetsection]["launchers"] = ""
 
                 # add at least one application to activated apps
                 appstring = "applications:geogebra.desktop"
                 # and prevent empty desktops
-                config[launchers_section]["launchers"] = appstring
-                activate_apps_string = config[launchers_section]["launchers"]
+                config[targetsection]["launchers"] = appstring
+                activate_apps_string = config[targetsection]["launchers"]
 
             # make a list
             if activate_apps_string in (',', ''):  # catch a corner case

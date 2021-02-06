@@ -23,7 +23,6 @@ encoding//client/resources/lockscreen.py=utf-8
 encoding//client/ui/ClientUI.py=utf-8
 encoding//config/config.py=utf-8
 encoding//config/logger.py=utf-8
-encoding//server/applist.py=utf-8
 encoding//server/resources/Applist.py=utf-8
 encoding//server/resources/MultcastLifeServer.py=utf-8
 encoding//server/resources/MyCustomWidget.py=utf-8

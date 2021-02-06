@@ -148,6 +148,10 @@ class ServerUI(QtWidgets.QDialog):
 
         # Applications ------------------------------------------------------
         self.splashscreen.setMessage("Generating Application List")
+        
+        #debug
+        self.splashscreen.finish(self)
+        
         findApps(self.ui.applist, self.ui.appview, self.application)
         self.splashscreen.step()
 
