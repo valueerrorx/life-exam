@@ -19,9 +19,9 @@ Tools needed in order to provide 100% functionality are:
   ```bash
   # is an old EXAM running after a reboot > then stop it
   $HOME/.life/applications/life-exam/DATA/scripts/isEXAMafterReboot.sh
-- check if you have Geogebra Web Apps inside *localhost/geogebra*.
-  Be sure wich path points to your webserver root. The entry html file
-  is either index.html or Geogebra.html.
+- check if you have Geogebra Web Apps inside *localhost/geogebra/*.
+  Be sure wich path points to your webserver root, see Configuration.
+  The entry html file is either *index.html* or *Geogebra.html*.
   ```
 ## Configuration
 is made in *config/config.py*.  
@@ -33,6 +33,11 @@ DEBUG_ID = "TestUser"
 DEBUG_PIN = "1234"
 # would you like to see Network Debugging Stuff?
 DEBUG_SHOW_NETWORKTRAFFIC = True
+
+# Web Server Root Directory
+WEB_ROOT="/var/www/html/"
+# Subdirectory to Geogebra
+GEOGEBRA_PATH = os.path.join(WEB_ROOT, "geogebra")
 
 # sec, how often do we heartbeating
 HEARTBEAT_INTERVALL = 5     
