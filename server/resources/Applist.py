@@ -14,7 +14,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN,\
-    BLACKLIST_APPS, GEOGEBRA_PATH
+    BLACKLIST_APPS, GEOGEBRA_PATH, WEB_ROOT
 from classes.CmdRunner import CmdRunner
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
