@@ -104,9 +104,9 @@ def get_file_md5_hash(file):
 
 def read_bytes_from_file(file, chunk_size=8100):
     """ Read bytes from a file in chunks. """
-    with open(file, 'rb') as file:
+    with open(file, 'rb') as ffile:
         while True:
-            chunk = file.read(chunk_size)
+            chunk = ffile.read(chunk_size)
 
             if chunk:
                 yield chunk
@@ -354,11 +354,7 @@ def writeLockFile():
 
 def lockFileExists():
     my_file = Path(WORK_DIRECTORY).joinpath('client.lock')
-    if my_file.is_file():
-        # file exists
-        return True
-    else:
-        return False
+    return my_file.is_file()
 
 
 def showDesktopMessage(msg):
