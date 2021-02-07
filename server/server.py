@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # set version first
     splash.setVersion(__version__)
     splash.setImage("img/LIFE.jpg")
-    splash.show()
+    # splash.show()
     splash.update()
     app.processEvents()
     while time() - start < 2:

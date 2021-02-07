@@ -169,13 +169,14 @@ def updatePlasmaConfig(oldConfig):
     launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
     """
     launchers = None
-    for item in oldConfig.keys():
-        if item.find('Configuration][General') != -1:
-            section = oldConfig[item]
-            try:
-                launchers = section["launchers"]
-            except KeyError:
-                continue
+    if oldConfig is not None:
+        for item in oldConfig.keys():
+            if item.find('Configuration][General') != -1:
+                section = oldConfig[item]
+                try:
+                    launchers = section["launchers"]
+                except KeyError:
+                    continue
     
     if launchers != None:
         # Create new Config File 
