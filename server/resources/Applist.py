@@ -469,17 +469,22 @@ def createGGBStarter():
     applicatins_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
     
     lines = []
-    if os.path.exists(GEOGEBRA_PATH):
+    if os.path.join(WEB_ROOT, GEOGEBRA_PATH):
         with open(path_to_file, 'r') as fh:
             for line in fh:
                 line = line.rstrip("\n")
                 if "Exec=".lower() in line.lower():
                     # create correct Exec Line in Starter
                     # Exec=firefox -ssb https://localhost/geogebra/index.html
+                    index = ""
                     if os.path.isfile(os.path.join(GEOGEBRA_PATH, )):
                         index = "index.html"
                     if os.path.isfile(os.path.join(GEOGEBRA_PATH, "GeoGebra.html")):
                         index = "GeoGebra.html"
+                    if index!="":
+                        # we found an entry Point
+                        line = "Exec=firefox -ssb https://localhost/" % ()
+                        
                     
                     
                     

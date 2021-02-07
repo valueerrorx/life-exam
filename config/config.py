@@ -18,7 +18,7 @@ BLACKLIST_APPS = ["geogebra", "LIFE Student", "LIFE Teacher", "EXAM"]
 # Web Server Root Directory
 WEB_ROOT="/var/www/html/"
 # Subdirectory to Geogebra
-GEOGEBRA_PATH = os.path.join(WEB_ROOT, "geogebra")
+GEOGEBRA_PATH = "geogebra"
 
 
 # DON'T CHANGE ==========================================================================================================

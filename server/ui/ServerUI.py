@@ -11,7 +11,7 @@ import sip
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH
+    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH, WEB_ROOT
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -943,7 +943,7 @@ class ServerUI(QtWidgets.QDialog):
         search fpr Geogebra WebApp in /var/www/html/geogebra
         fire a reminder if not existent 
         """
-        if os.path.exists(GEOGEBRA_PATH) == False:
+        if os.path.join(WEB_ROOT, GEOGEBRA_PATH) == False:
             self._setInfoColor("#ff0000")
             
             self.ui.info_label.setText("Geogebra Web App missing in %s !" % GEOGEBRA_PATH)
