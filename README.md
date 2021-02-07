@@ -37,7 +37,7 @@ DEBUG_SHOW_NETWORKTRAFFIC = True
 # Web Server Root Directory
 WEB_ROOT="/var/www/html/"
 # Subdirectory to Geogebra
-GEOGEBRA_PATH = os.path.join(WEB_ROOT, "geogebra")
+GEOGEBRA_PATH = "geogebra"
 
 # sec, how often do we heartbeating
 HEARTBEAT_INTERVALL = 5     
