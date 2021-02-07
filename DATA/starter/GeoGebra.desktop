@@ -1,0 +1,20 @@
+[Desktop Entry]
+Comment[de_AT]=
+Comment=
+Exec=firefox -ssb https://localhost/geogebra/index.html
+GenericName[de_AT]=GeoGebra Classic
+GenericName=GeoGebra Classic
+Icon=/home/student/.life/icons/geogebra.png
+MimeType=
+Name[de_AT]=GeoGebra
+Name=GeoGebra
+NoDisplay=false
+Path=/home/student/SHARE
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

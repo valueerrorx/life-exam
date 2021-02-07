@@ -14,8 +14,8 @@ SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'g
 
 # which apps are forbidden in EXAM
 BLACKLIST_APPS = ["geogebra", "LIFE Student", "LIFE Teacher", "EXAM"]
-
-
+# Path to Geogebra Web APP
+GEOGEBRA_PATH = "/var/www/html/geogebra"
 
 
 # DON'T CHANGE ==========================================================================================================

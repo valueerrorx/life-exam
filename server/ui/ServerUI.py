@@ -11,7 +11,7 @@ import sip
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK
+    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -23,7 +23,7 @@ from enum import Enum
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
-from PyQt5.Qt import QRegExpValidator, QFileDialog
+from PyQt5.Qt import QRegExpValidator, QFileDialog, QTimer
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QCursor
 
 from server.resources.MyCustomWidget import MyCustomWidget
@@ -202,6 +202,9 @@ class ServerUI(QtWidgets.QDialog):
 
         # Set UI Values from config_ui.yml file
         self.configUI.setConfig(self.ui)
+        
+        # search for GGB Web Apps
+        self.testGGB()
 
         # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
@@ -926,3 +929,31 @@ class ServerUI(QtWidgets.QDialog):
         """Heartbeat fired time to check the Heartbeat of client"""
         server_to_client = self.factory.server_to_client
         server_to_client.request_heartbeat(who)
+        
+    def _setInfoColor(self, col):
+        """sets the TextLabel Color in Info Area"""
+        self.ui.info_label.setStyleSheet("QLabel { color : %s; }" % col)
+        
+    def _resetInfoColor(self):
+        """resets the TextLabel Color in Info Area to black"""
+        self.ui.info_label.setStyleSheet("QLabel { color : black; }")
+        
+    def testGGB(self):
+        """ 
+        search fpr Geogebra WebApp in /var/www/html/geogebra
+        fire a reminder if not existent 
+        """
+        # if os.path.exists(GEOGEBRA_PATH) == False:
+        self._setInfoColor("#ff0000")
+        
+        self.ui.info_label.setText("Geogebra Web App missing in %s !" % GEOGEBRA_PATH)
+        self.ui.working.show()
+        
+        QTimer.singleShot(5000, self._hideGGBError)
+        
+        
+    def _hideGGBError(self):
+        """ hide GGB missing msg """
+        self.ui.info_label.setText("")
+        self.ui.working.hide()
+

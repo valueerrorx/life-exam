@@ -59,7 +59,7 @@ def findApps(applistwidget, appview, app):
 
 def addApplications(apps):
     """add everything from ~/.local/share/applications/ """
-    path = "/home/student/.local/share/applications/"
+    path = "%s/.local/share/applications/" % USER_HOME_DIR
     for root, dirs, files in os.walk(path, topdown=False):  # noqa
         for name in files:   
             apps.append(os.path.join(root, name))
@@ -143,7 +143,8 @@ def cleanUp(applist):
                 if len(item[2]) > 0:
                     newlist.append(item)
     
-    # _printArray(newlist)
+    #_printArray(newlist)
+     
     return newlist
 
 def create_app_ranking(applist):
@@ -222,7 +223,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     populates a QListWidgetItem with list entries
     """
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
-
+    
     cmdRunner = CmdRunner()
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
@@ -348,7 +349,7 @@ def saveProfile(applistwidget, appview):
         for section in config:
             try:
                 # try this entry
-                test = config[section]["launchers"]                
+                test = config[section]["launchers"]  # noqa             
                 taskbarsection.append(section)  
             except:
                 continue
@@ -423,7 +424,7 @@ def get_activated_apps():
         for section in config:
             try:
                 # try this entry
-                test = config[section]["launchers"]                
+                test = config[section]["launchers"]  # noqa              
                 taskbarsection.append(section)  
             except:
                 continue
