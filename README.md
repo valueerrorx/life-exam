@@ -19,9 +19,11 @@ Tools needed in order to provide 100% functionality are:
   ```bash
   # is an old EXAM running after a reboot > then stop it
   $HOME/.life/applications/life-exam/DATA/scripts/isEXAMafterReboot.sh
-- check if you have Geogebra Web Apps inside *localhost/geogebra/*.
+- check if you have Geogebra Web Apps inside `localhost/geogebra/`.
+
   Be sure wich path points to your webserver root, see Configuration.
-  The entry html file is either *index.html* or *Geogebra.html*.
+
+  The entry html file is either `index.html` or `Geogebra.html`.
   ```
 ## Configuration
 is made in *config/config.py*.  
