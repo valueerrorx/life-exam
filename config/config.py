@@ -14,8 +14,11 @@ SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'g
 
 # which apps are forbidden in EXAM
 BLACKLIST_APPS = ["geogebra", "LIFE Student", "LIFE Teacher", "EXAM"]
-# Path to Geogebra Web APP
-GEOGEBRA_PATH = "/var/www/html/geogebra"
+
+# Web Server Root Directory
+WEB_ROOT="/var/www/html/"
+# Subdirectory to Geogebra
+GEOGEBRA_PATH = os.path.join(WEB_ROOT, "geogebra")
 
 
 # DON'T CHANGE ==========================================================================================================

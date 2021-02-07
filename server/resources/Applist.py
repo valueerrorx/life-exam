@@ -14,7 +14,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
 from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN,\
-    BLACKLIST_APPS
+    BLACKLIST_APPS, GEOGEBRA_PATH
 from classes.CmdRunner import CmdRunner
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
@@ -28,6 +28,8 @@ def findApps(applistwidget, appview, app):
     apps = apps.decode()
     desktop_files_list = []
     app.processEvents()
+    
+    createGGBStarter()
 
     for line in apps.split('\n'):
         if line == "\n":
@@ -455,3 +457,50 @@ def get_activated_apps():
                 activated_apps.append(app[1])
 
     return activated_apps
+
+def createGGBStarter():
+    """ 
+    checks if Geogebra Starter is set correct
+    and copys the starter to  /home/student/.local/share/applications/
+    """
+    rootDir = Path(__file__).parent.parent.parent
+    path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
+    
+    applicatins_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
+    
+    lines = []
+    if os.path.exists(GEOGEBRA_PATH):
+        with open(path_to_file, 'r') as fh:
+            for line in fh:
+                line = line.rstrip("\n")
+                if "Exec=".lower() in line.lower():
+                    # create correct Exec Line in Starter
+                    # Exec=firefox -ssb https://localhost/geogebra/index.html
+                    if os.path.isfile(os.path.join(GEOGEBRA_PATH, )):
+                        index = "index.html"
+                    if os.path.isfile(os.path.join(GEOGEBRA_PATH, "GeoGebra.html")):
+                        index = "GeoGebra.html"
+                    
+                    
+                    
+                    
+                
+                print(line)
+                lines.append(line)
+                
+    else:
+        # No Geogebra > delete Starter
+        cmd = "rm %s%s" % (applicatins_path, "GeoGebra.desktop")
+        
+        
+        
+    
+    kk = 1
+    
+    
+    
+    
+    
+    
+    
+    

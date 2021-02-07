@@ -943,13 +943,13 @@ class ServerUI(QtWidgets.QDialog):
         search fpr Geogebra WebApp in /var/www/html/geogebra
         fire a reminder if not existent 
         """
-        # if os.path.exists(GEOGEBRA_PATH) == False:
-        self._setInfoColor("#ff0000")
-        
-        self.ui.info_label.setText("Geogebra Web App missing in %s !" % GEOGEBRA_PATH)
-        self.ui.working.show()
-        
-        QTimer.singleShot(5000, self._hideGGBError)
+        if os.path.exists(GEOGEBRA_PATH) == False:
+            self._setInfoColor("#ff0000")
+            
+            self.ui.info_label.setText("Geogebra Web App missing in %s !" % GEOGEBRA_PATH)
+            self.ui.working.show()
+            
+            QTimer.singleShot(5000, self._hideGGBError)
         
         
     def _hideGGBError(self):
