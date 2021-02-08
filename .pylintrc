@@ -29,6 +29,8 @@ disable=bare-except,
     wrong-import-order,
     too-many-public-methods,
     no-else-return,
-    too-many-statements
+    too-many-statements,
+    too-few-public-methods,
+    too-many-arguments
     
 
