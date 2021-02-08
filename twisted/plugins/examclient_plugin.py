@@ -43,6 +43,7 @@ from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
 import sys
 
+
 class MyClientProtocol(basic.LineReceiver):
     def __init__(self, factory, appDir):
         self.factory = factory
@@ -52,12 +53,12 @@ class MyClientProtocol(basic.LineReceiver):
         self.line_data_list = ()
         # Path Stuff
         self.rootDir = Path(__file__).parent.parent.parent
-        
+
         self.notification_path = Path(appDir)
         self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
-        
+
         # AutoSave open Apps Part ---------------------------------------------
         # which Apps are allready triggered a autosave via xdotool
         self.trigerdAutoSavedIDs = []
@@ -72,7 +73,7 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
         self.inform('Authenticated with server ...')
-        
+
         self.hideConnectedInformation()
 
     # twisted-Event:
@@ -87,7 +88,7 @@ class MyClientProtocol(basic.LineReceiver):
             command = "%s/client/client.py &" % (self.rootDir)
             os.system(command)
             sys.exit(1)
-            
+
     def _getIndex(self, index, data):
         """ try except Index from Array """
         try:
@@ -100,7 +101,7 @@ class MyClientProtocol(basic.LineReceiver):
         filename = self._getIndex(3, self.line_data_list)
         cleanup_abgabe = self._getIndex(5, self.line_data_list)
         spellcheck = self._getIndex(6, self.line_data_list)
-        
+
         file_path = os.path.join(self.factory.files_path, filename)
         print('Receiving file chunk (%d KB)' % (len(data)))
 
@@ -191,16 +192,16 @@ class MyClientProtocol(basic.LineReceiver):
         ENDMSG macht diesen dann als deskotp message sichtbar
         """
         line_handler(self) if line_handler is not None else self.buffer.append(line)  # noqa
-    
+
     def runAndWaittoFinish(self, cmd):
         """Runs a subprocess, and waits for it to finish"""
         stderr = ""
         stdout = ""
-        proc = subprocess.Popen(cmd, 
-                                shell=True, 
-                                stdin=subprocess.PIPE, 
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE, 
+        proc = subprocess.Popen(cmd,
+                                shell=True,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
                                 )
         for line in iter(proc.stderr.readline, b''):
             stderr += line.decode()
@@ -209,16 +210,16 @@ class MyClientProtocol(basic.LineReceiver):
             stdout += line.decode()
         # Wait for process to terminate and set the return code attribute
         proc.communicate()
-        
+
         return [proc.returncode, stderr, stdout]
-    
+
 # Autotrigger Save Part -------------------------------------------------------------------
     def _getArrayAsString(self, arr):
         string = ""
         for val in arr:
             string += val + " "
         return string
-    
+
     def _isTriggered(self, application_id):
         """ is this ID allready autosav fired? """
         found = False
@@ -227,15 +228,15 @@ class MyClientProtocol(basic.LineReceiver):
                 found = True
                 break
         return found
-    
+
     def _fireSaveApps(self, pids, app_id_list):
-        """ 
+        """
         trigger dbus and xdotool to open apps
         :pids: PIDs from DBus
-        :app_id_list: IDs from xdotool 
+        :app_id_list: IDs from xdotool
         """
         for app in SAVEAPPS:
-            if len(pids)>0:
+            if len(pids) > 0:
                 if app == "kate":
                     savetrigger = "file_save_all"
                 else:
@@ -248,21 +249,20 @@ class MyClientProtocol(basic.LineReceiver):
                         data = self.runAndWaittoFinish(qdbus_command)  # noqa
                 except Exception as error:  # noqa
                     print(error)
-            
+
         # trigger Auto Save via xdotool but only ONE Time
         if(len(app_id_list) > 0):
             for application_id in app_id_list:  # try to invoke ctrl+s on the running apps
-                if(self._isTriggered(application_id) == False):
+                if(self._isTriggered(application_id) is False):
                     command = "xdotool windowactivate %s && xdotool key ctrl+s &" % (application_id)
                     os.system(command)
                     print("ctrl+s sent to %s" % (application_id))
-                     
-                    #remember this id
+
+                    # remember this id
                     self.trigerdAutoSavedIDs.append(application_id)
                 else:
                     print("ID %s allready in save State -waiting-" % application_id)
 
-        
     def _countOpenApps(self):
         """ counts how much apps are open """
         open_apps = 0
@@ -273,20 +273,20 @@ class MyClientProtocol(basic.LineReceiver):
             found = False
             # DBus -------------------------------------
             command = "pidof %s" % (app)
-            data = self.runAndWaittoFinish(command)    
-            # clean               
+            data = self.runAndWaittoFinish(command)
+            # clean
             p = data[2].replace('\n', '')
             pids = p.split(' ')
             # check for empty data
             for item in pids:
                 if(len(item) > 0):
                     finalPids.append(item)
-                    open_apps += 1  
+                    open_apps += 1
                     found = True
                     # print("> %s" % app)
-            
+
             # i dont find it on DBus
-            if found ==False:
+            if found is False:
                 # xdotool -----------------------------------
                 command = "xdotool search --name %s &" % (app)
                 app_ids = subprocess.check_output(command, shell=True).decode().rstrip()
@@ -296,24 +296,24 @@ class MyClientProtocol(basic.LineReceiver):
                         app_id_list.append(app_id)
                     open_apps += 1
                     # print("xdo > %s" % app)
-        return [open_apps, finalPids, app_id_list] 
+        return [open_apps, finalPids, app_id_list]
 
     def _detectOpenApps(self, filename, wait_thread):
         """ counts the open Apps is called periodically by self.detectLoop """
-        #[open_apps, pids, app_ids]
+        # [open_apps, pids, app_ids]
         data = self._countOpenApps()
         count = int(data[0])
-        
+
         print("Offene Apps: %s" % count)
         self._fireSaveApps(data[1], data[2])
-        
+
         # Fallback abort if user isn't closing apps
-        fallback_time = 5*60  # 5 min
-        
+        fallback_time = 5 * 60  # 5 min
+
         # alle 10 sec repeat Message
         if wait_thread.getSeconds() % 10 == 0:
             self.inform("Bitte alle Dateien speichern und die laufenden Programme schließen!", Notification_Type.Warning)
-        
+
         if((count == 0) or (wait_thread.getSeconds() >= fallback_time)):
             # if there are no more open Apps
             self.detectLoop.stop()
@@ -323,7 +323,6 @@ class MyClientProtocol(basic.LineReceiver):
             # fire Event "We are ready to send the file"
             wait_thread.fireEvent_Done()
             wait_thread.stop()
-            
 
     def triggerAutosave(self, filename, wait_thread):
         """
@@ -335,9 +334,9 @@ class MyClientProtocol(basic.LineReceiver):
         del self.trigerdAutoSavedIDs[:]
         self.trigerdAutoSavedIDs = []
         self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename, wait_thread))
-        self.detectLoop.start(2)      
+        self.detectLoop.start(2)
         self.inform("Bitte alle Dateien speichern und die laufenden Programme schließen!", Notification_Type.Warning)
-            
+
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY
@@ -346,20 +345,20 @@ class MyClientProtocol(basic.LineReceiver):
         print("Anzahl an Files in %s" % target_folder)
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])
-        #create Zip File
+        # create Zip File
         shutil.make_archive(output_filename, 'zip', target_folder)
-        if  count > 0:
+        if count > 0:
             # this is the filename of the zip file
             return "%s.zip" % filename
         else:
             # create empty Zip File
             return "%s-%s.zip" % (filename, "Empty")
 # Autotrigger Save Part END -------------------------------------------------------------------
-        
+
     def sendFile(self, filename, filetype):
         """send a file to the server"""
         # rebuild here just in case something changed (zip/screenshot created )
-        self.factory.files = mutual_functions.get_file_list(self.factory.files_path)  
+        self.factory.files = mutual_functions.get_file_list(self.factory.files_path)
 
         if filename not in self.factory.files:  # if folder exists
             self.sendLine(b'filename not found in client directory')
@@ -374,7 +373,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         self.setRawMode()
         # complete filepath as arg
-        for bytess in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):  
+        for bytess in mutual_functions.read_bytes_from_file(self.factory.files[filename][0]):
             self.transport.write(bytess)
 
         # send this to inform the server that the datastream is finished
@@ -455,13 +454,13 @@ class MyClientProtocol(basic.LineReceiver):
 
         cmd = 'python3 %s/NotificationDispatcher.py "%s" "%s" &' % (self.notification_path, stype, msg)
         os.system(cmd)
-        
+
     def hideConnectedInformation(self):
         """ hide Connected Info after 5min ... """
         # time in sec
-        countdown_thread = Thread_Countdown(None, 5*60, self.checkConnectionInfo_and_CloseIt)    
+        countdown_thread = Thread_Countdown(None, 5 * 60, self.checkConnectionInfo_and_CloseIt)
         countdown_thread.start()
-        
+
     def checkConnectionInfo_and_CloseIt(self):
         """ close all Connection Processes """
         print("Killing all ConnectionInformation Processes")
@@ -472,8 +471,6 @@ class MyClientProtocol(basic.LineReceiver):
             pid = int(p[0])
             processUtil.killProcess(pid)
 
-        
-    
 
 class MyClientFactory(protocol.ReconnectingClientFactory):
     # ReconnectingClientFactory tries to reconnect automatically if connection fails
@@ -547,7 +544,7 @@ class MyServiceMaker():
 
     def makeService(self, options):
         return internet.TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))  #noqa
-    
+
     def getDescription(self):
         return self.description
 

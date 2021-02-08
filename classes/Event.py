@@ -14,6 +14,3 @@ class Event():
             for observable in observer._observed_events:
                 if observable['event_name'] == event_name:
                     observable['callback_fn'](*callback_args)
-    
-    def getClassName(self):
-        return "Event"

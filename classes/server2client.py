@@ -53,7 +53,7 @@ class ServerToClient:
             client = self.get_client(who)
             try:
                 client.sendEncodedLine(line % client.clientConnectionID)
-            except:                
+            except Exception:
                 print("server2client Error, clientID: %s, %s" % (client.clientConnectionID, line))
 
     """client instructions"""
