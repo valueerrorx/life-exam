@@ -13,7 +13,7 @@ DEBUG_SHOW_NETWORKTRAFFIC = True
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
 
 # which apps are forbidden in EXAM
-BLACKLIST_APPS = ["geogebra", "LIFE Student", "LIFE Teacher", "EXAM"]
+BLACKLIST_APPS = ["LIFE Student", "LIFE Teacher", "EXAM"]
 
 # Web Server Root Directory
 WEB_ROOT="/var/www/html/"

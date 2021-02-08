@@ -6,23 +6,24 @@
 # This software may be modified and distributed under the terms
 # of the GPLv3 license.  See the LICENSE file for details...
 
+
 import sys
-import logging
-
-import qt5reactor
 from pathlib import Path
-from classes import mutual_functions
-
-from PyQt5 import QtWidgets
-from classes.Splashscreen.SplashScreen import SplashScreen
-from time import time, sleep
-from version import __version__
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
+from classes import mutual_functions
+from classes.Splashscreen.SplashScreen import SplashScreen
 from config.logger import configure_logging
 from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
+
+import logging
+import qt5reactor
+
+from PyQt5 import QtWidgets
+from time import time, sleep
+from version import __version__
 
 from server.resources.MyServerFactory import MyServerFactory
 

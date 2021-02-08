@@ -75,7 +75,7 @@ class MyServerProtocol(basic.LineReceiver):
             try:
                 self.file_handler = open(file_path, 'wb')
             except FileNotFoundError:
-                logger.error("Cannot create File %s" % file_path)
+                self.logger.error("Cannot create File %s" % file_path)
 
         if data.endswith(b'\r\n'):  # Last chunk
             data = data[:-2]

@@ -46,11 +46,9 @@ class ScreenlockWindow(QtWidgets.QMainWindow):
 
     def clickedEvent(self, event):
         event.ignore()
-        return
 
     def mousePressEvent(self, event):
         event.ignore()
-        return
 
     def dragEnterEvent(self, event):
         event.ignore()

@@ -539,7 +539,7 @@ class Options(usage.Options):
 
 
 @implementer(IServiceMaker, IPlugin)
-class MyServiceMaker(object):
+class MyServiceMaker():
     # see https://twistedmatrix.com/documents/current/core/howto/plugin.html#extending-an-existing-program
     tapname = "examclient"
     description = "LiFE-Exam Client"
@@ -547,6 +547,9 @@ class MyServiceMaker(object):
 
     def makeService(self, options):
         return internet.TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))  #noqa
+    
+    def getDescription(self):
+        return self.description
 
 
 serviceMaker = MyServiceMaker()

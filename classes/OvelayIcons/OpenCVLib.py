@@ -9,7 +9,7 @@ from cv2 import cv2
 from PIL import ImageFont, ImageDraw, Image  
 
 
-class OpenCVLib(object):
+class OpenCVLib():
     """
     for inspiration have a look at
     https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_tutorials.html
@@ -27,7 +27,8 @@ class OpenCVLib(object):
 
         ptr = incomingImage.bits()
         ptr.setsize(incomingImage.byteCount())
-        arr = np.array(ptr).reshape(height, width, 4)  # copies the data
+        # copies the data
+        arr = np.array(ptr).reshape(height, width, 4)  # noqa  
         return arr
 
     def MAT2QPixmap(self, cvImg):

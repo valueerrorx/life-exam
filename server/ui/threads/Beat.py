@@ -3,7 +3,7 @@
 # Copyright (C) 2019 Stefan Hagmann
 
 
-class Beat(object):
+class Beat():
     """ Data for a Client """
     def __init__(self, ID):
         self._ID = ID   # connection ID

@@ -3,7 +3,13 @@
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code.
-extension-pkg-whitelist=PyQt5
+
+extension-pkg-whitelist=PyQt5, cv2, numpy
+
+ignored-modules = cv2
+
+generated-members = cv2.*
+
 disable=bare-except,
     locally-disabled,
     too-many-branches,
@@ -24,4 +30,5 @@ disable=bare-except,
     too-many-public-methods,
     no-else-return,
     too-many-statements
+    
 

@@ -37,10 +37,7 @@ class ConfigTools():
     
     def getState(self, what):
         """ return the State of a CheckBox for String '1/0' """
-        if(what == '1'):
-            return True
-        else:
-            return False
+        return what == '1'
         
     def setConfig(self, ui):
         """ set the Configuration """

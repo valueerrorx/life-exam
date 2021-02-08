@@ -139,7 +139,6 @@ class ClientToServer:
         print(startcommand)   
         os.system(startcommand)  
 
-        return
     
     def file_transfer_request(self, client):
         """

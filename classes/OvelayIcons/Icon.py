@@ -6,7 +6,7 @@ import cv2
 import pathlib
 
 
-class Icon(object):
+class Icon():
     """ the Icon as an OpenCV Mat Image """
 
     def __init__(self, path, filename):

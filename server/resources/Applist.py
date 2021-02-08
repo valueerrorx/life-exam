@@ -26,11 +26,8 @@ def findApps(applistwidget, appview, app):
     """
     apps = subprocess.check_output("kbuildsycoca5 --menutest", stderr=subprocess.DEVNULL, shell=True)
     apps = apps.decode()
-    desktop_files_list = []
-    app.processEvents()
     
-    createGGBStarter()
-
+    desktop_files_list = []
     for line in apps.split('\n'):
         if line == "\n":
             continue
@@ -49,6 +46,9 @@ def findApps(applistwidget, appview, app):
 
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
+    
+    # check Geogebra
+    desktop_files_list = createGGBStarter(desktop_files_list)
 
     # now we have pathes to desktop files, like /usr/share/applications/org.hydrogenmusic.Hydrogen.desktop
     # because in applications there are e.g. chrome apps we had to add them too, even they are not
@@ -258,6 +258,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
 
         applist.append(thisapp)
     
+    _printArray(applist)
     # clean problems
     applist = cleanUp(applist)
 
@@ -458,7 +459,7 @@ def get_activated_apps():
 
     return activated_apps
 
-def createGGBStarter():
+def createGGBStarter(desktop_files_list):
     """ 
     checks if Geogebra Starter is set correct
     and copys the starter to  /home/student/.local/share/applications/
@@ -492,10 +493,15 @@ def createGGBStarter():
         for l in lines: 
             file.write("%s\n" % l) 
         file.close() 
+        
+        # add to List
+        desktop_files_list.append(str(path_to_file))
                 
     else:
         # No Geogebra > delete Starter
         cmd = "rm %s%s" % (applicatins_path, "GeoGebra.desktop")
         os.system(cmd)
+        
+    return desktop_files_list
    
     

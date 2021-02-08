@@ -78,7 +78,7 @@ class CmdRunner():
         """Run the command 'id' in a subprocess as user 1000,
         return the result"""
         cmd = ['id']
-        return subprocess.check_output(cmd, preexec_fn=self.demote(1000, 1000))
+        return subprocess.check_output(cmd, preexec_fn=self.demote(1000, 1000))  # noqa
 
     def demote(self, user_name, user_uid, user_gid):
         """Pass the function 'set_ids' to preexec_fn, rather than just calling

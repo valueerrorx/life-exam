@@ -6,6 +6,7 @@ encoding//classes/HTMLTextExtractor.py=utf-8
 encoding//classes/Notification/Notification.py=utf-8
 encoding//classes/Notification/NotificationDispatcher.py=utf-8
 encoding//classes/Notification/NotificationTest.py=utf-8
+encoding//classes/Observers.py=utf-8
 encoding//classes/OvelayIcons/Icon.py=utf-8
 encoding//classes/OvelayIcons/IconStack.py=utf-8
 encoding//classes/OvelayIcons/OpenCVLib.py=utf-8

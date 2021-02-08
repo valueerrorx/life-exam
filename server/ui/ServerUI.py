@@ -133,7 +133,7 @@ class ServerUI(QtWidgets.QDialog):
 
         num_regex = QRegExp("[0-9_]+")
         num_validator = QRegExpValidator(num_regex)
-        ip_regex = QRegExp("[0-9\._]+")  # noqa
+        ip_regex = QRegExp(r"[0-9\._]+")
         ip_validator = QRegExpValidator(ip_regex)
 
         self.ui.firewall1.setValidator(ip_validator)

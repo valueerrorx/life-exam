@@ -5,13 +5,13 @@ with timeit():
     # your code, e.g.,
     print(sum(range(int(1e7))))
 '''
+from _datetime import datetime
 
 
 class time_it():
-    from datetime import datetime
 
     def __enter__(self):
-        self.tic = self.datetime.now()
+        self.tic = datetime.now()
 
     def __exit__(self, *args, **kwargs):
-        print('runtime: {}'.format(self.datetime.now() - self.tic))
+        print('runtime: {}'.format(datetime.now() - self.tic))

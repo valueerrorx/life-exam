@@ -1,6 +1,6 @@
 import socket
 import os
-from config.config import SCRIPTS_DIRECTORY
+from config.config import SCRIPTS_DIRECTORY, SHARE_DIRECTORY
 
 # TODO use systemcommander in examclient and add startexam
 

@@ -98,10 +98,7 @@ class Heartbeat(QtCore.QThread):
                 self.request_heartbeat.emit(hb.getConnectionID())
 
     def isAlive(self):
-        if self.running:
-            return True
-        else:
-            return False
+        return self.running
 
     def stop(self):
         """ stop this Thread """

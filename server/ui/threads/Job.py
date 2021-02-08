@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 
-class Job(object):
+class Job():
     """ Data for a job """
 
     def __init__(self, ID, func):
@@ -11,7 +11,7 @@ class Job(object):
         self._retries = 0
 
     def getID(self):
-        return self._ID
+        return self.ID
 
     def getFunction(self):
         return self._func

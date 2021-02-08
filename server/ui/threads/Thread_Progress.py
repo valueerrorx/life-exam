@@ -59,10 +59,7 @@ class Thread_Progress(QtCore.QThread):
             self.clients = self.clients[:index] + self.clients[index + 1:]
 
     def isAlive(self):
-        if self.running:
-            return True
-        else:
-            return False
+        return self.running
 
     def stop(self):
         self.running = False

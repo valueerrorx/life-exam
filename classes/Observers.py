@@ -16,3 +16,6 @@ class Observers():
 
     def observe(self, event_name, callback_fn):
         self._observed_events.append({'event_name': event_name, 'callback_fn': callback_fn})
+    
+    def getObservers(self):
+        return self._observers
