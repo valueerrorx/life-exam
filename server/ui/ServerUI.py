@@ -19,8 +19,6 @@ from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
 from version import __version__
 from enum import Enum
 
-
-
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
 from PyQt5.Qt import QRegExpValidator, QFileDialog, QTimer
@@ -55,11 +53,11 @@ class ServerUI(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         # rootDir of Application
         self.rootDir = Path(__file__).parent.parent.parent
-        
+
         self.logger = logging.getLogger(__name__)
         uic.uiparser.logger.setLevel(logging.INFO)
         uic.properties.logger.setLevel(logging.INFO)
-        
+
         path_to_yml = self.rootDir.joinpath('config/config_ui.yaml')
         self.configUI = ConfigTools(path_to_yml)
 
@@ -70,7 +68,7 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.setProgressMax(3)
         self.splashscreen.setMessage("Loading UI")
 
-        self.factory = factory     # type: MyServerFactory
+        self.factory = factory     # MyServerFactory
 
         uifile = self.rootDir.joinpath('server/server.ui')
         self.ui = uic.loadUi(uifile)        # load UI
@@ -102,7 +100,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         # is Auto Abgabe triggered
         self.autoAbgabe = False
-        
+
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
         self.ui.exitexam.clicked.connect(lambda: self._on_exit_exam("all"))
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
@@ -148,10 +146,10 @@ class ServerUI(QtWidgets.QDialog):
 
         # Applications ------------------------------------------------------
         self.splashscreen.setMessage("Generating Application List")
-        
-        #debug
+
+        # debug
         self.splashscreen.finish(self)
-        
+
         findApps(self.ui.applist, self.ui.appview, self.application)
         self.splashscreen.step()
 
@@ -202,7 +200,7 @@ class ServerUI(QtWidgets.QDialog):
 
         # Set UI Values from config_ui.yml file
         self.configUI.setConfig(self.ui)
-        
+
         # search for GGB Web Apps
         self.testGGB()
 
@@ -345,7 +343,7 @@ class ServerUI(QtWidgets.QDialog):
         who = connection ID or 'all'
         """
         server_to_client = self.factory.server_to_client
-        
+
         # suspend Heartbeat during filetransfer
         self.suspendHeartbeats()
 
@@ -413,7 +411,7 @@ class ServerUI(QtWidgets.QDialog):
     def onScreenshots(self, who):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
-        
+
         # suspend Heartbeat during filetransfer
         # self.suspendHeartbeats()
 
@@ -429,17 +427,17 @@ class ServerUI(QtWidgets.QDialog):
     def _onShowIP(self):
         self._show_workingIndicator(500, "Zeige deine IP an")
         show_ip()
-        
+
     def suspendHeartbeats(self):
         """ suspend Heartbeats until resumed"""
         self.heartbeat.suspend()
         self.log("Heartbeats PAUSE")
-        
+
     def resumeHeartbeats(self):
         """ if Heartbeats suspended, resume them """
         self.heartbeat.resume()
         self.log("Heartbeats RESUMED")
-    
+
     def onAbgabe(self, who, auto):
         """
         get SHARE folder from client
@@ -450,7 +448,7 @@ class ServerUI(QtWidgets.QDialog):
         self.suspendHeartbeats()
         # manual triggered?
         self.autoAbgabe = auto
-        
+
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
         # self._startWorkingIndicator('Abgabe ...')
 
@@ -463,7 +461,7 @@ class ServerUI(QtWidgets.QDialog):
 
         # Waiting Thread
         self.log("Waiting for Client to send Abgabe-Files")
-        
+
         if self.progress_thread:
             self.progress_thread.stop()
         self.progress_thread.start()
@@ -485,9 +483,9 @@ class ServerUI(QtWidgets.QDialog):
         send configuration-zip to clients - unzip there
         invoke startexam.sh file on clients
         """
-        #HB aus
+        # HB aus
         self.suspendHeartbeats()
-        
+
         self._show_workingIndicator(500, "Starte die Prüfung")
         server_to_client = self.factory.server_to_client
 
@@ -502,7 +500,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self._show_workingIndicator(4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
-        
+
         # Checkbox
         cleanup_abgabe = self.ui.cleanabgabe.checkState()
         spellcheck = self.ui.spellcheck.checkState()
@@ -524,10 +522,10 @@ class ServerUI(QtWidgets.QDialog):
 
         # send line and file to all clients
         server_to_client.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe, spellcheck)
-        
+
         # wait until all Clients started, then activate Heartbeats again
         # time in sec
-        countdown_thread = Thread_Countdown(None, 5*60, self.resumeHeartbeats())    
+        countdown_thread = Thread_Countdown(None, 5 * 60, self.resumeHeartbeats())
         countdown_thread.start()
 
     def _on_exit_exam(self, who):
@@ -613,12 +611,12 @@ class ServerUI(QtWidgets.QDialog):
             startcommand = "exec %s start &" % (scriptfile)
             os.system(startcommand)
             self.ui.testfirewall.setText("Stoppe Firewall")
-            
+
     def stopAutoAbgabe(self):
         """stop Auto Abgabe"""
         if self.factory.lc.running:
             self.factory.lc.stop()
-        
+
     def startAutoAbgabe(self):
         """start Auto Abgabe"""
         intervall = self.ui.aintervall.value()
@@ -634,7 +632,7 @@ class ServerUI(QtWidgets.QDialog):
             self.log("<b>Auto-Submission deactivated </b>")
             self.stopAutoAbgabe()
             return
-        
+
         intervall = self.ui.aintervall.value()
         if intervall != 0:
             icon = self.rootDir.joinpath("pixmaps/chronometer.png").as_posix()
@@ -643,7 +641,7 @@ class ServerUI(QtWidgets.QDialog):
             self.startAutoAbgabe()
         else:
             self.log("Auto-Submission Intervall is set to 0 - Auto-Submission not active")
-            
+
     def _removeClientWidget(self, con_id):
         """ remove from Widget Clients """
         item = self.get_list_widget_by_client_ConID(con_id)
@@ -658,8 +656,7 @@ class ServerUI(QtWidgets.QDialog):
             self.ui.label_clients.setText(self.createClientsLabel())
             # Update Heartbeat List
             self.heartbeat.updateClientHeartbeats()
-        
-       
+
     def _onRemoveClient(self, con_id):
         """ Entfernt einen Client aus dem Widget """
         self._show_workingIndicator(500, "Client wird entfernt")
@@ -673,7 +670,6 @@ class ServerUI(QtWidgets.QDialog):
             self._removeClientWidget(con_id)
         else:
             self.logger.error("Can't delete client %s" % client_name)
-            
 
     def disableClientScreenshot(self, client):
         self._show_workingIndicator(500, "Client Screenshot ausgeschaltet")
@@ -778,12 +774,12 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
         existing_item.setID(client.clientConnectionID)
-        
+
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         self.screenshotwindow.setClientConnectionID(client_connection_id)
         self.screenshotwindow.setClientname(client_name)
         self.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
-        
+
         self.screenshotwindow.updateUI()
         self.screenshotwindow.exec_()
 
@@ -873,7 +869,7 @@ class ServerUI(QtWidgets.QDialog):
         self.log("Close-Event triggered")
         if not self.msg:
             self._onAbbrechen()
-            
+
     def stopWidgetIconTimer(self):
         """ every Client Widget has a running Timer > stop them all """
         for widget in self.get_list_widget_items():
@@ -899,7 +895,7 @@ class ServerUI(QtWidgets.QDialog):
             if os.getuid() == 0:
                 # root has uid = 0
                 os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))
-            
+
             # save the UI Config
             self.configUI.saveConfig(self.ui)
 
@@ -929,31 +925,29 @@ class ServerUI(QtWidgets.QDialog):
         """Heartbeat fired time to check the Heartbeat of client"""
         server_to_client = self.factory.server_to_client
         server_to_client.request_heartbeat(who)
-        
+
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""
         self.ui.info_label.setStyleSheet("QLabel { color : %s; }" % col)
-        
+
     def _resetInfoColor(self):
         """resets the TextLabel Color in Info Area to black"""
         self.ui.info_label.setStyleSheet("QLabel { color : black; }")
-        
+
     def testGGB(self):
-        """ 
-        search fpr Geogebra WebApp in /var/www/html/geogebra
-        fire a reminder if not existent 
         """
-        if os.path.join(WEB_ROOT, GEOGEBRA_PATH) == False:
+        search fpr Geogebra WebApp in /var/www/html/geogebra
+        fire a reminder if not existent
+        """
+        if os.path.join(WEB_ROOT, GEOGEBRA_PATH) is False:
             self._setInfoColor("#ff0000")
-            
+
             self.ui.info_label.setText("Geogebra Web App missing in %s !" % GEOGEBRA_PATH)
             self.ui.working.show()
-            
+
             QTimer.singleShot(5000, self._hideGGBError)
-        
-        
+
     def _hideGGBError(self):
         """ hide GGB missing msg """
         self.ui.info_label.setText("")
         self.ui.working.hide()
-

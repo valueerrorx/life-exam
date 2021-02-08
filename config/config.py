@@ -10,13 +10,14 @@ DEBUG_PIN = "1234"
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
-SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate', 'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
+SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate',
+            'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
 
 # which apps are forbidden in EXAM
 BLACKLIST_APPS = ["LIFE Student", "LIFE Teacher", "EXAM"]
 
 # Web Server Root Directory
-WEB_ROOT="/var/www/html/"
+WEB_ROOT = "/var/www/html/"
 # Subdirectory to Geogebra
 GEOGEBRA_PATH = "geogebra"
 
@@ -58,7 +59,8 @@ SERVERZIP_DIRECTORY = os.path.join(SERVERFILES_DIRECTORY, ZIP)
 SHARE_DIRECTORY = os.path.join(USER_HOME_DIR, "SHARE")
 PRINTERCONFIG_DIRECTORY = "/etc/cups"
 
-PLASMACONFIG = os.path.join(EXAMCONFIG_DIRECTORY, "lockdown/plasma-EXAM")  # (this should be the config file that is then transferred to the clients and used for the exam desktop)
+# (this should be the config file that is then transferred to the clients and used for the exam desktop)
+PLASMACONFIG = os.path.join(EXAMCONFIG_DIRECTORY, "lockdown/plasma-EXAM")
 
 # relative paths
 DATA_DIRECTORY = "./DATA"
