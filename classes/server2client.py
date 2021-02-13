@@ -104,7 +104,7 @@ class ServerToClient:
         return True
 
     """client file transfer (send to client)"""
-    def send_file(self, file_path, who, datatype, cleanup_abgabe, spellcheck):
+    def send_file(self, file_path, who, datatype, **kwargs):
         """
         Dispatches Method to prepare requested file transfer and sends file
         :param file_path: absolute filepath
@@ -112,6 +112,12 @@ class ServerToClient:
         :param cleanup_abgabe: del Files on Startup
         :param spellcheck: is Spellcheck on?
         """
+
+        # only used if EXAM is started or finished
+        # Default 0 = do nothing
+        cleanup_abgabe = kwargs.get("cleanup_abgabe", 0)
+        # spellcheck = kwargs.get("spellcheck", 0)
+
         if file_path:
             filename = ntpath.basename(file_path)  # get filename without path
             filename = str(filename).replace(" ", "_")
@@ -140,7 +146,8 @@ class ServerToClient:
 
     def broadcast_file(self, file_path, filename, md5_hash, datatype, cleanup_abgabe):
         for client in self.clients.values():
-            client.sendEncodedLine('%s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe))  # trigger clienttask type filename filehash)
+            # trigger clienttask type filename filehash
+            client.sendEncodedLine('%s %s %s %s %s %s' % (Command.FILETRANSFER.value, Command.GET.value, datatype, str(filename), md5_hash, cleanup_abgabe))
             client.setRawMode()
             self.send_bytes(client, file_path)
             client.setLineMode()

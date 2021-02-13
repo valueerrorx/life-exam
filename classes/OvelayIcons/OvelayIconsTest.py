@@ -27,12 +27,12 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
         # IconStack, Image and IconPath
         self.stack = IconStack(self.ui.image.pixmap())
         self.stack.repaint_event.connect(self.repaint_event)
-        
+
     def repaint_event(self):
         """ Pixmap has changed > repaint """
         self.ui.image.setPixmap(self.stack.getPixmap())
 
-    def closeEvent(self, event):
+    def closeEvent(self):
         ''' window tries to close '''
         # event.ignore()
         self.stack.close()
@@ -51,7 +51,7 @@ class MAIN_UI(PyQt5.QtWidgets.QMainWindow):
         self.stack.removeFileReceivedOK()
         self.stack.removeFileReceivedERROR()
         self.stack.removeOffline()
-    
+
     def CVTest(self, pixmap):
         # TEST 1 ------------------------------------------------
         Qimg = pixmap.toImage()

@@ -147,8 +147,8 @@ class ServerUI(QtWidgets.QDialog):
         # Applications ------------------------------------------------------
         self.splashscreen.setMessage("Generating Application List")
 
-        # debug
-        self.splashscreen.finish(self)
+        # debug turn it off here
+        # self.splashscreen.finish(self)
 
         findApps(self.ui.applist, self.ui.appview, self.application)
         self.splashscreen.step()
@@ -502,8 +502,8 @@ class ServerUI(QtWidgets.QDialog):
         self.log('<b>Initializing Exam Mode On All Clients </b>')
 
         # Checkbox
-        cleanup_abgabe = self.ui.cleanabgabe.checkState()
-        spellcheck = self.ui.spellcheck.checkState()
+        _cleanup_abgabe = self.ui.cleanabgabe.checkState()
+        _spellcheck = self.ui.spellcheck.checkState()
         # create zip file of all examconfigs
         target_folder = EXAMCONFIG_DIRECTORY
         filename = "EXAMCONFIG"
@@ -521,7 +521,9 @@ class ServerUI(QtWidgets.QDialog):
         self.log('Sending Configuration: %s (%d KB)' % (filename, self.factory.files[filename][1] / 1024))
 
         # send line and file to all clients
-        server_to_client.send_file(file_path, who, DataType.EXAM.value, cleanup_abgabe, spellcheck)
+        server_to_client.send_file(
+            file_path, who, DataType.EXAM.value,
+            cleanup_abgabe=_cleanup_abgabe, spellcheck=_spellcheck)
 
         # wait until all Clients started, then activate Heartbeats again
         # time in sec
@@ -682,7 +684,7 @@ class ServerUI(QtWidgets.QDialog):
             item.picture.setPixmap(pixmap)
             item.info.setText('%s \ndisconnected' % client_name)
             item.disabled = True
-        except:
+        except Exception:
             # item not found because first connection attempt
             return
 

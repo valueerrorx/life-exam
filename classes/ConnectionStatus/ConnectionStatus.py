@@ -72,11 +72,10 @@ class ConnectionStatus(QMainWindow):
     def show(self):
         """ show it """
         # self.ticker.start()
-        
+
         # only if twistd is running
         processUtil = PsUtil()
         pid = processUtil.GetProcessByName("twistd3")
-        print(pid)
         if len(pid) > 0:
             # twistd is running
             self.ui.show()

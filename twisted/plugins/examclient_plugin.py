@@ -84,7 +84,8 @@ class MyClientProtocol(basic.LineReceiver):
         self.inform("Connection to the server has been lost")
 
         print("Server Fail #%s" % self.factory.failcount)
-        if self.factory.failcount > 2:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
+        # failcount is set to 100 if server refused connection otherwise its slowly incremented
+        if self.factory.failcount > 2:
             command = "%s/client/client.py &" % (self.rootDir)
             os.system(command)
             sys.exit(1)

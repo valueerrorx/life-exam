@@ -11,14 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
-    """ 
-    will fired when Client has sent his Abgabe File 
-    :autoAbgabe: 1/0 is that a AutoAbgabe event? 
+    """
+    will fired when Client has sent his Abgabe File
+    :autoAbgabe: 1/0 is that a AutoAbgabe event?
     """
     # event fired in MyServerProtocol
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Files ..." % item.getID())
-    
+
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
         # show in Filemanager only if we manually trigger Abgabe
@@ -55,7 +55,7 @@ def client_abgabe_done(parent, who):
     parent.log("Client %s has finished sending Files, now exiting ..." % item.getID())
     # then send the exam exit signal
     parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe, spellcheck)
-    
+
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
         # if there is an animation showing
@@ -64,15 +64,16 @@ def client_abgabe_done(parent, who):
     parent.resumeHeartbeats()
 
 
-def client_lock_screen(parent, who):
+def client_lock_screen(parent):
     """ will be fired when client locks the screen """
     parent.networkProgress.decrement()
     # print("ProgressBar: %s" % parent.networkProgress.value() )
     if parent.networkProgress.value() <= 1:
         # if there is an animation showing
-        parent.workinganimation.stop()    
+        parent.workinganimation.stop()
 
-def client_unlock_screen(parent, who):
+
+def client_unlock_screen(parent):
     """ will be fired when client unlocks the screen """
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:

@@ -10,6 +10,10 @@
 import sys
 from pathlib import Path
 
+import logging
+import qt5reactor
+from PyQt5 import QtWidgets
+
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
@@ -18,10 +22,6 @@ from classes.Splashscreen.SplashScreen import SplashScreen
 from config.logger import configure_logging
 from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
 
-import logging
-import qt5reactor
-
-from PyQt5 import QtWidgets
 from time import time, sleep
 from version import __version__
 

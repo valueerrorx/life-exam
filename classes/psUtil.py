@@ -3,8 +3,8 @@ import psutil
 
 class PsUtil():
     """ Library for psutil """
-    
-    def _closePID(self, pid):
+
+    def closePID(self, pid):
         """kill the old running Process"""
         PID = int(pid)
         if psutil.pid_exists(PID):
@@ -26,10 +26,10 @@ class PsUtil():
         return found
 
     def GetProcessByName(self, name, cmdline=None):
-        """ 
+        """
         search for a process with Name Regex
         :name: the name of the process
-        :cmdline: arguments in them command line for this process 
+        :cmdline: arguments in them command line for this process
         """
         processlist = []
         for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
@@ -45,8 +45,8 @@ class PsUtil():
                         processlist.append(data)
             except Exception as e:
                 print(e)
-        return processlist 
-    
+        return processlist
+
     def killProcess(self, pid):
         """kill a running Process"""
         PID = int(pid)

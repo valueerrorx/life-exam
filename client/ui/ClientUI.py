@@ -14,11 +14,12 @@ from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 from config.config import EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
     WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
-    
+
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission
 from classes.psUtil import PsUtil
+
 
 class ClientDialog(QtWidgets.QDialog, Observers):
     """ A dialog """
@@ -205,9 +206,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # see https://twistedmatrix.com/documents/current/core/howto/plugin.html
                 list(getPlugins(IPlugin))
 
-                #for item in plgs:   
+                # for item in plgs:
                 #    print(item)
-                #print(sys.path)
+                # print(sys.path)
 
                 # port, host, id, pincode, application_dir
                 command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)

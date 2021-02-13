@@ -7,26 +7,25 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 import sys
-import os
 from pathlib import Path
-import fcntl
-import atexit
-
+from classes.psUtil import PsUtil
 # add application root to python path for imports at position 0
 rootPath = Path(__file__).parent.parent.as_posix()
 sys.path.insert(0, rootPath)
-
 
 from client.ui.ClientUI import ClientDialog
 from client.resources.MulticastLifeClient import MulticastLifeClient
 from config.logger import configure_logging
 
+import os
+import fcntl
+import atexit
 from PyQt5 import QtWidgets
 import qt5reactor
 
 
-""" prevent to start client twice """
 def lockFile(lockfile):
+    """ prevent to start client twice """
     fp = open(lockfile, 'w')  # create a new one
     try:
         fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -34,26 +33,40 @@ def lockFile(lockfile):
         success = True
     except IOError:
         success = False
-    fp.close() 
+    fp.close()
     return success
 
-""" at client shutdown, delete the lock File """
+
 def cleanUpLockFile(file):
+    """ at client shutdown, delete the lock File """
     if os.path.exists(file):
         os.remove(file)
 
 
+def testRunningTwistd():
+    """ if a running twistd client is found > kill it """
+    processUtil = PsUtil()
+    pid = processUtil.GetProcessByName("twistd3")
+    if len(pid) > 0:
+        # found a twistd process, kill all pids
+        for p in pid:
+            processUtil.closePID(p)
+
+
 if __name__ == '__main__':
-    rootDir = Path(__file__).parent.parent   
+    rootDir = Path(__file__).parent.parent
     FILE_NAME = uifile = rootDir.joinpath("client/started_client.lock")
+    # test if twistd is running
+    testRunningTwistd()
+
     # do not start twice
     if os.path.exists(FILE_NAME):
-        print("Don't start the Client twice ... exit") 
+        print("Don't start the Client twice ... exit")
         cleanUpLockFile(FILE_NAME)
         sys.exit(0)
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
-    
+
     configure_logging(False)       # True is Server
 
     app = QtWidgets.QApplication(sys.argv)
