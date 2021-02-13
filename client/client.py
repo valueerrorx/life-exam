@@ -52,7 +52,8 @@ def testRunningTwistd(logger):
         logger.info("Found a running twistd, killing that process ...")
         # found a twistd process, kill all pids
         for p in pid:
-            processUtil.closePID(p)
+            cmd = "sudo -E kill %s" % p[0]
+            os.system(cmd)
 
 
 if __name__ == '__main__':

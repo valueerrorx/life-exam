@@ -212,7 +212,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
                 # port, host, id, pincode, application_dir
                 command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
-                self.logger.info(command)
                 os.system(command)
         else:
             self._changePalette(self.ui.serverip, "warn")

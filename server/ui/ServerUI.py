@@ -302,6 +302,9 @@ class ServerUI(QtWidgets.QDialog):
 
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit1.text()
+        if self.ui.examlabeledit1.text() == "":
+            self.factory.examid = self.factory.createExamId()
+
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid)
 
     def _startWorkingIndicator(self, info=""):

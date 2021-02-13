@@ -21,8 +21,6 @@ from twisted.internet.task import LoopingCall
 from server.resources.MyServerProtocol import MyServerProtocol
 
 
-
-
 class MyServerFactory(protocol.ServerFactory):
     def __init__(self, files_path, reactor, splash, app):
         """
