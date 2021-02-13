@@ -38,11 +38,10 @@ def lockFile(lockfile):
     return success
 
 
-def cleanUpLockFile(file, logger):
+def cleanUpLockFile(file):
     """ at client shutdown, delete the lock File """
     if os.path.exists(file):
         os.remove(file)
-        logger.info("Client Lock Files Zombie removed an exit now ...")
 
 
 def testRunningTwistd(logger):
@@ -67,8 +66,8 @@ if __name__ == '__main__':
 
     # do not start twice
     if os.path.exists(FILE_NAME):
-        print("Don't start the Client twice ... exit")
-        cleanUpLockFile(FILE_NAME, logger)
+        cleanUpLockFile(FILE_NAME)
+        logger.info("Client Lock File found, removed an exit now ...")
         sys.exit(0)
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
