@@ -9,6 +9,7 @@
 import sys
 from pathlib import Path
 from classes.psUtil import PsUtil
+import logging
 # add application root to python path for imports at position 0
 rootPath = Path(__file__).parent.parent.as_posix()
 sys.path.insert(0, rootPath)
@@ -37,17 +38,19 @@ def lockFile(lockfile):
     return success
 
 
-def cleanUpLockFile(file):
+def cleanUpLockFile(file, logger):
     """ at client shutdown, delete the lock File """
     if os.path.exists(file):
         os.remove(file)
+        logger.info("Client Lock Files Zombie removed an exit now ...")
 
 
-def testRunningTwistd():
+def testRunningTwistd(logger):
     """ if a running twistd client is found > kill it """
     processUtil = PsUtil()
     pid = processUtil.GetProcessByName("twistd3")
     if len(pid) > 0:
+        logger.info("Found a running twistd, killing that process ...")
         # found a twistd process, kill all pids
         for p in pid:
             processUtil.closePID(p)
@@ -56,13 +59,16 @@ def testRunningTwistd():
 if __name__ == '__main__':
     rootDir = Path(__file__).parent.parent
     FILE_NAME = uifile = rootDir.joinpath("client/started_client.lock")
+
+    logger = logging.getLogger(__name__)
+
     # test if twistd is running
-    testRunningTwistd()
+    testRunningTwistd(logger)
 
     # do not start twice
     if os.path.exists(FILE_NAME):
         print("Don't start the Client twice ... exit")
-        cleanUpLockFile(FILE_NAME)
+        cleanUpLockFile(FILE_NAME, logger)
         sys.exit(0)
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
