@@ -208,9 +208,11 @@ function playSound(){
 function restartDesktop(){
    # FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - 
    # kde devs haben das bis jetzt noch nicht implementiert
-    #pkill -f Xorg
-    kquitapp5 plasmashell
-    kstart5 plasmashell
+    pkill -f Xorg
+    
+    # not a chance
+    #kquitapp5 plasmashell
+    #kstart5 plasmashell
    
 }
 
