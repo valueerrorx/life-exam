@@ -37,6 +37,7 @@ from classes.Thread_Countdown import Thread_Countdown
 from classes import mutual_functions
 from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
+from classes.PlasmaRCTool import PlasmaRCTool
 
 
 class MsgType(Enum):
@@ -506,6 +507,8 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
 
+        self.prepareDesktopStarter()
+
         # Checkbox
         _cleanup_abgabe = self.ui.cleanabgabe.checkState()
         _spellcheck = self.ui.spellcheck.checkState()
@@ -958,3 +961,12 @@ class ServerUI(QtWidgets.QDialog):
         """ hide GGB missing msg """
         self.ui.info_label.setText("")
         self.ui.working.hide()
+
+    def prepareDesktopStarter(self):
+        """
+        prepare Desktop Starter for Exam Mode
+        Server prepares the plasma-org.kde.plasma.desktop-appletsrc
+        examclient_plugin copys the Desktop Starter
+        """
+        plasmaTool = PlasmaRCTool()
+        plasmaTool.addStarter()

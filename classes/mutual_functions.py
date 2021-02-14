@@ -150,15 +150,16 @@ def deleteFolderContent(folder):
             logger.error(e)
 
 
-def copyDesktopStarter(rootDir):
+def copyDesktopStarter():
     """copy the EXAM Desktop Starter to correct place"""
-    shareApps = "%s/.local/share/applications/" % USER_HOME_DIR
+    rootDir = Path(__file__).parent.parent
     sharePlasma = "%s/.local/share/plasma_icons/" % USER_HOME_DIR
 
-    copycommand = "cp -a %s/DATA/starter/* %s" % (rootDir, shareApps)
-    os.system(copycommand)
-    copycommand = "cp -a %s/DATA/starter/* %s" % (rootDir, sharePlasma)
-    os.system(copycommand)
+    # starter to copy
+    starter = ["Exam\ Student.desktop", "STOP.desktop"]
+    for _starter in starter:
+        copycommand = "cp -a %s/DATA/starter/%s %s" % (rootDir, _starter, sharePlasma)
+        os.system(copycommand)
 
 
 def prepareDirectories():
@@ -204,9 +205,6 @@ def prepareDirectories():
 
     # update with old Configuration Data
     plasmaTool.updatePlasmaConfig(oldPlasmaConfig)
-
-    # copy Desktop Starter
-    copyDesktopStarter(rootDir)
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)

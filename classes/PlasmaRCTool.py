@@ -21,12 +21,12 @@ class PlasmaRCTool():
             return None
 
     def updatePlasmaConfig(self, oldConfig):
-        """ Update plasma Config with previously stored Data"""
-        # stored Apps are here
         """
+        Update plasma Config with previously stored Data
         e.g.
         [Containments][2][Applets][5][Configuration][General]
         launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
+        we are searching fro launcher and place it in the same Containment
         """
         launchers = None
         if oldConfig is not None:
@@ -59,3 +59,7 @@ class PlasmaRCTool():
                     config[item] = plasma[item]
             # write new plasmaconfig
             config.write()
+
+    def addStarter(self):
+        """ edit plasma-org.kde.plasma.desktop-appletsrc and add Desktop Starter """
+        pass

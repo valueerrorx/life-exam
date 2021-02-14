@@ -42,6 +42,7 @@ from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
 import sys
+from classes.mutual_functions import copyDesktopStarter
 
 
 class MyClientProtocol(basic.LineReceiver):
@@ -58,6 +59,8 @@ class MyClientProtocol(basic.LineReceiver):
         self.notification_path = self.notification_path.joinpath('classes/Notification')
         # cleans everything and copies script files
         mutual_functions.prepareDirectories()
+        # manual copy Desktop Starter
+        copyDesktopStarter()
 
         # AutoSave open Apps Part ---------------------------------------------
         # which Apps are allready triggered a autosave via xdotool
