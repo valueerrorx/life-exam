@@ -4,8 +4,6 @@
 #
 # CLIENT FILE - STOP EXAM
 
-
-
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
@@ -13,9 +11,7 @@ BACKUPDIR="${HOME}.life/unlockedbackup/"
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 SHARE="${HOME}SHARE/"
 
-
 DELSHARE=$1
-
 
 #--------------------------------#
 # Check if root and running exam #
@@ -30,8 +26,6 @@ if [ "$(id -u)" != "0" ]; then
     kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
     exit 0
 fi
-
-
 
 
 # this function removes the firewall #
@@ -49,26 +43,16 @@ stopIPtables(){
     sudo iptables -t raw -X
 }
 
-
-
-
-
-
 #--------------------------------#
 # ASK FOR CONFIRMATION           #
 #--------------------------------#
-
-
-    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
-    if [ "$?" = 0 ]; then
-        sleep 0
-    else
-        exit 1   #cancel
-    fi;
+kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
+if [ "$?" = 0 ]; then
+    sleep 0
+else
+    exit 1   #cancel
+fi;
   
-
-
-
 
 #---------------------------------#
 # OPEN PROGRESSBAR DIALOG         #
@@ -79,10 +63,6 @@ qdbus $progress Set "" maximum 7
 sleep 0.5
 
 
-
-
-
-
 #---------------------------------#
 # RESTORE PREVIOUS DESKTOP CONFIG #
 #---------------------------------#
@@ -90,47 +70,44 @@ qdbus $progress Set "" value 1
 qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
 sleep 0.5
 
-    sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
+sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
 
-    cp -a ${BACKUPDIR}plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
-    cp -a ${BACKUPDIR}kwinrc ${HOME}.config/
+cp -a ${BACKUPDIR}plasma-org.kde.plasma.desktop-appletsrc ${HOME}.config/
+cp -a ${BACKUPDIR}kwinrc ${HOME}.config/
 
-    #cp -a ${BACKUPDIR}Office.conf ${HOME}.config/Kingsoft/
-    cp -a ${BACKUPDIR}registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
-    cp -a ${BACKUPDIR}user-places.xbel ${HOME}.local/share/
-    cp -a ${BACKUPDIR}dolphinrc ${HOME}.config/
-    cp -a ${BACKUPDIR}calligra* ${HOME}.config/
-    cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
-    cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
-    cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
-    cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
-    
-    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   # enable autoreplace 
-    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/
+#cp -a ${BACKUPDIR}Office.conf ${HOME}.config/Kingsoft/
+cp -a ${BACKUPDIR}registrymodifications.xcu ${HOME}.config/libreoffice/4/user/
+cp -a ${BACKUPDIR}user-places.xbel ${HOME}.local/share/
+cp -a ${BACKUPDIR}dolphinrc ${HOME}.config/
+cp -a ${BACKUPDIR}calligra* ${HOME}.config/
+cp -a ${BACKUPDIR}user-dirs.dirs ${HOME}.config/
+cp -a ${BACKUPDIR}mimeapps.list ${HOME}.config/
+cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
+cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
 
-    
-    sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
+cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   # enable autoreplace 
+sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/
 
-    qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
+
+sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
+
+qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
 
 
 
 #---------------------------------#
 # REMOVE EXAM LOCKFILE            #
 #---------------------------------#
-    # sichere exam start und end infos
-    date >> $EXAMLOCKFILE
-    sudo cp $EXAMLOCKFILE $SHARE
-    sudo rm $EXAMLOCKFILE
-    sleep 0.5
+# sichere exam start und end infos
+date >> $EXAMLOCKFILE
+sudo cp $EXAMLOCKFILE $SHARE
+sudo rm $EXAMLOCKFILE
+sleep 0.5
 
-
-  
   
 #---------------------------------#
 # CLEAN  SHARE                    #   
 #---------------------------------#
-
 if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
 then
     sudo rm -rf ${SHARE}*
@@ -138,19 +115,13 @@ then
 fi 
     
 
-
 #---------------------------------#
 # UMOUNT SHARE                    #    SHARE is now permanently mounted on life sticks
 #---------------------------------#
 qdbus $progress Set "" value 2
 #qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
 sleep 0.5
-   # sudo umount -l $SHARE
-
-
-    
-    
-    
+# sudo umount -l $SHARE
     
 
 #---------------------------------#
@@ -161,34 +132,27 @@ qdbus $progress setLabelText "Systemdateien werden entsperrt...."
 sleep 0.5
 
 #         sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
-        sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
-        sudo chmod 755 /usr/bin/xterm 
-        sudo chmod 755 /usr/bin/konsole
-      
-       
-        sudo umount /media/*
-        sudo umount /media/student/*
-        sudo umount -l /media/*
-        sudo umount -l /media/student/*
-        sleep 1
-        
-        
-        MOUNTED=$(df -h |grep media |wc -l)
-        if [[( $MOUNTED = "1" )]]
-        then
-            sleep 0 #do nothing - don't mess up rights of mounted partition there
-        else
-            # allow mounting again 
-            sudo chmod 755 /media/ -R  
-        fi
+sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
+sudo chmod 755 /usr/bin/xterm 
+sudo chmod 755 /usr/bin/konsole
 
-        
-        
-     
-       
-    
-    
-    
+
+sudo umount /media/*
+sudo umount /media/student/*
+sudo umount -l /media/*
+sudo umount -l /media/student/*
+sleep 1
+
+
+MOUNTED=$(df -h |grep media |wc -l)
+if [[( $MOUNTED = "1" )]]
+then
+    sleep 0 #do nothing - don't mess up rights of mounted partition there
+else
+    # allow mounting again 
+    sudo chmod 755 /media/ -R  
+fi
+ 
     
 #-------------------------------------------#
 # STOP AUTO SCREENSHOTS AND AUTO FIREWALL   #
@@ -196,15 +160,12 @@ sleep 0.5
 qdbus $progress Set "" value 4
 qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
    
-    rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
-    sudo killall auto-screenshot.sh && sudo pkill -f auto-screenshot
+rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
+sudo killall auto-screenshot.sh && sudo pkill -f auto-screenshot
 
-    # entferne firewall einträge (standalone-exam mode advanced)
-    #echo "#!/bin/sh -e" > /etc/rc.local
-    #echo "exit 0" >> /etc/rc.local
-
-
-    
+# entferne firewall einträge (standalone-exam mode advanced)
+#echo "#!/bin/sh -e" > /etc/rc.local
+#echo "exit 0" >> /etc/rc.local
     
 
 #---------------------------------#
@@ -214,13 +175,8 @@ qdbus $progress Set "" value 5
 qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
 sleep 0.5
 
-    stopIPtables
+stopIPtables
 
-    
-    
-    
-    
-    
 
 #---------------------------------#
 # REMOVE ROOT PASSWORD            #
@@ -228,19 +184,8 @@ sleep 0.5
 qdbus $progress Set "" value 6
 #qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
     
-
-        # falls ein rootpasswort vom lehrer gesetzt wurde (standalone-exam mode advanced)
-        #sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
+# falls ein rootpasswort vom lehrer gesetzt wurde (standalone-exam mode advanced)
+#sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
     
     
 #----------------------------------------------#
@@ -271,28 +216,5 @@ qdbus $progress close
 #     kstart5 plasmashell &
 #     sleep 2
 #     kwin --replace &
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

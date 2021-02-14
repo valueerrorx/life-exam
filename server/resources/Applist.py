@@ -26,7 +26,7 @@ def findApps(applistwidget, appview, app):
     """
     apps = subprocess.check_output("kbuildsycoca5 --menutest", stderr=subprocess.DEVNULL, shell=True)
     apps = apps.decode()
-    
+
     desktop_files_list = []
     for line in apps.split('\n'):
         if line == "\n":
@@ -46,7 +46,7 @@ def findApps(applistwidget, appview, app):
 
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
-    
+
     # check Geogebra
     desktop_files_list = createGGBStarter(desktop_files_list)
 
@@ -63,10 +63,10 @@ def addApplications(apps):
     """add everything from ~/.local/share/applications/ """
     path = "%s/.local/share/applications/" % USER_HOME_DIR
     for root, dirs, files in os.walk(path, topdown=False):  # noqa
-        for name in files:   
+        for name in files:
             apps.append(os.path.join(root, name))
     return apps
-    
+
 
 def clearDoubles(apps):
     """delete doubles, because they can be in global menue or local at the same time"""
@@ -109,13 +109,14 @@ def remove_duplicates(other_applist):
             seen.add(t)
     return newlist
 
+
 def cleanUp(applist):
-    """ 
+    """
     clean Up Apps
     filter out:
         Geogebra App alone
         Kate new Window (english)
-        Empty Names 
+        Empty Names
     """
     newlist = []
     for item in applist:
@@ -127,14 +128,14 @@ def cleanUp(applist):
                     print("BLOCKed App: %s" % item)
                 blocked = True
                 break
-                
-        if blocked == False:
+
+        if blocked is False:
             if "userapp-Firefox".lower() in item[1].lower():
                 continue
-            
+
             if "eclipse".lower() in item[2].lower():
                 continue
-            
+
             if "kate" in item[2].lower():
                 if "new session" not in item[2].lower():
                     if "neues fenster" not in item[2].lower():
@@ -144,10 +145,9 @@ def cleanUp(applist):
                 # Empty Name filter it out
                 if len(item[2]) > 0:
                     newlist.append(item)
-    
-    #_printArray(newlist)
-     
+    # _printArray(newlist)
     return newlist
+
 
 def create_app_ranking(applist):
     """ Important Apps moving to the top """
@@ -166,7 +166,7 @@ def create_app_ranking(applist):
             else:
                 other_applist.append(app)
     other_applist = remove_duplicates(other_applist)
-    
+
     # other_applist sortieren
     other_applist.sort()
     return remove_duplicates(final_applist + other_applist)
@@ -180,6 +180,7 @@ def makeFilenameSafe(filename):
     ''' If Filename has spaces, then escape them '''
     _to_esc = re.compile(r'\s')
     return _to_esc.sub(_esc_char, filename)
+
 
 def _printArray(data):
     for item in data:
@@ -225,7 +226,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     populates a QListWidgetItem with list entries
     """
     applist = []   # [[desktopfilepath,desktopfilename,appname,appicon],[desktopfilepath,desktopfilename,appname,appicon]]
-    
+
     cmdRunner = CmdRunner()
     for desktop_filepath in desktop_files_list:
         desktop_filename = desktop_filepath.rpartition('/')
@@ -236,7 +237,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
         try:
             file_lines = open(desktop_filepath, 'r').readlines()
             # print("%s %s" % (len(file_lines), desktop_filepath))
-        except:
+        except Exception:
             # Fallback if open fails
             # read the desktop File via cat
             cmd = "cat %s" % makeFilenameSafe(desktop_filepath)
@@ -257,7 +258,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
                     thisapp[3] = fields[1]
 
         applist.append(thisapp)
-    
+
     _printArray(applist)
     # clean problems
     applist = cleanUp(applist)
@@ -266,7 +267,6 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
     final_applist = create_app_ranking(applist)
     # what apps are activated and stored in OLD Config?
     activated_apps = get_activated_apps()
-    
 
     # clear appview first
     thislayout = appview.layout()
@@ -342,7 +342,7 @@ def saveProfile(applistwidget, appview):
     writes the plasmaconfig file
     """
 
-    # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")   
+    # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")
     # this should be the config file that is then transferred to the clients and used for the exam desktop
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
@@ -353,8 +353,8 @@ def saveProfile(applistwidget, appview):
             try:
                 # try this entry
                 test = config[section]["launchers"]  # noqa             
-                taskbarsection.append(section)  
-            except:
+                taskbarsection.append(section)
+            except Exception:
                 continue
 
     # get activated apps (those apps should be shown in taskmanager)
@@ -428,8 +428,8 @@ def get_activated_apps():
             try:
                 # try this entry
                 test = config[section]["launchers"]  # noqa              
-                taskbarsection.append(section)  
-            except:
+                taskbarsection.append(section)
+            except Exception:
                 continue
 
         # get activated apps
@@ -459,16 +459,17 @@ def get_activated_apps():
 
     return activated_apps
 
+
 def createGGBStarter(desktop_files_list):
-    """ 
+    """
     checks if Geogebra Starter is set correct
     and copys the starter to  /home/student/.local/share/applications/
     """
     rootDir = Path(__file__).parent.parent.parent
     path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
-    
+
     applicatins_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
-    
+
     lines = []
     if os.path.join(WEB_ROOT, GEOGEBRA_PATH):
         with open(path_to_file, 'r') as fh:
@@ -482,26 +483,24 @@ def createGGBStarter(desktop_files_list):
                         index = "index.html"
                     if os.path.isfile(os.path.join(WEB_ROOT, GEOGEBRA_PATH, "GeoGebra.html")):
                         index = "GeoGebra.html"
-                    if index!="":
+                    if index != "":
                         # we found an entry Point
                         line = "Exec=firefox -ssb https://localhost/%s/%s" % (GEOGEBRA_PATH, index)
                 lines.append(line)
         # create Desktop Starter
-        
+
         path_to_file = rootDir.joinpath(applicatins_path, 'GeoGebra.desktop')
         file = open(path_to_file, "w")
-        for l in lines: 
-            file.write("%s\n" % l) 
-        file.close() 
-        
+        for l in lines:
+            file.write("%s\n" % l)
+        file.close()
+
         # add to List
         desktop_files_list.append(str(path_to_file))
-                
+
     else:
         # No Geogebra > delete Starter
         cmd = "rm %s%s" % (applicatins_path, "GeoGebra.desktop")
         os.system(cmd)
-        
+
     return desktop_files_list
-   
-    

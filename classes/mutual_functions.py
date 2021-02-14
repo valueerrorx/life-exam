@@ -16,19 +16,18 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER, PLASMACONFIG, USER_HOME_DIR
+    SHARE_DIRECTORY, USER, USER_HOME_DIR
 import stat
 import sys
-from configobj import ConfigObj
-
-logger = logging.getLogger(__name__)
-
+from classes.PlasmaRCTool import PlasmaRCTool
 import ipaddress
 import shutil
 
 from random import randint
 
 import time
+
+logger = logging.getLogger(__name__)
 
 
 def generatePin(n):
@@ -78,7 +77,7 @@ def checkIP(iptest):
         return True
     except ValueError:
         return False
-    except:
+    except Exception:
         return False
 
 
@@ -150,65 +149,17 @@ def deleteFolderContent(folder):
         except Exception as e:  # noqa
             logger.error(e)
 
-def loadOldPlasmaConfig():
-    """ the old plasma Config is loaded for backup"""
-    if Path(PLASMACONFIG).is_file():
-        try:
-            return ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
-        except Exception as e:  # noqa
-            logger.error(e)
-    else:
-        return None
-    
-def updatePlasmaConfig(oldConfig):
-    """ Update plasma Config with previously stored Data"""
-    # stored Apps are here
-    """
-    e.g.
-    [Containments][2][Applets][5][Configuration][General]
-    launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
-    """
-    launchers = None
-    if oldConfig is not None:
-        for item in oldConfig.keys():
-            if item.find('Configuration][General') != -1:
-                section = oldConfig[item]
-                try:
-                    launchers = section["launchers"]
-                except KeyError:
-                    continue
-    
-    if launchers != None:
-        # Create new Config File 
-        config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
-        
-        # read actual File
-        plasma = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
-        for item in plasma:
-            if item.find('Configuration][General') != -1:
-                section = plasma[item]
-                try:
-                    dummy = section["launchers"]
-                    # here we are doing the Update
-                    config[item] = plasma[item]
-                    config[item]["launchers"] = launchers
-                except KeyError:
-                    continue
-            else:
-                # just copy top new Config
-                config[item] = plasma[item]
-        # write new plasmaconfig
-        config.write()
-        
+
 def copyDesktopStarter(rootDir):
     """copy the EXAM Desktop Starter to correct place"""
     shareApps = "%s/.local/share/applications/" % USER_HOME_DIR
     sharePlasma = "%s/.local/share/plasma_icons/" % USER_HOME_DIR
-    
+
     copycommand = "cp -a %s/DATA/starter/* %s" % (rootDir, shareApps)
     os.system(copycommand)
     copycommand = "cp -a %s/DATA/starter/* %s" % (rootDir, sharePlasma)
     os.system(copycommand)
+
 
 def prepareDirectories():
     # rootDir of Application
@@ -238,9 +189,10 @@ def prepareDirectories():
 
     copycommand = "cp -r %s/DATA/scripts %s" % (rootDir, WORK_DIRECTORY)
     os.system(copycommand)
-    
+
     # Manage old Configuration, that means, all stored stuff
-    oldPlasmaConfig = loadOldPlasmaConfig()
+    plasmaTool = PlasmaRCTool()
+    oldPlasmaConfig = plasmaTool.loadOldPlasmaConfig()
 
     logger.info("Copying default EXAM Config to workdirectory")
     # empty Dir
@@ -249,16 +201,16 @@ def prepareDirectories():
     # Copy All Stuff
     copycommand = "cp -r %s/DATA/EXAMCONFIG %s" % (rootDir, WORK_DIRECTORY)
     os.system(copycommand)
-    
+
     # update with old Configuration Data
-    updatePlasmaConfig(oldPlasmaConfig)
-    
+    plasmaTool.updatePlasmaConfig(oldPlasmaConfig)
+
     # copy Desktop Starter
     copyDesktopStarter(rootDir)
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)
-    
+
     # clean Log Files
     cmd = "find %s -maxdepth 1 -type f -name \"*.log.*\" -delete" % (WORK_DIRECTORY)
     os.system(cmd)
@@ -362,7 +314,7 @@ def showDesktopMessage(msg):
     # message = "Exam Server: %s " % (msg)
     # command = "sudo -u %s -- kdialog --title 'EXAM' --passivepopup '%s' 5 " % (USER, message)
     # os.system(command)
-    
+
     # rootDir of Application
     rootDir = Path(__file__).parent
     rootDir = rootDir.joinpath('Notification')
@@ -379,7 +331,8 @@ def openFileManager(path):
         subprocess.check_call(['xdg-open', path])
     elif sys.platform == 'win32':
         subprocess.check_call(['explorer', path])
-        
+
+
 def countFiles(path):
     """count number of files and dirs in directory"""
     files_count = 0
@@ -392,4 +345,3 @@ def countFiles(path):
         files_count = len(files)
         dir_count = len(dirs)
     return [files_count, dir_count]
-    

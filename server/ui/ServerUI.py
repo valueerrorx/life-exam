@@ -492,11 +492,13 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(500, "Starte die Prüfung")
         server_to_client = self.factory.server_to_client
 
-        if self.factory.rawmode is True:   # check if server is already in rawmode (ongoing filetransfer)
+        # check if server is already in rawmode (ongoing filetransfer)
+        if self.factory.rawmode is True:
             self.log("Waiting for ongoing file-transfers to finish ...")
             return
         else:
-            if not server_to_client.clients:        # check if there are clients connected
+            # check if there are clients connected
+            if not server_to_client.clients:
                 self.log("No clients connected")
                 return
             self.factory.rawmode = True   # ready for filetransfer - LOCK all other fileoperations
