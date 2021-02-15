@@ -159,6 +159,10 @@ class PlasmaRCTool():
         
         # [Containments][NumberOfContainment][Applets][NumberOf_Applet]
         """
+        [Containments][37]
+        Applet-29:x,y,width,height,0;  > x,y, 64,96
+        ItemGeometriesHorizontal=Applet-29:0,0,496,208,0;
+        
         [Containments][37][Applets][29]
 immutability=1
 plugin=org.kde.plasma.icon
