@@ -13,6 +13,7 @@ from pathlib import Path
 import logging
 import qt5reactor
 from PyQt5 import QtWidgets
+from classes.PlasmaRCTool import PlasmaRCTool
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -30,6 +31,9 @@ from server.resources.MyServerFactory import MyServerFactory
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    
+    plasma = PlasmaRCTool()
+    plasma.addStarter()
 
     start = time()
     # Create and display the splash screen

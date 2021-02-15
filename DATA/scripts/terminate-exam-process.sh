@@ -22,5 +22,5 @@ then
     PID=$(sudo cat ${PIDFILE})
     echo "terminating old process with pid $PID"
     #sudo kill -9 $PID
-    sudo killall twistd
+    sudo killall twistd3
 fi
