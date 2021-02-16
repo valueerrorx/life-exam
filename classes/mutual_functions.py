@@ -156,7 +156,7 @@ def copyDesktopStarter():
     sharePlasma = "%s/.local/share/plasma_icons/" % USER_HOME_DIR
 
     # starter to copy
-    starter = ["Exam\ Student.desktop", "STOP.desktop"]
+    starter = ["Exam Student.desktop", "STOP.desktop"]
     for _starter in starter:
         copycommand = "cp -a %s/DATA/starter/%s %s" % (rootDir, _starter, sharePlasma)
         os.system(copycommand)
