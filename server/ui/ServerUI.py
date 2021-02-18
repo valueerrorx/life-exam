@@ -149,7 +149,7 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.setMessage("Generating Application List")
 
         # debug turn it off here
-        self.splashscreen.finish(self)
+        # self.splashscreen.finish(self)
 
         findApps(self.ui.applist, self.ui.appview, self.application)
         self.splashscreen.step()

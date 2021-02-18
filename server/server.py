@@ -14,7 +14,6 @@ import logging
 import qt5reactor
 from PyQt5 import QtWidgets
 from classes.PlasmaRCTool import PlasmaRCTool
-from classes.mutual_functions import copyDesktopStarter
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
@@ -43,7 +42,7 @@ if __name__ == '__main__':
     # set version first
     splash.setVersion(__version__)
     splash.setImage("img/LIFE.jpg")
-    splash.show()
+    # splash.show()
     splash.update()
     app.processEvents()
     while time() - start < 2:
@@ -56,7 +55,7 @@ if __name__ == '__main__':
     configure_logging(True)
     app.processEvents()
 
-    mutual_functions.prepareDirectories()  # cleans everything and copies some scripts
+    mutual_functions.prepareDirectories()
     # killscript = os.path.join(SCRIPTS_DIRECTORY, "terminate-exam-process.sh")
     # os.system("%s %s" % (killscript, 'server'))  # make sure only one client instance is running per client
     # time.sleep(1)

@@ -201,7 +201,7 @@ def prepareDirectories():
 
     # Manage old Configuration, that means, all stored stuff
     plasmaTool = PlasmaRCTool()
-    oldPlasmaConfig = plasmaTool.loadOldPlasmaConfig()
+    plasmaTool.saveOldLaunchers()
 
     logger.info("Copying default EXAM Config to workdirectory")
     # empty Dir
@@ -212,7 +212,7 @@ def prepareDirectories():
     os.system(copycommand)
 
     # update with old Configuration Data
-    plasmaTool.updatePlasmaConfig(oldPlasmaConfig)
+    plasmaTool.updatePlasmaConfig()
 
     fixFilePermissions(WORK_DIRECTORY)
     fixFilePermissions(SHARE_DIRECTORY)

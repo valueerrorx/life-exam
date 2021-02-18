@@ -20,58 +20,48 @@ has its applets (usually one - [Containments][1][Applets][2])
 class PlasmaRCTool():
     """ A Class for handling ~./.config/plasma-org.kde.plasma.desktop-appletsrc """
 
+    _backup_launchers = None
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def loadOldPlasmaConfig(self):
-        """ the old plasma Config is loaded for backup"""
-        if Path(PLASMACONFIG).is_file():
+    def saveOldLaunchers(self):
+        """
+        Search for old Launchers, that are Icons in Tasbar
+        e.g.
+        launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
+        """
+        plasma = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        for item in plasma:
             try:
-                return ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
-            except Exception as e:  # noqa
-                self.logger.error(e)
-        else:
-            return None
+                section = plasma[item]
+                launchers = section["launchers"]
+                self._backup_launchers = launchers
+                break
+            except KeyError:
+                continue
 
-    def updatePlasmaConfig(self, oldConfig):
+    def updatePlasmaConfig(self):
         """
         Update plasma Config with previously stored Data
         e.g.
-        [Containments][2][Applets][5][Configuration][General]
         launchers = applications:org.kde.kate.desktop,applications:org.kde.kcalc.desktop,applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop
-        we are searching fro launcher and place it in the same Containment
         """
-        launchers = None
-        if oldConfig is not None:
-            for item in oldConfig.keys():
-                if item.find('Configuration][General') != -1:
-                    section = oldConfig[item]
-                    try:
-                        launchers = section["launchers"]
-                    except KeyError:
-                        continue
+        plasma = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        for item in plasma:
+            try:
+                section = plasma[item]
+                launchers = section["launchers"]
 
-        if launchers is None:
-            # Create new Config File
-            config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+                if self._backup_launchers is not None:
+                    # we do have a backup
+                    section["launchers"] = self._backup_launchers
+                    break
+            except KeyError:
+                continue
 
-            # read actual File
-            plasma = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
-            for item in plasma:
-                if item.find('Configuration][General') != -1:
-                    section = plasma[item]
-                    try:
-                        dummy = section["launchers"]
-                        # here we are doing the Update
-                        config[item] = plasma[item]
-                        config[item]["launchers"] = launchers
-                    except KeyError:
-                        continue
-                else:
-                    # just copy top new Config
-                    config[item] = plasma[item]
-            # write new plasmaconfig
-            config.write()
+        # write new plasmaconfig
+        plasma.write()
 
     def _extractFirstNumber(self, string):
         """ get first number of a String, or -1 if no number exists"""
@@ -134,7 +124,7 @@ class PlasmaRCTool():
         for item in plasma:
             try:
                 section = plasma[item]
-                geometry = section["ItemGeometriesHorizontal"]
+                geometry = section["ItemGeometriesHorizontal"]  # noqa
 
                 Nr = self._extractFirstNumber(section.name)
                 found = True
