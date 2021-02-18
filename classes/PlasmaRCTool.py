@@ -1,5 +1,5 @@
 from configobj import ConfigObj
-from config.config import PLASMACONFIG, USER_HOME_DIR
+from config.config import PLASMACONFIG, USER_HOME_DIR, EXAM_DESKTOP_APPS
 import logging
 from pathlib import Path
 import re
@@ -7,7 +7,12 @@ import os
 
 """
 Some Infos
-Config is organized based on "Containments" (e.g. [Containments][1]). Each of those has a number to distinguish one from the other, and each one has different blocks of options. That's where "applets" come into play and each "Containment" has its applets (usually one - [Containments][1][Applets][2]) 
+Config is organized based on "Containments" (e.g. [Containments][1]).
+Each of those has a number to distinguish one from the other, and each one has different
+blocks of options.
+That's where "applets" come into play and each "Containment"
+has its applets (usually one - [Containments][1][Applets][2])
+
 [Containments][NumberOfContainment][Applets][NumberOf_Applet]
 """
 
@@ -119,7 +124,7 @@ class PlasmaRCTool():
 
     def _areThereStarters(self):
         """
-        are there Starter Containments, search for plugin=org.kde.plasma.icon
+        are there Starter Containments, search for ItemGeometriesHorizontal
         :returns: [True/False, ContainmentNr]
         """
 
@@ -129,42 +134,65 @@ class PlasmaRCTool():
         for item in plasma:
             try:
                 section = plasma[item]
-                plugin = section["plugin"]
-                if plugin in "org.kde.plasma.icon":
-                    Nr = self._extractFirstNumber(section.name)
-                    found = True
+                geometry = section["ItemGeometriesHorizontal"]
+
+                Nr = self._extractFirstNumber(section.name)
+                found = True
             except KeyError:
                 continue
         return [found, Nr]
 
+    def _ifLauncherExists(self, containerNr, path):
+        """ test if this path exists allready """
+        plasma = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        pattern = "Containments][%s][Applets]" % containerNr
+        found = False
+        for item in plasma:
+            if item.find(pattern) != -1:
+                section = plasma[item]
+                try:
+                    url = section['url']
+                    # is this our url
+                    if path in url:
+                        found = True
+                        break
+                except Exception:
+                    pass
+        return found
+
     def addApplet(self, config, containerNr, appletNr, appName):
         """ adds to the config File a Applet Section for this starter """
+
         rootDir = Path(__file__).parent.parent
         """ for example
         [Containments][37][Applets][29]
         immutability=1
         plugin=org.kde.plasma.icon
         """
-        app1 = 'Containments][%s][Applets][%s' % (containerNr, appletNr)
-        config[app1] = {}
-        config[app1]['immutability'] = 1
-        config[app1]['plugin'] = "org.kde.plasma.icon"
-        
-        """ for example  
-        [Containments][37][Applets][29][Configuration]
-        PreloadWeight=0
-        localPath=/home/student/.local/share/plasma_icons/Exam Teacher.desktop
-        url=file:////home/student/.life/applications/life-exam/DATA/starter/Exam Teacher.desktop
-        """
-        app1 = 'Containments][%s][Applets][%s][Configuration' % (containerNr, appletNr)
+        # does this starter exist?
         p1 = os.path.join(USER_HOME_DIR, ".local/share/plasma_icons/", appName)
         p2 = os.path.join(rootDir, "DATA/starter/", appName)
-        config[app1] = {}
-        config[app1] = {
-             'PreloadWeight': 0, 
-             'localPath': p1,
-             'url': p2,
-             }
+
+        if self._ifLauncherExists(containerNr, p2) is False:
+            # starter does not exists
+            app1 = 'Containments][%s][Applets][%s' % (containerNr, appletNr)
+            config[app1] = {}
+            config[app1]['immutability'] = 1
+            config[app1]['plugin'] = "org.kde.plasma.icon"
+
+            """ for example
+            [Containments][37][Applets][29][Configuration]
+            PreloadWeight=0
+            localPath=/home/student/.local/share/plasma_icons/Exam Teacher.desktop
+            url=file:////home/student/.life/applications/life-exam/DATA/starter/Exam Teacher.desktop
+            """
+            app1 = 'Containments][%s][Applets][%s][Configuration' % (containerNr, appletNr)
+            config[app1] = {}
+            config[app1] = {
+                'PreloadWeight': 0,
+                'localPath': p1,
+                'url': p2
+            }
 
     def addStarter(self):
         """ edit plasma-org.kde.plasma.desktop-appletsrc and add Desktop Starter """
@@ -175,14 +203,13 @@ class PlasmaRCTool():
         # search for Containment Number
         maxContainmentNr = self._getContainmentMaxNr()
         starter = self._areThereStarters()
-        
-        
-        print("MAX Containment: %s" % maxContainmentNr)
+
+        # print("MAX Containment: %s" % maxContainmentNr)
         if starter[0]:
-            print("Starters are found at")
-            print("[Containments][%s][Applets]" % starter[1])
-            maxAppletNr = self._getAppletsMaxNr(starter[1])        
-            print("Applet MAX Nr = %s" % maxAppletNr)
+            # print("Starters are found at")
+            # print("[Containments][%s][Applets]" % starter[1])
+            maxAppletNr = self._getAppletsMaxNr(starter[1])
+            # print("Applet MAX Nr = %s" % maxAppletNr)
 
         # geometry of the widgets
         left = 560
@@ -190,8 +217,6 @@ class PlasmaRCTool():
         applet_width = 64
         applet_height = 96
         space = 10
-        
-        
         # Update Config File
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
         # there are no starter yet, create Container
@@ -200,41 +225,34 @@ class PlasmaRCTool():
             con = 'Containments][%s' % (maxContainmentNr)
             config[con] = {}
             config[con] = {
-             'ItemGeometriesHorizontal': "", 
-             'immutability': 1,
-             'plugin': "org.kde.desktopcontainment",
-             }
-            
+                'ItemGeometriesHorizontal': "",
+                'immutability': 1,
+                'plugin': "org.kde.desktopcontainment",
+                'formfactor': 0,
+                'lastScreen': 0,
+                'location': 0,
+                'wallpaperplugin': "org.kde.image",
+                'activityId': ""
+            }
+
             containerNr = maxContainmentNr
             maxAppletNr = 1
-            
-        
-            
-            
+
         container = 'Containments][%s' % containerNr
         geometry = config[container]['ItemGeometriesHorizontal']
         # append Widget like Applet-Nr:x,y,width,height,0;
         # we place 2 widgets on the desktop
         app1 = "Applet-%s:%s,%s,%s,%s,0;" % (maxAppletNr, left, top, applet_width, applet_height)
         app2 = "Applet-%s:%s,%s,%s,%s,0;" % (
-            maxAppletNr+1,
-            left + space + applet_width, 
+            maxAppletNr + 1,
+            left + space + applet_width,
             top, applet_width, applet_height
         )
         geometry += app1 + app2
         config[container]['ItemGeometriesHorizontal'] = geometry
-            
 
+        for _starter in EXAM_DESKTOP_APPS:
+            self.addApplet(config, containerNr, maxAppletNr, _starter)
+            maxAppletNr += 1
 
-            
-        
-        self.addApplet(config, containerNr, maxAppletNr, "Exam Student.desktop")
-        self.addApplet(config, containerNr, maxAppletNr + 1, "STOP.desktop")
         config.write()
-        kk = 0
-        
-        
-        
-        
-
-        

@@ -16,7 +16,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER, USER_HOME_DIR
+    SHARE_DIRECTORY, USER, USER_HOME_DIR, EXAM_DESKTOP_APPS
 import stat
 import sys
 from classes.PlasmaRCTool import PlasmaRCTool
@@ -146,7 +146,7 @@ def deleteFolderContent(folder):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
-        except Exception as e:  # noqa
+        except Exception as e:
             logger.error(e)
 
 
@@ -155,9 +155,16 @@ def copyDesktopStarter():
     rootDir = Path(__file__).parent.parent
     sharePlasma = "%s/.local/share/plasma_icons/" % USER_HOME_DIR
 
+    logger.info("Updated ~/.local/share/plasma_icons/")
+
     # starter to copy
-    starter = ["Exam Student.desktop", "STOP.desktop"]
-    for _starter in starter:
+    for _starter in EXAM_DESKTOP_APPS:
+        # first delete existing Starter
+        testfile = os.path.join(sharePlasma, _starter)
+        if os.path.isfile(testfile):
+            os.remove(testfile)
+        # escape all spaces
+        _starter = _starter.replace(" ", "\ ")
         copycommand = "cp -a %s/DATA/starter/%s %s" % (rootDir, _starter, sharePlasma)
         os.system(copycommand)
 
@@ -166,7 +173,8 @@ def prepareDirectories():
     # rootDir of Application
     rootDir = Path(__file__).parent.parent
 
-    if not os.path.exists(WORK_DIRECTORY):  # scripts just need to be on a specific location for plasma configfiles
+    # scripts just need to be on a specific location for plasma configfiles
+    if not os.path.exists(WORK_DIRECTORY):
         os.makedirs(WORK_DIRECTORY)
         os.makedirs(CLIENTFILES_DIRECTORY)
         os.makedirs(SERVERFILES_DIRECTORY)
@@ -212,6 +220,9 @@ def prepareDirectories():
     # clean Log Files
     cmd = "find %s -maxdepth 1 -type f -name \"*.log.*\" -delete" % (WORK_DIRECTORY)
     os.system(cmd)
+
+    # Desktop Apps on Desktop
+    copyDesktopStarter()
 
 
 def fixFilePermissions(folder):

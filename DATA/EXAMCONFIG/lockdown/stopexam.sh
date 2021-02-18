@@ -15,6 +15,14 @@ SHARE="${HOME}SHARE/"
 DELSHARE=$1
 SPELLCHECK=$2
 
+# test if set
+if [[ -z "$DELSHARE" ]]; then
+    DELSHARE=0
+fi
+if [[ -z "$SPELLCHECK" ]]; then
+    SPELLCHECK=0
+fi
+
 # skipping kdialogs
 SKIPDIALOGS=0
 
@@ -27,19 +35,19 @@ fi
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
-if ! [ -f "$EXAMLOCKFILE" ];then
+#if ! [ -f "$EXAMLOCKFILE" ];then
     # kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
     #sleep 2
-    exit 0
-fi
+#    exit 0
+#fi
 
-if [ "$(id -u)" != "0" ]; then
-    if [[ ( $SKIPDIALOGS = 0 ) ]] 
-    then
-        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
-    fi
-    exit 0
-fi
+#if [ "$(id -u)" != "0" ]; then
+#    if [[ ( $SKIPDIALOGS = 0 ) ]] 
+#    then
+#        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
+#    fi
+#    exit 0
+#fi
 
 
 
@@ -124,7 +132,7 @@ fi
 #---------------------------------#
     # sichere exam start und end infos
     date >> $EXAMLOCKFILE
-    sudo cp $EXAMLOCKFILE $SHARE
+    # sudo cp $EXAMLOCKFILE $SHARE
     sudo rm $EXAMLOCKFILE
     sudo rm $FIRSTSTARTFILE
     sleep 0.5

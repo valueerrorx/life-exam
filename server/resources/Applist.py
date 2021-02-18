@@ -47,6 +47,7 @@ def findApps(applistwidget, appview, app):
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
 
+    # _printArray(desktop_files_list)
     # check Geogebra
     desktop_files_list = createGGBStarter(desktop_files_list)
 
@@ -259,7 +260,7 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
 
         applist.append(thisapp)
 
-    _printArray(applist)
+    # _printArray(applist)
     # clean problems
     applist = cleanUp(applist)
 

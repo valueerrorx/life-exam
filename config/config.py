@@ -13,8 +13,10 @@ DEBUG_SHOW_NETWORKTRAFFIC = True
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate',
             'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
 
-# which apps are forbidden in EXAM
+# which apps must not be listed in apps-list you will provide during EXAM
 BLACKLIST_APPS = ["LIFE Student", "LIFE Teacher", "EXAM"]
+# During EXAM, which Apps will be visible on Desktop
+EXAM_DESKTOP_APPS = ["Exam Student.desktop", "STOP.desktop"]
 
 # Web Server Root Directory
 WEB_ROOT = "/var/www/html/"
