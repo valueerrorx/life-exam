@@ -31,18 +31,13 @@ from server.resources.MyServerFactory import MyServerFactory
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    # testing
-    plasma = PlasmaRCTool()
-    plasma.addStarter()
-    # testing
-
     start = time()
     # Create and display the splash screen
     splash = SplashScreen()
     # set version first
     splash.setVersion(__version__)
     splash.setImage("img/LIFE.jpg")
-    # splash.show()
+    splash.show()
     splash.update()
     app.processEvents()
     while time() - start < 2:
