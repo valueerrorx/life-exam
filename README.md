@@ -15,10 +15,6 @@ Tools needed in order to provide 100% functionality are:
 
 ## Install
 - Run `sudo pip3 install .` in exam-life path, in order to global install missing modules
-- place in your `~/.profile`
-  ```bash
-  # is an old EXAM running after a reboot > then stop it
-  $HOME/.life/applications/life-exam/DATA/scripts/isEXAMafterReboot.sh
 - check if you have Geogebra Web Apps inside `localhost/geogebra/`.  
   Be sure wich path points to your webserver root, see Configuration.  
   The entry html file is either `index.html` or `Geogebra.html`.
