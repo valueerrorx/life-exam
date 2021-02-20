@@ -78,7 +78,6 @@ class SplashScreen(QSplashScreen):
         if self.image is None:
             raise ValueError('Specify an Image via SplashScreen::setImage()')
         return QSplashScreen.show(self, *args, **kwargs)
-        
 
     def setMessage(self, msg):
         self.message.setText("%s ..." % (msg))
@@ -117,7 +116,7 @@ class SplashScreen(QSplashScreen):
         img = self.cv.QImage2MAT(Qimg)
         resized = self.cv.resizeTo(img, new_w, new_h)
         return self.cv.MAT2QPixmap(resized)
-    
+
     def setVersion(self, version):
         """ adds a Version Number and updates the image """
         self.version = "Version: %s" % version

@@ -35,11 +35,11 @@ class Heartbeat(QtCore.QThread):
 
     def __del__(self):
         self.wait()
-        
+
     def suspend(self):
         """ deactivate the Tick Timer """
         self.timer.stop()
-    
+
     def resume(self):
         """ resume the Tick Timer """
         self.timer.first_start()
@@ -135,4 +135,3 @@ class Heartbeat(QtCore.QThread):
         for i in range(len(self._heartbeats)):
             hb = self._heartbeats[i]
             print("cID: %s, Tries: %s" % (hb.getConnectionID(), hb.getRetries()))
-

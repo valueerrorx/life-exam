@@ -16,20 +16,20 @@ class Thread_Wait(QtCore.QThread):
         self.parent = parent
         self.running = False
         self.setObjectName("Wait Thread")
-        
+
         # count the seconds
         self.count = 0
 
     def __del__(self):
         self.wait()
-        
+
     def stop(self):
         """ stop the running thread """
         self.running = False
-        
+
     def fireEvent_Done(self):
         self.finished_signal.emit()
-        
+
     def getSeconds(self):
         """ how many seconds are we running? """
         return self.count

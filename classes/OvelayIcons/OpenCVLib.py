@@ -132,14 +132,13 @@ class OpenCVLib():
         # Write some Text
         font = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
         fontSize = height - 2 * padding
-        fontColor = (255, 255, 255)
 
         # center
         fontobj = ImageFont.truetype(font, fontSize)
         font_size = self._textsize(text, fontobj)
         xpos = (pixmap.width() - font_size[0]) // 2
         bottomLeftCornerOfText = (xpos, ypos + padding)
-        pixmap = self._putText(pixmap, text, bottomLeftCornerOfText, font, fontSize, fontColor)
+        pixmap = self._putText(pixmap, text, bottomLeftCornerOfText, font, fontSize)
 
         return pixmap
 
@@ -161,7 +160,7 @@ class OpenCVLib():
         cv2.addWeighted(overlay, alpha, output, 1 - alpha, 1.0, output)
         return self.MAT2QPixmap(output)
 
-    def _putText(self, pixmap, msg, bottomLeftCornerOfText, font, fontSize, fontColor):
+    def _putText(self, pixmap, msg, bottomLeftCornerOfText, font, fontSize):
         """
         place text onto pixmap
         ttf fonts needs full Path

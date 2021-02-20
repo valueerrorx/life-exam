@@ -16,38 +16,36 @@ def write_dbus_env_OS():
         item = item.decode('UTF-8')
         sp = item.split('=', 1)
         os.environ[sp[0]] = sp[1][:-1]    
-        
+
 def export_to_shell():
-    full_cmd =""
+    full_cmd = ""
     p = subprocess.Popen('dbus-launch', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for item in p.stdout:
         # decode byte to ...
         item = item.decode('UTF-8')
         sp = item.split('=', 1)
-        cmd ="export %s=\"%s\"" % (sp[0], sp[1][:-1])
+        cmd = "export %s=\"%s\"" % (sp[0], sp[1][:-1])
         full_cmd += "%s && " % cmd
     return full_cmd
 
-                
+
 def demote(user_name, user_uid, user_gid):
     """Pass the function 'set_ids' to preexec_fn, rather than just calling
     setuid and setgid. This will change the ids for that subprocess only"""
     def set_ids():
         try:
             print("starting")
-            #print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
-            #print (os.getgroups())
+            # print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
+            # print (os.getgroups())
             # initgroups must be run before we lose the privilege to set it!
             os.initgroups(user_name, user_gid)
-            #print("initgroups")
+            # print("initgroups")
             os.setgid(user_gid)
             # this must be run last
             os.setuid(user_uid)
-            #print("finished demotion")
-            #print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
-            #print (os.getgroups())
-            
-            
+            # print("finished demotion")
+            # print ("uid, gid = %d, %d" % (os.getuid(), os.getgid()))
+            # print (os.getgroups())
         except Exception as error:
             print(error)
         
@@ -83,16 +81,15 @@ DBUS_SESSION_BUS_WINDOWID=119537665
     exported_cmd = "%s%s" % (export_to_shell(), cmd)
     print(exported_cmd)
     
-    
-    
-    proc = subprocess.Popen(exported_cmd, 
-                            shell=True, 
-                            stdin=subprocess.PIPE, 
-                            stdout=subprocess.PIPE, 
-                            stderr=subprocess.PIPE, 
+
+    proc = subprocess.Popen(exported_cmd,
+                            shell=True,
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
                             # bufsize=0, 
-                            #preexec_fn=demote(user_name, uid, guid)
-                            #env={'env_keep': ENV}
+                            # preexec_fn=demote(user_name, uid, guid)
+                            # env={'env_keep': ENV}
                             )
     for line in iter(proc.stderr.readline, b''):
         stderr += line.decode()
@@ -101,7 +98,7 @@ DBUS_SESSION_BUS_WINDOWID=119537665
         stdout += line.decode()
     # Wait for process to terminate and set the returncode attribute
     proc.communicate()
-    
+
     return [proc.returncode, stderr, stdout]
 
 def runAndWaittoFinish(cmd):

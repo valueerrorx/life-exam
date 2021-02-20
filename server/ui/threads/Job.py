@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 
+
 class Job():
     """ Data for a job """
 

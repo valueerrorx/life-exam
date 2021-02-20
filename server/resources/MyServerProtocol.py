@@ -61,7 +61,6 @@ class MyServerProtocol(basic.LineReceiver):
 
         if not self.refused:
             self.factory.window.disableClientScreenshot(self)
-            
 
     # twisted-Event: Data Received
     def rawDataReceived(self, data):
@@ -111,10 +110,10 @@ class MyServerProtocol(basic.LineReceiver):
                     # shutil.unpack_archive(file_path, extract_dir, 'tar')
                     extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])
                     user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
-                    
+
                     # checks if filename is taken and renames this file in order to make room for the userfolder
                     mutual_functions.checkIfFileExists(user_dir)
-                    
+
                     if os.path.isfile(file_path):
                         with zipfile.ZipFile(file_path, "r") as zip_ref:
                             zip_ref.extractall(extract_dir)
@@ -127,14 +126,14 @@ class MyServerProtocol(basic.LineReceiver):
                     # the network progress is allways handled
                     # Send Event to Wait Thread with Client Name
                     ui = self.factory.window
-                    
+
                     # Flags to String
                     aA = '0'
                     if ui.autoAbgabe:
                         aA = '1'
-                        
+
                     print("Autoabgabe: %s" % (aA))
-                    
+
                     if ui.progress_thread:
                         ui.progress_thread.fireEvent_Abgabe_finished(self.line_data_list[4], aA)
 
@@ -225,8 +224,8 @@ class MyServerProtocol(basic.LineReceiver):
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.progress_thread.fireEvent_Lock_Screen(clientWidget)
-        
-        #Update Screenshot
+
+        # Update Screenshot
         ui.onScreenshots(self.line_data_list[1])
 
     def _unlockscreen_ok(self):
@@ -236,8 +235,8 @@ class MyServerProtocol(basic.LineReceiver):
         # get the client item from QListWidget
         clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
         ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
-        
-        #Update Screenshot
+
+        # Update Screenshot
         ui.onScreenshots(self.line_data_list[1])
 
     def _heartbeat_received(self):

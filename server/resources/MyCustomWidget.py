@@ -27,7 +27,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.id = client.clientName             # eg TestUser
         self.pID = client.clientConnectionID    # eg 5508
         self.ip = client.transport.hostname     # eg 192.168.1.10
-        
+
         self.image_width = 180
         self.image_height = 101
         self.widget_width = 204
@@ -35,13 +35,13 @@ class MyCustomWidget (QtWidgets.QWidget):
 
         self.set_ui()
         self.setText('%s' % (client.clientName))
-        
+
         # Overlay IconsIconStack, hier noch kein Pixmap vorhanden
         self.iconStack = IconStack(None)
         self.iconStack.repaint_event.connect(self.repaint_event)
-        
+
         self.show()
-        
+
     def close(self):
         """ stop Timer for Icons """
         self.iconStack.close()
@@ -64,7 +64,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
         self.setMinimumSize(QtCore.QSize(self.image_width, self.image_height))
-        #self.setMaximumSize(QtCore.QSize(196, 125))
+        # self.setMaximumSize(QtCore.QSize(196, 125))
         self.setObjectName("mywidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
         self.horizontalLayout.setContentsMargins(6, 6, 6, 6)
@@ -119,12 +119,11 @@ class MyCustomWidget (QtWidgets.QWidget):
         pixmap = QtGui.QPixmap(icon)
         pixmap = pixmap.scaled(self.image_width, self.image_height)
         self.image.setPixmap(pixmap)
-        
-        #Overlay Icons
+
+        # Overlay Icons
         self.iconStack.setPixmap(pixmap)
-        
         self.repaint()
-        
+
     def repaint_event(self):
         """ Pixmap has changed > repaint """
         self.image.setPixmap(self.iconStack.getPixmap())
@@ -172,8 +171,7 @@ class MyCustomWidget (QtWidgets.QWidget):
     def setFileReceivedERROR(self):
         """ set all File NOT Received icon """
         self.iconStack.addFileReceivedERROR()
-    
+
     def setOffline(self):
         """ set Client Offline, due to missing heartbeats """
         self.iconStack.addOffline()
-        

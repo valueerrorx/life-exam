@@ -5,10 +5,11 @@
 from PyQt5 import QtCore
 from threading import Timer
 
+
 class Thread_Countdown(QtCore.QThread):
-    """ 
+    """
     a Thread that counts down some time
-    you had to manually stop this thread! 
+    you had to manually stop this thread!
     :time: in Seconds after that the Timer is fireing event func
     """
     def __init__(self, parent, time, func, *args, **kwargs):
@@ -19,18 +20,18 @@ class Thread_Countdown(QtCore.QThread):
         self.running = False
         self.args = args
         self.kwargs = kwargs
-        
+
         self.setObjectName("Countdown Thread")
         self.time = time
 
     def __del__(self):
         self.wait()
-        
+
     def start(self):
         self.timer = Timer(self.time, self.run)
         self.running = True
         self.timer.start()
-        
+
     def stop(self):
         """
         cancel current timer in case failed it's still OK
@@ -39,14 +40,14 @@ class Thread_Countdown(QtCore.QThread):
         if self.timer:
             self.timer.cancel()
         self.running = False
-    
+
     def setTime(self, t):
         """ set Time in seconds """
-        self.time = t       
-        
+        self.time = t
+
     def getSeconds(self):
         """ how many seconds are we running? """
         return self.count
-    
+
     def run(self):
         self.func(*self.args, **self.kwargs)
