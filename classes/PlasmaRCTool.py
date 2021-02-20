@@ -51,7 +51,7 @@ class PlasmaRCTool():
         for item in plasma:
             try:
                 section = plasma[item]
-                launchers = section["launchers"]
+                launchers = section["launchers"]  # noqa
 
                 if self._backup_launchers is not None:
                     # we do have a backup
@@ -204,8 +204,6 @@ class PlasmaRCTool():
         # geometry of the widgets
         left = 560
         top = 35
-        applet_width = 64
-        applet_height = 96
         space = 10
         # Update Config File
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
@@ -229,20 +227,28 @@ class PlasmaRCTool():
             maxAppletNr = 1
 
         container = 'Containments][%s' % containerNr
-        geometry = config[container]['ItemGeometriesHorizontal']
         # append Widget like Applet-Nr:x,y,width,height,0;
         # we place 2 widgets on the desktop
-        app1 = "Applet-%s:%s,%s,%s,%s,0;" % (maxAppletNr, left, top, applet_width, applet_height)
-        app2 = "Applet-%s:%s,%s,%s,%s,0;" % (
-            maxAppletNr + 1,
-            left + space + applet_width,
-            top, applet_width, applet_height
-        )
-        geometry += app1 + app2
+
+        # create Apps list with som edata
+        i = 0
+        apps_list = []
+        for _starter in EXAM_DESKTOP_APPS:
+            if "stop.desktop".lower() in _starter.lower():
+                apps_list.append([i, _starter, 80, 80])
+            else:
+                apps_list.append([i, _starter, 64, 96])
+            i += 1
+
+        geometry = ""
+        for item in apps_list:
+            geometry += "Applet-%s:%s,%s,%s,%s,0;" % (maxAppletNr + item[0], left + i * space, top, item[2], item[3])
+
         config[container]['ItemGeometriesHorizontal'] = geometry
 
-        for _starter in EXAM_DESKTOP_APPS:
-            self.addApplet(config, containerNr, maxAppletNr, _starter)
-            maxAppletNr += 1
+        i = 0
+        for item in apps_list:
+            self.addApplet(config, containerNr, maxAppletNr + item[0], item[1])
+            i += 1
 
         config.write()
