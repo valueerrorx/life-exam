@@ -229,6 +229,7 @@ class PlasmaRCTool():
         container = 'Containments][%s' % containerNr
         # append Widget like Applet-Nr:x,y,width,height,0;
         # we place 2 widgets on the desktop
+        geometry = config[container]['ItemGeometriesHorizontal']
 
         # create Apps list with som edata
         i = 0
@@ -240,7 +241,6 @@ class PlasmaRCTool():
                 apps_list.append([i, _starter, 64, 96])
             i += 1
 
-        geometry = ""
         for item in apps_list:
             geometry += "Applet-%s:%s,%s,%s,%s,0;" % (maxAppletNr + item[0], left + i * space, top, item[2], item[3])
 
