@@ -4,7 +4,6 @@
 import logging
 from twisted.internet.protocol import DatagramProtocol
 from config.config import DEBUG_PIN
-from classes import mutual_functions
 
 
 class MultcastLifeServer(DatagramProtocol):
@@ -18,7 +17,7 @@ class MultcastLifeServer(DatagramProtocol):
         # Set the TTL>1 so multicast will cross router hops
         self.transport.setTTL(5)
         # Join a specific multicast group
-        self.transport.joinGroup("228.0.0.5")   
+        self.transport.joinGroup("228.0.0.5")
 
     def datagramReceived(self, datagram, address):
         datagram = datagram.decode()

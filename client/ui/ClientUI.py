@@ -12,8 +12,7 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 
-from config.config import EXAMCONFIG_DIRECTORY, SCRIPTS_DIRECTORY,\
-    WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
+from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
@@ -169,7 +168,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             self.msg = False  # noqa
 
     def _on_offline_exam_exit(self):
-        startcommand = "%s/stopexam.sh &" % (SCRIPTS_DIRECTORY)
+        startcommand = "%s/lockdown/stopexam.sh &" % (EXAMCONFIG_DIRECTORY)
         os.system(startcommand)  # start script
 
     def _onStartExamClient(self):

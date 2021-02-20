@@ -9,8 +9,8 @@
 import sys
 from pathlib import Path
 import os
-from config.config import WORK_DIRECTORY, SCRIPTS_DIRECTORY,\
-    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY
+from config.config import SCRIPTS_DIRECTORY,\
+    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, EXAMCONFIG_DIRECTORY
 from time import sleep
 from classes.Thread_Wait import Thread_Wait
 
@@ -34,7 +34,7 @@ class ClientToServer:
         # rootDir of Application
         self.rootDir = Path(__file__).parent.parent
         self.zipFileName = None
-    
+
     def _getIndex(self, index, data):
         """ try except Index from Array """
         try:
@@ -88,7 +88,7 @@ class ClientToServer:
             return
         startcommand = "exec pkill -9 -f lockscreen.py &"
         os.system(startcommand)
-        
+
         # create an Screenshot
         self.prepare_screenshot("%s.jpg" % cID)
 
@@ -108,21 +108,21 @@ class ClientToServer:
         if mutual_functions.checkPidFile("server"):
             # True > I'm the Teacher nothing to do
             return
-        
+
         startcommand = "exec %s/client/resources/lockscreen.py &" % (self.rootDir)  # kill it if it already exists
         os.system(startcommand)
-        
+
         # wait a bit
         sleep(1)
-        
+
         # create an Screenshot
         self.prepare_screenshot("%s.jpg" % cID)
-        
+
         # Send OK i'm locked to Server
         line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
         print("Sending Lock Screen OK")
         client.sendEncodedLine(line)
-        
+
         return
 
     def exitExam(self, client):
@@ -132,14 +132,13 @@ class ClientToServer:
         :return:
         """
         exitcleanup_abgabe = self._getIndex(1, client.line_data_list)
-        spellcheck =  self._getIndex(2, client.line_data_list)
+        spellcheck = self._getIndex(2, client.line_data_list)
         print("Stopping EXAM")
         # start as user even if the twistd daemon is run by root
-        startcommand = "%s/scripts/stopexam.sh %s %s &" % (WORK_DIRECTORY, exitcleanup_abgabe, spellcheck)
-        print(startcommand)   
-        os.system(startcommand)  
+        startcommand = "%s/lockdown/stopexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, exitcleanup_abgabe, spellcheck)
+        print(startcommand)
+        os.system(startcommand)
 
-    
     def file_transfer_request(self, client):
         """
         Decides if a GET or a SEND operation needs to be dispatched and unboxes relevant attributes to be used in the actual sending/receiving functions
@@ -163,28 +162,28 @@ class ClientToServer:
                 wait_thread = Thread_Wait()
                 wait_thread.finished_signal.connect(lambda: self._sendZipFile(client, filetype))
                 wait_thread.start()
-                
-                # zip Files send signal when done to _sendZipFile 
-                self.prepare_abgabe(client, filename, wait_thread)                
+
+                # zip Files send signal when done to _sendZipFile
+                self.prepare_abgabe(client, filename, wait_thread)
         else:   # this is a GET file request - switch to RAW Mode
             client.setRawMode()
-            
+
     def _sendZipFile(self, client, filetype):
         """ signal received send the file """
         if "-Empty".lower() not in self.zipFileName.lower():
             print("Abgabe ZipFile: %s" % self.zipFileName)
             client.sendFile(self.zipFileName, filetype)
-        else:            
+        else:
             print("Abgabe: No Data to send, because nothing in %s!" % (SHARE_DIRECTORY))
             print("We send an empty Zip File to Server ...")
             # to inform Server, we send a empty File
-            #client.setLineMode()
+            # client.setLineMode()
             # print("Filetransfer finished, switched back to LineMode")
-            
+
     def setZipFileName(self, name):
         """ the name of the Zip File to send """
         self.zipFileName = name
-    
+
     """ prepare filetype """
     def prepare_screenshot(self, filename):
         """
@@ -203,11 +202,10 @@ class ClientToServer:
 
     def prepare_abgabe(self, client, filename, wait_thread):
         """
-        Prepares Files to be send as zip archive if there a files 
+        Prepares Files to be send as zip archive if there a files
         :param client: clientprotocol
         :param filename: filename of abgabe archive
         :return: filename or None
         """
-        self.zipFileName = None # be sure
+        self.zipFileName = None  # be sure
         client.triggerAutosave(filename, wait_thread)
-    

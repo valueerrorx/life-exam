@@ -2,7 +2,7 @@
 [Desktop Entry]
 Comment[de_DE]=
 Comment=
-Exec=/home/student/.life/EXAM/EXAMCONFIG/lockdown/stopexam.sh
+Exec=/home/student/.life/applications/life-exam/DATA/EXAMCONFIG/lockdown/stopexam.sh
 GenericName[de_DE]=Beende die Prüfungsumgebung
 GenericName=Beende die Prüfungsumgebung
 Icon=/home/student/.life/applications/life-exam/DATA/starter/stop.svg
