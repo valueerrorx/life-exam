@@ -347,10 +347,12 @@ def countFiles(path):
     files_count = 0
     dir_count = 0
     for root, dirs, files in os.walk(path, topdown=False):
+        """ debug only
         for name in files:
             print(os.path.join(root, name))
         for name in dirs:
             print(os.path.join(root, name))
+        """
         files_count = len(files)
         dir_count = len(dirs)
     return [files_count, dir_count]
