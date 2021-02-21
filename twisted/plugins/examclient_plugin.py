@@ -46,6 +46,9 @@ from classes.mutual_functions import copyDesktopStarter
 
 
 class MyClientProtocol(basic.LineReceiver):
+
+    _detectLoop_wait_thread = None
+
     def __init__(self, factory, appDir):
         self.factory = factory
         self.client_to_server = self.factory.client_to_server
@@ -83,8 +86,7 @@ class MyClientProtocol(basic.LineReceiver):
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
         # stop the Information to close and save all open Programs
-        if self.detectLoop:
-            self.detectLoop.stop()
+        self._stop_detectLoop()
 
         self.factory.failcount += 1
         self.file_handler = None
@@ -307,7 +309,15 @@ class MyClientProtocol(basic.LineReceiver):
                     # print("xdo > %s" % app)
         return [open_apps, finalPids, app_id_list]
 
-    def _detectOpenApps(self, filename, wait_thread):
+    def _stop_detectLoop(self):
+        self.detectLoop.stop()
+        self.allSaved = True
+        # fire Event "We are ready to send the file"
+        self._detectLoop_wait_thread.fireEvent_Done()
+        self._detectLoop_wait_thread.stop()
+        self._detectLoop_wait_thread = None
+
+    def _detectOpenApps(self, filename):
         """ counts the open Apps is called periodically by self.detectLoop """
         # [open_apps, pids, app_ids]
         data = self._countOpenApps()
@@ -320,18 +330,13 @@ class MyClientProtocol(basic.LineReceiver):
         fallback_time = 5 * 60  # 5 min
 
         # alle 10 sec repeat Message
-        if wait_thread.getSeconds() % 10 == 0:
+        if self._detectLoop_wait_thread.getSeconds() % 10 == 0:
             self.inform(self.saveMSG, Notification_Type.Warning)
 
-        if((count == 0) or (wait_thread.getSeconds() >= fallback_time)):
-            # if there are no more open Apps
-            self.detectLoop.stop()
-            self.allSaved = True
+        if((count == 0) or (self._detectLoop_wait_thread.getSeconds() >= fallback_time)):
+            self._stop_detectLoop()
             finalname = self.create_abgabe_zip(filename)
             self.client_to_server.setZipFileName(finalname)
-            # fire Event "We are ready to send the file"
-            wait_thread.fireEvent_Done()
-            wait_thread.stop()
 
     def triggerAutosave(self, filename, wait_thread):
         """
@@ -342,7 +347,10 @@ class MyClientProtocol(basic.LineReceiver):
         # clear Array
         del self.trigerdAutoSavedIDs[:]
         self.trigerdAutoSavedIDs = []
-        self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename, wait_thread))
+
+        self._detectLoop_wait_thread = wait_thread
+
+        self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename))
         self.detectLoop.start(2)
         self.inform(self.saveMSG, Notification_Type.Warning)
 
