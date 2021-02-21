@@ -375,18 +375,17 @@ class MyClientProtocol(basic.LineReceiver):
         print("Anzahl an Files in %s: %s" % (target_folder, count))
         if count > 0:
             # this is the filename of the zip file
-            fname = "%s.zip" % filename
+            fname = "%s" % filename
             output_filename = os.path.join(CLIENTZIP_DIRECTORY, fname)
         else:
             # create empty Zip File
-            fname = "%s-%s.zip" % (filename, "Empty")
+            fname = "%s-%s" % (filename, "Empty")
             output_filename = os.path.join(CLIENTZIP_DIRECTORY, fname)
 
         # create Zip File
         shutil.make_archive(output_filename, 'zip', target_folder)
         print("Created Zip File in %s" % output_filename)
-        print("Name: %s" % filename)
-        return fname
+        return "%s.zip" % fname
 
 # Autotrigger Save Part END -------------------------------------------------------------------
 
