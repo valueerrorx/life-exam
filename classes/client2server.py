@@ -135,7 +135,7 @@ class ClientToServer:
         spellcheck = self._getIndex(2, client.line_data_list)
         print("=========================== Stopping EXAM ===========================")
         # start as user even if the twistd daemon is run by root
-        startcommand = "%s/lockdown/stopexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, exitcleanup_abgabe, spellcheck)
+        startcommand = "sudo %s/lockdown/stopexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, exitcleanup_abgabe, spellcheck)
         print(startcommand)
         os.system(startcommand)
 
