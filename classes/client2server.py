@@ -133,7 +133,7 @@ class ClientToServer:
         """
         exitcleanup_abgabe = self._getIndex(1, client.line_data_list)
         spellcheck = self._getIndex(2, client.line_data_list)
-        print("Stopping EXAM")
+        print("=========================== Stopping EXAM ===========================")
         # start as user even if the twistd daemon is run by root
         startcommand = "%s/lockdown/stopexam.sh %s %s &" % (EXAMCONFIG_DIRECTORY, exitcleanup_abgabe, spellcheck)
         print(startcommand)
@@ -183,7 +183,6 @@ class ClientToServer:
         except Exception:
             # maybe a triggered stop from Server, do nothing
             print("Exception in _sendZipFile: %s" % self.zipFileName)
-            
 
     def setZipFileName(self, name):
         """ the name of the Zip File to send """
@@ -213,4 +212,4 @@ class ClientToServer:
         :return: filename or None
         """
         self.zipFileName = None  # be sure
-        client.triggerAutosave(filename, wait_thread)
+        client.triggerAutosave(filename)

@@ -342,7 +342,7 @@ class MyClientProtocol(basic.LineReceiver):
             finalname = self.create_abgabe_zip(filename)
             self.client_to_server.setZipFileName(finalname)
 
-    def triggerAutosave(self, filename, wait_thread):
+    def triggerAutosave(self, filename):
         """
         this function uses xdotool to find windows and trigger ctrl + s shortcut on them
         which will show the save dialog the first time and silently save the document the next time
@@ -361,23 +361,25 @@ class MyClientProtocol(basic.LineReceiver):
         finalname = self.create_abgabe_zip(filename)
         self.client_to_server.setZipFileName(finalname)
 
-
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY
         output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
         # create zip of folder
-        print("Anzahl an Files in %s" % target_folder)
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])
+        print("Anzahl an Files in %s: %s" % (target_folder, count[0]))
         # create Zip File
         shutil.make_archive(output_filename, 'zip', target_folder)
         if count > 0:
             # this is the filename of the zip file
-            return "%s.zip" % filename
+            fname = "%s.zip" % filename 
         else:
             # create empty Zip File
-            return "%s-%s.zip" % (filename, "Empty")
+            fname = "%s-%s.zip" % (filename, "Empty")
+        print("Created Zip File %s" % fname)
+        return fname
+
 # Autotrigger Save Part END -------------------------------------------------------------------
 
     def sendFile(self, filename, filetype):
