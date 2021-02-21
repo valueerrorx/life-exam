@@ -310,7 +310,8 @@ class MyClientProtocol(basic.LineReceiver):
         return [open_apps, finalPids, app_id_list]
 
     def _stop_detectLoop(self):
-        self.detectLoop.stop()
+        if self.detectLoop:
+            self.detectLoop.stop()
         self.allSaved = True
         # fire Event "We are ready to send the file"
         self._detectLoop_wait_thread.fireEvent_Done()
@@ -320,6 +321,7 @@ class MyClientProtocol(basic.LineReceiver):
     def _detectOpenApps(self, filename):
         """ counts the open Apps is called periodically by self.detectLoop """
         # [open_apps, pids, app_ids]
+        print("Debug: Count OpenApps")
         data = self._countOpenApps()
         count = int(data[0])
 
@@ -349,9 +351,11 @@ class MyClientProtocol(basic.LineReceiver):
         self.trigerdAutoSavedIDs = []
 
         self._detectLoop_wait_thread = wait_thread
+        
+        print("Debug: %s" % filename)
 
         self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename))
-        self.detectLoop.start(2)
+        # self.detectLoop.start(2)
         self.inform(self.saveMSG, Notification_Type.Warning)
 
     def create_abgabe_zip(self, filename):
