@@ -342,7 +342,7 @@ class MyClientProtocol(basic.LineReceiver):
             finalname = self.create_abgabe_zip(filename)
             self.client_to_server.setZipFileName(finalname)
 
-    def triggerAutosave(self, filename):
+    def triggerAutosave(self, filename, wait_thread):
         """
         this function uses xdotool to find windows and trigger ctrl + s shortcut on them
         which will show the save dialog the first time and silently save the document the next time
@@ -360,6 +360,10 @@ class MyClientProtocol(basic.LineReceiver):
         self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)
         finalname = self.create_abgabe_zip(filename)
         self.client_to_server.setZipFileName(finalname)
+        
+        # fire event Zip is ready, Server will send back ExitExam now
+        wait_thread.fireEvent_Done()
+        wait_thread.stop(
 
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
@@ -369,11 +373,12 @@ class MyClientProtocol(basic.LineReceiver):
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])
         print("Anzahl an Files in %s: %s" % (target_folder, count))
+
         # create Zip File
         shutil.make_archive(output_filename, 'zip', target_folder)
         if count > 0:
             # this is the filename of the zip file
-            fname = "%s.zip" % filename 
+            fname = "%s.zip" % filename
         else:
             # create empty Zip File
             fname = "%s-%s.zip" % (filename, "Empty")

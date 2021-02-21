@@ -212,4 +212,4 @@ class ClientToServer:
         :return: filename or None
         """
         self.zipFileName = None  # be sure
-        client.triggerAutosave(filename)
+        client.triggerAutosave(filename, wait_thread)
