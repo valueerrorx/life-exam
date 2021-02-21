@@ -67,6 +67,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.trigerdAutoSavedIDs = []
         self.detectLoop = None
         self.allSaved = False
+        self.saveMSG = "Bitte alle Dateien speichern und die laufenden Programme schließen!"
 
     # twisted-Event: Client connects to server
     def connectionMade(self):
@@ -81,6 +82,10 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
+        # stop the Information to close and save all open Programs
+        if self.detectLoop:
+            self.detectLoop.stop()
+
         self.factory.failcount += 1
         self.file_handler = None
         self.line_data_list = ()
@@ -316,7 +321,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         # alle 10 sec repeat Message
         if wait_thread.getSeconds() % 10 == 0:
-            self.inform("Bitte alle Dateien speichern und die laufenden Programme schließen!", Notification_Type.Warning)
+            self.inform(self.saveMSG, Notification_Type.Warning)
 
         if((count == 0) or (wait_thread.getSeconds() >= fallback_time)):
             # if there are no more open Apps
@@ -339,7 +344,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.trigerdAutoSavedIDs = []
         self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename, wait_thread))
         self.detectLoop.start(2)
-        self.inform("Bitte alle Dateien speichern und die laufenden Programme schließen!", Notification_Type.Warning)
+        self.inform(self.saveMSG, Notification_Type.Warning)
 
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
