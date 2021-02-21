@@ -363,7 +363,7 @@ class MyClientProtocol(basic.LineReceiver):
         
         # fire event Zip is ready, Server will send back ExitExam now
         wait_thread.fireEvent_Done()
-        wait_thread.stop(
+        wait_thread.stop()
 
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
