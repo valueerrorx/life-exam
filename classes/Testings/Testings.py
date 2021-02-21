@@ -5,6 +5,8 @@ import subprocess
 import pwd
 import psutil
 from classes.psUtil import PsUtil
+from config.config import SHARE_DIRECTORY, CLIENTZIP_DIRECTORY, USER_HOME_DIR
+import shutil
 
 
 
@@ -205,7 +207,7 @@ print(export_to_shell())
 # session = bus.get_object("org.kde.calligrawords", "/calligrawords/MainWindow_1/actions")
 
                                                                                  
-  
+"""
 processUtil = PsUtil()
 pid = processUtil.GetProcessByName("Test")
 print(pid)
@@ -232,5 +234,10 @@ print("----------")
 
 pid = processUtil.GetProcessByName("twistd3")
 print(pid)
-
+"""
+filename = "Test"
+target_folder = os.path.join(USER_HOME_DIR, "Downloads")
+output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
+shutil.make_archive(output_filename, 'zip', target_folder)
+print("Done")
 

@@ -360,7 +360,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)
         finalname = self.create_abgabe_zip(filename)
         self.client_to_server.setZipFileName(finalname)
-        
+
         # fire event Zip is ready, Server will send back ExitExam now
         wait_thread.fireEvent_Done()
         wait_thread.stop()
@@ -382,7 +382,8 @@ class MyClientProtocol(basic.LineReceiver):
         else:
             # create empty Zip File
             fname = "%s-%s.zip" % (filename, "Empty")
-        print("Created Zip File %s" % fname)
+        print("Created Zip File in %s" % target_folder)
+        print("Name: %s" % filename)
         return fname
 
 # Autotrigger Save Part END -------------------------------------------------------------------
