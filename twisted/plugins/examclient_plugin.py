@@ -368,7 +368,7 @@ class MyClientProtocol(basic.LineReceiver):
         # create zip of folder
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])
-        print("Anzahl an Files in %s: %s" % (target_folder, count[0]))
+        print("Anzahl an Files in %s: %s" % (target_folder, count))
         # create Zip File
         shutil.make_archive(output_filename, 'zip', target_folder)
         if count > 0:
