@@ -172,14 +172,14 @@ class ClientToServer:
         """ signal received send the file """
         try:
             if "-Empty".lower() not in self.zipFileName.lower():
-                print("Abgabe ZipFile: %s" % self.zipFileName)
-                client.sendFile(self.zipFileName, filetype)
+                print("Abgabe ZipFile: %s" % self.zipFileName)                
             else:
                 print("Abgabe: No Data to send, because nothing in %s!" % (SHARE_DIRECTORY))
                 print("We send an empty Zip File to Server ...")
                 # to inform Server, we send a empty File
                 # client.setLineMode()
                 # print("Filetransfer finished, switched back to LineMode")
+            client.sendFile(self.zipFileName, filetype)
         except Exception:
             # maybe a triggered stop from Server, do nothing
             print("Exception in _sendZipFile: %s" % self.zipFileName)
