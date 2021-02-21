@@ -384,7 +384,7 @@ class MyClientProtocol(basic.LineReceiver):
 
         # create Zip File
         shutil.make_archive(output_filename, 'zip', target_folder)
-        print("Created Zip File in %s" % output_filename)
+        print("Created Zip File in %s.zip" % output_filename)
         return "%s.zip" % fname
 
 # Autotrigger Save Part END -------------------------------------------------------------------
