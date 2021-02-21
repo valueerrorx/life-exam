@@ -46,9 +46,6 @@ from classes.mutual_functions import copyDesktopStarter
 
 
 class MyClientProtocol(basic.LineReceiver):
-
-    _detectLoop_wait_thread = None
-
     def __init__(self, factory, appDir):
         self.factory = factory
         self.client_to_server = self.factory.client_to_server
@@ -85,9 +82,6 @@ class MyClientProtocol(basic.LineReceiver):
 
     # twisted-Event:
     def connectionLost(self, reason):  #noqa
-        # stop the Information to close and save all open Programs
-        self._stop_detectLoop()
-
         self.factory.failcount += 1
         self.file_handler = None
         self.line_data_list = ()
@@ -323,7 +317,6 @@ class MyClientProtocol(basic.LineReceiver):
     def _detectOpenApps(self, filename):
         """ counts the open Apps is called periodically by self.detectLoop """
         # [open_apps, pids, app_ids]
-        print("Debug: Count OpenApps")
         data = self._countOpenApps()
         count = int(data[0])
 
@@ -338,7 +331,14 @@ class MyClientProtocol(basic.LineReceiver):
             self.inform(self.saveMSG, Notification_Type.Warning)
 
         if((count == 0) or (self._detectLoop_wait_thread.getSeconds() >= fallback_time)):
-            self._stop_detectLoop()
+            self.allSaved = True
+            self.detectLoop.stop()
+
+            # fire Event "We are ready to send the file"
+            self._detectLoop_wait_thread.fireEvent_Done()
+            self._detectLoop_wait_thread.stop()
+            self._detectLoop_wait_thread = None
+
             finalname = self.create_abgabe_zip(filename)
             self.client_to_server.setZipFileName(finalname)
 
@@ -351,14 +351,16 @@ class MyClientProtocol(basic.LineReceiver):
         # clear Array
         del self.trigerdAutoSavedIDs[:]
         self.trigerdAutoSavedIDs = []
-
-        self._detectLoop_wait_thread = wait_thread
-        
-        print("Debug: %s" % filename)
-
+        """ some runtime errors, not now
         self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename))
-        #self.detectLoop.start(2)
+        self.detectLoop.start(2)
         self.inform(self.saveMSG, Notification_Type.Warning)
+        """
+
+        self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)
+        finalname = self.create_abgabe_zip(filename)
+        self.client_to_server.setZipFileName(finalname)
+
 
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
