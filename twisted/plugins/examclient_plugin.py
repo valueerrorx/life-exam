@@ -355,7 +355,7 @@ class MyClientProtocol(basic.LineReceiver):
         print("Debug: %s" % filename)
 
         self.detectLoop = LoopingCall(lambda: self._detectOpenApps(filename))
-        # self.detectLoop.start(2)
+        self.detectLoop.start(2)
         self.inform(self.saveMSG, Notification_Type.Warning)
 
     def create_abgabe_zip(self, filename):
