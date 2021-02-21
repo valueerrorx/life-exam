@@ -368,21 +368,23 @@ class MyClientProtocol(basic.LineReceiver):
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY
-        output_filename = os.path.join(CLIENTZIP_DIRECTORY, filename)
+
         # create zip of folder
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])
         print("Anzahl an Files in %s: %s" % (target_folder, count))
-
-        # create Zip File
-        shutil.make_archive(output_filename, 'zip', target_folder)
         if count > 0:
             # this is the filename of the zip file
             fname = "%s.zip" % filename
+            output_filename = os.path.join(CLIENTZIP_DIRECTORY, fname)
         else:
             # create empty Zip File
             fname = "%s-%s.zip" % (filename, "Empty")
-        print("Created Zip File in %s" % target_folder)
+            output_filename = os.path.join(CLIENTZIP_DIRECTORY, fname)
+
+        # create Zip File
+        shutil.make_archive(output_filename, 'zip', target_folder)
+        print("Created Zip File in %s" % output_filename)
         print("Name: %s" % filename)
         return fname
 
