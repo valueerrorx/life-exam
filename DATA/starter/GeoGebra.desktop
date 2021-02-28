@@ -1,9 +1,9 @@
 [Desktop Entry]
-Comment[de_AT]=
-Comment=
+Comment[de_AT]="GeoGebra Starter"
+Comment="GeoGebra Starter"
 Exec=firefox --ssb https://localhost/geogebra/index.html
-GenericName[de_AT]=GeoGebra Classic
-GenericName=GeoGebra Classic
+GenericName[de_AT]=GeoGebra\ Classic
+GenericName="GeoGebra Classic"
 Icon=/home/student/.life/icons/geogebra.png
 MimeType=
 Name[de_AT]=GeoGebra

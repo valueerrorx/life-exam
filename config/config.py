@@ -16,7 +16,8 @@ SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate',
 # which apps must not be listed in apps-list you will provide during EXAM
 BLACKLIST_APPS = ["LIFE Student", "LIFE Teacher", "EXAM"]
 # During EXAM, which Apps will be visible on Desktop
-EXAM_DESKTOP_APPS = ["Exam Student.desktop", "STOP.desktop"]
+# you find them in DATA/starter/
+EXAM_DESKTOP_APPS = ["Exam Student.desktop", "STOP.desktop", "GeoGebra.desktop"]
 
 # Web Server Root Directory
 WEB_ROOT = "/var/www/html/"
