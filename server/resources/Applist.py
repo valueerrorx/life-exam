@@ -478,7 +478,7 @@ def createGGBStarter(desktop_files_list):
                 line = line.rstrip("\n")
                 if "Exec=".lower() in line.lower():
                     # create correct Exec Line in Starter
-                    # Exec=firefox -ssb https://localhost/geogebra/index.html
+                    # Exec=firefox --ssb https://localhost/geogebra/index.html
                     index = ""
                     if os.path.isfile(os.path.join(WEB_ROOT, GEOGEBRA_PATH, "index.html")):
                         index = "index.html"
@@ -486,7 +486,7 @@ def createGGBStarter(desktop_files_list):
                         index = "GeoGebra.html"
                     if index != "":
                         # we found an entry Point
-                        line = "Exec=firefox -ssb https://localhost/%s/%s" % (GEOGEBRA_PATH, index)
+                        line = "Exec=firefox https://localhost/%s/%s" % (GEOGEBRA_PATH, index)
                 lines.append(line)
         # create Desktop Starter
 
