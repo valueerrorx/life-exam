@@ -16,6 +16,7 @@ from PyQt5.QtCore import QSize
 from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN,\
     BLACKLIST_APPS, GEOGEBRA_PATH, WEB_ROOT
 from classes.CmdRunner import CmdRunner
+from classes.mutual_functions import checkGeogebraStarter_isinPlace
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
 
@@ -466,39 +467,14 @@ def createGGBStarter(desktop_files_list):
     checks if Geogebra Starter is set correct
     and copys the starter to  /home/student/.local/share/applications/
     """
-    rootDir = Path(__file__).parent.parent.parent
+    rootDir = Path(__file__).parent.parent
     path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
-
     applicatins_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
-
-    lines = []
+    # if GGB is placed in Webserver Root
     if os.path.join(WEB_ROOT, GEOGEBRA_PATH):
-        with open(path_to_file, 'r') as fh:
-            for line in fh:
-                line = line.rstrip("\n")
-                if "Exec=".lower() in line.lower():
-                    # create correct Exec Line in Starter
-                    # Exec=firefox --ssb https://localhost/geogebra/index.html
-                    index = ""
-                    if os.path.isfile(os.path.join(WEB_ROOT, GEOGEBRA_PATH, "index.html")):
-                        index = "index.html"
-                    if os.path.isfile(os.path.join(WEB_ROOT, GEOGEBRA_PATH, "GeoGebra.html")):
-                        index = "GeoGebra.html"
-                    if index != "":
-                        # we found an entry Point
-                        line = "Exec=firefox https://localhost/%s/%s" % (GEOGEBRA_PATH, index)
-                lines.append(line)
-        # create Desktop Starter
-
-        path_to_file = rootDir.joinpath(applicatins_path, 'GeoGebra.desktop')
-        file = open(path_to_file, "w")
-        for l in lines:
-            file.write("%s\n" % l)
-        file.close()
-
+        checkGeogebraStarter_isinPlace()
         # add to List
         desktop_files_list.append(str(path_to_file))
-
     else:
         # No Geogebra > delete Starter
         cmd = "rm %s%s" % (applicatins_path, "GeoGebra.desktop")

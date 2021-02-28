@@ -16,7 +16,8 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER, USER_HOME_DIR, EXAM_DESKTOP_APPS
+    SHARE_DIRECTORY, USER, USER_HOME_DIR, EXAM_DESKTOP_APPS, GEOGEBRA_PATH,\
+    WEB_ROOT
 import stat
 import sys
 from classes.PlasmaRCTool import PlasmaRCTool
@@ -223,6 +224,39 @@ def prepareDirectories():
 
     # Desktop Apps on Desktop
     copyDesktopStarter()
+
+
+def checkGeogebraStarter_isinPlace():
+    """ checks if GGB is in /~/.local/share/applications/ """
+    rootDir = Path(__file__).parent.parent
+    path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
+
+    applicatins_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
+    lines = []
+    # if GGB is placed in Webserver Root
+    if os.path.join(WEB_ROOT, GEOGEBRA_PATH):
+        with open(path_to_file, 'r') as fh:
+            for line in fh:
+                line = line.rstrip("\n")
+                if "Exec=".lower() in line.lower():
+                    # create correct Exec Line in Starter
+                    # Exec=firefox --ssb https://localhost/geogebra/index.html
+                    index = ""
+                    if os.path.isfile(os.path.join(WEB_ROOT, GEOGEBRA_PATH, "index.html")):
+                        index = "index.html"
+                    if os.path.isfile(os.path.join(WEB_ROOT, GEOGEBRA_PATH, "GeoGebra.html")):
+                        index = "GeoGebra.html"
+                    if index != "":
+                        # we found an entry Point
+                        line = "Exec=firefox https://localhost/%s/%s" % (GEOGEBRA_PATH, index)
+                lines.append(line)
+        # create Desktop Starter
+
+        path_to_file = rootDir.joinpath(applicatins_path, 'GeoGebra.desktop')
+        file = open(path_to_file, "w")
+        for l in lines:
+            file.write("%s\n" % l)
+        file.close()
 
 
 def fixFilePermissions(folder):

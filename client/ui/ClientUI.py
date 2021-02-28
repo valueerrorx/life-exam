@@ -16,7 +16,7 @@ from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
-    changePermission
+    changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
 
 
@@ -39,6 +39,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.completerlist = []
         self._initUi()
         prepareDirectories()
+        checkGeogebraStarter_isinPlace()
 
     def _initUi(self):
         # Register self to Global Observer List Object
