@@ -39,7 +39,7 @@ movable_toolbars=false
 run_command=false  
 switch_user=false
 start_new_session=false
-#shell_access=false
+shell_access=false
 
 
 [KDE Control Module Restrictions]
