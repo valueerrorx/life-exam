@@ -158,11 +158,13 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def setExamIconON(self):
         """ set all Status Exam Icons to on """
-        pass
+        self.iconStack.addExamIconON()
 
     def setExamIconOFF(self):
-        """ set all Status Exam Icons to off """
-        pass
+        """
+        set all Status Exam Icons to off, that is remove Icons 
+        """
+        self.iconStack.removeExamIconON()
 
     def setFileReceivedOK(self):
         """ set all File received Icon """

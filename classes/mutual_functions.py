@@ -380,7 +380,7 @@ def countFiles(path):
     """count number of files and dirs in directory"""
     files_count = 0
     dir_count = 0
-    for root, dirs, files in os.walk(path, topdown=False):
+    for root, dirs, files in os.walk(path, topdown=False):  # noqa
         """ debug only
         for name in files:
             print(os.path.join(root, name))

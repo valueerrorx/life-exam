@@ -30,6 +30,7 @@ from server.resources.MyServerFactory import MyServerFactory
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+
     start = time()
     # Create and display the splash screen
     splash = SplashScreen()

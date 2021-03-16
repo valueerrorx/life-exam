@@ -11,7 +11,8 @@ import sip
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH, WEB_ROOT
+    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH, WEB_ROOT,\
+    DELIVERY_DIRECTORY, USER_HOME_DIR
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -299,7 +300,10 @@ class ServerUI(QtWidgets.QDialog):
                 self.ui.screenlock.setIcon(QIcon(icon))
 
     def _onOpenshare(self):
-        mutual_functions.openFileManager(SHARE_DIRECTORY)
+        dir_path = os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY)
+        # be sure directory exists
+        os.system("mkdir -p %s" % dir_path)
+        mutual_functions.openFileManager(dir_path)
 
     def _updateExamName(self):
         self.factory.examid = self.ui.examlabeledit1.text()
@@ -569,7 +573,11 @@ class ServerUI(QtWidgets.QDialog):
         self.log("Waiting for all Clients to send their Abgabe-Files")
         # on Event call
         self.progress_thread.start()
-        mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner/SHARE")
+
+        dir_path = os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY)
+        # subtract
+        dir_path = dir_path[len(USER_HOME_DIR):]
+        mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner%s" % dir_path)
 
     def _onStartHotspot(self):
         self._show_workingIndicator(500, "Starte Hotspot")
