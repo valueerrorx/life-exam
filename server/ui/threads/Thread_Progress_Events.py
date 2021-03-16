@@ -15,12 +15,12 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
     will fired when Client has sent his Abgabe File
     :autoAbgabe: 1/0 is that a AutoAbgabe event?
     """
-    # set the status Icon
-    who.removeExamIconON()
-
     # event fired in MyServerProtocol
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Files ..." % item.getID())
+
+    # set the status Icon
+    item.removeExamIconON()
 
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:

@@ -537,6 +537,10 @@ class ServerUI(QtWidgets.QDialog):
             file_path, who, DataType.EXAM.value,
             cleanup_abgabe=_cleanup_abgabe, spellcheck=_spellcheck)
 
+        # set the status Icon
+        client_widget = self.get_list_widget_by_client_name(who)
+        client_widget.addExamIconON()
+
         # wait until all Clients started, then activate Heartbeats again
         # time in sec
         countdown_thread = Thread_Countdown(None, 5 * 60, self.resumeHeartbeats())
