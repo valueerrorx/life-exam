@@ -19,6 +19,9 @@ BLACKLIST_APPS = ["LIFE Student", "LIFE Teacher", "EXAM"]
 # you find them in DATA/starter/
 EXAM_DESKTOP_APPS = ["Exam Student.desktop", "STOP.desktop", "GeoGebra.desktop"]
 
+# in which directory are datas from clients are stored
+DELIVERY_DIRECTORY = "ABGABE/"
+
 # Web Server Root Directory
 WEB_ROOT = "/var/www/html/"
 # Subdirectory to Geogebra

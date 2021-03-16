@@ -8,7 +8,7 @@ import classes.mutual_functions as mutual_functions
 from twisted.protocols import basic
 from config.enums import DataType, Command
 from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
-    DEBUG_SHOW_NETWORKTRAFFIC
+    DEBUG_SHOW_NETWORKTRAFFIC, DELIVERY_DIRECTORY
 import zipfile
 from server.ui.ServerUI import MsgType
 
@@ -108,15 +108,23 @@ class MyServerProtocol(basic.LineReceiver):
                     """ Request for all Data of a client """
                     # extract to unzipDIR / clientName / foldername without .zip (cut last four letters
                     # shutil.unpack_archive(file_path, extract_dir, 'tar')
-                    extract_dir = os.path.join(SHARE_DIRECTORY, self.clientName, filename[:-4])
-                    user_dir = os.path.join(SHARE_DIRECTORY, self.clientName)
 
-                    # checks if filename is taken and renames this file in order to make room for the userfolder
+                    user_dir = os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY, self.clientName)
+                    extract_dir = os.path.join(user_dir, filename[:-4])
+
+                    # checks if filename is taken and renames this file in order to make 
+                    # room for the userfolder
                     mutual_functions.checkIfFileExists(user_dir)
 
                     if os.path.isfile(file_path):
-                        with zipfile.ZipFile(file_path, "r") as zip_ref:
-                            zip_ref.extractall(extract_dir)
+                        if "-empty".lower() in file_path.lower():
+                            # empty Abgabe, dont extract, just inform
+                            fp = "%s/NoDataFromClient.txt" % extract_dir
+                            os.system("touch %s" % fp)
+                            os.system('echo "No Data was received from Client!" >> %s' % fp)
+                        else:
+                            with zipfile.ZipFile(file_path, "r") as zip_ref:
+                                zip_ref.extractall(extract_dir)
                     # fix filepermission of transferred file
                     mutual_functions.fixFilePermissions(SHARE_DIRECTORY)
 
