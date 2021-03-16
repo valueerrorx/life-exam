@@ -162,7 +162,7 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def setExamIconOFF(self):
         """
-        set all Status Exam Icons to off, that is remove Icons 
+        set all Status Exam Icons to off, that is remove Icons
         """
         self.iconStack.removeExamIconON()
 

@@ -369,6 +369,12 @@ class MyClientProtocol(basic.LineReceiver):
         """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY
 
+        # be sure .screenshots directory is removed
+        screens_path = os.path.join(target_folder, ".screenshots")
+        if os.path.isdir(screens_path):
+            # remove it
+            os.system("rm -r %s" % screens_path)
+
         # create zip of folder
         count = mutual_functions.countFiles(target_folder)
         count = int(count[0])

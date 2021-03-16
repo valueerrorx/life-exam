@@ -20,7 +20,7 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
     logger.info("Client %s has finished sending Files ..." % item.getID())
 
     # set the status Icon
-    item.removeExamIconON()
+    item.setExamIconOFF()
 
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
