@@ -112,7 +112,10 @@ class MyServerProtocol(basic.LineReceiver):
                     user_dir = os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY, self.clientName)
                     extract_dir = os.path.join(user_dir, filename[:-4])
 
-                    # checks if filename is taken and renames this file in order to make 
+                    # be sure directory exists
+                    os.system("mkdir -p %s" % extract_dir)
+
+                    # checks if filename is taken and renames this file in order to make
                     # room for the userfolder
                     mutual_functions.checkIfFileExists(user_dir)
 
