@@ -152,10 +152,12 @@ class IconStack(QObject):
     def addExamIconON(self):
         """ show Exam Icons ON """
         self.add(Icons.EXAM_ON)
+        self.removeExamIconOFF()
 
     def addExamIconOFF(self):
         """ show Exam Icons OFF """
         self.add(Icons.EXAM_OFF)
+        self.removeExamIconON()
 
     def addFileReceivedOK(self):
         """ show File received Icon """
