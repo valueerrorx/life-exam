@@ -28,18 +28,18 @@ RUNNINGEXAM=0
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
-#if [ "$(id -u)" != "0" ]; then
-#    kdialog  --msgbox "You need root privileges - Otherwise can't sudo some stuff!" --title 'Starting Exam' 
-#    exit 1
-#fi
-#if [ -f "$EXAMLOCKFILE" ];then
-#    kdialog  --msgbox "Desktop is about to reload! \nYou need to SAVE your work BEFORE you click OK on this dialog.\n\nYou have been warned!"  --title 'Starting Exam'
-#    RUNNINGEXAM=1
-#fi
+if [ "$(id -u)" != "0" ]; then
+   kdialog  --msgbox "You need root privileges - Otherwise can't sudo some stuff!" --title 'Starting Exam' 
+   exit 1
+fi
+if [ -f "$EXAMLOCKFILE" ];then
+   kdialog  --msgbox "Desktop is about to reload! \nYou need to SAVE your work BEFORE you click OK on this dialog.\n\nYou have been warned!"  --title 'Starting Exam'
+   RUNNINGEXAM=1
+fi
 kdialog  --msgbox "Desktop is about to reload! \nYou need to SAVE your work BEFORE you click OK on this dialog.\n\nYou have been warned!"  --title 'Starting Exam'
-#if [ -f "/etc/kde5rc" ];then
-#    RUNNINGEXAM=1
-#fi
+if [ -f "/etc/kde5rc" ];then
+   RUNNINGEXAM=1
+fi
 if [ ! -d "$BACKUPDIR" ];then
     mkdir -p $BACKUPDIR
 fi
