@@ -38,7 +38,6 @@ from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 from pathlib import Path
-from twisted.internet.task import LoopingCall
 from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
 import sys

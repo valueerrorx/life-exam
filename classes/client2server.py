@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 import os
 from config.config import SCRIPTS_DIRECTORY,\
-    CLIENTSCREENSHOT_DIRECTORY, SHARE_DIRECTORY, EXAMCONFIG_DIRECTORY
+    CLIENTSCREENSHOT_DIRECTORY, EXAMCONFIG_DIRECTORY
 from time import sleep
 from classes.Thread_Wait import Thread_Wait
 
