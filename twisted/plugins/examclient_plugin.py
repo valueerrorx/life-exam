@@ -550,6 +550,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self, self.rootDir)
 
+
 """
 Um diese Datei als twisted plugin mit twistd -l client.log --pidfile client.pid examclient -p PORT -h HOST starten zu können
 muss die ClientFactory im Service (MyServiceMaker) gestartet werden
