@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 import os
 from config.config import SCRIPTS_DIRECTORY,\
-    CLIENTSCREENSHOT_DIRECTORY, EXAMCONFIG_DIRECTORY
+    CLIENTSCREENSHOT_DIRECTORY, EXAMCONFIG_DIRECTORY, DEBUG_PIN
 from time import sleep
 from classes.Thread_Wait import Thread_Wait
 
@@ -198,9 +198,11 @@ class ClientToServer:
         scriptfile = os.path.join(SCRIPTS_DIRECTORY, SHOT)
         screenshotfile = os.path.join(CLIENTSCREENSHOT_DIRECTORY, filename)
         command = "%s %s" % (scriptfile, screenshotfile)
-        print(command)
         os.system(command)
-        print("SCREENSHOT IS PREPARED")
+        # only debug if DEBUG_PIN is not ""
+        if DEBUG_PIN != "":
+            print("SCREENSHOT IS PREPARED")
+            print(command)
         return filename
 
     def prepare_abgabe(self, client, filename, wait_thread):

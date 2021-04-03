@@ -74,6 +74,7 @@ def client_lock_screen(parent):
     if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()
+        parent.onScreenshots("all")
 
 
 def client_unlock_screen(parent):
@@ -82,3 +83,4 @@ def client_unlock_screen(parent):
     if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()
+        parent.onScreenshots("all")

@@ -20,10 +20,9 @@ import datetime
 
 from classes import mutual_functions
 from config.config import SHARE_DIRECTORY, SAVEAPPS, \
-    PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY,\
+    PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY, \
     CLIENTFILES_DIRECTORY, CLIENTZIP_DIRECTORY
 from config.enums import Command, DataType
-
 
 from classes.client2server import ClientToServer
 import time
@@ -45,6 +44,7 @@ from classes.mutual_functions import copyDesktopStarter
 
 
 class MyClientProtocol(basic.LineReceiver):
+
     def __init__(self, factory, appDir):
         self.factory = factory
         self.client_to_server = self.factory.client_to_server
@@ -80,7 +80,7 @@ class MyClientProtocol(basic.LineReceiver):
         self.hideConnectedInformation()
 
     # twisted-Event:
-    def connectionLost(self, reason):  #noqa
+    def connectionLost(self, reason):  # noqa
         self.factory.failcount += 1
         self.file_handler = None
         self.line_data_list = ()
@@ -468,7 +468,7 @@ class MyClientProtocol(basic.LineReceiver):
             ipstore = os.path.join(EXAMCONFIG_DIRECTORY, "EXAM-A-IPS.DB")
             thisexamfile = open(ipstore, 'a+')  # anhängen
             thisexamfile.write("\n")
-            thisexamfile.write("%s:5000" % self.factory.options['host'])   # server IP, port 5000 (twisted)
+            thisexamfile.write("%s:5000" % self.factory.options['host'])  # server IP, port 5000 (twisted)
 
             command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make examscript executable
             os.system(command)
@@ -512,6 +512,7 @@ class MyClientProtocol(basic.LineReceiver):
 
 
 class MyClientFactory(protocol.ReconnectingClientFactory):
+
     # ReconnectingClientFactory tries to reconnect automatically if connection fails
     def __init__(self, files_path, options):
         self.files_path = files_path
@@ -528,7 +529,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.maxRetries = 10
 
     # twisted-Event: Called when a connection has failed to connect
-    def clientConnectionFailed(self, connector, reason):  #noqa
+    def clientConnectionFailed(self, connector, reason):  # noqa
         self.failcount += 1
 
         if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
@@ -540,15 +541,14 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     # twisted Method
-    def startedConnecting(self, connector):  #noqa
+    def startedConnecting(self, connector):  # noqa
         # Reconnection delays resetting
         self.resetDelay()
 
     # twisted Method
-    def buildProtocol(self, addr):  #noqa
+    def buildProtocol(self, addr):  # noqa
         # http://twistedmatrix.com/documents/12.1.0/api/twisted.internet.protocol.Factory.html#buildProtocol
         return MyClientProtocol(self, self.rootDir)
-
 
 """
 Um diese Datei als twisted plugin mit twistd -l client.log --pidfile client.pid examclient -p PORT -h HOST starten zu können
@@ -558,7 +558,6 @@ damit twistd dieses überall findet sollte das Stammverzeichnis im pythonpath ei
 
 export PYTHONPATH=".:/pathto/life-exam-controlcenter:$PYTHONPATH"
 """
-
 
 # from twisted.application.internet import backoffPolicy    #only with twisted >=16.03
 # retryPolicy=backoffPolicy(initialDelay=1, factor=0.5)    # where to put ???
@@ -582,7 +581,7 @@ class MyServiceMaker():
     options = Options
 
     def makeService(self, options):
-        return internet.TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))  #noqa
+        return internet.TCPClient(options["host"], int(options["port"]), MyClientFactory(CLIENTFILES_DIRECTORY, options))  # noqa
 
     def getDescription(self):
         return self.description
