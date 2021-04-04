@@ -127,8 +127,8 @@ function mountShare(){
         ## only if exam is not already running delete share folder (otherwise we could delete the students work)
         if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
         then
-            qdbus $progress Set "" value 4
-            qdbus $progress setLabelText "Bereinige SHARE...."
+            sudo -u ${USER} -E qdbus $progress Set "" value 4
+            sudo -u ${USER} -E qdbus $progress setLabelText "Bereinige SHARE...."
             sleep 0.5
             sudo rm -rf ${SHARE}*
             sudo rm -rf ${SHARE}.* 
@@ -158,7 +158,7 @@ function runAutostartScripts(){
     cp ${CONFIGDIR}auto-screenshot.sh ${HOME}.config/autostart-scripts
     sudo chown -R ${USER}:${USER} ${HOME}.config/autostart-scripts  # twistd runs as root - fix permissions
     sudo chmod -R 755 ${HOME}.config/autostart-scripts
-    nohup sudo -u ${USER} -H ${HOME}.config/autostart-scripts/auto-screenshot.sh  >/dev/null 2>&1 &
+    nohup sudo -u ${USER} -E -H ${HOME}.config/autostart-scripts/auto-screenshot.sh  >/dev/null 2>&1 &
 }
 
 
@@ -200,16 +200,32 @@ function blockAdditionalFeatures(){
 
 
 function playSound(){
-    sudo -u ${USER} amixer -D pulse sset Master 90% > /dev/null 2>&1
-    sudo -u ${USER} pactl set-sink-volume 0 90%
-    sudo -u ${USER} paplay /usr/share/sounds/Oxygen-Sys-Question.ogg
+    sudo -u ${USER} -E amixer -D pulse sset Master 90% > /dev/null 2>&1
+    sudo -u ${USER} -E pactl set-sink-volume 0 90%
+    sudo -u ${USER} -E paplay /usr/share/sounds/Oxygen-Sys-Question.ogg
 }
 
 
 function restartDesktop(){
    # FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - 
    # kde devs haben das bis jetzt noch nicht implementiert
-    pkill -f Xorg
+   
+    
+    
+    if [[ ( $RUNNINGEXAM = "0") ]]  #be careful not to store locked config instead of unlocked config here
+    then
+        sudo killall -u ${USER}   # kills alls user processes (not Xorg)
+        kstart5 kwin_x11
+        kstart5 plasmashell
+        
+    else
+        sudo killall plasmashell    ## only restart desktop and reload configuration without killing word, geogebra etc. 
+        sudo killall kwin_x11
+        
+        kstart5 kwin_x11
+        kstart5 plasmashell
+    fi
+    
    
 }
 
@@ -218,15 +234,15 @@ function restartDesktop(){
 # OPEN PROGRESSBAR DIALOG         #
 #---------------------------------#
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
-progress=$(sudo -u ${USER} kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
-sudo -u ${USER} qdbus $progress Set "" maximum 9
+progress=$(sudo -u ${USER} -E kdialog --progressbar "Starte Prüfungsumgebung                                                               "); > /dev/null
+sudo -u ${USER} -E qdbus $progress Set "" maximum 9
 sleep 0.1
 
 #---------------------------------#
 # CREATE EXAM LOCK FILE           #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 1
-sudo -u ${USER} qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
+sudo -u ${USER} -E qdbus $progress Set "" value 1
+sudo -u ${USER} -E qdbus $progress setLabelText "Erstelle Sperrdatei mit Uhrzeit...."
 sleep 0.1
 
 createLockFile
@@ -234,8 +250,8 @@ createLockFile
 #---------------------------------#
 # INITIALIZE FIREWALL             #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 2
-sudo -u ${USER} qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
+sudo -u ${USER} -E qdbus $progress Set "" value 2
+sudo -u ${USER} -E qdbus $progress setLabelText "Beende alle Netzwerkverbindungen...."
 sleep 0.1
 
 startFireWall  
@@ -244,8 +260,8 @@ startFireWall
 #---------------------------------#
 # BACKUP CURRENT DESKTOP CONFIG   #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 3
-sudo -u ${USER} qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
+sudo -u ${USER} -E qdbus $progress Set "" value 3
+sudo -u ${USER} -E qdbus $progress setLabelText "Sichere entsperrte Desktop Konfiguration.... "
 sleep 0.1
 
 backupCurrentConfig
@@ -253,8 +269,8 @@ backupCurrentConfig
 #---------------------------------#
 # LOAD EXAM CONFIG                #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 4
-sudo -u ${USER} qdbus $progress setLabelText "Lade Exam Desktop...."
+sudo -u ${USER} -E qdbus $progress Set "" value 4
+sudo -u ${USER} -E qdbus $progress setLabelText "Lade Exam Desktop...."
 sleep 0.1
 
 loadExamConfig
@@ -263,8 +279,8 @@ loadExamConfig
 #---------------------------------#
 # MOUNT SHARE                     #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 5
-sudo -u ${USER} qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
+sudo -u ${USER} -E qdbus $progress Set "" value 5
+sudo -u ${USER} -E qdbus $progress setLabelText "Mounte Austauschpartition in das Verzeichnis SHARE...."
 sleep 0.1
 
 mountShare
@@ -279,8 +295,8 @@ mountShare
 #---------------------------------#
 # COPY AUTOSTART SCRIPTS          #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 6
-sudo -u ${USER} qdbus $progress setLabelText "Starte automatische Screenshots...."
+sudo -u ${USER} -E qdbus $progress Set "" value 6
+sudo -u ${USER} -E qdbus $progress setLabelText "Starte automatische Screenshots...."
 sleep 0.1
 
 runAutostartScripts
@@ -289,8 +305,8 @@ runAutostartScripts
 #--------------------------------------------------------#
 # BLOCK ADDITIONAL FEATURES (menuedit, usbmount, etc.)   #
 #--------------------------------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 7
-sudo -u ${USER} qdbus $progress setLabelText "Sperre Systemdateien...."
+sudo -u ${USER} -E qdbus $progress Set "" value 7
+sudo -u ${USER} -E qdbus $progress setLabelText "Sperre Systemdateien...."
    
 # blockAdditionalFeatures
 
@@ -298,8 +314,8 @@ sudo -u ${USER} qdbus $progress setLabelText "Sperre Systemdateien...."
 #--------------------------------------------------------#
 # LOCK DESKTOP CONFIG (rightclick, krunner, toolbars )   #
 #--------------------------------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 8
-sudo -u ${USER} qdbus $progress setLabelText "Sperre Desktop"
+sudo -u ${USER} -E qdbus $progress Set "" value 8
+sudo -u ${USER} -E qdbus $progress setLabelText "Sperre Desktop"
   
 #loadKioskSettings
   
@@ -308,15 +324,15 @@ sudo -u ${USER} qdbus $progress setLabelText "Sperre Desktop"
 #---------------------------------#
 # FINISH - RESTART DESKTOP        #
 #---------------------------------#
-sudo -u ${USER} qdbus $progress Set "" value 9
-sudo -u ${USER} qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...  
+sudo -u ${USER} -E qdbus $progress Set "" value 9
+sudo -u ${USER} -E qdbus $progress setLabelText "Prüfungsumgebung eingerichtet...  
 Starte Desktop neu!"
 
 playSound
-sudo -u ${USER} qdbus $progress close
+sudo -u ${USER} -E qdbus $progress close
 
 # this script will run on desktop start and make sure that kwin is running
-cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
+# cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
 
 
 restartDesktop

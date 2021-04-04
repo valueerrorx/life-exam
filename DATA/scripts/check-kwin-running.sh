@@ -5,6 +5,9 @@ PLASMARUNNING="0"
 RUNNINGCOUNT=0
 
 
+killall plasmashell&
+killall kwin_x11&
+
 check(){
 #     if [[ $RUNNINGCOUNT > "8" ]] 
 #     then 

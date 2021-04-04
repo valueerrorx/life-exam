@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[de_AT]=
 Comment=
-Exec=/home/student/.life/applications/life-exam/client/client.py
+Exec=sudo -E /home/student/.life/applications/life-exam/client/client.py
 GenericName[de_AT]=
 GenericName=
 Icon=/home/student/.life/applications/life-exam/pixmaps/life.svg
@@ -9,7 +9,7 @@ MimeType=
 Name[de_AT]=Exam Student
 Name=Exam Student
 NoDisplay=false
-Path=
+Path=/home/student/.life/applications/life-exam/client/
 StartupNotify=true
 Terminal=false
 TerminalOptions=
