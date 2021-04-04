@@ -192,7 +192,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
                 os.system(cmd)
 
-                # moved this to workdirectory because configdirectory is overwritten on exam start
+                # moved this to workdirectory because config directory is overwritten on exam start
                 namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
                 try:
                     openednamefile = open(namefile, 'w+')  # create new file
@@ -213,6 +213,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # port, host, id, pincode, application_dir
                 command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 os.system(command)
+                if DEBUG_PIN != "":
+                    self.logger.debug(command)
         else:
             self._changePalette(self.ui.serverip, "warn")
 

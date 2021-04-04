@@ -228,6 +228,10 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onSendPrintconf(self, who):
         """send the printer configuration to all clients"""
+
+        if self.clientsConnected() == False:
+            return
+
         self._show_workingIndicator(500, "Drucker Konfiguration senden")
         server_to_client = self.factory.server_to_client
 
@@ -267,9 +271,17 @@ class ServerUI(QtWidgets.QDialog):
         command = "kcmshell5 kcm_printer_manager &"
         os.system(command)
 
+    def clientsConnected(self):
+        """ check if clients connected """
+        clients = self.get_list_widget_items()
+        if len(clients) == 0:
+            return False
+        return True
+
     def _onScreenlock(self, who):
         """locks or unlock the client screens"""
-        clients = self.get_list_widget_items()
+        if self.clientsConnected() == False:
+            return
 
         # self._startWorkingIndicator("Locking Client Screens ... ")
         self.networkProgress.show(len(clients))
@@ -452,6 +464,9 @@ class ServerUI(QtWidgets.QDialog):
         :who: client or all
         :auto: True/False is this a AutoAbgabe Event?
         """
+        if self.clientsConnected() == False:
+            return
+
         # suspend Heartbeat during filetransfer
         self.suspendHeartbeats()
         # manual triggered?
@@ -538,6 +553,8 @@ class ServerUI(QtWidgets.QDialog):
             cleanup_abgabe=_cleanup_abgabe, spellcheck=_spellcheck)
 
         if who == 'all':
+            if DEBUG_PIN != "":
+                self.logger.info("Starting Exam on ALL Clients: %s")
             client_widgets = self.get_list_widget_items()
             for client_widget in client_widgets:
                 # set the status Icon
@@ -545,7 +562,9 @@ class ServerUI(QtWidgets.QDialog):
                 client_widget.setExamIconON()
         else:
             # single Widget
-            client_widget = self.get_list_widget_by_client_name(who)
+            if DEBUG_PIN != "":
+                self.logger.info("Starting Exam on Client: %s" % who)
+            client_widget = self.get_list_widget_by_client_ConID(who)
             client_widget.setExamIconON()
 
         # wait until all Clients started, then activate Heartbeats again
@@ -654,7 +673,7 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lc.start(minute_intervall)
 
     def _onAutoabgabe(self):
-        self._show_workingIndicator(500)
+        # self._show_workingIndicator(500)
         if self.factory.lc.running:
             icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()
             self.ui.autoabgabe.setIcon(QIcon(icon))

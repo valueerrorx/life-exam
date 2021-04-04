@@ -28,8 +28,7 @@ class MyServerProtocol(basic.LineReceiver):
         self.logger = logging.getLogger(__name__)
 
     # twisted-Event: A Connection is made
-    def connectionMade(self):  # noqa
-        self.factory.server_to_client.add_client(self)
+    def connectionMade(self):  # noqa        
         self.file_handler = None
         self.line_data_list = ()
         self.refused = False
@@ -280,14 +279,17 @@ class MyServerProtocol(basic.LineReceiver):
     def _checkclientAuth(self):
         """
         searches for the newID in factory.clients and rejects the connection if found or wrong pincode
-        :param newID: string
+        :param newID: string Username
         :param pincode: int
         :return:
         """
         newID = self.line_data_list[1]
         pincode = self.line_data_list[2]
+        # self.factory.server_to_client.clients.keys there we store clientConnectionID's
+        conID = self.clientConnectionID
+        print(self.factory.server_to_client.clients.keys())
 
-        if newID in self.factory.server_to_client.clients.keys():
+        if conID in self.factory.server_to_client.clients.keys():
             # TEST keys contains numbers - newID is a name .. how does this work?
             self.refused = True
             self.sendEncodedLine(Command.REFUSED.value)
@@ -295,18 +297,20 @@ class MyServerProtocol(basic.LineReceiver):
             msg = 'Client Connection from %s has been refused. User already exists' % (newID)
             self.factory.window.log(msg)
             return
-        elif int(pincode) != int(self.factory.pincode):
-            self.refused = True
-            self.sendEncodedLine(Command.REFUSED.value)
-            self.transport.loseConnection()
-            msg = 'Client Connection from %s has been refused. Wrong pincode given' % (newID)
-            self.factory.window.log(msg)
-            return
-        else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
-            self.clientName = newID
-            msg = 'New Connection from <b>%s</b>' % (newID)
-            self.factory.window.log(msg)
-            # transfer, send, screenshot, filename, hash, clean Abgabe
-            line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
-            self.sendEncodedLine(line)
-            return
+        else:
+            self.factory.server_to_client.add_client(self)
+            if int(pincode) != int(self.factory.pincode):
+                self.refused = True
+                self.sendEncodedLine(Command.REFUSED.value)
+                self.transport.loseConnection()
+                msg = 'Client Connection from %s has been refused. Wrong pincode given' % (newID)
+                self.factory.window.log(msg)
+                return
+            else:  # otherwise ad this unique id to the client protocol instance and request a screenshot
+                self.clientName = newID
+                msg = 'New Connection from <b>%s</b>' % (newID)
+                self.factory.window.log(msg)
+                # transfer, send, screenshot, filename, hash, clean Abgabe
+                line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
+                self.sendEncodedLine(line)
+                return

@@ -5,14 +5,16 @@ import subprocess
 
 # Debugging Stuff, set Name of Client and a fix Pin Code
 # set both empty, then we are NOT debugging
-DEBUG_ID = "TestUser"
-DEBUG_PIN = "1234"
-DEBUG_SHOW_NETWORKTRAFFIC = True
+
 
 # DEBUG OFF
 #DEBUG_ID = ""
 #DEBUG_PIN = ""
 #DEBUG_SHOW_NETWORKTRAFFIC = False
+
+DEBUG_ID = "TestUser"
+DEBUG_PIN = "1234"
+DEBUG_SHOW_NETWORKTRAFFIC = True
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus

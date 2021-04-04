@@ -7,6 +7,8 @@ Client->Client: starts twisted daemon in background
 group twisted daemon examclient_plugin runs on client
 	Client -> Server: connectionMade(): AUTH
 	note right: On every data received\ncheck AUTH from Client\nMyServerProtocol:lineReceived()
+	Server -> Server: MyServerProtocol: connectionMade()
+	
 	Server -> Server: MyServerProtocol: rawDataReceived(DataType.SCREENSHOT)\nServerUI: createOrUpdateListItem()
 	
 	note over Server: EXIT EXAM

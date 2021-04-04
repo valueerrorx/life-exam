@@ -76,6 +76,7 @@ class MyClientProtocol(basic.LineReceiver):
         line = '%s %s %s' % (Command.AUTH.value, self.factory.options['id'], self.factory.options['pincode'])
         self.sendEncodedLine(line)
         self.inform('Authenticated with server ...')
+        print("Id: %s" % self.factory.options['id'])
 
         self.hideConnectedInformation()
 
