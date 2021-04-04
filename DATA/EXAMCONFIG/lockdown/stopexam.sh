@@ -252,28 +252,45 @@ Starte Desktop neu!"
 sleep 0.5
 sudo -u ${USER} -E qdbus $progress close
 
-    sudo -u ${USER} -E amixer -D pulse sset Master 90% > /dev/null 2>&1
-    sudo -u ${USER} -E pactl set-sink-volume 0 90%
-    sudo -u ${USER} -E paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
+sudo -u ${USER} -E amixer -D pulse sset Master 90% > /dev/null 2>&1
+sudo -u ${USER} -E pactl set-sink-volume 0 90%
+sudo -u ${USER} -E paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
+
 
     
-    pkill -f Xorg
     
-#     # pkill -f dolphin && killall dolphin   #nachdem die testscripte oft aus dolphin gestartet werden wird dieser in der entwicklungsphase noch ausgespart
-#     pkill -f google && killall google-chrome && killall google-chrome-stable
-#     pkill -f firefox  && killall firefox
-#     pkill -f writer && killall writer
-#     pkill -f konsole && killall konsole
-#     pkill -f geogebra && killall geogebra
-# 
-#     kquitapp5 plasmashell &
-#     sleep 2
-#     kstart5 plasmashell &
-#     sleep 2
-#     kwin --replace &
+function killRunningApps(){
+    # kill all user applications !FIXME this has to be dynamic !
+    pkill -f dolphin
+    pkill -f calligrasheets
+    pkill -f calligrawords
+    pkill -f kate
+    pkill -f konsole
+    pkill -f geogebra
+    pkill -f firefox
+    pkill -f systemsettings5
+    pkill -f gwenview
+    pkill -f spectacle
+    pkill -f vlc
+    pkill -f google 
 
+    # kill desktop environment
+    pkill -f  plasmashell    
+    pkill -f  kwin_x11
+}
+  
+    
+   
+   
+   
+killRunningApps   
 
-
+sudo -u ${USER} -E kstart5 kwin_x11
+sudo -u ${USER} -E kstart5 plasmashell
+    
+   
+    
+    
 
 
 

@@ -159,7 +159,7 @@ class ServerUI(QtWidgets.QDialog):
         self.progress_thread = Thread_Progress(self)
         # connect Events
         self.progress_thread.client_finished.connect(client_abgabe_done)
-        self.progress_thread.client_finished.connect(client_abgabe_done_exit_exam)
+        self.progress_thread.client_exitExam.connect(client_abgabe_done_exit_exam)
         self.progress_thread.client_received_file.connect(client_received_file_done)
         self.progress_thread.client_lock_screen.connect(client_lock_screen)
         self.progress_thread.client_unlock_screen.connect(client_unlock_screen)
@@ -608,6 +608,10 @@ class ServerUI(QtWidgets.QDialog):
         # subtract
         dir_path = dir_path[len(USER_HOME_DIR):]
         mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner%s" % dir_path)
+        
+        if self.progress_thread:
+            self.progress_thread.fireEvent_exitExam(who, "0")
+        
 
     def _onStartHotspot(self):
         self._show_workingIndicator(500, "Starte Hotspot")

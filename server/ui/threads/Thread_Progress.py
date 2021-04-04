@@ -15,6 +15,7 @@ class Thread_Progress(QtCore.QThread):
     client_received_file = pyqtSignal(QDialog, MyCustomWidget)
     client_lock_screen = pyqtSignal(QDialog, MyCustomWidget)
     client_unlock_screen = pyqtSignal(QDialog, MyCustomWidget)
+    client_exitExam =  pyqtSignal(QDialog, str, str)
 
     def __init__(self, parent=None):
         QtCore.QThread.__init__(self, parent)
@@ -38,6 +39,12 @@ class Thread_Progress(QtCore.QThread):
     def fireEvent_Abgabe_finished(self, who, autoAbgabe):
         """ client has sended his Files """
         self.client_finished.emit(self.parent, who, autoAbgabe)
+        
+        
+    def fireEvent_exitExam(self, who, autoAbgabe):
+        """ exit exam  """
+        self.client_exitExam.emit(self.parent, who, autoAbgabe)
+        
 
     def fireEvent_File_received(self, clientWidget):
         """ client has received a file """

@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
+def client_abgabe_done(parent, who):
     """
     will fired when Client has sent his Abgabe File
     :autoAbgabe: 1/0 is that a AutoAbgabe event?
@@ -24,9 +24,7 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
 
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
-        # show in Filemanager only if we manually trigger Abgabe
-        if autoAbgabe == '0':
-            mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
+       
         # if there is an animation showing
         parent.workinganimation.stop()
     # resume Heartbeats again
@@ -47,20 +45,25 @@ def client_received_file_done(parent, clientWidget):
     parent.resumeHeartbeats()
 
 
-def client_abgabe_done(parent, who):
-    """ will fired when Client has sent his Abgabe File """
+def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
+    """ 
+    will fired when Client has sent his Abgabe File
+    :autoAbgabe: 1/0 is that a AutoAbgabe event?
+    """
     # Checkbox
     onexit_cleanup_abgabe = parent.ui.exitcleanabgabe.checkState()
     spellcheck = parent.ui.spellcheck.checkState()
 
-    # get from who the connectionID
-    item = parent.get_list_widget_by_client_name(who)
-    parent.log("Client %s has finished sending Files, now exiting ..." % item.getID())
+   
     # then send the exam exit signal
-    parent.factory.server_to_client.exit_exam(item.pID, onexit_cleanup_abgabe, spellcheck)
+    parent.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe, spellcheck)
 
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
+         # show in Filemanager only if we manually trigger Abgabe
+        if autoAbgabe == '0':
+            logger.info("Opening FileManager..")
+            mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
         # if there is an animation showing
         parent.workinganimation.stop()
     # resume Heartbeats again

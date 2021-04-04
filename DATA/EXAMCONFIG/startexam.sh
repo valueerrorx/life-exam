@@ -207,41 +207,48 @@ function playSound(){
 
 
 function restartDesktop(){
-   # FIXME (etwas brachial) man könnte auch einfach die plasma config neueinlesen - 
-   # kde devs haben das bis jetzt noch nicht implementiert
-   
-    
-    
-    if [[ ( $RUNNINGEXAM = "0") ]]  #be careful not to store locked config instead of unlocked config here
+
+    if [[ ( $RUNNINGEXAM = "0") ]]
     then
-        # kill all user applications !FIXME this has to be dynamic !
-        sudo killall dolphin
-        sudo killall calligrasheets
-        sudo killall calligrawords
-        sudo killall kate
-        sudo killall konsole
-        sudo killall geogebra
-        sudo killall firefox
-        sudo killall systemsettings5
-        sudo killall gwenview
-        sudo killall spectacle
-        sudo killall vlc
-    
-        # sudo killall -u ${USER}   # kills alls user processes (not Xorg)
+        killRunningApps
+        
         sudo -u ${USER} -E kstart5 kwin_x11
         sudo -u ${USER} -E kstart5 plasmashell
         
     else
         ## only restart desktop and reload configuration without killing word, geogebra etc. 
-        sudo killall plasmashell    
-        sudo killall kwin_x11
+        pkill -f  plasmashell    
+        pkill -f  kwin_x11
 
         sudo -u ${USER} -E kstart5 kwin_x11
         sudo -u ${USER} -E kstart5 plasmashell
     fi
-    
    
 }
+
+
+function killRunningApps(){
+        # kill all user applications !FIXME this has to be dynamic !
+        pkill -f dolphin
+        pkill -f calligrasheets
+        pkill -f calligrawords
+        pkill -f kate
+        pkill -f konsole
+        pkill -f geogebra
+        pkill -f firefox
+        pkill -f systemsettings5
+        pkill -f gwenview
+        pkill -f spectacle
+        pkill -f vlc
+        pkill -f google 
+    
+        # kill desktop environment
+        pkill -f  plasmashell    
+        pkill -f  kwin_x11
+}
+
+
+
 
 
 #---------------------------------#

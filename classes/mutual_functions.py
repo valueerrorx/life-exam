@@ -371,7 +371,9 @@ def openFileManager(path):
     if sys.platform == 'darwin':
         subprocess.check_call(['open', path])
     elif sys.platform.startswith('linux'):
-        subprocess.check_call(['xdg-open', path])
+        subprocess.check_call(['sudo', '-u', USER, '-E', 'xdg-open', path])
+        #startcommand = "sudo -u %s -E dolphin %s &" % (USER, path)
+        #os.system(startcommand)
     elif sys.platform == 'win32':
         subprocess.check_call(['explorer', path])
 
