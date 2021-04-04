@@ -214,16 +214,30 @@ function restartDesktop(){
     
     if [[ ( $RUNNINGEXAM = "0") ]]  #be careful not to store locked config instead of unlocked config here
     then
-        sudo killall -u ${USER}   # kills alls user processes (not Xorg)
-        kstart5 kwin_x11
-        kstart5 plasmashell
+        # kill all user applications !FIXME this has to be dynamic !
+        sudo killall dolphin
+        sudo killall calligrasheets
+        sudo killall calligrawords
+        sudo killall kate
+        sudo killall konsole
+        sudo killall geogebra
+        sudo killall firefox
+        sudo killall systemsettings5
+        sudo killall gwenview
+        sudo killall spectacle
+        sudo killall vlc
+    
+        # sudo killall -u ${USER}   # kills alls user processes (not Xorg)
+        sudo -u ${USER} -E kstart5 kwin_x11
+        sudo -u ${USER} -E kstart5 plasmashell
         
     else
-        sudo killall plasmashell    ## only restart desktop and reload configuration without killing word, geogebra etc. 
+        ## only restart desktop and reload configuration without killing word, geogebra etc. 
+        sudo killall plasmashell    
         sudo killall kwin_x11
-        
-        kstart5 kwin_x11
-        kstart5 plasmashell
+
+        sudo -u ${USER} -E kstart5 kwin_x11
+        sudo -u ${USER} -E kstart5 plasmashell
     fi
     
    
@@ -332,7 +346,7 @@ playSound
 sudo -u ${USER} -E qdbus $progress close
 
 # this script will run on desktop start and make sure that kwin is running
-# cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
+cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
 
 
 restartDesktop

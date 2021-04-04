@@ -5,16 +5,16 @@ PLASMARUNNING="0"
 RUNNINGCOUNT=0
 
 
-killall plasmashell&
-killall kwin_x11&
+#killall plasmashell&
+#killall kwin_x11&
 
 check(){
-#     if [[ $RUNNINGCOUNT > "8" ]] 
-#     then 
-#         echo "Job done"
-#         exit 0
-#     fi
-#   
+    if [[ $RUNNINGCOUNT > "6" ]] 
+    then 
+        echo "Job done"
+        exit 0
+    fi
+  
  
     SLEEP=2
  
@@ -37,6 +37,7 @@ check(){
         kstart5 plasmashell 
     else
         echo "Plasmashell is running!"
+        RUNNINGCOUNT=$(( $RUNNINGCOUNT + 1))
         SLEEP=10
     fi
     

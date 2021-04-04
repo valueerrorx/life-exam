@@ -163,13 +163,13 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make exam script executable
             os.system(command)
             time.sleep(2)
-            startcommand = "%s/startexam.sh &" % (EXAMCONFIG_DIRECTORY)  # start as user even if the twistd daemon is run by root
+            startcommand = "sudo -E %s/startexam.sh &" % (EXAMCONFIG_DIRECTORY)  # start as user even if the twistd daemon is run by root
             os.system(startcommand)  # start script
         else:
             self.msg = False  # noqa
 
     def _on_offline_exam_exit(self):
-        startcommand = "%s/lockdown/stopexam.sh &" % (EXAMCONFIG_DIRECTORY)
+        startcommand = "sudo -E %s/lockdown/stopexam.sh &" % (EXAMCONFIG_DIRECTORY)
         os.system(startcommand)  # start script
 
     def _onStartExamClient(self):
