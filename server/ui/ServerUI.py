@@ -39,7 +39,6 @@ from classes import mutual_functions
 from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
-from oauthlib.oauth2.rfc6749 import clients
 
 
 class MsgType(Enum):
@@ -229,10 +228,10 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onSendPrintconf(self, who):
         """send the printer configuration to all clients"""
-        
+
         if self.clientsConnected() == False:
             return
-        
+
         self._show_workingIndicator(500, "Drucker Konfiguration senden")
         server_to_client = self.factory.server_to_client
 
@@ -554,6 +553,8 @@ class ServerUI(QtWidgets.QDialog):
             cleanup_abgabe=_cleanup_abgabe, spellcheck=_spellcheck)
 
         if who == 'all':
+            if DEBUG_PIN != "":
+                self.logger.info("Starting Exam on ALL Clients: %s")
             client_widgets = self.get_list_widget_items()
             for client_widget in client_widgets:
                 # set the status Icon
@@ -561,7 +562,9 @@ class ServerUI(QtWidgets.QDialog):
                 client_widget.setExamIconON()
         else:
             # single Widget
-            client_widget = self.get_list_widget_by_client_name(who)
+            if DEBUG_PIN != "":
+                self.logger.info("Starting Exam on Client: %s" % who)
+            client_widget = self.get_list_widget_by_client_ConID(who)
             client_widget.setExamIconON()
 
         # wait until all Clients started, then activate Heartbeats again

@@ -11,6 +11,7 @@ import os
 
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
+from config.config import DEBUG_PIN
 
 
 class ServerToClient:
@@ -29,6 +30,8 @@ class ServerToClient:
         """
         Client has made a connection
         """
+        if DEBUG_PIN != "":
+            print("**** Added ClientConnectionID %s" % str(client.transport.client[1]))
         self.clients.update({str(client.transport.client[1]): client})
 
     def remove_client(self, client):
