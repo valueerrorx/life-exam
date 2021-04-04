@@ -94,7 +94,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
         for p in pids:
             pid = int(p[0])
-            processUtil.killProcess(pid)
+            #processUtil.killProcess(pid)
+            os.system("sudo pkill -f ConnectionStatusDispatcher")
+            
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:

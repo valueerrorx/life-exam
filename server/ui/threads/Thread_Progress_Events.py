@@ -19,8 +19,6 @@ def client_abgabe_done(parent, who):
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Files ..." % item.getID())
 
-    # set the status Icon
-    item.setExamIconOFF()
 
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
@@ -57,6 +55,7 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
    
     # then send the exam exit signal
     parent.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe, spellcheck)
+
 
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
