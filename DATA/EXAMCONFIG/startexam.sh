@@ -317,5 +317,10 @@ Starte Desktop neu!"
 
 playSound
 #qdbus $progress close
+
+# this script will run on desktop start and make sure that kwin is running
+cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
+
+
 restartDesktop
     

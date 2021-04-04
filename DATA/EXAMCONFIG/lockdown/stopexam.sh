@@ -235,6 +235,10 @@ qdbus $progress close
     pactl set-sink-volume 0 90%
     paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
+
+    # this script will run on desktop start and make sure that kwin is running
+    cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
+
     
     pkill -f Xorg
     
