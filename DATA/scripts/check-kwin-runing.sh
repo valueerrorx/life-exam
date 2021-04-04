@@ -1,39 +1,45 @@
 #!/bin/bash
 
-RUNNING="0"
-NOTRUNNINGCOUNT=0
+KWINRUNNING="0"
+PLASMARUNNING="0"
 RUNNINGCOUNT=0
 
 
-
 check(){
-    if [[ $RUNNINGCOUNT > "8" ]] 
-    then 
-        echo "Job done"
-        exit 0
-    fi
+#     if [[ $RUNNINGCOUNT > "8" ]] 
+#     then 
+#         echo "Job done"
+#         exit 0
+#     fi
+#   
+ 
+    SLEEP=2
+ 
+    KWINRUNNING=$(ps caux|grep kwin_x11| wc -l)
+    PLASMARUNNING=$(ps caux|grep plasmashell| wc -l)
     
-
-
-    RUNNING=$(ps caux|grep kwin_x11| wc -l)
-    if [[ $RUNNING = "0" ]]
+    if [[ $KWINRUNNING = "0" ]]
     then
         echo "kwin_x11 is not running! Starting KWIN"
-        kwin_x11 --replace &
-        
-        $NOTRUNNINGCOUNT = $NOTRUNNINGCOUNT+1
-        sleep 2
-        echo $NOTRUNNINGCOUNT
-        
-        check
+        kstart5 kwin_x11&
     else
         echo "kwin_x11 is running!"
-        RUNNINGCOUNT=$(( $RUNNINGCOUNT + 1 ))
-        sleep 2
-        echo $RUNNINGCOUNT
-        
-        check
+        SLEEP=10
     fi
+    
+    
+    if [[ $PLASMARUNNING = "0" ]]
+    then
+        echo "Plasmashell is not running! Starting Plasmashell"
+        kstart5 plasmashell 
+    else
+        echo "Plasmashell is running!"
+        SLEEP=10
+    fi
+    
+    sleep $SLEEP
+    
+    check
 }
 
 
