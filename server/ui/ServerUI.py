@@ -39,6 +39,7 @@ from classes import mutual_functions
 from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
+from oauthlib.oauth2.rfc6749 import clients
 
 
 class MsgType(Enum):
@@ -228,6 +229,10 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onSendPrintconf(self, who):
         """send the printer configuration to all clients"""
+        
+        if self.clientsConnected() == False:
+            return
+        
         self._show_workingIndicator(500, "Drucker Konfiguration senden")
         server_to_client = self.factory.server_to_client
 
@@ -267,9 +272,17 @@ class ServerUI(QtWidgets.QDialog):
         command = "kcmshell5 kcm_printer_manager &"
         os.system(command)
 
+    def clientsConnected(self):
+        """ check if clients connected """
+        clients = self.get_list_widget_items()
+        if len(clients) == 0:
+            return False
+        return True
+
     def _onScreenlock(self, who):
         """locks or unlock the client screens"""
-        clients = self.get_list_widget_items()
+        if self.clientsConnected() == False:
+            return
 
         # self._startWorkingIndicator("Locking Client Screens ... ")
         self.networkProgress.show(len(clients))
@@ -452,6 +465,9 @@ class ServerUI(QtWidgets.QDialog):
         :who: client or all
         :auto: True/False is this a AutoAbgabe Event?
         """
+        if self.clientsConnected() == False:
+            return
+
         # suspend Heartbeat during filetransfer
         self.suspendHeartbeats()
         # manual triggered?
@@ -654,7 +670,7 @@ class ServerUI(QtWidgets.QDialog):
             self.factory.lc.start(minute_intervall)
 
     def _onAutoabgabe(self):
-        self._show_workingIndicator(500)
+        # self._show_workingIndicator(500)
         if self.factory.lc.running:
             icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()
             self.ui.autoabgabe.setIcon(QIcon(icon))
