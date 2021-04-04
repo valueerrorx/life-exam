@@ -1,53 +1,35 @@
 #!/bin/bash
+# last updated: 17.01.2021
 # unloads exam desktop
 #
 # CLIENT FILE - STOP EXAM
 
+
+
 USER=$(logname)   #logname seems to always deliver the current xsession user - no matter if you are using SUDO
 HOME="/home/${USER}/"
 EXAMLOCKFILE="${HOME}.life/EXAM/exam.lock"
-FIRSTSTARTFILE="${HOME}.life/EXAM/startid.lock"
 BACKUPDIR="${HOME}.life/unlockedbackup/" 
 LOCKDOWNDIR="${HOME}.life/EXAM/EXAMCONFIG/lockdown/"
 SHARE="${HOME}SHARE/"
 
 
 DELSHARE=$1
-SPELLCHECK=$2
-
-# test if set
-if [[ -z "$DELSHARE" ]]; then
-    DELSHARE=0
-fi
-if [[ -z "$SPELLCHECK" ]]; then
-    SPELLCHECK=0
-fi
-
-# skipping kdialogs
-SKIPDIALOGS=0
-
-if [[ -n $3 ]]; then
-    SKIPDIALOGS=1
-fi
-
 
 
 #--------------------------------#
 # Check if root and running exam #
 #--------------------------------#
-#if ! [ -f "$EXAMLOCKFILE" ];then
-    # kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
-    #sleep 2
-#    exit 0
-#fi
+if ! [ -f "$EXAMLOCKFILE" ];then
+    kdialog  --msgbox 'Not running exam - Stopping program' --title 'Starting Exam'
+    sleep 2
+    exit 0
+fi
 
-#if [ "$(id -u)" != "0" ]; then
-#    if [[ ( $SKIPDIALOGS = 0 ) ]] 
-#    then
-#        kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
-#    fi
-#    exit 0
-#fi
+if [ "$(id -u)" != "0" ]; then
+    kdialog  --msgbox 'You need root privileges - Stopping program' --title 'Starting Exam'
+    exit 0
+fi
 
 
 
@@ -67,34 +49,46 @@ stopIPtables(){
     sudo iptables -t raw -X
 }
 
+
+
+
+
+
 #--------------------------------#
 # ASK FOR CONFIRMATION           #
 #--------------------------------#
-    if [[ ( $SKIPDIALOGS = 0 ) ]] 
-    then
-        kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
-    fi
+
+
+    kdialog --warningcontinuecancel "Prüfungsumgebung beenden?\nHaben sie ihre Arbeit im Ordner SHARE gesichert ? " --title "EXAM";
     if [ "$?" = 0 ]; then
         sleep 0
     else
         exit 1   #cancel
     fi;
+  
+
+
+
 
 #---------------------------------#
 # OPEN PROGRESSBAR DIALOG         #
 #---------------------------------#
 ## start progress with a lot of spaces (defines the width of the window - using geometry will move the window out of the center)
-progress=$(kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
-qdbus $progress Set "" maximum 7
-sleep 0.5
+progress=$(sudo -u ${USER} kdialog --progressbar "Beende Prüfungsumgebung                                                               ");
+sudo -u ${USER} qdbus $progress Set "" maximum 7
+sleep 0.1
+
+
+
+
 
 
 #---------------------------------#
 # RESTORE PREVIOUS DESKTOP CONFIG #
 #---------------------------------#
-qdbus $progress Set "" value 1
-qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
-sleep 0.5
+sudo -u ${USER} qdbus $progress Set "" value 1
+sudo -u ${USER} qdbus $progress setLabelText "Stelle entsperrte Desktop Konfiguration wieder her.... "
+sleep 0.1
 
     sudo rm /etc/kde5rc        #kde plasma KIOSK wieder aufheben
 
@@ -111,59 +105,60 @@ sleep 0.5
     cp -a ${BACKUPDIR}mimeapps.list ${HOME}.local/share/applications/
     cp -a ${BACKUPDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
     
+    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   # enable autoreplace 
+    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/
+
+    
     sudo cp -a ${BACKUPDIR}mimeapps.list /usr/share/applications/mimeapps.list
 
-    qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
+    sudo -u ${USER} qdbus org.kde.kglobalaccel /kglobalaccel blockGlobalShortcuts false   #UN-block all global short cuts ( like alt+space for krunner)
+
+
 
 #---------------------------------#
-# Spell Checking                  #   
-#---------------------------------#
-
-if [[ ( $SPELLCHECK = "0" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
-then
-    # enable again autocorrection if checkbox is not
-    cp -a ${BACKUPDIR}acor*  ${HOME}.config/libreoffice/4/user/autocorr/   
-    sudo cp -a ${BACKUPDIR}acor* /usr/lib/libreoffice/share/autocorr/ 
-fi   
-    
-
-#---------------------------------#
-# REMOVE EXAM LOCK FILES          #
+# REMOVE EXAM LOCKFILE            #
 #---------------------------------#
     # sichere exam start und end infos
     date >> $EXAMLOCKFILE
-    # sudo cp $EXAMLOCKFILE $SHARE
+    sudo cp $EXAMLOCKFILE $SHARE
     sudo rm $EXAMLOCKFILE
-    sudo rm $FIRSTSTARTFILE
-    sleep 0.5
+    sleep 0.1
+
+
   
   
 #---------------------------------#
 # CLEAN  SHARE                    #   
 #---------------------------------#
 
-if [[ ( $DELSHARE = "2" ) ]]     #checkbox sends 0 for unchecked and 2 for checked
+if [[ ( $DELSHARE = "2") ]]     #checkbox sends 0 for unchecked and 2 for checked
 then
     sudo rm -rf ${SHARE}*
     sudo rm -rf ${SHARE}.* 
 fi 
+    
 
 
 #---------------------------------#
 # UMOUNT SHARE                    #    SHARE is now permanently mounted on life sticks
 #---------------------------------#
-qdbus $progress Set "" value 2
+sudo -u ${USER} qdbus $progress Set "" value 2
 #qdbus $progress setLabelText "Verzeichnis SHARE wird freigegeben...."
-sleep 0.5
+sleep 0.1
    # sudo umount -l $SHARE
+
+
+    
+    
+    
     
 
 #---------------------------------#
 # UNLOCK SYSTEM FILES             #
 #---------------------------------#
-qdbus $progress Set "" value 3
-qdbus $progress setLabelText "Systemdateien werden entsperrt...."
-sleep 0.5
+sudo -u ${USER} qdbus $progress Set "" value 3
+sudo -u ${USER} qdbus $progress setLabelText "Systemdateien werden entsperrt...."
+sleep 0.1
 
 #         sudo chmod 755 /sbin/iptables   # nachdem eh kein terminal erlaubt ist ist es fraglich ob das notwendig ist
         sudo chmod 755 /sbin/agetty  # start (respawning) von virtuellen terminals auf ctrl+alt+F[1-6]  erlauben
@@ -186,13 +181,20 @@ sleep 0.5
             # allow mounting again 
             sudo chmod 755 /media/ -R  
         fi
+
+        
+        
+     
+       
+    
+    
     
     
 #-------------------------------------------#
 # STOP AUTO SCREENSHOTS AND AUTO FIREWALL   #
 #-------------------------------------------#
-qdbus $progress Set "" value 4
-qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
+sudo -u ${USER} qdbus $progress Set "" value 4
+sudo -u ${USER} qdbus $progress setLabelText "Stoppe automatische Screenshots...."   
    
     rm  ${HOME}.config/autostart-scripts/auto-screenshot.sh
     sudo killall auto-screenshot.sh && sudo pkill -f auto-screenshot
@@ -200,44 +202,59 @@ qdbus $progress setLabelText "Stoppe automatische Screenshots...."
     # entferne firewall einträge (standalone-exam mode advanced)
     #echo "#!/bin/sh -e" > /etc/rc.local
     #echo "exit 0" >> /etc/rc.local
+
+
+    
     
 
 #---------------------------------#
 # STOP FIREWALL                   #
 #---------------------------------#
-qdbus $progress Set "" value 5
-qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
-sleep 0.5
-stopIPtables
+sudo -u ${USER} qdbus $progress Set "" value 5
+sudo -u ${USER} qdbus $progress setLabelText "Aktiviere Netzwerkverbindungen...."
+sleep 0.1
+
+    stopIPtables
 
     
+    
+    
+    
+    
+
 #---------------------------------#
 # REMOVE ROOT PASSWORD            #
 #---------------------------------#
-qdbus $progress Set "" value 6
+sudo -u ${USER} qdbus $progress Set "" value 6
 #qdbus $progress setLabelText "Passwort wird zurückgesetzt...."
     
 
         # falls ein rootpasswort vom lehrer gesetzt wurde (standalone-exam mode advanced)
         #sudo sed -i "/student/c\student:U6aMy0wojraho:16233:0:99999:7:::" /etc/shadow
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 #----------------------------------------------#
 # FINISH - RESTART AND LOAD DEFAULT DESKTOP    #
 #----------------------------------------------#
-qdbus $progress Set "" value 7
-qdbus $progress setLabelText "Prüfungsumgebung angehalten...  
+sudo -u ${USER} qdbus $progress Set "" value 7
+sudo -u ${USER} qdbus $progress setLabelText "Prüfungsumgebung angehalten...  
 Starte Desktop neu!"
-sleep 4
-qdbus $progress close
+sleep 0.5
+sudo -u ${USER} qdbus $progress close
 
-    amixer -D pulse sset Master 90% > /dev/null 2>&1
-    pactl set-sink-volume 0 90%
-    paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
-
-
-    # this script will run on desktop start and make sure that kwin is running
-    cp /home/student/.life/applications/life-exam/DATA/scripts/check-kwin-runing.sh /home/student/.config/autostart-scripts/
+    sudo -u ${USER} amixer -D pulse sset Master 90% > /dev/null 2>&1
+    sudo -u ${USER} pactl set-sink-volume 0 90%
+    sudo -u ${USER} paplay /usr/share/sounds/KDE-Sys-App-Error-Serious-Very.ogg
 
     
     pkill -f Xorg
@@ -254,3 +271,28 @@ qdbus $progress close
 #     kstart5 plasmashell &
 #     sleep 2
 #     kwin --replace &
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
