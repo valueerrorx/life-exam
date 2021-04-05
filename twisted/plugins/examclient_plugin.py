@@ -19,7 +19,7 @@ import zipfile
 import datetime
 
 from classes import mutual_functions
-from config.config import SHARE_DIRECTORY, SAVEAPPS, \
+from config.config import SHARE_DIRECTORY, \
     PRINTERCONFIG_DIRECTORY, WORK_DIRECTORY, EXAMCONFIG_DIRECTORY, \
     CLIENTFILES_DIRECTORY, CLIENTZIP_DIRECTORY
 from config.enums import Command, DataType
@@ -65,10 +65,6 @@ class MyClientProtocol(basic.LineReceiver):
         # which Apps are allready triggered a autosave via xdotool
         """
         not used yet
-        self.trigerdAutoSavedIDs = []
-        self.detectLoop = None
-        self.allSaved = False
-        self.saveMSG = "Bitte alle Dateien speichern und die laufenden Programme schließen!"
         """
 
     # twisted-Event: Client connects to server
