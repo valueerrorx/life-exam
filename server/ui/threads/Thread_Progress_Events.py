@@ -3,7 +3,7 @@
 # Copyright (C) 2019 Stefan Hagmann
 
 import os
-from config.config import SHARE_DIRECTORY
+from config.config import SHARE_DIRECTORY, DELIVERY_DIRECTORY
 import classes.mutual_functions as mutual_functions
 import logging
 
@@ -19,10 +19,8 @@ def client_abgabe_done(parent, who):
     item = parent.get_list_widget_by_client_name(who)
     logger.info("Client %s has finished sending Files ..." % item.getID())
 
-
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
-       
         # if there is an animation showing
         parent.workinganimation.stop()
     # resume Heartbeats again
@@ -44,7 +42,7 @@ def client_received_file_done(parent, clientWidget):
 
 
 def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
-    """ 
+    """
     will fired when Client has sent his Abgabe File
     :autoAbgabe: 1/0 is that a AutoAbgabe event?
     """
@@ -52,17 +50,15 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
     onexit_cleanup_abgabe = parent.ui.exitcleanabgabe.checkState()
     spellcheck = parent.ui.spellcheck.checkState()
 
-   
     # then send the exam exit signal
     parent.factory.server_to_client.exit_exam(who, onexit_cleanup_abgabe, spellcheck)
 
-
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
-         # show in Filemanager only if we manually trigger Abgabe
+        # show in Filemanager only if we manually trigger Abgabe
         if autoAbgabe == '0':
             logger.info("Opening FileManager..")
-            mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY))
+            mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY))
         # if there is an animation showing
         parent.workinganimation.stop()
     # resume Heartbeats again
