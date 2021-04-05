@@ -229,7 +229,7 @@ class ServerUI(QtWidgets.QDialog):
     def _onSendPrintconf(self, who):
         """send the printer configuration to all clients"""
 
-        if self.clientsConnected() == False:
+        if self.clientsConnected() is False:
             return
 
         self._show_workingIndicator(500, "Drucker Konfiguration senden")
@@ -280,12 +280,12 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onScreenlock(self, who):
         """locks or unlock the client screens"""
-        if self.clientsConnected() == False:
+        if self.clientsConnected() is False:
             return
 
+        clients = self.get_list_widget_items()
         # self._startWorkingIndicator("Locking Client Screens ... ")
         self.networkProgress.show(len(clients))
-
         # Waiting Thread
         self.progress_thread.restart(clients)
 
@@ -464,7 +464,7 @@ class ServerUI(QtWidgets.QDialog):
         :who: client or all
         :auto: True/False is this a AutoAbgabe Event?
         """
-        if self.clientsConnected() == False:
+        if self.clientsConnected() is False:
             return
 
         # suspend Heartbeat during filetransfer
@@ -473,7 +473,6 @@ class ServerUI(QtWidgets.QDialog):
         self.autoAbgabe = auto
 
         self.log('Requesting Folder SHARE from <b>%s</b>' % who)
-        # self._startWorkingIndicator('Abgabe ...')
 
         clients = []
         if who == "all":
@@ -608,10 +607,9 @@ class ServerUI(QtWidgets.QDialog):
         # subtract
         dir_path = dir_path[len(USER_HOME_DIR):]
         mutual_functions.showDesktopMessage("Abgabe Ordner ist Persönlicher Ordner%s" % dir_path)
-        
+
         if self.progress_thread:
             self.progress_thread.fireEvent_exitExam(who, "0")
-        
 
     def _onStartHotspot(self):
         self._show_workingIndicator(500, "Starte Hotspot")

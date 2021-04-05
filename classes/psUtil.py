@@ -4,18 +4,6 @@ import psutil
 class PsUtil():
     """ Library for psutil """
 
-    def closePID(self, pid):
-        """kill the old running Process"""
-        PID = int(pid)
-        if psutil.pid_exists(PID):
-            try:
-                p = psutil.Process(PID)
-                p.terminate()  # or p.kill()
-                return True
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                print("PsUtils cant kill process %s ..." % PID)
-                return False
-
     def _searchInArray(self, arr, pattern):
         """ Search within Array """
         found = False
@@ -46,6 +34,10 @@ class PsUtil():
             except Exception as e:
                 print(e)
         return processlist
+
+    def closePID(self, pid):
+        """kill the old running Process"""
+        return self.killProcess(pid)
 
     def killProcess(self, pid):
         """kill a running Process"""

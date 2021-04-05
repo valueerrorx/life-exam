@@ -18,8 +18,10 @@ DEBUG_SHOW_NETWORKTRAFFIC = False
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
+"""
 SAVEAPPS = ['calligrawords', 'calligrasheets', 'writer', 'kate',
             'unbenannt', 'geogebra', 'calc', 'spreadsheets', 'wxmaxima']
+"""
 
 # which apps must not be listed in apps-list you will provide during EXAM
 BLACKLIST_APPS = ["LIFE Student", "LIFE Teacher", "EXAM"]
