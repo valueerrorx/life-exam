@@ -216,7 +216,7 @@ class MyClientProtocol(basic.LineReceiver):
         proc.communicate()
 
         return [proc.returncode, stderr, stdout]
-    
+
     def triggerAutosave(self, filename, wait_thread):
         """ Create Zip File and send it to server """
         self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)

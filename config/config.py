@@ -7,7 +7,7 @@ import subprocess
 # set both empty, then we are NOT debugging
 
 
-#DEBUG OFF
+# DEBUG OFF
 DEBUG_ID = ""
 DEBUG_PIN = ""
 DEBUG_SHOW_NETWORKTRAFFIC = False
