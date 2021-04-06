@@ -811,7 +811,7 @@ class ServerUI(QtWidgets.QDialog):
 
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientName, False))
-        widget.mouseDoubleClickEvent = lambda: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
 
         # important!
         itemN.setSizeHint(widget.sizeHint())
@@ -834,7 +834,7 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.setID(uniqueID)
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
-        self.screenshotwindow.setClientConnectionID(client_connection_id)
+        self.screenshotwindow.setClientConnectionID(client_name)
         self.screenshotwindow.setClientname(client_name)
         self.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
 

@@ -103,6 +103,9 @@ class MyServerProtocol(basic.LineReceiver):
                     mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)
                     # make the client screenshot visible in the listWidget
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)
+                   
+                    if hasattr(self.factory.window.screenshotwindow, 'clientname'):
+                        self.factory.window.screenshotwindow.updateUI()
 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
                     """ Request for all Data of a client """
