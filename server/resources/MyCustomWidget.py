@@ -25,7 +25,7 @@ class MyCustomWidget (QtWidgets.QWidget):
 
         # store clientName as itemID for later use (delete event)
         self.id = client.clientName             # eg TestUser
-        self.pID = client.clientConnectionID    # eg 5508
+        self.connectionID = client.clientConnectionID    # eg 5508
         self.ip = client.transport.hostname     # eg 192.168.1.10
 
         self.image_width = 180
@@ -130,10 +130,13 @@ class MyCustomWidget (QtWidgets.QWidget):
 
     def getConnectionID(self):
         """ return the ID of the Client """
-        return self.pID
+        return self.connectionID
+
+    def setConnectionID(self, the_id):
+        self.connectionID = the_id
 
     def setID(self, the_id):
-        self.pID = the_id
+        self.setConnectionID(the_id)
 
     def getID(self):
         """ return the ID of the Client """
