@@ -15,7 +15,7 @@ action/show_dot=false
 
 action/switch_user=false
 action/lock_screen=false
-action/logout=false
+#action/logout=false
 action/kwin_rmb=false
 action/plasma/containment_actions=false
 action/run_command=false
@@ -34,19 +34,21 @@ plasma/containment_actions=false
 plasma-desktop/add_activities=false
 
 unlockedDesktop=false
-logout=false
+#logout=false
 movable_toolbars=false
 run_command=false  
 switch_user=false
 start_new_session=false
-#shell_access=false
+shell_access=false
 
 
 [KDE Control Module Restrictions]
 device_automounter_kcm.desktop=false
 formats.desktop=false
 clock.desktop=false
-
+kcm_networkmanagement.desktop=false
+kcm_pulseaudio.desktop=false
+kcm_keyboard.desktop=false
 
 [KDE URL Restrictions][$i]
 rule_count=18
