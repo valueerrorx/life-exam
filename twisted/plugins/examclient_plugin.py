@@ -217,6 +217,16 @@ class MyClientProtocol(basic.LineReceiver):
 
         return [proc.returncode, stderr, stdout]
 
+    def triggerAutosave(self, filename, wait_thread):
+        """ Create Zip File and send it to server """
+        self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)
+        finalname = self.create_abgabe_zip(filename)
+        self.client_to_server.setZipFileName(finalname)
+
+        # fire event Zip is ready, Server will send back ExitExam now
+        wait_thread.fireEvent_Done()
+        wait_thread.stop()
+
     def create_abgabe_zip(self, filename):
         """Event Save done is ready, now create zip"""
         target_folder = SHARE_DIRECTORY

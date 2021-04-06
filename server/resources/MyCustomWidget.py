@@ -7,6 +7,7 @@ from pathlib import Path
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QSize
 from classes.OvelayIcons.IconStack import IconStack
+from classes.Hasher import Hasher
 
 
 class MyCustomWidget (QtWidgets.QWidget):
@@ -23,9 +24,14 @@ class MyCustomWidget (QtWidgets.QWidget):
         self.client = client
         self.screenshot_file_path = screenshot_file_path
 
-        # store clientName as itemID for later use (delete event)
-        self.id = client.clientName             # eg TestUser
-        self.connectionID = client.clientConnectionID    # eg 5508
+        # eg TestUser
+        self.id = client.clientName
+
+        # the connectionID is going to be hashed, to be unique
+        hasher = Hasher()
+        uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
+        self.setConnectionID(uniqueID)
+
         self.ip = client.transport.hostname     # eg 192.168.1.10
 
         self.image_width = 180
@@ -39,7 +45,7 @@ class MyCustomWidget (QtWidgets.QWidget):
         # Overlay IconsIconStack, hier noch kein Pixmap vorhanden
         self.iconStack = IconStack(None)
         self.iconStack.repaint_event.connect(self.repaint_event)
-
+        self.update()
         self.show()
 
     def close(self):

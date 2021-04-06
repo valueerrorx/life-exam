@@ -11,6 +11,7 @@ from config.config import SERVERSCREENSHOT_DIRECTORY, SHARE_DIRECTORY,\
     DEBUG_SHOW_NETWORKTRAFFIC, DELIVERY_DIRECTORY
 import zipfile
 from server.ui.ServerUI import MsgType
+from classes.Hasher import Hasher
 
 
 class MyServerProtocol(basic.LineReceiver):
@@ -276,6 +277,31 @@ class MyServerProtocol(basic.LineReceiver):
         self.factory.window.log(msg)
         self.setRawMode()  # this is a file - set to raw mode
 
+    def _checkDoubleClientName(self, name):
+        """
+        check for if Client name exists > rename it
+        Connection is unique with connectionID!
+        """
+        newName = name
+        index = 1
+        widget = self._testName(name)
+        if widget:
+            found = True
+            # search as long Name is Unique
+            while found:
+                newName = "%s[%s]" % (name, index)
+                found = self._testName(newName)
+                index += 1
+        return newName
+
+    def _testName(self, name):
+        """just a helper"""
+        ui = self.factory.window
+        for widget in ui.get_list_widget_items():
+            if name == widget.getName():
+                return widget
+        return False
+
     def _checkclientAuth(self):
         """
         searches for the newID in factory.clients and rejects the connection if found or wrong pincode
@@ -284,13 +310,18 @@ class MyServerProtocol(basic.LineReceiver):
         :return:
         """
         newID = self.line_data_list[1]
+        newID = self._checkDoubleClientName(newID)
+
         pincode = self.line_data_list[2]
         # self.factory.server_to_client.clients.keys there we store clientConnectionID's
         conID = self.clientConnectionID
-        print(self.factory.server_to_client.clients.keys())
 
-        if conID in self.factory.server_to_client.clients.keys():
-            # TEST keys contains numbers - newID is a name .. how does this work?
+        hasher = Hasher()
+        uniqueID = hasher.getUniqueConnectionID(newID, conID)
+        
+        print("Debug: _checkclientAuth %s %s" % (newID, conID))
+
+        if uniqueID in self.factory.server_to_client.clients.keys():
             self.refused = True
             self.sendEncodedLine(Command.REFUSED.value)
             self.transport.loseConnection()
@@ -298,7 +329,7 @@ class MyServerProtocol(basic.LineReceiver):
             self.factory.window.log(msg)
             return
         else:
-            self.factory.server_to_client.add_client(self)
+            self.factory.server_to_client.add_client(self, uniqueID)
             if int(pincode) != int(self.factory.pincode):
                 self.refused = True
                 self.sendEncodedLine(Command.REFUSED.value)
