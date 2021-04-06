@@ -6,7 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from server.ui.threads.PeriodicTimer import PeriodicTimer
 from config.config import HEARTBEAT_INTERVALL, HEARTBEAT_START_AFTER,\
-    MAX_HEARTBEAT_FAILS
+    MAX_HEARTBEAT_FAILS, DEBUG_PIN
 from server.ui.threads.Beat import Beat
 
 
@@ -55,6 +55,7 @@ class Heartbeat(QtCore.QThread):
             # get the linked object back
             mycustomwidget = item.data(QtCore.Qt.UserRole)
             items.append(mycustomwidget)
+            # print("HB cID: %s" % mycustomwidget.getConnectionID())
         return items
 
     def _cleanUpHeartBeats(self):
@@ -75,7 +76,7 @@ class Heartbeat(QtCore.QThread):
         self._cleanUpHeartBeats()
         # neue Elemente suchen
         for widget in self.get_list_widget_items():
-            wid = widget.getConnectionID()  # remark ID = Name!!
+            wid = widget.getConnectionID()  
             found = False
             for i in range(len(self._heartbeats)):
                 if self._heartbeats[i] == wid:
@@ -87,15 +88,17 @@ class Heartbeat(QtCore.QThread):
 
     def checkClients(self):
         """ check HB of the clients """
-        for i in range(len(self._heartbeats)):
-            hb = self._heartbeats[i]
+        for hb in self._heartbeats:
             # inc counter, counter is set to 0 when client answers
             hb.incCounter()
             if hb.getRetries() >= MAX_HEARTBEAT_FAILS:
                 self.kickZombie(hb)
             else:
                 # send Request
-                self.request_heartbeat.emit(hb.getConnectionID())
+                print("%s %s" % (hb.getRetries(), hb.getConnectionID()))
+                # is there all ready a Request for Heartbeat?
+                if hb.isPending() is False:
+                    self.request_heartbeat.emit(hb.getConnectionID())
 
     def isAlive(self):
         return self.running
@@ -112,6 +115,8 @@ class Heartbeat(QtCore.QThread):
         operations, an event() will be fired
         """
         self.running = True
+        # make a panic Thread Shutdown
+
         while(self.running):
             time.sleep(0.01)
 
@@ -120,8 +125,7 @@ class Heartbeat(QtCore.QThread):
         client has sended a heartbeat
         :param who: MyCustomWidget Object
         """
-        for i in range(len(self._heartbeats)):
-            hb = self._heartbeats[i]
+        for hb in self._heartbeats:
             if hb.getConnectionID() == who.getConnectionID():
                 hb.resetCounter()
                 break

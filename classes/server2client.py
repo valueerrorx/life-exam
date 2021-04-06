@@ -12,6 +12,7 @@ import os
 import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
 from config.config import DEBUG_PIN
+from classes.Hasher import Hasher
 
 
 class ServerToClient:
@@ -26,13 +27,14 @@ class ServerToClient:
         client = self.clients.get(key, None)  # type: MyServerProtocol
         return client
 
-    def add_client(self, client):
+    def add_client(self, client, uniqueID):
         """
         Client has made a connection
+        :param uniqueID: is a created unique ID
         """
+        self.clients.update({uniqueID: client})
         if DEBUG_PIN != "":
-            print("**** Added ClientConnectionID %s" % str(client.transport.client[1]))
-        self.clients.update({str(client.transport.client[1]): client})
+            print("**** Added ClientConnectionID %s" % uniqueID)
 
     def remove_client(self, client):
         del self.clients[client.clientConnectionID]
@@ -51,11 +53,13 @@ class ServerToClient:
         if who == "all":
             for clientid in self.clients:
                 client = self.get_client(clientid)
-                client.sendEncodedLine(line % client.clientConnectionID)
+                client.sendEncodedLine(line % clientid)
         else:
             client = self.get_client(who)
             try:
-                client.sendEncodedLine(line % client.clientConnectionID)
+                hasher = Hasher()
+                uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
+                client.sendEncodedLine(line % uniqueID)
             except Exception:
                 print("server2client Error, clientID: %s, %s" % (client.clientConnectionID, line))
 

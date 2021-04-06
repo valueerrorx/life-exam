@@ -39,6 +39,8 @@ from classes import mutual_functions
 from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
+import hashlib
+from classes.Hasher import Hasher
 
 
 class MsgType(Enum):
@@ -750,18 +752,26 @@ class ServerUI(QtWidgets.QDialog):
         # ...
         self.DebugLog(msg, show_allways)
 
+    
+
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """ generates new List Item that displays the client screenshot """
-        # die cID ist eindeutig
-        existing_item = self.get_list_widget_by_client_ConID(client.clientConnectionID)
+
+        
+
+        
+        hasher = Hasher()
+        uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
+
+        existing_item = self.get_list_widget_by_client_ConID(uniqueID)
 
         if existing_item:  # just update screenshot
             self._updateListItemScreenshot(existing_item, client, screenshot_file_path)
         else:
             new_client_name = self._checkDoubleClientName(client)
-            # change name
+            # change name or leave it the same
             client.clientName = new_client_name
-
+            
             self._addNewListItem(client, screenshot_file_path)
             # Update Label
             self.ui.label_clients.setText(self.createClientsLabel())
@@ -776,16 +786,11 @@ class ServerUI(QtWidgets.QDialog):
         widget = self._testName(client.clientName)
         if widget:
             found = True
-            newIP = client.transport.hostname
-            print("**************** IP Adr.: %s" % newIP)
-            # reconnecting, compare from wich IP we are coming
-            if(widget.getIP() != newIP):
-                # same Name but different host via IP > Rename
-                # search as long Name is Unique
-                while found:
-                    newName = "%s[%s]" % (client.clientName, index)
-                    found = self._testName(newName)
-                    index += 1
+            # search as long Name is Unique
+            while found:
+                newName = "%s[%s]" % (client.clientName, index)
+                found = self._testName(newName)
+                index += 1
         return newName
 
     def _testName(self, name):
@@ -823,7 +828,10 @@ class ServerUI(QtWidgets.QDialog):
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
-        existing_item.setID(client.clientConnectionID)
+
+        hasher = Hasher()
+        uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
+        existing_item.setID(uniqueID)
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         self.screenshotwindow.setClientConnectionID(client_connection_id)
@@ -876,7 +884,11 @@ class ServerUI(QtWidgets.QDialog):
                 return widget
         # there are items in list
         if len(self.get_list_widget_items()) > 0:
-            self.log("Error: No list widget for client connectionID %s" % client_connection_id)
+            self.log("Error: No list widget for connectionID %s" % client_connection_id)
+            if DEBUG_PIN != "":
+                self.logger.debug("Widgets in List")
+                for widget in self.get_list_widget_items():
+                    self.logger.debug(widget.getConnectionID())
         return False
 
     def get_QListWidgetItem_by_client_id(self, con_id):
