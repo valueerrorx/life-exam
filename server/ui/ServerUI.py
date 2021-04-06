@@ -579,7 +579,7 @@ class ServerUI(QtWidgets.QDialog):
         """
         self.log("<b>Finishing Exam</b>")
         self._show_workingIndicator(2000, "Prüfung wird beendet")
-        if self.factory.lcs.running:
+        #if self.factory.lcs.running:
             # disable autoscreenshot, lcs = Loopingcall
             #self.factory.lcs.stop()
 
