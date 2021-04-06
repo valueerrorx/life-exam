@@ -581,7 +581,7 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(2000, "Prüfung wird beendet")
         if self.factory.lcs.running:
             # disable autoscreenshot, lcs = Loopingcall
-            self.factory.lcs.stop()
+            #self.factory.lcs.stop()
 
         if self.factory.lc.running:
             icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()

@@ -105,6 +105,7 @@ class MyServerProtocol(basic.LineReceiver):
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)
                    
                     if hasattr(self.factory.window.screenshotwindow, 'clientname'):
+                        self.factory.window.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
                         self.factory.window.screenshotwindow.updateUI()
 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
