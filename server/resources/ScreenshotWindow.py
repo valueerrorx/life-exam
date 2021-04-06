@@ -58,7 +58,7 @@ class ScreenshotWindow(QtWidgets.QDialog):
         # 10 = Windowrole
         palette.setBrush(10, QBrush(sImage))
         self.setPalette(palette)
-        self.button2.clicked.connect(lambda: self.serverui.onAbgabe(self.getClientConnectionID()))
+        self.button2.clicked.connect(lambda: self.serverui.onAbgabe(self.getClientConnectionID(), False))
         self.button3.clicked.connect(lambda: self.serverui.onScreenshots(self.getClientConnectionID()))
 
     def setScreenshot(self):
