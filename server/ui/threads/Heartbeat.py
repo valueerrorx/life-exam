@@ -100,6 +100,7 @@ class Heartbeat(QtCore.QThread):
             else:
                 # is there all ready a Request for Heartbeat?
                 if hb.isPending() is False:
+                    hb.setPending(True)
                     self.request_heartbeat.emit(hb.getConnectionID())
 
     def isAlive(self):
@@ -131,7 +132,6 @@ class Heartbeat(QtCore.QThread):
             print("HB received from %s" % who.getConnectionID())
             if hb.getConnectionID() == who.getConnectionID():
                 hb.resetCounter()
-                break
 
     def kickZombie(self, hb):
         """HB Limit reached, kick clients"""
