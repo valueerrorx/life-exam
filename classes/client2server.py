@@ -74,7 +74,6 @@ class ClientToServer:
         """send Heartbeat to Server"""
         cID = client.line_data_list[1]
         line = '%s %s' % (Command.HEARTBEAT_BEAT.value, cID)
-        print(line)
         client.sendEncodedLine(line)
 
     def un_lock_screen(self, client):

@@ -322,8 +322,6 @@ class MyServerProtocol(basic.LineReceiver):
 
         hasher = Hasher()
         uniqueID = hasher.getUniqueConnectionID(newID, conID)
-        
-        print("Debug: _checkclientAuth %s %s" % (newID, conID))
 
         if uniqueID in self.factory.server_to_client.clients.keys():
             self.refused = True

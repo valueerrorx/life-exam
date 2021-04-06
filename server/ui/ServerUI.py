@@ -233,6 +233,9 @@ class ServerUI(QtWidgets.QDialog):
 
         if self.clientsConnected() is False:
             return
+        
+        # during filetransfer off
+        self.suspendHeartbeats()
 
         self._show_workingIndicator(500, "Drucker Konfiguration senden")
         server_to_client = self.factory.server_to_client
@@ -268,6 +271,8 @@ class ServerUI(QtWidgets.QDialog):
 
         # send line and file to all clients
         server_to_client.send_file(file_path, who, DataType.PRINTER.value)
+        
+        self.resumeHeartbeats()
 
     def _onPrintconf(self):
         command = "kcmshell5 kcm_printer_manager &"
