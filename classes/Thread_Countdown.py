@@ -50,4 +50,5 @@ class Thread_Countdown(QtCore.QThread):
         return self.count
 
     def run(self):
-        self.func(*self.args, **self.kwargs)
+        if self:
+            self.func(*self.args, **self.kwargs)
