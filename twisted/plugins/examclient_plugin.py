@@ -219,9 +219,9 @@ class MyClientProtocol(basic.LineReceiver):
 
     def triggerAutosave(self, filename, wait_thread):
         
-        #cas = closeNSaveApps()
-        #data = cas._countOpenApps() # [open_apps, pids, app_ids]
-        #cas._fireSaveApps(data[1], data[2])
+        cas = closeNSaveApps()
+        data = cas._countOpenApps() # [open_apps, pids, app_ids]
+        cas._fireSaveApps(data[1], data[2])
          
         
         """ Create Zip File and send it to server """
