@@ -37,7 +37,7 @@ class ServerToClient:
             print("**** Added ClientConnectionID %s" % uniqueID)
 
     def remove_client(self, client):
-        del self.clients[client.clientConnectionID]
+        del self.clients[client.clientName]
 
     def kick_client(self, client_id):
         client = self.get_client(client_id)

@@ -810,7 +810,7 @@ class ServerUI(QtWidgets.QDialog):
         widget.setExamIconOFF()
 
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientConnectionID, False))
+        widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientName, False))
         widget.mouseDoubleClickEvent = lambda: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
 
         # important!

@@ -20,8 +20,8 @@ class Thread_Wait(QtCore.QThread):
         # count the seconds
         self.count = 0
 
-    def __del__(self):
-        self.wait()
+    #def __del__(self):
+        #self.wait()
 
     def stop(self):
         """ stop the running thread """
@@ -40,4 +40,4 @@ class Thread_Wait(QtCore.QThread):
             time.sleep(1)
             self.count += 1
 
-        return 0
+        return
