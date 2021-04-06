@@ -9,7 +9,7 @@ class Beat():
     def __init__(self, ID):
         self._ID = ID   # connection ID
         self._retries = 0
-        self._pending = True
+        self._pending = False
 
     def getConnectionID(self):
         return self._ID
