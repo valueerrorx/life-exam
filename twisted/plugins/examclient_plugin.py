@@ -41,7 +41,7 @@ from classes.Thread_Countdown import Thread_Countdown
 from classes.psUtil import PsUtil
 import sys
 from classes.mutual_functions import copyDesktopStarter
-
+from classes.closeNSaveApps import closeNSaveApps
 
 class MyClientProtocol(basic.LineReceiver):
 
@@ -218,6 +218,12 @@ class MyClientProtocol(basic.LineReceiver):
         return [proc.returncode, stderr, stdout]
 
     def triggerAutosave(self, filename, wait_thread):
+        
+        #cas = closeNSaveApps()
+        #data = cas._countOpenApps() # [open_apps, pids, app_ids]
+        #cas._fireSaveApps(data[1], data[2])
+         
+        
         """ Create Zip File and send it to server """
         self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)
         finalname = self.create_abgabe_zip(filename)
