@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
-import os
+import os, sys
 import stat
 import psutil
 
@@ -49,6 +49,7 @@ class ConnectionStatus(QMainWindow):
 
     def enterEvent(self, *args, **kwargs):
         """hide Info, and show it after x seconds again"""
+        sys.exit(0)  ## sorry.. vl. musst mir nochmal erklären warum des wieder kommen soll für 5min :-)
         self.hide()
         QtCore.QTimer.singleShot(4000, self.showAgain)
         return QMainWindow.enterEvent(self, *args, **kwargs)
