@@ -56,9 +56,9 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
         # show in Filemanager only if we manually trigger Abgabe
-        if autoAbgabe == '0':
-            logger.info("Opening FileManager..")
-            mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY))
+        #if autoAbgabe == '0':
+        #    logger.info("Opening FileManager..")
+        #    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY))
         # if there is an animation showing
         parent.workinganimation.stop()
     # resume Heartbeats again
