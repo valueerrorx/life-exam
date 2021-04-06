@@ -289,6 +289,8 @@ class ServerUI(QtWidgets.QDialog):
         """locks or unlock the client screens"""
         if self.clientsConnected() is False:
             return
+        
+        self.suspendHeartbeats()
 
         clients = self.get_list_widget_items()
         # self._startWorkingIndicator("Locking Client Screens ... ")
@@ -317,6 +319,7 @@ class ServerUI(QtWidgets.QDialog):
                 self.factory.clientslocked = False
                 icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png.png").as_posix()
                 self.ui.screenlock.setIcon(QIcon(icon))
+        self.resumeHeartbeats()
 
     def _onOpenshare(self):
         dir_path = os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY)
@@ -398,8 +401,6 @@ class ServerUI(QtWidgets.QDialog):
                 c = self.get_list_widget_by_client_ConID(client_id)
                 clients.append(c)
                 receiver = c.id
-
-            # self._startWorkingIndicator("%s wird an %s gesendet" % (os.path.basename(file_path), receiver))
 
             # Waiting Thread
             self.progress_thread.setClients(clients)
@@ -761,10 +762,6 @@ class ServerUI(QtWidgets.QDialog):
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """ generates new List Item that displays the client screenshot """
-
-        
-
-        
         hasher = Hasher()
         uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
 
@@ -776,7 +773,7 @@ class ServerUI(QtWidgets.QDialog):
             new_client_name = self._checkDoubleClientName(client)
             # change name or leave it the same
             client.clientName = new_client_name
-            
+            print("createOrUpdateListItem %s" % new_client_name)
             self._addNewListItem(client, screenshot_file_path)
             # Update Label
             self.ui.label_clients.setText(self.createClientsLabel())

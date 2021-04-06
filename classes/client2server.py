@@ -94,7 +94,7 @@ class ClientToServer:
 
         # Send OK i'm UNlocked to Server
         line = '%s %s' % (Command.UNLOCKSCREEN_OK.value, cID)
-        print("Sending UN-Lock Screen OK")
+        print("Sending UN-Lock Screen OK from %s" % cID)
         client.sendEncodedLine(line)
         return
 
@@ -120,7 +120,7 @@ class ClientToServer:
 
         # Send OK i'm locked to Server
         line = '%s %s' % (Command.LOCKSCREEN_OK.value, cID)
-        print("Sending Lock Screen OK")
+        print("Sending Lock Screen OK from %s" % cID)
         client.sendEncodedLine(line)
 
         return
