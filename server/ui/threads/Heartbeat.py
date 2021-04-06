@@ -76,10 +76,10 @@ class Heartbeat(QtCore.QThread):
         self._cleanUpHeartBeats()
         # neue Elemente suchen
         for widget in self.get_list_widget_items():
-            wid = widget.getConnectionID()  
+            wid = widget.getConnectionID()
             found = False
-            for i in range(len(self._heartbeats)):
-                if self._heartbeats[i] == wid:
+            for hb in self._heartbeats:
+                if hb.getConnectionID() == wid:
                     found = True
                     break
             if found is False:
@@ -92,9 +92,7 @@ class Heartbeat(QtCore.QThread):
             # inc counter, counter is set to 0 when client answers
             hb.incCounter()
             
-            # send Request
-            print("HB: %s %s" % (hb.getRetries(), hb.getConnectionID()))
-            
+            #print("HB: %s %s" % (hb.getRetries(), hb.getConnectionID()))            
             if hb.getRetries() >= MAX_HEARTBEAT_FAILS:
                 self.kickZombie(hb)
             else:
@@ -129,7 +127,7 @@ class Heartbeat(QtCore.QThread):
         :param who: MyCustomWidget Object
         """
         for hb in self._heartbeats:
-            print("HB received from %s" % who.getConnectionID())
+            #print("HB received from %s" % who.getConnectionID())
             if hb.getConnectionID() == who.getConnectionID():
                 hb.resetCounter()
 
