@@ -329,7 +329,7 @@ runAutostartScripts
 sudo -u ${USER} -E qdbus $progress Set "" value 7
 sudo -u ${USER} -E qdbus $progress setLabelText "Sperre Systemdateien...."
    
-# blockAdditionalFeatures
+blockAdditionalFeatures
 
 
 #--------------------------------------------------------#
@@ -338,7 +338,7 @@ sudo -u ${USER} -E qdbus $progress setLabelText "Sperre Systemdateien...."
 sudo -u ${USER} -E qdbus $progress Set "" value 8
 sudo -u ${USER} -E qdbus $progress setLabelText "Sperre Desktop"
   
-#loadKioskSettings
+loadKioskSettings
   
   
   
