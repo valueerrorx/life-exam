@@ -62,14 +62,17 @@ if __name__ == '__main__':
 
     logger = logging.getLogger(__name__)
 
-    # test if twistd is running
-    testRunningTwistd(logger)
 
     # do not start twice
     if os.path.exists(FILE_NAME):
-        cleanUpLockFile(FILE_NAME)
-        logger.info("Client Lock File found, removed an exit now ...")
+        #cleanUpLockFile(FILE_NAME)
+        logger.info("Client Lock File found, exiting now ...")
         sys.exit(0)
+        
+    # test if twistd is running
+    testRunningTwistd(logger)
+
+        
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
 
