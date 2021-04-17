@@ -43,8 +43,9 @@ def cleanUpLockFile(file):
     if os.path.exists(file):
         os.remove(file)
 
+        
 
-def testRunningTwistd(logger):
+def killRunningTwistd(logger):
     """ if a running twistd client is found > kill it """
     processUtil = PsUtil()
     pid = processUtil.GetProcessByName("twistd3")
@@ -54,6 +55,8 @@ def testRunningTwistd(logger):
         for p in pid:
             cmd = "sudo -E kill -9 %s" % int(p[0])
             os.system(cmd)
+
+
 
 
 if __name__ == '__main__':
@@ -69,10 +72,7 @@ if __name__ == '__main__':
         logger.info("Client Lock File found, exiting now ...")
         sys.exit(0)
         
-    # test if twistd is running
-    testRunningTwistd(logger)
-
-        
+  
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
 
@@ -81,6 +81,11 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     dialog = ClientDialog()
     dialog.ui.show()
+    
+    # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
+    #testRunningTwistd(logger,dialog)
+
+        
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor

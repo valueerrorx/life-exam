@@ -86,7 +86,41 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         # detect changing of userdata, only needed if debugging is active
         self.inputs_changed = False
 
+        self.testRunningTwistd()
         self.checkConnectionInfo_and_CloseIt()
+
+
+
+
+    def testRunningTwistd(self):
+        """ if a running twistd client is found > kill it """
+        processUtil = PsUtil()
+        pid = processUtil.GetProcessByName("twistd3")
+        if len(pid) > 0:
+            self.ui.status.setText("Already connected to an Exam instance!")
+            self.ui.start.setText("Kill connection")
+            
+            self.ui.start.clicked.disconnect()
+            self.ui.start.clicked.connect(self.killRunningTwistd)
+            
+
+
+    def killRunningTwistd(self):
+        """ if a running twistd client is found > kill it """
+        processUtil = PsUtil()
+        pid = processUtil.GetProcessByName("twistd3")
+        if len(pid) > 0:
+            # found a twistd process, kill all pids
+            for p in pid:
+                cmd = "sudo -E kill -9 %s" % int(p[0])
+                os.system(cmd)
+            
+            self.ui.start.setText("Verbinden")
+            self.ui.status.setText("Terminated existing connection")
+            self.ui.start.clicked.disconnect()
+            self.ui.start.clicked.connect(self._onStartExamClient)
+
+
 
     def checkConnectionInfo_and_CloseIt(self):
         '''is there an active connection Info on desktop? > close it'''
