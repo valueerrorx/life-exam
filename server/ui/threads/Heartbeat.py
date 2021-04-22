@@ -61,7 +61,10 @@ class Heartbeat(QtCore.QThread):
     def _cleanUpHeartBeats(self):
         """verwaiste HB entfernen"""
         for i in range(len(self._heartbeats)):
-            hb = self._heartbeats[i]
+            try:
+                hb = self._heartbeats[i]
+            except IndexError:
+                break
             found = False
             for widget in self.get_list_widget_items():
                 if hb.getConnectionID() == widget.getConnectionID():

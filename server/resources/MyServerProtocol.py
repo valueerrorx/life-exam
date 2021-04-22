@@ -171,7 +171,7 @@ class MyServerProtocol(basic.LineReceiver):
                     self.factory.window.log(msg)
                     self.logger.info(msg)
                     # True means AutoAbgabe
-                    self.factory.window.onAbgabe(self.clientConnectionID, True)
+                    self.factory.window.onAbgabe(self.clientName, True)
                 else:
                     self.filetransfer_fail_count = 0
 
