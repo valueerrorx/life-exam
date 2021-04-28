@@ -35,7 +35,6 @@ if __name__ == '__main__':
             'datetime',
             'psutil',
             'pillow',
-            'configobj',
             'pyqt5',
             'qt5reactor',
             'ConfigObj'
