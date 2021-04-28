@@ -38,6 +38,7 @@ if __name__ == '__main__':
             'configobj',
             'pyqt5',
             'qt5reactor',
+            'ConfigObj'
         ],
         python_requires='>=3.8',
     )
