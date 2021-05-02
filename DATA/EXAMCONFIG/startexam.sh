@@ -98,6 +98,8 @@ function loadExamConfig(){
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list   #dateitypen zuordnung zu programmen
     cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
     cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
+    cp -a ${LOCKDOWNDIR}powermanagementprofilesrc ${HOME}.config/powermanagementprofilesrc
+    
     
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
 
@@ -241,6 +243,8 @@ function killRunningApps(){
         pkill -f spectacle
         pkill -f vlc
         pkill -f google 
+        pkill -f kcalc
+        pkill -f okular
     
         # kill desktop environment
         pkill -f  plasmashell    
