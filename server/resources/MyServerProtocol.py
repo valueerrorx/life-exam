@@ -105,8 +105,9 @@ class MyServerProtocol(basic.LineReceiver):
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)
                    
                     if hasattr(self.factory.window.screenshotwindow, 'clientname'):
-                        self.factory.window.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
-                        self.factory.window.screenshotwindow.updateUI()
+                        if self.factory.window.screenshotwindow.clientname in filename:
+                            self.factory.window.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
+                            self.factory.window.screenshotwindow.updateUI()
 
                 elif self.line_data_list[1] == DataType.ABGABE.value:
                     """ Request for all Data of a client """
@@ -349,6 +350,6 @@ class MyServerProtocol(basic.LineReceiver):
                 msg = 'New Connection from <b>%s</b>' % (newID)
                 self.factory.window.log(msg)
                 # transfer, send, screenshot, filename, hash, clean Abgabe
-                line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.transport.client[1])
+                line = "%s %s %s %s.jpg none none" % (Command.FILETRANSFER.value, Command.SEND.value, DataType.SCREENSHOT.value, self.clientName)
                 self.sendEncodedLine(line)
                 return

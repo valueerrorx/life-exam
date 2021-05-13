@@ -192,10 +192,10 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.finish(self)
 
         # Heartbeat Thread
-        self.heartbeat = Heartbeat(self)
-        self.heartbeat.kick_zombie.connect(self.removeZombie)
-        self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
-        self.heartbeat.start()
+        #self.heartbeat = Heartbeat(self)
+        #self.heartbeat.kick_zombie.connect(self.removeZombie)
+        #self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
+        #self.heartbeat.start()
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -458,12 +458,12 @@ class ServerUI(QtWidgets.QDialog):
 
     def suspendHeartbeats(self):
         """ suspend Heartbeats until resumed"""
-        self.heartbeat.suspend()
+        #self.heartbeat.suspend()
         self.log("Heartbeats PAUSE")
 
     def resumeHeartbeats(self):
         """ if Heartbeats suspended, resume them """
-        self.heartbeat.resume()
+        #self.heartbeat.resume()
         self.log("Heartbeats RESUMED")
 
     def onAbgabe(self, who, auto):
@@ -576,8 +576,8 @@ class ServerUI(QtWidgets.QDialog):
 
         # wait until all Clients started, then activate Heartbeats again
         # time in sec
-        countdown_thread = Thread_Countdown(None, 5 * 60, self.resumeHeartbeats())
-        countdown_thread.start()
+        #countdown_thread = Thread_Countdown(None, 5 * 60, self.resumeHeartbeats())
+        #countdown_thread.start()
 
     def _on_exit_exam(self, who):
         """
@@ -713,7 +713,7 @@ class ServerUI(QtWidgets.QDialog):
             # UI Label Update count clients
             self.ui.label_clients.setText(self.createClientsLabel())
             # Update Heartbeat List
-            self.heartbeat.updateClientHeartbeats()
+            #self.heartbeat.updateClientHeartbeats()
 
     def _onRemoveClient(self, con_id):
         """ Entfernt einen Client aus dem Widget """
@@ -825,7 +825,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
 
         # Update Heartbeat List
-        self.heartbeat.updateClientHeartbeats()
+        #self.heartbeat.updateClientHeartbeats()
 
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         existing_item.setImage(screenshot_file_path)
@@ -836,10 +836,11 @@ class ServerUI(QtWidgets.QDialog):
         existing_item.setID(uniqueID)
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
+        print(screenshot_file_path)
+        
         self.screenshotwindow.setClientConnectionID(client_name)
         self.screenshotwindow.setClientname(client_name)
         self.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
-
         self.screenshotwindow.updateUI()
         self.screenshotwindow.exec_()
 
@@ -951,7 +952,7 @@ class ServerUI(QtWidgets.QDialog):
         if str(retval) == "16384":
             # Threads Shutdown
             # self.jobs.stop()
-            self.heartbeat.stop()
+            #self.heartbeat.stop()
             self.stopWidgetIconTimer()
 
             # if in root mode than change log Files to student User
@@ -987,8 +988,8 @@ class ServerUI(QtWidgets.QDialog):
 
     def request_heartbeat(self, who):
         """Heartbeat fired time to check the Heartbeat of client"""
-        server_to_client = self.factory.server_to_client
-        server_to_client.request_heartbeat(who)
+        #server_to_client = self.factory.server_to_client
+        #server_to_client.request_heartbeat(who)
 
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""

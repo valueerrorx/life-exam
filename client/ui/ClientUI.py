@@ -98,7 +98,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         processUtil = PsUtil()
         pid = processUtil.GetProcessByName("twistd3")
         if len(pid) > 0:
-            self.ui.status.setText("Already connected to an Exam instance!")
+            self.ui.status.setText("Connection daemon already running!")
             self.ui.start.setText("Kill connection")
             
             self.ui.start.clicked.disconnect()
