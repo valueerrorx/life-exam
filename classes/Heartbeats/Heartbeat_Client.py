@@ -9,7 +9,7 @@ class HeartbeatClient(Thread):
     PyHBClient.py serverip [udpport]
     """
 
-    BEATWAIT = 10             # number of seconds between heartbeats
+    period = 10             # number of seconds between heartbeats
 
     def __init__(self, ip, port):
         Thread.__init__(self)
@@ -18,6 +18,7 @@ class HeartbeatClient(Thread):
         self.abort = False
 
         self.hbsocket = socket(AF_INET, SOCK_DGRAM)
+        self.start()
 
     def __repr__(self):
         return "Heartbeat Client on port: %d\n" % self.port
@@ -26,8 +27,11 @@ class HeartbeatClient(Thread):
         print("PyHeartBeat client sending to IP %s , port %d" % (self.serverIP, self.port))
         while self.abort is False:
             self.hbsocket.sendto('Thump!'.encode(), (self.serverIP, self.port))
-            sleep(self.BEATWAIT)
+            sleep(self.period)
 
     def stop(self):
         """ Stop the Thread """
         self.abort = True
+
+
+hbc = HeartbeatClient('127.0.0.1', 43278)

@@ -6,9 +6,6 @@ clients that sent at least one packet during the run, but have
 not sent any packet since a time longer than the definition of the timeout.
 """
 
-HBPORT = 43278
-CHECKWAIT = 30
-
 from socket import socket, AF_INET, SOCK_DGRAM
 from threading import Lock, Thread, Event
 from time import time, ctime, sleep
@@ -50,9 +47,8 @@ class BeatDict:
         return silent
 
 
-class BeatRec(Thread):
+class BeatRecorder(Thread):
     "Receive UDP packets, log them in heartbeat dictionary"
-
     def __init__(self, goOnEvent, updateDictFunc, port):
         Thread.__init__(self)
         self.goOnEvent = goOnEvent
@@ -69,42 +65,49 @@ class BeatRec(Thread):
 
     def run(self):
         while self.goOnEvent.isSet():
-            if __debug__:
-                print("Waiting to receive...")
             data, addr = self.recSocket.recvfrom(6)
 
             print("Received packet from %s > %s" % (self.getAddress_Port(addr), data.decode()))
             self.updateDictFunc(addr[0])
 
 
-def main():
-    "Listen to the heartbeats and detect inactive clients"
-    global HBPORT, CHECKWAIT
+class HeartBeatServer(Thread):
+    """
+    Starts the Heartbeat Server
+    Listen to the heartbeats and detect inactive clients
+    """
+    period = 30
 
-    beatRecGoOnEvent = Event()
-    beatRecGoOnEvent.set()
-    beatDictObject = BeatDict()
-    beatRecThread = BeatRec(beatRecGoOnEvent, beatDictObject.update, HBPORT)
-    if __debug__:
-        print(beatRecThread)
-    beatRecThread.start()
-    print("PyHeartBeat server listening on port %d" % HBPORT)
-    print("\n*** Press Ctrl-C to stop ***\n")
-    while 1:
-        try:
+    def __init__(self, port):
+        Thread.__init__(self)
+        self.port = port
+        self.abort = False
+
+        self.beatRecGoOnEvent = Event()
+        self.beatRecGoOnEvent.set()
+        self.beatDictObject = BeatDict()
+        beatRecordThread = BeatRecorder(self.beatRecGoOnEvent, self.beatDictObject.update, self.port)
+        beatRecordThread.start()
+        print("PyHeartBeat server listening on port %d" % self.port)
+        self.start()
+
+    def run(self):
+        while self.abort is False:
             if __debug__:
                 print("Beat Dictionary")
-                print(beatDictObject)
-            silent = beatDictObject.extractSilent(CHECKWAIT)
+                print(self.beatDictObject)
+            silent = self.beatDictObject.extractSilent(self.period)
             if silent:
                 print("Silent clients")
                 print(silent)
-            sleep(CHECKWAIT)
-        except KeyboardInterrupt:
-            print("Exiting.")
-            beatRecGoOnEvent.clear()
-            beatRecThread.join()
+            sleep(self.period)
+
+    def stop(self):
+        """ Stop the Thread """
+        print("Exiting.")
+        self.beatRecGoOnEvent.clear()
+        self.beatRecThread.join()
+        self.abort = True
 
 
-if __name__ == '__main__':
-    main()
+hbs = HeartBeatServer(43278)
