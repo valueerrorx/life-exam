@@ -6,7 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from server.ui.threads.PeriodicTimer import PeriodicTimer
 from config.config import HEARTBEAT_INTERVALL, HEARTBEAT_START_AFTER,\
-    MAX_HEARTBEAT_FAILS, DEBUG_PIN
+    MAX_HEARTBEAT_FAILS
 from server.ui.threads.Beat import Beat
 
 
