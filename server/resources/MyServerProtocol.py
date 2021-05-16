@@ -223,7 +223,6 @@ class MyServerProtocol(basic.LineReceiver):
                 Command.FILE_OK.value: self._file_ok,
                 Command.LOCKSCREEN_OK.value: self._lockscreen_ok,
                 Command.UNLOCKSCREEN_OK.value: self._unlockscreen_ok,
-                Command.HEARTBEAT_BEAT.value: self._heartbeat_received,
             }
 
             # Default is None if nothing is found
@@ -257,16 +256,6 @@ class MyServerProtocol(basic.LineReceiver):
             ui.progress_thread.fireEvent_UnLock_Screen(clientWidget)
             # Update Screenshot
             ui.onScreenshots(self.line_data_list[1])
-
-    def _heartbeat_received(self):
-        """a client has sended a heartbeat"""
-        # fire Event to Thread
-        ui = self.factory.window
-        # get the client item from QListWidget
-        clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
-        # Maybe new Widget is not Registered
-        if clientWidget:
-            ui.heartbeat.fireEvent_Heartbeat(clientWidget)
 
     def _file_ok(self):
         """ a client has received a file sends OK """

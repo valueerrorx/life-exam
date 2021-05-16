@@ -29,6 +29,7 @@ def lockFile(lockfile):
     """ prevent to start client twice """
     fp = open(lockfile, 'w')  # create a new one
     try:
+        fp.write("%s" % os.getpid())
         fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
         # the file has been locked
         success = True
@@ -43,7 +44,6 @@ def cleanUpLockFile(file):
     if os.path.exists(file):
         os.remove(file)
 
-        
 
 def killRunningTwistd(logger):
     """ if a running twistd client is found > kill it """
@@ -57,6 +57,17 @@ def killRunningTwistd(logger):
             os.system(cmd)
 
 
+def checkRunningPID():
+    """ check id the PID from Lock File is still active, if not then del LockFile """
+    f = open(FILE_NAME, "r")
+    pid = f.read()
+    ps = PsUtil()
+    if ps.isRunning(pid) is False:
+        # old Process is dead
+        cleanUpLockFile(FILE_NAME)
+        print("Deleted Client Zombie Process Lock File ...")
+        return False
+    return True
 
 
 if __name__ == '__main__':
@@ -65,14 +76,12 @@ if __name__ == '__main__':
 
     logger = logging.getLogger(__name__)
 
-
     # do not start twice
     if os.path.exists(FILE_NAME):
-        #cleanUpLockFile(FILE_NAME)
-        logger.info("Client Lock File found, exiting now ...")
-        sys.exit(0)
-        
-  
+        if checkRunningPID() is True:
+            print("Client Process found, exiting now ...")
+            sys.exit(0)
+
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
 
@@ -81,11 +90,10 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     dialog = ClientDialog()
     dialog.ui.show()
-    
-    # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
-    #testRunningTwistd(logger,dialog)
 
-        
+    # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
+    # testRunningTwistd(logger,dialog)
+
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor

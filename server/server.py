@@ -7,7 +7,8 @@
 # of the GPLv3 license.  See the LICENSE file for details...
 
 
-import sys,os
+import sys
+import os
 from pathlib import Path
 
 import logging
@@ -20,7 +21,7 @@ sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 from classes import mutual_functions
 from classes.Splashscreen.SplashScreen import SplashScreen
 from config.logger import configure_logging
-from config.config import SERVER_PORT, SERVERFILES_DIRECTORY
+from config.config import SERVER_PORT, SERVERFILES_DIRECTORY, HEARTBEAT_PORT
 
 from time import time, sleep
 from version import __version__
@@ -61,14 +62,13 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
     # start the server on SERVER_PORT
-    
+
     try:
         reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app))  #noqa
-    except:
+        reactor.listenUDP(HEARTBEAT_PORT, HeartbeatFactory())
+    except Exception:
         print("Adress already taken")
         os._exit(0)  # noqa
-    
-
 
     logger = logging.getLogger('server')
     logger.info('Listening on port %d' % (SERVER_PORT))

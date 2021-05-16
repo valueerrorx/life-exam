@@ -23,8 +23,6 @@ def client_abgabe_done(parent, who):
     if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()
-    # resume Heartbeats again
-    parent.resumeHeartbeats()
 
 
 def client_received_file_done(parent, clientWidget):
@@ -37,8 +35,6 @@ def client_received_file_done(parent, clientWidget):
     if parent.networkProgress.value() <= 1:
         # if there is an animation showing
         parent.workinganimation.stop()
-    # resume Heartbeats again
-    parent.resumeHeartbeats()
 
 
 def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
@@ -61,8 +57,6 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
         #    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY))
         # if there is an animation showing
         parent.workinganimation.stop()
-    # resume Heartbeats again
-    parent.resumeHeartbeats()
 
 
 def client_lock_screen(parent):

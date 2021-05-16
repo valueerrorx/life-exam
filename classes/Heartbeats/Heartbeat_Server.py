@@ -8,7 +8,11 @@ not sent any packet since a time longer than the definition of the timeout.
 
 from socket import socket, AF_INET, SOCK_DGRAM
 from threading import Lock, Thread, Event
-from time import time, ctime, sleep
+from time import time, ctime
+import logging
+from config.config import DEBUG_PIN
+import threading
+from PyQt5.Qt import pyqtSignal
 
 
 class BeatDict:
@@ -67,7 +71,8 @@ class BeatRecorder(Thread):
         while self.goOnEvent.isSet():
             data, addr = self.recSocket.recvfrom(6)
 
-            print("Received packet from %s > %s" % (self.getAddress_Port(addr), data.decode()))
+            if DEBUG_PIN != "":
+                self.logger.info("Received packet from %s > %s" % (self.getAddress_Port(addr), data.decode()))
             self.updateDictFunc(addr[0])
 
 
@@ -77,37 +82,43 @@ class HeartBeatServer(Thread):
     Listen to the heartbeats and detect inactive clients
     """
     period = 30
+    # Signal with silent Clients
+    silentClientList_Signal = pyqtSignal(list)
 
     def __init__(self, port):
+        self.logger = logging.getLogger(__name__)
         Thread.__init__(self)
         self.port = port
         self.abort = False
+        self.e = threading.Event()
 
         self.beatRecGoOnEvent = Event()
         self.beatRecGoOnEvent.set()
         self.beatDictObject = BeatDict()
         beatRecordThread = BeatRecorder(self.beatRecGoOnEvent, self.beatDictObject.update, self.port)
         beatRecordThread.start()
-        print("PyHeartBeat server listening on port %d" % self.port)
+        if DEBUG_PIN != "":
+            self.logger.info("PyHeartBeat server listening on port %d" % self.port)
         self.start()
 
     def run(self):
         while self.abort is False:
             if __debug__:
-                print("Beat Dictionary")
                 print(self.beatDictObject)
             silent = self.beatDictObject.extractSilent(self.period)
             if silent:
-                print("Silent clients")
-                print(silent)
-            sleep(self.period)
+                self.silentClientList_Signal.emit(silent)
+                if DEBUG_PIN != "":
+                    self.logger.info(silent)
+            self.e.wait(timeout=self.period)   # instead of time.sleep()
 
     def stop(self):
         """ Stop the Thread """
-        print("Exiting.")
         self.beatRecGoOnEvent.clear()
         self.beatRecThread.join()
         self.abort = True
+        # interrupt sleep
+        self.e.set()
 
 
-hbs = HeartBeatServer(43278)
+# hbs = HeartBeatServer(43278)

@@ -12,12 +12,14 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 
-from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
+from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT,\
+    HEARTBEAT_PORT
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
+from classes.Heartbeats.Heartbeat_Client import HeartbeatClient
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -40,6 +42,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self._initUi()
         prepareDirectories()
         checkGeogebraStarter_isinPlace()
+        self.heartbeat_client = None
 
     def _initUi(self):
         # Register self to Global Observer List Object
@@ -90,9 +93,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.testRunningTwistd()
         self.checkConnectionInfo_and_CloseIt()
 
-
-
-
     def testRunningTwistd(self):
         """ if a running twistd client is found > kill it """
         processUtil = PsUtil()
@@ -100,11 +100,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         if len(pid) > 0:
             self.ui.status.setText("Connection daemon already running!")
             self.ui.start.setText("Kill connection")
-            
+
             self.ui.start.clicked.disconnect()
             self.ui.start.clicked.connect(self.killRunningTwistd)
-            
-
 
     def killRunningTwistd(self):
         """ if a running twistd client is found > kill it """
@@ -115,23 +113,22 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             for p in pid:
                 cmd = "sudo -E kill -9 %s" % int(p[0])
                 os.system(cmd)
-            
+
             self.ui.start.setText("Verbinden")
             self.ui.status.setText("Terminated existing connection")
             self.ui.start.clicked.disconnect()
             self.ui.start.clicked.connect(self._onStartExamClient)
 
-
-
     def checkConnectionInfo_and_CloseIt(self):
         '''is there an active connection Info on desktop? > close it'''
-        processUtil = PsUtil()
+
+        """processUtil = PsUtil()
         pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
         for p in pids:
             pid = int(p[0])
-            #processUtil.killProcess(pid)
-            os.system("sudo pkill -f ConnectionStatusDispatcher")
-            
+            processUtil.killProcess(pid)
+        """
+        os.system("sudo pkill -f ConnectionStatusDispatcher")
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
@@ -142,12 +139,17 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self._onAbbrechen()
 
     def _onAbbrechen(self):  # Exit button
+        # Close Heartbeat client
+        if self.heartbeat_client:
+            self.logger.info("Heartbeat Client stopped ...")
+            self.heartbeat_client.stop()
         # if in root mode than change log Files to student User
         print("root?: uid: %s" % os.getuid())
         if os.getuid() == 0:
             # root has uid = 0
             os.system("cd %s && chown %s:%s *.log" % (self.rootDir, USER, USER))
         self.ui.close()
+        print("-Exit-")
 
     def updateGUI(self, multicast_client):
         """
@@ -252,6 +254,10 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 os.system(command)
                 if DEBUG_PIN != "":
                     self.logger.debug(command)
+
+                # Start Heartbeat Client
+                self.logger.info("Heartbeat Client started ...")
+                self.heartbeat_client = HeartbeatClient(SERVER_IP, HEARTBEAT_PORT)
         else:
             self._changePalette(self.ui.serverip, "warn")
 
