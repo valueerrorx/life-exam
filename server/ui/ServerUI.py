@@ -12,7 +12,7 @@ import sip
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
     SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH, WEB_ROOT,\
-    DELIVERY_DIRECTORY, USER_HOME_DIR, HEARTBEAT_PORT
+    DELIVERY_DIRECTORY, USER_HOME_DIR
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -38,7 +38,6 @@ from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
 from classes.Hasher import Hasher
-from classes.Heartbeats.Heartbeat_Server import HeartBeatServer
 
 
 class MsgType(Enum):
@@ -190,8 +189,8 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.finish(self)
 
         # Heartbeat Server
-        self.heartbeat_server = HeartBeatServer(HEARTBEAT_PORT)
-        self.heartbeat_server.silentClientList_Signal.connect(self.removeZombie)
+        # self.heartbeat_server = HeartBeatServer(HEARTBEAT_PORT)
+        # self.heartbeat_server.silentClientList_Signal.connect(self.removeZombie)
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()

@@ -12,14 +12,12 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 
-from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT,\
-    HEARTBEAT_PORT
+from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
-from classes.Heartbeats.Heartbeat_Client import HeartbeatClient
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -122,13 +120,13 @@ class ClientDialog(QtWidgets.QDialog, Observers):
     def checkConnectionInfo_and_CloseIt(self):
         '''is there an active connection Info on desktop? > close it'''
 
-        """processUtil = PsUtil()
+        processUtil = PsUtil()
         pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
         for p in pids:
             pid = int(p[0])
             processUtil.killProcess(pid)
-        """
-        os.system("sudo pkill -f ConnectionStatusDispatcher")
+        # benötigt sudo PAssword wenn mit nachfolgender Zeile, daher obige Lösung
+        # os.system("sudo pkill -f ConnectionStatusDispatcher")
 
     def newOnkeyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
@@ -139,10 +137,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self._onAbbrechen()
 
     def _onAbbrechen(self):  # Exit button
-        # Close Heartbeat client
-        if self.heartbeat_client:
-            self.logger.info("Heartbeat Client stopped ...")
-            self.heartbeat_client.stop()
         # if in root mode than change log Files to student User
         print("root?: uid: %s" % os.getuid())
         if os.getuid() == 0:
@@ -155,7 +149,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         """
         Event Update from Observeable MultiCastClient
         """
-
         data = multicast_client.info
         server_ip = multicast_client.server_ip
 
@@ -257,9 +250,15 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
                 # Start Heartbeat Client
                 self.logger.info("Heartbeat Client started ...")
-                self.heartbeat_client = HeartbeatClient(SERVER_IP, HEARTBEAT_PORT)
+                if self.heartbeat_client:
+                    self.heartbeat_client.setServerIP(SERVER_IP)
+                    self.heartbeat_client.start()
         else:
             self._changePalette(self.ui.serverip, "warn")
+
+    def setHeartbeatClient(self, client):
+        """ sets the Heartbeat Client """
+        self.heartbeat_client = client
 
     def _changePalette(self, item, reason):
         if reason == 'warn':

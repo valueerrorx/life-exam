@@ -4,7 +4,6 @@ encoding//classes/ConnectionStatus/ConnectionStatusDispatcher.py=utf-8
 encoding//classes/Event.py=utf-8
 encoding//classes/HTMLTextExtractor.py=utf-8
 encoding//classes/Hasher.py=utf-8
-encoding//classes/Heartbeats/HeartbeatFactory.py=utf-8
 encoding//classes/Notification/Notification.py=utf-8
 encoding//classes/Notification/NotificationDispatcher.py=utf-8
 encoding//classes/Notification/NotificationTest.py=utf-8

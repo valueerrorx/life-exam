@@ -14,12 +14,14 @@ from pathlib import Path
 import logging
 import qt5reactor
 from PyQt5 import QtWidgets
+from classes.Heartbeats.HeartbeatServer import HeartBeatServer
 
 # add application root to python path for imports at position 0
 sys.path.insert(0, Path(__file__).parent.parent.as_posix())
 
 from classes import mutual_functions
 from classes.Splashscreen.SplashScreen import SplashScreen
+
 from config.logger import configure_logging
 from config.config import SERVER_PORT, SERVERFILES_DIRECTORY, HEARTBEAT_PORT
 
@@ -61,13 +63,12 @@ if __name__ == '__main__':
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor
-    # start the server on SERVER_PORT
 
     try:
         reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app))  #noqa
-        reactor.listenUDP(HEARTBEAT_PORT, HeartbeatFactory())
-    except Exception:
-        print("Adress already taken")
+        reactor.listenUDP(HEARTBEAT_PORT, HeartBeatServer())  #noqa
+    except Exception as ex:
+        print("Socket already in use!")
         os._exit(0)  # noqa
 
     logger = logging.getLogger('server')

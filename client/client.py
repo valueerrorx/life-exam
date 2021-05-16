@@ -10,6 +10,9 @@ import sys
 from pathlib import Path
 from classes.psUtil import PsUtil
 import logging
+from config.config import HEARTBEAT_PORT
+from classes.Heartbeats.HeartbeatClient import HeartbeatClient
+
 # add application root to python path for imports at position 0
 rootPath = Path(__file__).parent.parent.as_posix()
 sys.path.insert(0, rootPath)
@@ -75,6 +78,7 @@ if __name__ == '__main__':
     FILE_NAME = uifile = rootDir.joinpath("client/started_client.lock")
 
     logger = logging.getLogger(__name__)
+    configure_logging(False)       # True is Server
 
     # do not start twice
     if os.path.exists(FILE_NAME):
@@ -85,11 +89,12 @@ if __name__ == '__main__':
     print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
     atexit.register(cleanUpLockFile, FILE_NAME)
 
-    configure_logging(False)       # True is Server
-
     app = QtWidgets.QApplication(sys.argv)
     dialog = ClientDialog()
     dialog.ui.show()
+
+    HBClient = HeartbeatClient()
+    dialog.setHeartbeatClient(HBClient)
 
     # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
     # testRunningTwistd(logger,dialog)
@@ -98,4 +103,5 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
     reactor.listenMulticast(8005, MulticastLifeClient(), listenMultiple=True)  #noqa
+    reactor.listenUDP(HEARTBEAT_PORT, HBClient)  #noqa
     sys.exit(app.exec_())
