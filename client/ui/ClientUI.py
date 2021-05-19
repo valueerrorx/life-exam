@@ -19,7 +19,6 @@ from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
-from classes.CmdRunner import CmdRunner
 import subprocess
 
 
@@ -95,7 +94,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self.testRunningTwistd()
         self.checkConnectionInfo_and_CloseIt()
         self.killRunningClientProcesses()
-        
+
     def killRunningClientProcesses(self):
         """ kills Heartbeatclient, Pid is readed frim PID File """
         pids = self.readPIDFile()
@@ -106,9 +105,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         # delete PIDFile
         filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
         if os.path.exists(filename):
-            os.remove(filename) 
-        
-    
+            os.remove(filename)
+
     def testRunningTwistd(self):
         """ if a running twistd client is found > kill it """
         processUtil = PsUtil()
@@ -221,7 +219,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
     def _on_offline_exam_exit(self):
         startcommand = "sudo -E %s/lockdown/stopexam.sh &" % (EXAMCONFIG_DIRECTORY)
         os.system(startcommand)  # start script
-    
+
     def readPIDFile(self):
         pids = []
         filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
@@ -232,7 +230,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             return pids
         except IOError:
             return []
-        
+
     def writePIDFile(self, pids):
         filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
         try:
@@ -272,9 +270,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # for item in plgs:
                 #    print(item)
                 # print(sys.path)
-                
-                pids = []
 
+                pids = []
                 # port, host, id, pincode, application_dir
                 command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 os.system(command)
@@ -286,9 +283,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
                 if DEBUG_PIN != "":
                     self.logger.debug(command)
-
                 proc = subprocess.Popen(command, shell=True)
-                
                 pids.append(proc.pid)
                 self.writePIDFile(pids)
         else:

@@ -46,18 +46,6 @@ def cleanUpLockFile(file):
         os.remove(file)
 
 
-def killRunningTwistd(logger):
-    """ if a running twistd client is found > kill it """
-    processUtil = PsUtil()
-    pid = processUtil.GetProcessByName("twistd3")
-    if len(pid) > 0:
-        logger.info("Found a running twistd, killing that process ...")
-        # found a twistd process, kill all pids
-        for p in pid:
-            cmd = "sudo -E kill -9 %s" % int(p[0])
-            os.system(cmd)
-
-
 def checkRunningPID():
     """ check id the PID from Lock File is still active, if not then delete LockFile """
     f = open(FILE_NAME, "r")
@@ -84,7 +72,7 @@ if __name__ == '__main__':
             print("Client Process found, exiting now ...")
             sys.exit(0)
 
-    print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
+    print('Lock File created: Preventing starting twice ...')
     atexit.register(cleanUpLockFile, FILE_NAME)
 
     app = QtWidgets.QApplication(sys.argv)
