@@ -12,16 +12,21 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 
-from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
+from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT,\
+    HEARTBEAT_PORT, HEARTBEAT_INTERVALL
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
+from classes.CmdRunner import CmdRunner
+import subprocess
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
     """ A dialog """
+
+    CLIENT_PID_FILE = "clientPIDS.pid"
 
     def __init__(self):  # noqa 
         QtWidgets.QDialog.__init__(self)
@@ -40,7 +45,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         self._initUi()
         prepareDirectories()
         checkGeogebraStarter_isinPlace()
-        self.heartbeat_client = None
 
     def _initUi(self):
         # Register self to Global Observer List Object
@@ -90,7 +94,21 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
         self.testRunningTwistd()
         self.checkConnectionInfo_and_CloseIt()
-
+        self.killRunningClientProcesses()
+        
+    def killRunningClientProcesses(self):
+        """ kills Heartbeatclient, Pid is readed frim PID File """
+        pids = self.readPIDFile()
+        psutil = PsUtil()
+        for p in pids:
+            # Try to kill Processes
+            psutil.killProcess(p)
+        # delete PIDFile
+        filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
+        if os.path.exists(filename):
+            os.remove(filename) 
+        
+    
     def testRunningTwistd(self):
         """ if a running twistd client is found > kill it """
         processUtil = PsUtil()
@@ -125,7 +143,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         for p in pids:
             pid = int(p[0])
             processUtil.killProcess(pid)
-        # benötigt sudo PAssword wenn mit nachfolgender Zeile, daher obige Lösung
+        # benötigt sudo Password wenn mit nachfolgender Zeile, daher obige Lösung
         # os.system("sudo pkill -f ConnectionStatusDispatcher")
 
     def newOnkeyPressEvent(self, e):
@@ -203,6 +221,28 @@ class ClientDialog(QtWidgets.QDialog, Observers):
     def _on_offline_exam_exit(self):
         startcommand = "sudo -E %s/lockdown/stopexam.sh &" % (EXAMCONFIG_DIRECTORY)
         os.system(startcommand)  # start script
+    
+    def readPIDFile(self):
+        pids = []
+        filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
+        try:
+            with open(filename, 'r') as fh:
+                for line in fh:
+                    pids.append(int(line))
+            return pids
+        except IOError:
+            return []
+        
+    def writePIDFile(self, pids):
+        filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
+        try:
+            f = open(filename, 'w+')  # create new file
+            for p in pids:
+                f.write("%s" % (p))
+            f.close()
+            changePermission(filename, "777")
+        except IOError:
+            self.logger.error("Can't create file %s" % filename)
 
     def _onStartExamClient(self):
         SERVER_IP = self.ui.serverip.text()
@@ -224,15 +264,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 cmd = 'python3 %s "%s" "%s" &' % (path, 1, exam)
                 os.system(cmd)
 
-                # moved this to workdirectory because config directory is overwritten on exam start
-                namefile = os.path.join(WORK_DIRECTORY, "myname.txt")
-                try:
-                    openednamefile = open(namefile, 'w+')  # create new file
-                    openednamefile.write("%s" % (ID))
-                    changePermission(namefile, "777")
-                except IOError:
-                    self.logger.error("Can't create myname.txt")
-
                 from twisted.plugin import IPlugin, getPlugins
                 # Update the cache system
                 # see https://twistedmatrix.com/documents/current/core/howto/plugin.html
@@ -241,6 +272,8 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # for item in plgs:
                 #    print(item)
                 # print(sys.path)
+                
+                pids = []
 
                 # port, host, id, pincode, application_dir
                 command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
@@ -249,16 +282,17 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                     self.logger.debug(command)
 
                 # Start Heartbeat Client
-                self.logger.info("Heartbeat Client started ...")
-                if self.heartbeat_client:
-                    self.heartbeat_client.setServerIP(SERVER_IP)
-                    self.heartbeat_client.start()
+                # ip, port, interval
+                command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
+                if DEBUG_PIN != "":
+                    self.logger.debug(command)
+
+                proc = subprocess.Popen(command, shell=True)
+                
+                pids.append(proc.pid)
+                self.writePIDFile(pids)
         else:
             self._changePalette(self.ui.serverip, "warn")
-
-    def setHeartbeatClient(self, client):
-        """ sets the Heartbeat Client """
-        self.heartbeat_client = client
 
     def _changePalette(self, item, reason):
         if reason == 'warn':

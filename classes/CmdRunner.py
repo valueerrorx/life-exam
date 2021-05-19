@@ -6,6 +6,8 @@ import pwd
 
 
 class CmdRunner():
+    pid = None
+    
     def __init__(self):
         self._stderr = ""
         self._stdout = ""
@@ -40,6 +42,12 @@ class CmdRunner():
         for line in iter(proc.stdout.readline, b''):
             self._stdout += line.decode()
         proc.communicate()
+
+        self.pid = proc.pid
+
+    def getPID(self):
+        """ returns the running PID """
+        return self.pid
 
     def runCmdasUser(self, cmd):
         ''' runs a command as student '''

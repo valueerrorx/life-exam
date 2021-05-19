@@ -44,7 +44,7 @@ SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses th
 
 # Heartbeat Section
 HEARTBEAT_PORT = 43278
-HEARTBEAT_INTERVALL = 10    # sec
+HEARTBEAT_INTERVALL = 2    # sec
 HEARTBEAT_START_AFTER = 5   # sec
 MAX_HEARTBEAT_FAILS = 3     # maximum number of Heartbeats missing, until a Client is marked as offline
 MAX_HEARTBEAT_KICK = 8      # maximum number of Heartbeats missing, until a Client is removed

@@ -10,9 +10,6 @@ import sys
 from pathlib import Path
 from classes.psUtil import PsUtil
 import logging
-from config.config import HEARTBEAT_PORT
-from classes.Heartbeats.HeartbeatClient import HeartbeatClient
-import socket
 
 # add application root to python path for imports at position 0
 rootPath = Path(__file__).parent.parent.as_posix()
@@ -62,7 +59,7 @@ def killRunningTwistd(logger):
 
 
 def checkRunningPID():
-    """ check id the PID from Lock File is still active, if not then del LockFile """
+    """ check id the PID from Lock File is still active, if not then delete LockFile """
     f = open(FILE_NAME, "r")
     pid = f.read()
     ps = PsUtil()
@@ -72,20 +69,6 @@ def checkRunningPID():
         print("Deleted Client Zombie Process Lock File ...")
         return False
     return True
-
-def testSocketisinUse():
-    """
-    check if server is running on same machine. If that is the case,
-    Socket is in Use > disable HeartbeatClient
-    """
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # Ip doesnt matter, just to test port
-        s.connect(('127.0.0.1', HEARTBEAT_PORT))
-        s.close()
-    except Exception:
-        return True
-    return False
 
 
 if __name__ == '__main__':
@@ -108,12 +91,6 @@ if __name__ == '__main__':
     dialog = ClientDialog()
     dialog.ui.show()
 
-    HBClient = HeartbeatClient()
-    dialog.setHeartbeatClient(HBClient)
-    
-    # check if server is running on same machine
-    socketBlocked = testSocketisinUse()
-
     # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
     # testRunningTwistd(logger,dialog)
 
@@ -121,9 +98,5 @@ if __name__ == '__main__':
 
     from twisted.internet import reactor
     reactor.listenMulticast(8005, MulticastLifeClient(), listenMultiple=True)  #noqa
-    if socketBlocked is False:
-        reactor.listenUDP(HEARTBEAT_PORT, HBClient)  #noqa
-    else:
-        logger.info("Heartbeat Client NOT started, because Socket is blocked ...")
-        logger.info("Seems Server is running on the same machine")
+
     sys.exit(app.exec_())
