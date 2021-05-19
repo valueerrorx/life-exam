@@ -31,8 +31,6 @@ class Command(Enum):
     FILE_OK = "FO"
     LOCKSCREEN_OK = "LKSOK"
     UNLOCKSCREEN_OK = "ULKSOK"
-    HEARTBEAT = "RHB"  # request heartbeat
-    HEARTBEAT_BEAT = "HB"  # heartbeat
 
     def tobytes(self):
         return bytes(self.value, 'utf-8')

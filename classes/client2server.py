@@ -70,12 +70,6 @@ class ClientToServer:
         mutual_functions.showDesktopMessage('Connection aborted by the Teacher!')
         client.factory.failcount = 100
 
-    def heartbeat(self, client):
-        """send Heartbeat to Server"""
-        cID = client.line_data_list[1]
-        line = '%s %s' % (Command.HEARTBEAT_BEAT.value, cID)
-        client.sendEncodedLine(line)
-
     def un_lock_screen(self, client):
         """
         Just UNlock the client screen and send OK

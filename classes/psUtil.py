@@ -35,6 +35,28 @@ class PsUtil():
                 print(e)
         return processlist
 
+    def getAllProcesses(self):
+        """ get all running processes with Name and PID """
+        data = []
+        for proc in psutil.process_iter():
+            try:
+                # Get process name & pid from process object
+                processName = proc.name()
+                processID = proc.pid
+                data.append([processName, processID])
+                # print(processName , ' ::: ', processID)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        return data
+
+    def isRunning(self, thepid):
+        """ Test if an PID ist in Process List """
+        processes = self.getAllProcesses()
+        for p in processes:
+            if int(thepid) == p[1]:
+                return True
+        return False
+
     def closePID(self, pid):
         """kill the old running Process"""
         return self.killProcess(pid)

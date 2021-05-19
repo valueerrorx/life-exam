@@ -43,6 +43,7 @@ import sys
 from classes.mutual_functions import copyDesktopStarter
 from classes.closeNSaveApps import closeNSaveApps
 
+
 class MyClientProtocol(basic.LineReceiver):
 
     def __init__(self, factory, appDir):
@@ -186,7 +187,6 @@ class MyClientProtocol(basic.LineReceiver):
             Command.LOCK.value: self.client_to_server.lock_screen,
             Command.UNLOCK.value: self.client_to_server.un_lock_screen,
             Command.EXITEXAM.value: self.client_to_server.exitExam,
-            Command.HEARTBEAT.value: self.client_to_server.heartbeat,
         }
 
         line_handler = command.get(self.line_data_list[0], None)
@@ -218,12 +218,10 @@ class MyClientProtocol(basic.LineReceiver):
         return [proc.returncode, stderr, stdout]
 
     def triggerAutosave(self, filename, wait_thread):
-        
         cas = closeNSaveApps()
-        data = cas._countOpenApps() # [open_apps, pids, app_ids]
+        data = cas._countOpenApps()  # [open_apps, pids, app_ids]
         cas._fireSaveApps(data[1], data[2])
-         
-        
+
         """ Create Zip File and send it to server """
         self.inform("Abgabe ZIP wird an Lehrer versendet ...", Notification_Type.Warning)
         finalname = self.create_abgabe_zip(filename)

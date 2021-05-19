@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from classes.psUtil import PsUtil
 import logging
+
 # add application root to python path for imports at position 0
 rootPath = Path(__file__).parent.parent.as_posix()
 sys.path.insert(0, rootPath)
@@ -29,6 +30,7 @@ def lockFile(lockfile):
     """ prevent to start client twice """
     fp = open(lockfile, 'w')  # create a new one
     try:
+        fp.write("%s" % os.getpid())
         fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
         # the file has been locked
         success = True
@@ -43,20 +45,18 @@ def cleanUpLockFile(file):
     if os.path.exists(file):
         os.remove(file)
 
-        
 
-def killRunningTwistd(logger):
-    """ if a running twistd client is found > kill it """
-    processUtil = PsUtil()
-    pid = processUtil.GetProcessByName("twistd3")
-    if len(pid) > 0:
-        logger.info("Found a running twistd, killing that process ...")
-        # found a twistd process, kill all pids
-        for p in pid:
-            cmd = "sudo -E kill -9 %s" % int(p[0])
-            os.system(cmd)
-
-
+def checkRunningPID():
+    """ check id the PID from Lock File is still active, if not then delete LockFile """
+    f = open(FILE_NAME, "r")
+    pid = f.read()
+    ps = PsUtil()
+    if ps.isRunning(pid) is False:
+        # old Process is dead
+        cleanUpLockFile(FILE_NAME)
+        print("Deleted Client Zombie Process Lock File ...")
+        return False
+    return True
 
 
 if __name__ == '__main__':
@@ -64,30 +64,27 @@ if __name__ == '__main__':
     FILE_NAME = uifile = rootDir.joinpath("client/started_client.lock")
 
     logger = logging.getLogger(__name__)
-
+    configure_logging(False)       # True is Server
 
     # do not start twice
     if os.path.exists(FILE_NAME):
-        #cleanUpLockFile(FILE_NAME)
-        logger.info("Client Lock File found, exiting now ...")
-        sys.exit(0)
-        
-  
-    print('Lock File created: Preventing starting twice ...', lockFile(FILE_NAME))
-    atexit.register(cleanUpLockFile, FILE_NAME)
+        if checkRunningPID() is True:
+            print("Client Process found, exiting now ...")
+            sys.exit(0)
 
-    configure_logging(False)       # True is Server
+    print('Lock File created: Preventing starting twice ...')
+    atexit.register(cleanUpLockFile, FILE_NAME)
 
     app = QtWidgets.QApplication(sys.argv)
     dialog = ClientDialog()
     dialog.ui.show()
-    
-    # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
-    #testRunningTwistd(logger,dialog)
 
-        
+    # test if twistd is running (show information and disable connect button ? or allow to kill current connection ??
+    # testRunningTwistd(logger,dialog)
+
     qt5reactor.install()  # imported from file and needed for Qt to function properly in combination with twisted reactor
 
     from twisted.internet import reactor
     reactor.listenMulticast(8005, MulticastLifeClient(), listenMultiple=True)  #noqa
+
     sys.exit(app.exec_())

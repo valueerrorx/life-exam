@@ -32,14 +32,11 @@ from server.ui.threads.Thread_Progress_Events import client_abgabe_done,\
     client_abgabe_done_exit_exam, client_received_file_done, client_lock_screen,\
     client_unlock_screen
 from server.ui.threads.Thread_Progress import Thread_Progress
-from server.ui.threads.Heartbeat import Heartbeat
 from classes.ConfigTools import ConfigTools
-from classes.Thread_Countdown import Thread_Countdown
 from classes import mutual_functions
 from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
-import hashlib
 from classes.Hasher import Hasher
 
 
@@ -191,11 +188,9 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
 
-        # Heartbeat Thread
-        #self.heartbeat = Heartbeat(self)
-        #self.heartbeat.kick_zombie.connect(self.removeZombie)
-        #self.heartbeat.request_heartbeat.connect(self.request_heartbeat)
-        #self.heartbeat.start()
+        # Heartbeat Server
+        # self.heartbeat_server = HeartBeatServer(HEARTBEAT_PORT)
+        # self.heartbeat_server.silentClientList_Signal.connect(self.removeZombie)
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -220,22 +215,20 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(200, "Screenshot intervall gesetzt")
         intervall = self.ui.ssintervall.value()
 
-        if self.factory.lcs.running:
-            self.factory.lcs.stop()
-        if intervall != 0:
-            self.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
-            self.factory.lcs.start(intervall)
-        else:
-            self.log("<b>Screenshot Intervall is set to 0 - Screenshotupdate deactivated</b>")
+        if hasattr(self.factory, 'lcs'):
+            if self.factory.lcs.running:
+                self.factory.lcs.stop()
+            if intervall != 0:
+                self.log("<b>Changed Screenshot Intervall to %s seconds </b>" % (str(intervall)))
+                self.factory.lcs.start(intervall)
+            else:
+                self.log("<b>Screenshot Intervall is set to 0 - Screenshotupdate deactivated</b>")
 
     def _onSendPrintconf(self, who):
         """send the printer configuration to all clients"""
 
         if self.clientsConnected() is False:
             return
-        
-        # during filetransfer off
-        self.suspendHeartbeats()
 
         self._show_workingIndicator(500, "Drucker Konfiguration senden")
         server_to_client = self.factory.server_to_client
@@ -271,8 +264,6 @@ class ServerUI(QtWidgets.QDialog):
 
         # send line and file to all clients
         server_to_client.send_file(file_path, who, DataType.PRINTER.value)
-        
-        self.resumeHeartbeats()
 
     def _onPrintconf(self):
         command = "kcmshell5 kcm_printer_manager &"
@@ -289,8 +280,6 @@ class ServerUI(QtWidgets.QDialog):
         """locks or unlock the client screens"""
         if self.clientsConnected() is False:
             return
-        
-        self.suspendHeartbeats()
 
         clients = self.get_list_widget_items()
         # self._startWorkingIndicator("Locking Client Screens ... ")
@@ -319,7 +308,6 @@ class ServerUI(QtWidgets.QDialog):
                 self.factory.clientslocked = False
                 icon = self.rootDir.joinpath("pixmaps/network-wired-symbolic.png.png").as_posix()
                 self.ui.screenlock.setIcon(QIcon(icon))
-        self.resumeHeartbeats()
 
     def _onOpenshare(self):
         dir_path = os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY)
@@ -373,9 +361,6 @@ class ServerUI(QtWidgets.QDialog):
         who = connection ID or 'all'
         """
         server_to_client = self.factory.server_to_client
-
-        # suspend Heartbeat during filetransfer
-        self.suspendHeartbeats()
 
         # check if server is already in rawmode (ongoing filetransfer)
         if self.factory.rawmode is True:
@@ -440,9 +425,6 @@ class ServerUI(QtWidgets.QDialog):
         msg = "<b>Requesting Screenshot Update </b>"
         self.log(msg)
 
-        # suspend Heartbeat during filetransfer
-        # self.suspendHeartbeats()
-
         if self.factory.rawmode is True:
             self.log("Waiting for ongoing file-transfers to finish ...")
             return
@@ -456,16 +438,6 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(500, "Zeige deine IP an")
         show_ip()
 
-    def suspendHeartbeats(self):
-        """ suspend Heartbeats until resumed"""
-        #self.heartbeat.suspend()
-        self.log("Heartbeats PAUSE")
-
-    def resumeHeartbeats(self):
-        """ if Heartbeats suspended, resume them """
-        #self.heartbeat.resume()
-        self.log("Heartbeats RESUMED")
-
     def onAbgabe(self, who, auto):
         """
         get SHARE folder from client
@@ -475,8 +447,6 @@ class ServerUI(QtWidgets.QDialog):
         if self.clientsConnected() is False:
             return
 
-        # suspend Heartbeat during filetransfer
-        self.suspendHeartbeats()
         # manual triggered?
         self.autoAbgabe = auto
 
@@ -513,8 +483,6 @@ class ServerUI(QtWidgets.QDialog):
         send configuration-zip to clients - unzip there
         invoke startexam.sh file on clients
         """
-        # HB aus
-        self.suspendHeartbeats()
 
         self._show_workingIndicator(500, "Starte die Prüfung")
         server_to_client = self.factory.server_to_client
@@ -574,20 +542,15 @@ class ServerUI(QtWidgets.QDialog):
             client_widget = self.get_list_widget_by_client_ConID(who)
             client_widget.setExamIconON()
 
-        # wait until all Clients started, then activate Heartbeats again
-        # time in sec
-        #countdown_thread = Thread_Countdown(None, 5 * 60, self.resumeHeartbeats())
-        #countdown_thread.start()
-
     def _on_exit_exam(self, who):
         """
         Ends the Exammode from a Client, who=all or name
         """
         self.log("<b>Finishing Exam</b>")
         self._show_workingIndicator(2000, "Prüfung wird beendet")
-        #if self.factory.lcs.running:
-            # disable autoscreenshot, lcs = Loopingcall
-            #self.factory.lcs.stop()
+        # if self.factory.lcs.running:
+        # disable autoscreenshot, lcs = Loopingcall
+        # self.factory.lcs.stop()
 
         if self.factory.lc.running:
             icon = self.rootDir.joinpath("pixmaps/chronometer-off.png").as_posix()
@@ -712,8 +675,6 @@ class ServerUI(QtWidgets.QDialog):
             # remove from Listwidget the QListWidgetItem
             # UI Label Update count clients
             self.ui.label_clients.setText(self.createClientsLabel())
-            # Update Heartbeat List
-            #self.heartbeat.updateClientHeartbeats()
 
     def _onRemoveClient(self, con_id):
         """ Entfernt einen Client aus dem Widget """
@@ -757,8 +718,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.logwidget.append(timestamp + " " + str(msg))
         # ...
         self.DebugLog(msg, show_allways)
-
-    
 
     def createOrUpdateListItem(self, client, screenshot_file_path):
         """ generates new List Item that displays the client screenshot """
@@ -824,9 +783,6 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.listWidget.addItem(itemN)                # add the listitem to the listwidget
         self.ui.listWidget.setItemWidget(itemN, widget)  # set the widget as the listitem's widget
 
-        # Update Heartbeat List
-        #self.heartbeat.updateClientHeartbeats()
-
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
@@ -837,7 +793,7 @@ class ServerUI(QtWidgets.QDialog):
 
     def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
         print(screenshot_file_path)
-        
+
         self.screenshotwindow.setClientConnectionID(client_name)
         self.screenshotwindow.setClientname(client_name)
         self.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
@@ -952,7 +908,6 @@ class ServerUI(QtWidgets.QDialog):
         if str(retval) == "16384":
             # Threads Shutdown
             # self.jobs.stop()
-            #self.heartbeat.stop()
             self.stopWidgetIconTimer()
 
             # if in root mode than change log Files to student User
@@ -985,11 +940,6 @@ class ServerUI(QtWidgets.QDialog):
             print("Client is dead %s, %s" % (conId, count))
             if c > MAX_HEARTBEAT_KICK:
                 self._removeClientWidget(conId)
-
-    def request_heartbeat(self, who):
-        """Heartbeat fired time to check the Heartbeat of client"""
-        #server_to_client = self.factory.server_to_client
-        #server_to_client.request_heartbeat(who)
 
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""

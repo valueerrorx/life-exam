@@ -12,9 +12,9 @@ DEBUG_ID = ""
 DEBUG_PIN = ""
 DEBUG_SHOW_NETWORKTRAFFIC = False
 
-#DEBUG_ID = "TestUser"
-#DEBUG_PIN = "1234"
-#DEBUG_SHOW_NETWORKTRAFFIC = True
+DEBUG_ID = "TestUser"
+DEBUG_PIN = "1234"
+DEBUG_SHOW_NETWORKTRAFFIC = True
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
@@ -43,7 +43,8 @@ SERVER_IP = "localhost"
 SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
 # Heartbeat Section
-HEARTBEAT_INTERVALL = 10     # sec
+HEARTBEAT_PORT = 43278
+HEARTBEAT_INTERVALL = 2    # sec
 HEARTBEAT_START_AFTER = 5   # sec
 MAX_HEARTBEAT_FAILS = 3     # maximum number of Heartbeats missing, until a Client is marked as offline
 MAX_HEARTBEAT_KICK = 8      # maximum number of Heartbeats missing, until a Client is removed

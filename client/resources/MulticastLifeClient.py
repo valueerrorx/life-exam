@@ -18,6 +18,8 @@ class MulticastLifeClient(DatagramProtocol):
         self.logger = logging.getLogger(__name__)
 
     def startProtocol(self):
+        # Set the TTL>1 so multicast will cross router hops:
+        self.transport.setTTL(5)
         self.transport.joinGroup("228.0.0.5")        # Join the multicast address, so we can receive replies:
         self.loopObj = LoopingCall(self._sendProbe)  # continuously send probe for exam server
         self.loopObj.start(2, now=False)             # wait 2 sec between calls, False start after first wait time
