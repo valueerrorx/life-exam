@@ -1,7 +1,8 @@
 [Desktop Entry]
+Categories=Education;Math;
 Comment[de_AT]=GeoGebra Starter
 Comment=GeoGebra Starter
-Exec=firefox https://localhost/geogebra/index.html
+Exec=google-chrome-stable --app=http://localhost/.GeoGebra-Classic/html
 GenericName[de_AT]=GeoGebra Classic
 GenericName=GeoGebra Classic
 Icon=/home/student/.life/icons/geogebra.png
