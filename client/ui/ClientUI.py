@@ -280,11 +280,11 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
                 # Start Heartbeat Client
                 # ip, port, interval
-                command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
-                if DEBUG_PIN != "":
-                    self.logger.debug(command)
-                proc = subprocess.Popen(command, shell=True)
-                pids.append(proc.pid)
+                #command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
+                #if DEBUG_PIN != "":
+                #    self.logger.debug(command)
+                #proc = subprocess.Popen(command, shell=True)
+                #pids.append(proc.pid)
                 self.writePIDFile(pids)
         else:
             self._changePalette(self.ui.serverip, "warn")
