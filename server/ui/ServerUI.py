@@ -11,7 +11,7 @@ import sip
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN, MAX_HEARTBEAT_KICK, GEOGEBRA_PATH, WEB_ROOT,\
+    SCRIPTS_DIRECTORY, DEBUG_PIN, GEOGEBRA_PATH, WEB_ROOT,\
     DELIVERY_DIRECTORY, USER_HOME_DIR
 from config.enums import DataType
 from server.resources.Applist import findApps
@@ -38,6 +38,7 @@ from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
 from classes.Hasher import Hasher
+from classes.Heartbeats.HeartbeatSignalEmitter import HeartbeatSignalEmitter
 
 
 class MsgType(Enum):
@@ -188,9 +189,9 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
 
-        # Heartbeat Server
-        # self.heartbeat_server = HeartBeatServer(HEARTBEAT_PORT)
-        # self.heartbeat_server.silentClientList_Signal.connect(self.removeZombie)
+        # Heartbeat Server Signal
+        self.heartbeat_server_emitter = HeartbeatSignalEmitter()
+        self.heartbeat_server_emitter.signal_1.connect(self.removeZombie)
 
         self.ui.keyPressEvent = self.newOnkeyPressEvent
         self.ui.show()
@@ -933,13 +934,17 @@ class ServerUI(QtWidgets.QDialog):
         :param count: how often the client was not Reachable
         """
         # if count Reached a Limit, remove client and Heartbeat
+        """
         c = int(count)
         client = self.get_list_widget_by_client_ConID(conId)
         if client:
             client.setOffline()
             print("Client is dead %s, %s" % (conId, count))
             if c > MAX_HEARTBEAT_KICK:
-                self._removeClientWidget(conId)
+        self._removeClientWidget(conId)
+        """
+        print("HB Signal from Server ")
+        pass
 
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""
