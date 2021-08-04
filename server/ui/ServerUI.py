@@ -38,7 +38,6 @@ from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
 from classes.Hasher import Hasher
-from classes.Heartbeats.HeartbeatSignalEmitter import HeartbeatSignalEmitter
 
 
 class MsgType(Enum):
@@ -188,12 +187,8 @@ class ServerUI(QtWidgets.QDialog):
             sleep(3)  # only if not debugging
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
-
-        # Heartbeat Server Signal
-        self.heartbeat_server_emitter = HeartbeatSignalEmitter()
-        self.heartbeat_server_emitter.signal_1.connect(self.removeZombie)
-
         self.ui.keyPressEvent = self.newOnkeyPressEvent
+
         self.ui.show()
 
         self.screenshotwindow = ScreenshotWindow(self)
@@ -851,6 +846,20 @@ class ServerUI(QtWidgets.QDialog):
                     self.logger.debug(widget.getConnectionID())
         return False
 
+    def get_list_widget_by_client_IP(self, client_IP):
+        """ returns the widget from a client """
+        for widget in self.get_list_widget_items():
+            if client_IP == widget.getIP():
+                return widget
+        # there are items in list
+        if len(self.get_list_widget_items()) > 0:
+            self.log("Error: No list widget for IP %s" % client_IP)
+            if DEBUG_PIN != "":
+                self.logger.debug("Widgets in List")
+                for widget in self.get_list_widget_items():
+                    self.logger.debug(widget.getConnectionID())
+        return False
+
     def get_QListWidgetItem_by_client_id(self, con_id):
         """
         returns the QListWidgetItem from a client
@@ -927,24 +936,19 @@ class ServerUI(QtWidgets.QDialog):
         else:
             self.msg = False
 
-    def removeZombie(self, conId, count):
+    @QtCore.pyqtSlot(list)
+    def removeZombie(self, silent_clients):
         """
-        removes a zombie client, fired from Heartbeat.py when a limit is reached
-        :param conId: the ConnectionID from the Client
-        :param count: how often the client was not Reachable
+        removes a zombie client, fired from HeartbeatServer.py when a time limit is reached
+        :param silent_clients: list of IP's
         """
-        # if count Reached a Limit, remove client and Heartbeat
-        """
-        c = int(count)
-        client = self.get_list_widget_by_client_ConID(conId)
-        if client:
-            client.setOffline()
-            print("Client is dead %s, %s" % (conId, count))
-            if c > MAX_HEARTBEAT_KICK:
-        self._removeClientWidget(conId)
-        """
-        print("HB Signal from Server ")
-        pass
+        # get Connection ID
+        for ip in silent_clients:
+            client = self.get_list_widget_by_client_IP(ip)
+            if client:
+                client.setOffline()
+                self.logger.info("Client \"%s\" is dead ...." % client.getName())
+                self._removeClientWidget(client.getConnectionID())
 
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""

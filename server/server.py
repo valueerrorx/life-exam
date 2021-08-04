@@ -65,8 +65,10 @@ if __name__ == '__main__':
     from twisted.internet import reactor
 
     try:
-        reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app))  #noqa
-        reactor.listenUDP(HEARTBEAT_PORT, HeartBeatServer())  #noqa
+        serverFactory = MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app)
+        reactor.listenTCP(SERVER_PORT, serverFactory)  #noqa
+        serverUI = serverFactory.getUI()
+        reactor.listenUDP(HEARTBEAT_PORT, HeartBeatServer(serverUI))  #noqa
     except Exception as ex:
         print(ex)
         os._exit(0)  # noqa  

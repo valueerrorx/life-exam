@@ -64,6 +64,10 @@ class MyServerFactory(protocol.ServerFactory):
         # starting multicast server here in order to provide "factory" information via broadcast
         self.reactor.listenMulticast(8005, MultcastLifeServer(self), listenMultiple=True)
 
+    def getUI(self):
+        """ give me the underlaying UI """
+        return self.window
+    
     def createExamId(self):
         return "Exam-%s" % mutual_functions.generatePin(3)
 

@@ -57,12 +57,14 @@ class HeartBeatServer(DatagramProtocol):
     cleanup = HEARTBEAT_CLEANUP
     abort = False
 
-    def __init__(self):
+    def __init__(self, main_ui):
         self.logger = logging.getLogger(__name__)
         self.port = HEARTBEAT_PORT
         self.HBDictionary = HeartBeatDict()
-        # just a wrapper
-        self.emitter = HeartbeatSignalEmitter()
+        # the main UI
+        self.main_ui = main_ui
+        # just a wrapper, pass Main UI to perform Signals to it
+        self.emitter = HeartbeatSignalEmitter(self.main_ui)
 
         if DEBUG_PIN != "":
             self.logger.info("HeartBeatServer server listening on port %d" % self.port)
@@ -78,10 +80,8 @@ class HeartBeatServer(DatagramProtocol):
     def checkSilentClients(self):
         """ check for silent clients in dict """
         silent = self.HBDictionary.extractSilentClients(self.silent_period)
-        # debug
-        silent = ["192.168.1.10", "192.168.1.11"]
         if silent:
-            self.emitter.emit(silent)
+            self.emitter.emitSilentClients(silent)
             if DEBUG_PIN != "":
                 self.logger.info(silent)
 
