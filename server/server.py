@@ -65,11 +65,13 @@ if __name__ == '__main__':
     from twisted.internet import reactor
 
     try:
-        reactor.listenTCP(SERVER_PORT, MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app))  #noqa
-        reactor.listenUDP(HEARTBEAT_PORT, HeartBeatServer())  #noqa
+        serverFactory = MyServerFactory(SERVERFILES_DIRECTORY, reactor, splash, app)
+        reactor.listenTCP(SERVER_PORT, serverFactory)  #noqa
+        serverUI = serverFactory.getUI()
+        reactor.listenUDP(HEARTBEAT_PORT, HeartBeatServer(serverUI))  #noqa
     except Exception as ex:
-        print("Socket already in use!")
-        os._exit(0)  # noqa
+        print(ex)
+        os._exit(0)  # noqa  
 
     logger = logging.getLogger('server')
     logger.info('Listening on port %d' % (SERVER_PORT))

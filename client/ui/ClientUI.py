@@ -12,14 +12,12 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 
-from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT,\
-    HEARTBEAT_PORT, HEARTBEAT_INTERVALL
+from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
-import subprocess
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -280,11 +278,11 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
                 # Start Heartbeat Client
                 # ip, port, interval
-                command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
-                if DEBUG_PIN != "":
-                    self.logger.debug(command)
-                proc = subprocess.Popen(command, shell=True)
-                pids.append(proc.pid)
+                # command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
+                # if DEBUG_PIN != "":
+                #    self.logger.debug(command)
+                # proc = subprocess.Popen(command, shell=True)
+                # pids.append(proc.pid)
                 self.writePIDFile(pids)
         else:
             self._changePalette(self.ui.serverip, "warn")

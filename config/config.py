@@ -12,9 +12,9 @@ DEBUG_ID = ""
 DEBUG_PIN = ""
 DEBUG_SHOW_NETWORKTRAFFIC = False
 
-#DEBUG_ID = "TestUser"
-#DEBUG_PIN = "1234"
-#DEBUG_SHOW_NETWORKTRAFFIC = True
+DEBUG_ID = "TestUser"
+DEBUG_PIN = "1234"
+DEBUG_SHOW_NETWORKTRAFFIC = True
 
 
 # these apps will try to autosave your work before "abgabe" via xdotool or qdbus
@@ -44,11 +44,12 @@ SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses th
 
 # Heartbeat Section
 HEARTBEAT_PORT = 43278
-HEARTBEAT_INTERVALL = 2    # sec
-HEARTBEAT_START_AFTER = 5   # sec
-MAX_HEARTBEAT_FAILS = 3     # maximum number of Heartbeats missing, until a Client is marked as offline
-MAX_HEARTBEAT_KICK = 8      # maximum number of Heartbeats missing, until a Client is removed
-
+# Clients send Heartbeats in x sec
+HEARTBEAT_INTERVALL = 2
+# Server cleans up silent Clients after x sec
+HEARTBEAT_CLEANUP = 2
+# how long may a client be silent, after that it is marked as zombie x sec
+MAX_HEARTBEAT_DELTA_TIME = 120
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()
