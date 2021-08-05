@@ -22,6 +22,7 @@ Tools needed in order to provide 100% functionality are:
 - check if you have Geogebra Web Apps inside `localhost/geogebra/`.  
   Be sure wich path points to your webserver root, see Configuration.  
   The entry html file is either `index.html` or `Geogebra.html`.
+
   ```
 
   ```
@@ -47,9 +48,9 @@ GEOGEBRA_PATH = "geogebra"
 # Heartbeat Section
 HEARTBEAT_PORT = 43278
 # Clients send Heartbeats in x sec
-HEARTBEAT_INTERVALL = 2
+HEARTBEAT_INTERVALL = 5
 # Server cleans up silent Clients after x sec
-HEARTBEAT_CLEANUP = 2
+HEARTBEAT_CLEANUP = 30
 # how long may a client be silent, after that it is marked as zombie x sec
 MAX_HEARTBEAT_DELTA_TIME = 120
 ```
