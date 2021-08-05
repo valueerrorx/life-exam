@@ -89,8 +89,9 @@ class MyClientProtocol(basic.LineReceiver):
 
         print("Server Fail #%s" % self.factory.failcount)
         # failcount is set to 100 if server refused connection otherwise its slowly incremented
+        # -r means restarting client
         if self.factory.failcount > 2:
-            command = "%s/client/client.py &" % (self.rootDir)
+            command = "%s/client/client.py -r &" % (self.rootDir)
             os.system(command)
             sys.exit(1)
 
@@ -398,7 +399,7 @@ class MyClientFactory(protocol.ReconnectingClientFactory):
         self.failcount += 1
 
         if self.failcount > 3:  # failcount is set to 100 if server refused connection otherwise its slowly incremented
-            command = "%s/client/client.py &" % (self.rootDir)
+            command = "%s/client/client.py -r &" % (self.rootDir)
             print(command)
             os.system(command)
             sys.exit(1)

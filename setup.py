@@ -37,7 +37,8 @@ if __name__ == '__main__':
             'pillow',
             'pyqt5',
             'qt5reactor',
-            'ConfigObj'
+            'ConfigObj',
+            'argparse'
         ],
         python_requires='>=3.8',
     )

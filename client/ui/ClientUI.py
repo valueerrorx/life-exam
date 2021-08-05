@@ -12,12 +12,14 @@ from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QRegExpValidator, QPixmap, QColor
 
 
-from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT
+from config.config import EXAMCONFIG_DIRECTORY, WORK_DIRECTORY, DEBUG_PIN, DEBUG_ID, USER, SERVER_PORT,\
+    HEARTBEAT_INTERVALL, HEARTBEAT_PORT
 
 from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
+import subprocess
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -91,19 +93,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
 
         self.testRunningTwistd()
         self.checkConnectionInfo_and_CloseIt()
-        self.killRunningClientProcesses()
-
-    def killRunningClientProcesses(self):
-        """ kills Heartbeatclient, Pid is readed frim PID File """
-        pids = self.readPIDFile()
-        psutil = PsUtil()
-        for p in pids:
-            # Try to kill Processes
-            psutil.killProcess(p)
-        # delete PIDFile
-        filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
-        if os.path.exists(filename):
-            os.remove(filename)
 
     def testRunningTwistd(self):
         """ if a running twistd client is found > kill it """
@@ -135,7 +124,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         '''is there an active connection Info on desktop? > close it'''
 
         processUtil = PsUtil()
-        pids = processUtil.GetProcessByName("python", "ConnectionStatusDispatcher")
+        pids = processUtil.GetProcessByName("python3", "ConnectionStatusDispatcher")
         for p in pids:
             pid = int(p[0])
             processUtil.killProcess(pid)
@@ -270,19 +259,24 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # print(sys.path)
 
                 pids = []
+                # Start Heartbeat Client ------------------------------------
+                # examclient_plugin connectionLost() is starting client.py again with parameter -r
+                # that means kill the running HeratbeatClient
+                client_path = self.rootDir.joinpath("classes", "Heartbeats").as_posix()
+                # ip, port, interval
+                command = "python3 %s/HeartbeatClient.py %s %s %s &" % (client_path, SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
+                if DEBUG_PIN != "":
+                    self.logger.debug(command)
+                proc = subprocess.Popen(command, shell=True)
+                pids.append(proc.pid)
+
+                # Start Twisted Client ---------------------------------------
                 # port, host, id, pincode, application_dir
                 command = "sudo -E twistd3 -l %s/client.log --pidfile %s/client.pid examclient -p %s -h %s -i %s -c %s -d %s &" % (WORK_DIRECTORY, WORK_DIRECTORY, SERVER_PORT, SERVER_IP, ID, PIN, self.rootDir)
                 os.system(command)
                 if DEBUG_PIN != "":
                     self.logger.debug(command)
-
-                # Start Heartbeat Client
-                # ip, port, interval
-                # command = "python3 %s/Heartbeats/HeartbeatClient.py %s %s %s &" % (self.rootDir.joinpath("classes"), SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
-                # if DEBUG_PIN != "":
-                #    self.logger.debug(command)
-                # proc = subprocess.Popen(command, shell=True)
-                # pids.append(proc.pid)
+                # remember active PID's
                 self.writePIDFile(pids)
         else:
             self._changePalette(self.ui.serverip, "warn")

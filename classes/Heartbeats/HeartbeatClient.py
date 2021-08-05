@@ -2,6 +2,11 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 import sys
+import fcntl
+import atexit
+import os
+from classes.psUtil import PsUtil
+from pathlib import Path
 
 
 class HeartbeatClient(DatagramProtocol):
@@ -36,9 +41,56 @@ class HeartbeatClient(DatagramProtocol):
         self.transport.write(b'HB!', (self.serverIP, self.port))
 
 
-if __name__ == '__main__':
-    # index 0 is the name of the script itself
+def cleanUp(file):
+    """ at client shutdown, delete the lock File """
+    if os.path.exists(file):
+        os.remove(file)
+
+
+def checkRunningPID():
+    """ check id the PID from Lock File is still active, if not then delete LockFile """
+    f = open(FILE_NAME, "r")
+    pid = f.read()
+    ps = PsUtil()
+    if ps.isRunning(pid) is False:
+        # old Process is dead
+        cleanUp(FILE_NAME)
+        print("Deleted Client Zombie Process Lock File ...")
+        return False
+    return True
+
+
+def lockFile(lockfile):
+    """ prevent to start client twice """
+    fp = open(lockfile, 'w')  # create a new one
     try:
+        fp.write("%s" % os.getpid())
+        fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # the file has been locked
+        success = True
+    except IOError:
+        success = False
+    fp.close()
+    return success
+
+
+if __name__ == '__main__':
+    rootDir = Path(__file__).parent
+    FILE_NAME = rootDir.joinpath("hb_client.lock")
+    # do not start twice
+
+    if os.path.exists(FILE_NAME) is True:
+        if checkRunningPID() is True:
+            print("Client Process found, exiting now ...")
+            sys.exit(0)
+    else:
+        print('Lock File created: Preventing starting twice ...')
+        lockFile(FILE_NAME)
+
+    atexit.register(cleanUp, FILE_NAME)
+
+    try:
+        # index 0 is the name of the script itself
         serverIP = sys.argv[1]
         port = int(sys.argv[2])
         interval = int(sys.argv[3])
