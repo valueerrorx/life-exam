@@ -254,8 +254,8 @@ def checkGeogebraStarter_isinPlace():
 
         path_to_file = rootDir.joinpath(applicatins_path, 'GeoGebra.desktop')
         file = open(path_to_file, "w")
-        for l in lines:
-            file.write("%s\n" % l)
+        for line in lines:
+            file.write("%s\n" % line)
         file.close()
 
 
@@ -372,8 +372,8 @@ def openFileManager(path):
         subprocess.check_call(['open', path])
     elif sys.platform.startswith('linux'):
         subprocess.check_call(['sudo', '-u', USER, '-E', 'xdg-open', path])
-        #startcommand = "sudo -u %s -E dolphin %s &" % (USER, path)
-        #os.system(startcommand)
+        # startcommand = "sudo -u %s -E dolphin %s &" % (USER, path)
+        # os.system(startcommand)
     elif sys.platform == 'win32':
         subprocess.check_call(['explorer', path])
 
