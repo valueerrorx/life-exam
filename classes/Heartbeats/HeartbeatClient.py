@@ -1,12 +1,13 @@
+import atexit
+import fcntl
+import os
+import sys
+from pathlib import Path
+
+from classes.psUtil import PsUtil
+from twisted.internet import reactor
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet.task import LoopingCall
-from twisted.internet import reactor
-import sys
-import fcntl
-import atexit
-import os
-from classes.psUtil import PsUtil
-from pathlib import Path
 
 
 class HeartbeatClient(DatagramProtocol):
@@ -97,8 +98,8 @@ if __name__ == '__main__':
 
         heartBeatClientObj = HeartbeatClient(serverIP, port, interval)
 
-        reactor.listenMulticast(8005, heartBeatClientObj, listenMultiple=True)    #noqa
-        reactor.run()  #noqa
+        reactor.listenMulticast(8005, heartBeatClientObj, listenMultiple=True)  # noqa
+        reactor.run()  # noqa
     except Exception as ex:
         print("Usage: HeartbeatClient.py ServerIP Port Intervall")
         print(ex)
