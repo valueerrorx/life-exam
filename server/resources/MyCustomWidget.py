@@ -128,11 +128,11 @@ class MyCustomWidget (QtWidgets.QWidget):
 
         # Overlay Icons
         self.iconStack.setPixmap(pixmap)
-        self.repaint()
 
     def repaint_event(self):
         """ Pixmap has changed > repaint """
         self.image.setPixmap(self.iconStack.getPixmap())
+        self.update()
 
     def getConnectionID(self):
         """ return the ID of the Client """

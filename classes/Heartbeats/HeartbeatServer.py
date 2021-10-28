@@ -18,6 +18,7 @@ class HeartBeatDict:
             self.beatDict['127.0.0.1'] = time()
         self.dictLock = Lock()
 
+    # equals to __toString() from Java
     def __repr__(self):
         data = ''
         self.dictLock.acquire()

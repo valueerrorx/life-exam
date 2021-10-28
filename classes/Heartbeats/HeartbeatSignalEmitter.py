@@ -12,7 +12,8 @@ class HeartbeatSignalEmitter(PyQt5.QtCore.QObject):
         self.connectSilentClientsSignal()
 
     def connectSilentClientsSignal(self):
-        self.signal_1.connect(self.main_ui.removeZombie)
+        self.signal_1.connect(self.main_ui.silentClientsUpdate)
 
     def emitSilentClients(self, what):
+        """ fire Signal which Clients are silent """
         self.signal_1.emit(what)

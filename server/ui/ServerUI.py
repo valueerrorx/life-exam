@@ -208,7 +208,7 @@ class ServerUI(QtWidgets.QDialog):
         return ("Clients: <b>%s</b>" % self.ui.listWidget.count())
 
     def _changeAutoscreenshot(self):
-        self._show_workingIndicator(200, "Screenshot intervall gesetzt")
+        self._show_workingIndicator(200, "Screenshot Intervall gesetzt")
         intervall = self.ui.ssintervall.value()
 
         if hasattr(self.factory, 'lcs'):
@@ -782,6 +782,8 @@ class ServerUI(QtWidgets.QDialog):
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
+        # force repaint with OverlayIcons
+        existing_item.repaint()
 
         hasher = Hasher()
         uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
@@ -937,18 +939,18 @@ class ServerUI(QtWidgets.QDialog):
             self.msg = False
 
     @QtCore.pyqtSlot(list)
-    def removeZombie(self, silent_clients):
+    def silentClientsUpdate(self, silent_clients):
         """
-        removes a zombie client, fired from HeartbeatServer.py when a time limit is reached
-        :param silent_clients: list of IP's
+        fired from HeartbeatServer.py when a time limit is reached
+        :param silent_clients: list of IP's which clients are silent
         """
         # get Connection ID
         for ip in silent_clients:
             client = self.get_list_widget_by_client_IP(ip)
             if client:
                 client.setOffline()
-                self.logger.info("Client \"%s\" is dead ...." % client.getName())
-                self._removeClientWidget(client.getConnectionID())
+                self.logger.info("Client \"%s\" is silent ...." % client.getName())
+                # self._removeClientWidget(client.getConnectionID())
 
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""
