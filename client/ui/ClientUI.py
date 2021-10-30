@@ -20,12 +20,13 @@ from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
 import subprocess
+from PyQt5.Qt import QTimer
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
     """ A dialog """
 
-    CLIENT_PID_FILE = "clientPIDS.pid"
+    CLIENT_PID_FILE = "client_extras.pid"
 
     def __init__(self):  # noqa 
         QtWidgets.QDialog.__init__(self)
@@ -105,6 +106,14 @@ class ClientDialog(QtWidgets.QDialog, Observers):
             self.ui.start.clicked.disconnect()
             self.ui.start.clicked.connect(self.killRunningTwistd)
 
+    def clearStatusMessage(self):
+        self.ui.status.setText("")
+
+    def showNhide(self, msg, time=2000):
+        """ show a Status Message and hide it after some time """
+        self.ui.status.setText(msg)
+        QTimer.singleShot(time, self.clearStatusMessage)
+
     def killRunningTwistd(self):
         """ if a running twistd client is found > kill it """
         processUtil = PsUtil()
@@ -112,11 +121,14 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         if len(pid) > 0:
             # found a twistd process, kill all pids
             for p in pid:
-                cmd = "sudo -E kill -9 %s" % int(p[0])
-                os.system(cmd)
+                try:
+                    # only kills as root
+                    processUtil.killProcess(int(p[0]))
+                except Exception as e:
+                    self.logger.error(e)
 
             self.ui.start.setText("Verbinden")
-            self.ui.status.setText("Terminated existing connection")
+            self.showNhide("Terminated existing connection")
             self.ui.start.clicked.disconnect()
             self.ui.start.clicked.connect(self._onStartExamClient)
 
@@ -124,7 +136,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         '''is there an active connection Info on desktop? > close it'''
 
         processUtil = PsUtil()
-        pids = processUtil.GetProcessByName("python3", "ConnectionStatusDispatcher")
+        pids = processUtil.GetProcessByName("ConnectionStatusDispatcher")
         for p in pids:
             pid = int(p[0])
             processUtil.killProcess(pid)
@@ -207,23 +219,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         startcommand = "sudo -E %s/lockdown/stopexam.sh &" % (EXAMCONFIG_DIRECTORY)
         os.system(startcommand)  # start script
 
-    def readPIDFile(self):
-        pids = []
-        filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
-        try:
-            with open(filename, 'r') as fh:
-                for line in fh:
-                    pids.append(int(line))
-            return pids
-        except IOError:
-            return []
-
-    def writePIDFile(self, pids):
+    def writeExtraPIDFile(self, pids):
         filename = os.path.join(WORK_DIRECTORY, self.CLIENT_PID_FILE)
         try:
             f = open(filename, 'w+')  # create new file
             for p in pids:
-                f.write("%s" % (p))
+                f.write("%s\n" % (p))
             f.close()
             changePermission(filename, "777")
         except IOError:
@@ -258,6 +259,7 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 #    print(item)
                 # print(sys.path)
 
+                processUtil = PsUtil()
                 pids = []
                 # Start Heartbeat Client ------------------------------------
                 # examclient_plugin connectionLost() is starting client.py again with parameter -r
@@ -265,10 +267,9 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 client_path = self.rootDir.joinpath("classes", "Heartbeats").as_posix()
                 # ip, port, interval
                 command = "python3 %s/HeartbeatClient.py %s %s %s &" % (client_path, SERVER_IP, HEARTBEAT_PORT, HEARTBEAT_INTERVALL)
+                os.system(command)
                 if DEBUG_PIN != "":
                     self.logger.debug(command)
-                proc = subprocess.Popen(command, shell=True)
-                pids.append(proc.pid)
 
                 # Start Twisted Client ---------------------------------------
                 # port, host, id, pincode, application_dir
@@ -276,8 +277,23 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 os.system(command)
                 if DEBUG_PIN != "":
                     self.logger.debug(command)
-                # remember active PID's
-                self.writePIDFile(pids)
+
+                # search for running PIDS for Client
+                # Heartbeat Client Connection Info
+                pid = processUtil.GetProcessByName("HeartbeatClient")
+                for p in pid:
+                    pids.append(p[0])
+                if DEBUG_PIN != "":
+                    self.logger.debug("** HeartbeatClient Pid: %s" % pid)
+
+                pid = processUtil.GetProcessByName("ConnectionStatusDispatcher")
+                for p in pid:
+                    pids.append(p[0])
+                if DEBUG_PIN != "":
+                    self.logger.debug("** ConnectionStatusDispatcher Pid: %s" % pid)
+
+                # remember active PID's from extra programs started by the client
+                self.writeExtraPIDFile(pids)
         else:
             self._changePalette(self.ui.serverip, "warn")
 

@@ -13,28 +13,6 @@ class PsUtil():
                 break
         return found
 
-    def GetProcessByName(self, name, cmdline=None):
-        """
-        search for a process with Name Regex
-        :name: the name of the process
-        :cmdline: arguments in them command line for this process
-        """
-        processlist = []
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-            try:
-                if name.lower() in proc.name().lower():
-                    if cmdline is not None:
-                        cmdl = proc.cmdline()
-                        if self._searchInArray(cmdl, cmdline):
-                            data = ["%s" % proc.pid, "%s" % proc.name()]
-                            processlist.append(data)
-                    else:
-                        data = ["%s" % proc.pid, "%s" % proc.name()]
-                        processlist.append(data)
-            except Exception as e:
-                print(e)
-        return processlist
-
     def getAllProcesses(self):
         """ get all running processes with Name and PID """
         data = []
@@ -70,5 +48,52 @@ class PsUtil():
                 p.terminate()  # or p.kill()
                 return True
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                print("PsUtils cant kill process %s ..." % PID)
+                print("PsUtils can't kill process %s ..." % PID)
                 return False
+
+    def GetProcessByNameOLD(self, name, cmdline=None):
+        """
+        Problems for searching in Arguments
+        search for a process with Name Regex
+        :name: the name of the process
+        :cmdline: arguments in them command line for this process
+        """
+        processlist = []
+        # for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        for proc in psutil.process_iter():
+            try:
+                if name.lower() in proc.name().lower():
+                    if cmdline is not None:
+                        cmdl = proc.cmdline()
+                        if self._searchInArray(cmdl, cmdline):
+                            data = ["%s" % proc.pid, "%s" % proc.name()]
+                            processlist.append(data)
+                    else:
+                        data = ["%s" % proc.pid, "%s" % proc.name()]
+                        processlist.append(data)
+            except Exception as e:
+                print(e)
+        return processlist
+
+    def GetProcessByName(self, name):
+        """
+        search for a process with Name Regex and also search in Arguments
+        :name: the name of the process
+        """
+        processlist = []
+        # for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        for proc in psutil.process_iter():
+            try:
+                # print("%s %s %s" % (proc.pid, proc.name(), proc.cmdline()))
+                if name.lower() in proc.name().lower():
+                    data = ["%s" % proc.pid, "%s" % proc.name()]
+                    processlist.append(data)
+                else:
+                    # also search in Cmd Lines
+                    cmdl = proc.cmdline()
+                    if self._searchInArray(cmdl, name):
+                        data = ["%s" % proc.pid, "%s" % proc.name()]
+                        processlist.append(data)
+            except Exception as e:
+                print(e)
+        return processlist

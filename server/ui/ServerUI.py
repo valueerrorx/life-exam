@@ -7,7 +7,7 @@ import os
 import shutil
 from time import sleep
 from pathlib import Path
-import sip
+import sip  #noqa
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
@@ -768,7 +768,7 @@ class ServerUI(QtWidgets.QDialog):
 
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         widget.customContextMenuRequested.connect(lambda: self._on_context_menu(client.clientName, False))
-        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)
+        widget.mouseDoubleClickEvent = lambda event: self._onDoubleClick(client.clientConnectionID, client.clientName, screenshot_file_path)  # noqa
 
         # important!
         itemN.setSizeHint(widget.sizeHint())
@@ -789,7 +789,7 @@ class ServerUI(QtWidgets.QDialog):
         uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
         existing_item.setID(uniqueID)
 
-    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):
+    def _onDoubleClick(self, client_connection_id, client_name, screenshot_file_path):  # noqa
         print(screenshot_file_path)
 
         self.screenshotwindow.setClientConnectionID(client_name)

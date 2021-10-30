@@ -48,7 +48,7 @@ def cleanUp(file):
         os.remove(file)
 
 
-def readPIDFile(fname):
+def readExtraPIDFile(fname):
     """ any other started processes? """
     pids = []
     filename = os.path.join(WORK_DIRECTORY, fname)
@@ -63,8 +63,8 @@ def readPIDFile(fname):
 
 def killRunningClientProcesses():
     """ kills all started Programms like Heartbeatclient , Pid is readed from PID File """
-    pFName = "clientPIDS.pid"
-    pids = readPIDFile(pFName)
+    pFName = "client_extras.pid"
+    pids = readExtraPIDFile(pFName)
     psutil = PsUtil()
     for p in pids:
         if DEBUG_PIN != "":

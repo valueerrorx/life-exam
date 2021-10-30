@@ -41,7 +41,10 @@ class HeartBeatDict:
         self.dictLock.acquire()
         for key in self.beatDict.keys():
             # dont do home sweet home
+            print(key)
             if "127.0.0.1" not in key:
+                print("Last: %s" % self.beatDict[key])
+                print(when)
                 if self.beatDict[key] < when:
                     silent.append(key)
         self.dictLock.release()
@@ -55,7 +58,7 @@ class HeartBeatServer(DatagramProtocol):
     # delta time a client may be silent in sec
     silent_period = MAX_HEARTBEAT_DELTA_TIME
     # auto cleanup intervall in sec
-    cleanup = HEARTBEAT_CLEANUP
+    cleanup_interval = HEARTBEAT_CLEANUP
     abort = False
 
     def __init__(self, main_ui):
@@ -70,12 +73,12 @@ class HeartBeatServer(DatagramProtocol):
         if DEBUG_PIN != "":
             self.logger.info("HeartBeatServer server listening on port %d" % self.port)
         # check periodic for silent clients
-        self.periodic_check = PeriodicThread(self.auto_checkSilentClients, self.cleanup, "HBCleanUp")
+        self.periodic_check = PeriodicThread(self.auto_checkSilentClients, self.cleanup_interval, "HBCleanUp")
         self.periodic_check.start()
 
     def auto_checkSilentClients(self):
-        if DEBUG_PIN != "":
-            self.logger.info("AutoCleanUp Heartbeat Server Dictionary ...")
+        # if DEBUG_PIN != "":
+        #    self.logger.info("AutoCleanUp Heartbeat Server Dictionary ...")
         self.checkSilentClients()
 
     def checkSilentClients(self):
