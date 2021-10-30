@@ -19,7 +19,6 @@ from classes.Observers import Observers
 from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission, checkGeogebraStarter_isinPlace
 from classes.psUtil import PsUtil
-import subprocess
 from PyQt5.Qt import QTimer
 
 
