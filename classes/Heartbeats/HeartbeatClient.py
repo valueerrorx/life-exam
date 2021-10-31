@@ -39,7 +39,12 @@ class HeartbeatClient(DatagramProtocol):
         pass
 
     def sendHeartBeat(self):
-        self.transport.write(b'HB!', (self.serverIP, self.port))
+        try:
+            self.transport.write(b'HB!', (self.serverIP, self.port))
+            print("HB")
+        except Exception:
+            # Network unreachable
+            print("Network unreachable")
 
 
 def cleanUp(file):

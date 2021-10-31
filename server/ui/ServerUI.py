@@ -945,8 +945,10 @@ class ServerUI(QtWidgets.QDialog):
         :param silent_clients: list of IP's which clients are silent
         """
         # get Connection ID
-        for ip in silent_clients:
-            client = self.get_list_widget_by_client_IP(ip)
+        for client in silent_clients:
+
+            ## how_long = client[1]
+            client = self.get_list_widget_by_client_IP(client[0])
             if client:
                 client.setOffline()
                 self.logger.info("Client \"%s\" is silent ...." % client.getName())

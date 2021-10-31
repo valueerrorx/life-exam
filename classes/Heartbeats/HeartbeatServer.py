@@ -29,24 +29,26 @@ class HeartBeatDict:
         return data
 
     def update(self, entry):
-        "Create or update a dictionary entry"
+        """Create or update a dictionary entry"""
         self.dictLock.acquire()
         self.beatDict[entry] = time()
         self.dictLock.release()
 
-    def extractSilentClients(self, howPast):
-        "Returns a list of entries older than howPast"
+    def extractSilentClients(self, delta_time):
+        """
+        Returns a list of entries older than delta_time in sec
+        :return: ['192.168.3.4', sec]
+        """
         silent = []
-        when = time() - howPast
+        now = time()
+        when = now - delta_time  # jetzt - Intervall alles was davor liegt ist tot
         self.dictLock.acquire()
         for key in self.beatDict.keys():
+            # print("%s: %s" % (key, now-self.beatDict[key]))
             # dont do home sweet home
-            print(key)
             if "127.0.0.1" not in key:
-                print("Last: %s" % self.beatDict[key])
-                print(when)
                 if self.beatDict[key] < when:
-                    silent.append(key)
+                    silent.append([key, round(now - self.beatDict[key])])
         self.dictLock.release()
         return silent
 
