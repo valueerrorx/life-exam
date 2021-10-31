@@ -186,3 +186,7 @@ class MyCustomWidget (QtWidgets.QWidget):
     def setOffline(self):
         """ set Client Offline, due to missing heartbeats """
         self.iconStack.addOffline()
+
+    def setOnline(self):
+        """ set Client Online """
+        self.iconStack.removeOffline()

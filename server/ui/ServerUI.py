@@ -12,7 +12,7 @@ import sip  #noqa
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
     SCRIPTS_DIRECTORY, DEBUG_PIN, GEOGEBRA_PATH, WEB_ROOT,\
-    DELIVERY_DIRECTORY, USER_HOME_DIR
+    DELIVERY_DIRECTORY, USER_HOME_DIR, MAX_SILENT_TIME_OFf_CLIENT
 from config.enums import DataType
 from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
@@ -944,15 +944,36 @@ class ServerUI(QtWidgets.QDialog):
         fired from HeartbeatServer.py when a time limit is reached
         :param silent_clients: list of IP's which clients are silent
         """
-        # get Connection ID
+        # these are the silent client
         for client in silent_clients:
-
-            ## how_long = client[1]
+            how_long_offline = client[1]
             client = self.get_list_widget_by_client_IP(client[0])
             if client:
                 client.setOffline()
                 self.logger.info("Client \"%s\" is silent ...." % client.getName())
-                # self._removeClientWidget(client.getConnectionID())
+                
+                if how_long_offline > MAX_SILENT_TIME_OFf_CLIENT:
+                    # too long silent, remove it
+                    self._removeClientWidget(client.getConnectionID())
+
+    @QtCore.pyqtSlot(list)
+    def checkOnlineClients(self, silent_clients):
+        """ are there clients that must remove the Offline Banner? """
+        online_clients = []
+        for widget in self.get_list_widget_items():
+            found = False
+            for client in silent_clients:
+                # compare IP's
+                if widget.getIP() in client[0]:
+                    found = True
+                    break
+            if found is False:
+                online_clients.append(widget)
+
+        # set Online
+        for widget in online_clients:
+            widget.setOnline()
+        # print("Silent: %s" % silent_clients)
 
     def _setInfoColor(self, col):
         """sets the TextLabel Color in Info Area"""

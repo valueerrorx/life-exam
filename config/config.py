@@ -45,13 +45,13 @@ SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses th
 # Heartbeat Section
 HEARTBEAT_PORT = 43278
 # Clients send Heartbeats in x sec
-HEARTBEAT_INTERVALL = 2
-# Server cleans up silent Clients after x sec
+HEARTBEAT_INTERVALL = 4
+# Server checks offline/online clients x sec
 HEARTBEAT_CLEANUP = 2
 # how long may a client be silent, after that it is marked as zombie x sec
 MAX_HEARTBEAT_DELTA_TIME = 20 # 120
 # how long may a client be silent until removed from Server
-MAX_SILENT_TIME_OF_CLIENT = 30 # 2 * MAX_HEARTBEAT_DELTA_TIME
+MAX_SILENT_TIME_OFf_CLIENT = 30 # 2 * MAX_HEARTBEAT_DELTA_TIME
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()

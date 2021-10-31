@@ -90,6 +90,8 @@ class HeartBeatServer(DatagramProtocol):
             self.emitter.emitSilentClients(silent)
             if DEBUG_PIN != "":
                 self.logger.info(silent)
+        # send also an Signal to check wich clients has marked as ONline
+        self.emitter.emitcheckOnlineClients(silent)
 
     # Twisted Part ##################################################
 
@@ -103,8 +105,7 @@ class HeartBeatServer(DatagramProtocol):
 
     def datagramReceived(self, data, addr):
         "Receive UDP packets, log them in heartbeat dictionary"
-        if DEBUG_PIN != "":
-            self.logger.info("Received packet from %s > %s" % (addr[0], data.decode()))
+        # self.logger.info("Received packet from %s > %s" % (addr[0], data.decode()))
         self.HBDictionary.update(addr[0])
         self.checkSilentClients()
 
