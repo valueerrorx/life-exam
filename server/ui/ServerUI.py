@@ -45,6 +45,16 @@ class MsgType(Enum):
 
 
 class ServerUI(QtWidgets.QDialog):
+    backupTitel = ""
+    backupBackgroundColor = "#000000"
+    examBackgroundColor = "#fab1a0"
+
+    defaultTitel = "Exam Server"
+    defaultBgColor = "#eff0f1"
+
+    debugTitel = ".: DEBUG MODE :. - Exam Server - .: DEBUG MODE :."
+    debugBgColor = "#ffffbf"
+
     def __init__(self, factory, splash, app):
         """
         :param factory: Server Factory
@@ -83,10 +93,14 @@ class ServerUI(QtWidgets.QDialog):
         # only debug if DEBUG_PIN is not ""
         debug_css = ""
         if DEBUG_PIN != "":
-            self.ui.setWindowTitle(".: DEBUG MODE :. - Exam Server - .: DEBUG MODE :.")
-            debug_css = "QDialog{ background: #ffffbf; }"
+            self.ui.setWindowTitle(self.debugTitel)
+            debug_css = "QDialog{ background: %s; }" % self.debugBgColor
+            self.backupTitel = self.debugTitel
+            self.backupBackgroundColor = self.debugBgColor
         else:
-            self.ui.setWindowTitle("Exam Server")
+            self.ui.setWindowTitle(self.defaultTitel)
+            self.backupTitel = self.defaultTitel
+            self.backupBackgroundColor = self.defaultBgColor
 
         self.ui.exit.clicked.connect(self._onAbbrechen)  # setup3 Slots
         self.ui.sendfile.clicked.connect(lambda: self._onSendFile("all"))  # button x   (lambda is not needed - only if you wanna pass a variable to the function)
@@ -184,7 +198,7 @@ class ServerUI(QtWidgets.QDialog):
 
         self.splashscreen.step()
         if DEBUG_PIN == "":
-            sleep(3)  # only if not debugging
+            sleep(3)
         self.splashscreen.setMessage("Done")
         self.splashscreen.finish(self)
         self.ui.keyPressEvent = self.newOnkeyPressEvent
@@ -200,8 +214,24 @@ class ServerUI(QtWidgets.QDialog):
         self.testGGB()
 
         # TEST
+        if len(DEBUG_PIN) > 0:
+            self.ui.testbtn.clicked.connect(self._test)
+        else:
+            self.ui.testbtn.hide()
+
+        # TEST
         # file_path = self._showFilePicker(SHARE_DIRECTORY)
         # mutual_functions.openFileManager("/home/student")
+
+    def _test(self):
+        print("TEST ---------------------------")
+        for widget in self.get_list_widget_items():
+            widget.setFileReceivedOK()
+
+        # Color the UI for visual Feedback
+        self.ui.setWindowTitle("%s - EXAM MODE" % self.defaultTitel)
+        self.ui.setStyleSheet("QDialog{ background: %s; }" % self.examBackgroundColor)
+        self.update()
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -479,7 +509,6 @@ class ServerUI(QtWidgets.QDialog):
         send configuration-zip to clients - unzip there
         invoke startexam.sh file on clients
         """
-
         self._show_workingIndicator(500, "Starte die Prüfung")
         server_to_client = self.factory.server_to_client
 
@@ -538,6 +567,10 @@ class ServerUI(QtWidgets.QDialog):
             client_widget = self.get_list_widget_by_client_ConID(who)
             client_widget.setExamIconON()
 
+        # Color the UI for visual Feedback
+        self.ui.setWindowTitle("%s - EXAM MODE" % self.defaultTitel)
+        self.ui.setStyleSheet("QDialog{ background: %s; }" % self.examBackgroundColor)
+
     def _on_exit_exam(self, who):
         """
         Ends the Exammode from a Client, who=all or name
@@ -577,6 +610,10 @@ class ServerUI(QtWidgets.QDialog):
 
         if self.progress_thread:
             self.progress_thread.fireEvent_exitExam(who, "0")
+
+        # Color the UI for visual Feedback back to normal
+        self.ui.setWindowTitle(self.backupTitel)
+        self.ui.setStyleSheet("QDialog{ background: %s; }" % self.backupBackgroundColor)
 
     def _onStartHotspot(self):
         self._show_workingIndicator(500, "Starte Hotspot")
@@ -782,8 +819,6 @@ class ServerUI(QtWidgets.QDialog):
     def _updateListItemScreenshot(self, existing_item, client, screenshot_file_path):
         existing_item.setImage(screenshot_file_path)
         existing_item.setText('%s' % (client.clientName))
-        # force repaint with OverlayIcons
-        existing_item.repaint()
 
         hasher = Hasher()
         uniqueID = hasher.getUniqueConnectionID(client.clientName, client.clientConnectionID)
@@ -950,8 +985,9 @@ class ServerUI(QtWidgets.QDialog):
             client = self.get_list_widget_by_client_IP(client[0])
             if client:
                 client.setOffline()
-                self.logger.info("Client \"%s\" is silent ...." % client.getName())
-                
+                if DEBUG_PIN != "":
+                    self.logger.info("Client \"%s\" is silent ...." % client.getName())
+
                 if how_long_offline > MAX_SILENT_TIME_OFf_CLIENT:
                     # too long silent, remove it
                     self._removeClientWidget(client.getConnectionID())

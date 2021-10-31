@@ -124,11 +124,14 @@ class MyCustomWidget (QtWidgets.QWidget):
         icon = self.rootDir.joinpath(screenshot_file_path).as_posix()
         pixmap = QtGui.QPixmap(icon)
         pixmap = pixmap.scaled(self.image_width, self.image_height)
-        self.image.setPixmap(pixmap)
 
         # Overlay Icons
         self.iconStack.setPixmap(pixmap)
 
+        # do not set Image will made wit Repaint event
+        # self.image.setPixmap(pixmap)
+
+    @QtCore.pyqtSlot()
     def repaint_event(self):
         """ Pixmap has changed > repaint """
         self.image.setPixmap(self.iconStack.getPixmap())

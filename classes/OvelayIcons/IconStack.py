@@ -25,11 +25,13 @@ class IconStack(QObject):
     - the IconStack is bound to a QPixmap
     - the position is from right top > left top
     Usage:
-    # set a Pixmap and a relative Path where to find Overlay Icons
+    set a Pixmap and a relative Path where to find Overlay Icons
     self.stack = IconStack(self.ui.image.pixmap(), "overlay_icons/")
-    # whenever a Pixmap changed, it will be emitted an event
+
+    whenever a Pixmap changed, it will be emitted an event
     self.stack.repaint_event.connect(self.repaint_event)
-    # there u set the new Pixmap
+
+    there u set the new Pixmap
     self.ui.image.setPixmap(self.stack.getPixmap())
     """
     # pixmap was updated > repaint

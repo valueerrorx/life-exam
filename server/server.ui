@@ -211,6 +211,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="testbtn">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -868,8 +875,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>851</width>
-               <height>946</height>
+               <width>756</width>
+               <height>936</height>
               </rect>
              </property>
              <property name="styleSheet">
