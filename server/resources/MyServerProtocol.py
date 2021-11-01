@@ -103,7 +103,7 @@ class MyServerProtocol(basic.LineReceiver):
                     mutual_functions.fixFilePermissions(SERVERSCREENSHOT_DIRECTORY)
                     # make the client screenshot visible in the listWidget
                     self.factory.window.createOrUpdateListItem(self, screenshot_file_path)
-                   
+
                     if hasattr(self.factory.window.screenshotwindow, 'clientname'):
                         if self.factory.window.screenshotwindow.clientname in filename:
                             self.factory.window.screenshotwindow.setScreenshotFilePath(screenshot_file_path)
@@ -147,9 +147,6 @@ class MyServerProtocol(basic.LineReceiver):
                     aA = '0'
                     if ui.autoAbgabe:
                         aA = '1'
-
-                    print("Autoabgabe: %s" % (aA))
-
                     if ui.progress_thread:
                         ui.progress_thread.fireEvent_Abgabe_finished(self.line_data_list[4], aA)
 

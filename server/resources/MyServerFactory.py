@@ -26,7 +26,7 @@ class MyServerFactory(protocol.ServerFactory):
         """
         :param splash: the Splashscreen started in Main Application
         :param app: the main QApplication
-        """        
+        """
         self.logger = logging.getLogger(__name__)
         self.files_path = files_path
         self.reactor = reactor
@@ -67,7 +67,7 @@ class MyServerFactory(protocol.ServerFactory):
     def getUI(self):
         """ give me the underlaying UI """
         return self.window
-    
+
     def createExamId(self):
         return "Exam-%s" % mutual_functions.generatePin(3)
 

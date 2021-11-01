@@ -31,7 +31,7 @@ class ServerToClient:
         """
         self.clients.update({uniqueID: client})
         if DEBUG_PIN != "":
-            print("**** Added ClientConnectionID %s" % uniqueID)
+            self.logger.debug("**** Added ClientConnectionID %s" % uniqueID)
 
     def remove_client(self, client):
         del self.clients[client.clientName]

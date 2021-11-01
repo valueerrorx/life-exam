@@ -147,7 +147,7 @@ class closeNSaveApps():
             chunks = parts[0].split("=")
             chunks = chunks[1].split("/")
             app_name = chunks[-1]
-                
+
             # Working
             if app_name != "":
                 for p in processlist:
@@ -155,7 +155,6 @@ class closeNSaveApps():
                         # this is an running App
                         apps_list.append(p)
                         print(p)
-                    
                         break
         return apps_list
 

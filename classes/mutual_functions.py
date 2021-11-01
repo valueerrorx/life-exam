@@ -394,7 +394,7 @@ def countFiles(path):
     return [files_count, dir_count]
 
 
-def websaveName(name):
+def websaveName(context):
     """ creates a websave Name """
     table = [
         ['ä', 'ae'],
@@ -405,12 +405,12 @@ def websaveName(name):
         ['Ö', 'Oe'],
         ['Ü', 'Üe'],
         [' ', '_'],
-        ]
+    ]
     for item in table:
-        name = name.replace(item[0], item[1])
-    return  name
+        context = context.replace(item[0], item[1])
+    return context
 
 
 
 
-    
+

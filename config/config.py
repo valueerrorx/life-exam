@@ -50,9 +50,9 @@ HEARTBEAT_INTERVALL = 4
 # Server checks offline/online clients x sec
 HEARTBEAT_CLEANUP = 2
 # how long may a client be silent, after that it is marked as zombie x sec
-MAX_HEARTBEAT_DELTA_TIME = 20 # 120
+MAX_HEARTBEAT_DELTA_TIME = 120
 # how long may a client be silent until removed from Server
-MAX_SILENT_TIME_OFf_CLIENT = 30 # 2 * MAX_HEARTBEAT_DELTA_TIME
+MAX_SILENT_TIME_OFf_CLIENT = 2 * MAX_HEARTBEAT_DELTA_TIME
 
 # find username and set user home directory
 USER = subprocess.check_output("logname", shell=True).rstrip().decode()

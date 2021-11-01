@@ -7,7 +7,7 @@ import pwd
 
 class CmdRunner():
     pid = None
-    
+
     def __init__(self):
         self._stderr = ""
         self._stdout = ""

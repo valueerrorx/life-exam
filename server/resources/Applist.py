@@ -37,7 +37,7 @@ def findApps(applistwidget, appview, app):
         filepath1 = Path("/usr/share/applications/%s" % fields[-1])
         filepath2 = Path("%s/.local/share/applications/%s" % (USER_HOME_DIR, fields[-1]))
         filepath3 = Path("%s/.local/share/plasma_icons/%s" % (USER_HOME_DIR, fields[-1]))
-        
+
         if filepath1.is_file():
             desktopfilelocation = filepath1
         elif filepath2.is_file():

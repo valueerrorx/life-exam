@@ -103,7 +103,7 @@ class HeartBeatServer(DatagramProtocol):
         "Called after all transport is teared down"
         pass
 
-    def datagramReceived(self, data, addr):
+    def datagramReceived(self, data, addr):  # noqa
         "Receive UDP packets, log them in heartbeat dictionary"
         # self.logger.info("Received packet from %s > %s" % (addr[0], data.decode()))
         self.HBDictionary.update(addr[0])

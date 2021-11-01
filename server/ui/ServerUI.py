@@ -54,7 +54,7 @@ class ServerUI(QtWidgets.QDialog):
 
     debugTitel = ".: DEBUG MODE :. - Exam Server - .: DEBUG MODE :."
     debugBgColor = "#ffffbf"
-    
+
     examON = False
 
     def __init__(self, factory, splash, app):
@@ -118,7 +118,7 @@ class ServerUI(QtWidgets.QDialog):
         # is Auto Abgabe triggered
         self.autoAbgabe = False
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
-        
+
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
         self.ui.printconf.clicked.connect(self._onPrintconf)
         self.ui.printer.clicked.connect(lambda: self._onSendPrintconf("all"))
@@ -504,23 +504,21 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False   # UNLOCK all fileoperations
             self.log("No clients connected")
-            
+
     def _on_start_exit_exam(self, who):
         if self.examON is False:
             self.examON = True
             self.ui.startstopexam.setText("EXAM beenden")
-            icon = self.rootDir.joinpath("pixmaps/document-noedit.png").as_posix()            
+            icon = self.rootDir.joinpath("pixmaps/document-noedit.png").as_posix()
             self.ui.startstopexam.setIcon(QIcon(icon))
             self._on_start_exam(who)
         else:
             self.examON = False
             self.ui.startstopexam.setText("EXAM starten")
-            
             icon = self.rootDir.joinpath("pixmaps/document-edit.png").as_posix()
             self.ui.startstopexam.setIcon(QIcon(icon))
-
             self._on_exit_exam(who)
-        
+
     def _on_start_exam(self, who):
         """
         ZIP examconfig folder
@@ -783,7 +781,6 @@ class ServerUI(QtWidgets.QDialog):
             new_client_name = self._checkDoubleClientName(client)
             # change name or leave it the same
             client.clientName = new_client_name
-            print("createOrUpdateListItem %s" % new_client_name)
             self._addNewListItem(client, screenshot_file_path)
             # Update Label
             self.ui.label_clients.setText(self.createClientsLabel())

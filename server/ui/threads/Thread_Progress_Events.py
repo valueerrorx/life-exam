@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019 Stefan Hagmann
 
-import os
-from config.config import SHARE_DIRECTORY, DELIVERY_DIRECTORY
-import classes.mutual_functions as mutual_functions
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,7 +37,7 @@ def client_received_file_done(parent, clientWidget):
         parent.workinganimation.stop()
 
 
-def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
+def client_abgabe_done_exit_exam(parent, who, autoAbgabe):  # noqa
     """
     will fired when Client has sent his Abgabe File
     :autoAbgabe: 1/0 is that a AutoAbgabe event?
@@ -55,7 +52,7 @@ def client_abgabe_done_exit_exam(parent, who, autoAbgabe):
     parent.networkProgress.decrement()
     if parent.networkProgress.value() <= 1:
         # show in Filemanager only if we manually trigger Abgabe
-        #if autoAbgabe == '0':
+        # if autoAbgabe == '0':
         #    logger.info("Opening FileManager..")
         #    mutual_functions.openFileManager(os.path.join(SHARE_DIRECTORY, DELIVERY_DIRECTORY))
         # if there is an animation showing
