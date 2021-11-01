@@ -26,16 +26,16 @@ setIPtables(){
         sudo iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT     #allow DNS
         sudo iptables -A OUTPUT -p udp --dport 137 -j ACCEPT     #allow WINS
         
-        #allow IPP,TPS,PCL,snmp,mDNS for network printing
-        sudo iptables -A INPUT -p tcp -m multiport --dports 631,515,9100,9101,9102,161,139,5353  -j ACCEPT  
-        sudo iptables -A OUTPUT -p tcp -m multiport --dports 631,515,9100,9101,9102,161,139,5353 -j ACCEPT 
-        sudo iptables -A INPUT -p tcp -m multiport --sports 631,515,9100,9101,9102,161,139,5353 -j ACCEPT  
-        sudo iptables -A OUTPUT -p tcp -m multiport --sports 631,515,9100,9101,9102,161,139,5353 -j ACCEPT 
+        #allow IPP,TPS,PCL,snmp,mDNS for network printing, 43278 for Heartbeats
+        sudo iptables -A INPUT -p tcp -m multiport --dports 631,515,9100,9101,9102,161,139,5353,43278  -j ACCEPT  
+        sudo iptables -A OUTPUT -p tcp -m multiport --dports 631,515,9100,9101,9102,161,139,5353,43278 -j ACCEPT 
+        sudo iptables -A INPUT -p tcp -m multiport --sports 631,515,9100,9101,9102,161,139,5353,43278 -j ACCEPT  
+        sudo iptables -A OUTPUT -p tcp -m multiport --sports 631,515,9100,9101,9102,161,139,5353,43278 -j ACCEPT 
         
-        sudo iptables -A INPUT -p udp -m multiport --dports 631,515,9100,9101,9102,161,139,5353  -j ACCEPT
-        sudo iptables -A OUTPUT -p udp -m multiport --dports 631,515,9100,9101,9102,161,139,5353 -j ACCEPT 
-        sudo iptables -A INPUT -p udp -m multiport --sports 631,515,9100,9101,9102,161,139,5353 -j ACCEPT  
-        sudo iptables -A OUTPUT -p udp -m multiport --sports 631,515,9100,9101,9102,161,139,5353 -j ACCEPT 
+        sudo iptables -A INPUT -p udp -m multiport --dports 631,515,9100,9101,9102,161,139,5353,43278  -j ACCEPT
+        sudo iptables -A OUTPUT -p udp -m multiport --dports 631,515,9100,9101,9102,161,139,5353,43278 -j ACCEPT 
+        sudo iptables -A INPUT -p udp -m multiport --sports 631,515,9100,9101,9102,161,139,5353,43278 -j ACCEPT  
+        sudo iptables -A OUTPUT -p udp -m multiport --sports 631,515,9100,9101,9102,161,139,5353,43278 -j ACCEPT 
         
      
 

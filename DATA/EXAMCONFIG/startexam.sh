@@ -193,7 +193,7 @@ function blockAdditionalFeatures(){
     sudo chmod 644 /usr/bin/konsole
 
     sudo systemctl stop getty@tty1.service      # laufende virtuelle terminals abschalten
-    sudo systemctl stop getty@tty2.service
+    # sudo systemctl stop getty@tty2.service
     sudo systemctl stop getty@tty3.service
     sudo systemctl stop getty@tty4.service
     sudo systemctl stop getty@tty5.service
