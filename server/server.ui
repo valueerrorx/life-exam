@@ -65,7 +65,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="startexam">
+          <widget class="QPushButton" name="startstopexam">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -169,32 +169,6 @@
            <property name="icon">
             <iconset>
              <normaloff>../pixmaps/download.png</normaloff>../pixmaps/download.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="exitexam">
-           <property name="toolTip">
-            <string>Prüfungsumgebung beenden</string>
-           </property>
-           <property name="text">
-            <string>Exam beenden</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../pixmaps/document-noedit.png</normaloff>../pixmaps/document-noedit.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -2595,10 +2569,9 @@ QProgressBar::chunk{
   </layout>
  </widget>
  <tabstops>
-  <tabstop>startexam</tabstop>
+  <tabstop>startstopexam</tabstop>
   <tabstop>sendfile</tabstop>
   <tabstop>abgabe</tabstop>
-  <tabstop>exitexam</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>screenlock</tabstop>
   <tabstop>screenshots</tabstop>

@@ -54,6 +54,8 @@ class ServerUI(QtWidgets.QDialog):
 
     debugTitel = ".: DEBUG MODE :. - Exam Server - .: DEBUG MODE :."
     debugBgColor = "#ffffbf"
+    
+    examON = False
 
     def __init__(self, factory, splash, app):
         """
@@ -107,7 +109,7 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.showip.clicked.connect(self._onShowIP)  # button y
         self.ui.abgabe.clicked.connect(lambda: self.onAbgabe("all", False))
         self.ui.screenshots.clicked.connect(lambda: self.onScreenshots("all"))
-        self.ui.startexam.clicked.connect(lambda: self._on_start_exam("all"))
+        self.ui.startstopexam.clicked.connect(lambda: self._on_start_exit_exam("all"))
         self.ui.openshare.clicked.connect(self._onOpenshare)
         self.ui.starthotspot.clicked.connect(self._onStartHotspot)
         self.ui.testfirewall.clicked.connect(self._onTestFirewall)
@@ -115,9 +117,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.autoabgabe.clicked.connect(self._onAutoabgabe)
         # is Auto Abgabe triggered
         self.autoAbgabe = False
-
         self.ui.screenlock.clicked.connect(lambda: self._onScreenlock("all"))
-        self.ui.exitexam.clicked.connect(lambda: self._on_exit_exam("all"))
+        
         self.ui.closeEvent = self.closeEvent  # links the window close event to our custom ui
         self.ui.printconf.clicked.connect(self._onPrintconf)
         self.ui.printer.clicked.connect(lambda: self._onSendPrintconf("all"))
@@ -342,10 +343,11 @@ class ServerUI(QtWidgets.QDialog):
         mutual_functions.openFileManager(dir_path)
 
     def _updateExamName(self):
-        self.factory.examid = self.ui.examlabeledit1.text()
+        # make failsave name
+        self.factory.examid = mutual_functions.websaveName(self.ui.examlabeledit1.text())
+
         if self.ui.examlabeledit1.text() == "":
             self.factory.examid = self.factory.createExamId()
-
         self.ui.currentlabel.setText("<b>%s</b>" % self.factory.examid)
 
     def _startWorkingIndicator(self, info=""):
@@ -502,7 +504,23 @@ class ServerUI(QtWidgets.QDialog):
         if not self.factory.server_to_client.request_abgabe(who):
             self.factory.rawmode = False   # UNLOCK all fileoperations
             self.log("No clients connected")
+            
+    def _on_start_exit_exam(self, who):
+        if self.examON is False:
+            self.examON = True
+            self.ui.startstopexam.setText("EXAM beenden")
+            icon = self.rootDir.joinpath("pixmaps/document-noedit.png").as_posix()            
+            self.ui.startstopexam.setIcon(QIcon(icon))
+            self._on_start_exam(who)
+        else:
+            self.examON = False
+            self.ui.startstopexam.setText("EXAM starten")
+            
+            icon = self.rootDir.joinpath("pixmaps/document-edit.png").as_posix()
+            self.ui.startstopexam.setIcon(QIcon(icon))
 
+            self._on_exit_exam(who)
+        
     def _on_start_exam(self, who):
         """
         ZIP examconfig folder

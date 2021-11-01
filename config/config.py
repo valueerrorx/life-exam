@@ -43,6 +43,7 @@ SERVER_IP = "localhost"
 SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)
 
 # Heartbeat Section
+# be sure to enable in /DATA/scripts/exam-firewall.sh
 HEARTBEAT_PORT = 43278
 # Clients send Heartbeats in x sec
 HEARTBEAT_INTERVALL = 4
