@@ -570,7 +570,7 @@ class ServerUI(QtWidgets.QDialog):
 
         if who == 'all':
             if DEBUG_PIN != "":
-                self.logger.info("Starting Exam on ALL Clients: %s")
+                self.logger.info("Starting Exam on ALL Clients ...")
             client_widgets = self.get_list_widget_items()
             for client_widget in client_widgets:
                 # set the status Icon

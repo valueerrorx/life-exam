@@ -13,10 +13,12 @@ import classes.mutual_functions as mutual_functions
 from config.enums import Command, DataType
 from config.config import DEBUG_PIN
 from classes.Hasher import Hasher
+import logging
 
 
 class ServerToClient:
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.clients = dict()
 
     """client handling"""
@@ -29,9 +31,12 @@ class ServerToClient:
         Client has made a connection
         :param uniqueID: is a created unique ID
         """
-        self.clients.update({uniqueID: client})
-        if DEBUG_PIN != "":
-            self.logger.debug("**** Added ClientConnectionID %s" % uniqueID)
+        try:
+            self.clients.update({uniqueID: client})
+            if DEBUG_PIN != "":
+                self.logger.debug("**** Added ClientConnectionID %s" % uniqueID)
+        except Exception as e:
+            print(e)
 
     def remove_client(self, client):
         del self.clients[client.clientName]

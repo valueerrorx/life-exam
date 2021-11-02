@@ -221,21 +221,20 @@ class MyServerProtocol(basic.LineReceiver):
                 Command.LOCKSCREEN_OK.value: self._lockscreen_ok,
                 Command.UNLOCKSCREEN_OK.value: self._unlockscreen_ok,
             }
-
             # Default is None if nothing is found
             line_handler = command.get(self.line_data_list[0], None)
             line_handler()
-        except Exception as e:
+        except Exception:
             self.logger.error("line_dispatcher: Command [%s] NOT Found ... doing nothing!" % self.line_data_list[0])
-            self.logger.error(e)
 
     def _lockscreen_ok(self):
         """ a client has locked the screen and sends OK """
         # fire Event to Thread
         ui = self.factory.window
         # get the client item from QListWidget
-        print("_lockscreen_ok %s" % self.line_data_list[1])
         clientWidget = ui.get_list_widget_by_client_ConID(self.line_data_list[1])
+
+        self.logger.debug(self.line_data_list[1])
         # Maybe new Widget is not Registered
         if clientWidget:
             ui.progress_thread.fireEvent_Lock_Screen(clientWidget)

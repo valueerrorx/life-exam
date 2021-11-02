@@ -50,7 +50,7 @@ def findApps(applistwidget, appview, app):
         if desktopfilelocation != "none":
             desktop_files_list.append(str(desktopfilelocation))
 
-    # _printArray(desktop_files_list)
+    
     # check Geogebra
     # desktop_files_list = createGGBStarter(desktop_files_list)
 
@@ -59,6 +59,10 @@ def findApps(applistwidget, appview, app):
     # listet in kbuildsycoca5
     desktop_files_list = addApplications(desktop_files_list)
     desktop_files_list = clearDoubles(desktop_files_list)
+    
+    # _printArray(desktop_files_list)
+    # ok
+
     app.processEvents()
     listInstalledApplications(applistwidget, desktop_files_list, appview)
 
@@ -263,14 +267,13 @@ def listInstalledApplications(applistwidget, desktop_files_list, appview):
 
         applist.append(thisapp)
 
-    # _printArray(applist)
     # clean problems
     applist = cleanUp(applist)
-
     # sort applist and put most used apps on top
     final_applist = create_app_ranking(applist)
     # what apps are activated and stored in OLD Config?
     activated_apps = get_activated_apps()
+    #_printArray(applist)
 
     # clear appview first
     thislayout = appview.layout()
@@ -345,9 +348,14 @@ def saveProfile(applistwidget, appview):
     changes the plasmaconfig
     writes the plasmaconfig file
     """
-
+    # original RC File in ./config/plasma-org.kde.plasma.desktop-appletsrc
+    # RC File for Exam to be transfered
     # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")
     # this should be the config file that is then transferred to the clients and used for the exam desktop
+    
+    im Original File Container suchen 
+    
+    
     if Path(PLASMACONFIG).is_file():
         config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
 
