@@ -226,6 +226,7 @@ def prepareDirectories():
     copyDesktopStarter()
 
 
+# not used anymore
 def checkGeogebraStarter_isinPlace():
     """ checks if GGB is in /~/.local/share/applications/ """
     rootDir = Path(__file__).parent.parent

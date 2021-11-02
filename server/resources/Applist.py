@@ -52,7 +52,7 @@ def findApps(applistwidget, appview, app):
 
     # _printArray(desktop_files_list)
     # check Geogebra
-    desktop_files_list = createGGBStarter(desktop_files_list)
+    # desktop_files_list = createGGBStarter(desktop_files_list)
 
     # now we have pathes to desktop files, like /usr/share/applications/org.hydrogenmusic.Hydrogen.desktop
     # because in applications there are e.g. chrome apps we had to add them too, even they are not
@@ -471,7 +471,7 @@ def createGGBStarter(desktop_files_list):
     """
     rootDir = Path(__file__).parent.parent
     path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
-    applicatins_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
+    applications_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
     # if GGB is placed in Webserver Root
     if os.path.join(WEB_ROOT, GEOGEBRA_PATH):
         checkGeogebraStarter_isinPlace()
@@ -479,7 +479,7 @@ def createGGBStarter(desktop_files_list):
         desktop_files_list.append(str(path_to_file))
     else:
         # No Geogebra > delete Starter
-        cmd = "rm %s%s" % (applicatins_path, "GeoGebra.desktop")
+        cmd = "rm %s%s" % (applications_path, "GeoGebra.desktop")
         os.system(cmd)
 
     return desktop_files_list
