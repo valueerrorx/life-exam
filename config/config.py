@@ -32,12 +32,6 @@ EXAM_DESKTOP_APPS = ["Exam Student.desktop", "STOP.desktop", "GeoGebra.desktop"]
 # in which directory are datas from clients are stored
 DELIVERY_DIRECTORY = "ABGABE/"
 
-# Web Server Root Directory
-WEB_ROOT = "/var/www/html/"
-# Subdirectory to Geogebra
-GEOGEBRA_PATH = "geogebra"
-
-
 # DON'T CHANGE ==========================================================================================================
 SERVER_IP = "localhost"
 SERVER_PORT = 11411   # according to wikipedia and IANA no other service uses this port.. so this is ours ;)

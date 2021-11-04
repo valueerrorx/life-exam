@@ -40,6 +40,60 @@ class PlasmaRCTool():
                 break
             except KeyError:
                 continue
+    # NOT USED
+    def search_Desktop_Container(self):
+        """
+        search in the original ./config/plasma-org.kde.plasma.desktop-appletsrc
+        for the most likely ID from Desktop Container
+        """
+        filename = os.path.join(USER_HOME_DIR, ".config/plasma-org.kde.plasma.desktop-appletsrc")
+        f = open(filename, "r")
+        lines = f.readlines()
+        """
+        Desktop may look like
+        [Containments][22][Applets][31][Configuration]
+        PreloadWeight=0
+        localPath=/home/student/.local/share/plasma_icons/onlyoffice-desktopeditors.desktop
+        url=file:///home/student/.local/share/applications/onlyoffice-desktopeditors.desktop
+        """
+
+        # search Containments].*[Applets].*[Configuration]
+        # and within for dektop files
+        containerDict = {}
+        for line in lines:
+            # case intensive
+            matchObj = re.match(r'\[Containments\]\[(.*)\]\[Applets\]\[(.*)\]\[Configuration\]', line, re.I)
+            if matchObj:
+                containerId = matchObj.group(1)
+                # ContainerNr count desktop Files
+                containerDict[containerId] = 0
+        # now count in each Container for *.desktop Files
+        for key in containerDict:
+            isContainer = False
+            for line in lines:
+                matchObj = re.match(r'\[Containments\]\[(.*)\]\[Applets\]\[(.*)\]\[Configuration\]', line, re.I)
+                if matchObj:
+                    if key == matchObj.group(1):
+                        isContainer = True
+                    else:
+                        isContainer = False
+                if isContainer is True:
+                    matchObj = re.match(r'.*\.desktop', line, re.I | re.M)  # math end of line caseintensive
+                    if matchObj:
+                        containerDict[key] = containerDict[key] + 1
+        # most likely Desktop Container with most Desktop Files
+        maximum = -1
+        max_key = -1
+        for key in containerDict:
+            if containerDict[key] > maximum:
+                maximum = containerDict[key]
+                max_key = key
+        """
+        print(containerDict)
+        print(max_key)
+        print(max)
+        """
+        return max_key
 
     def updatePlasmaConfig(self):
         """

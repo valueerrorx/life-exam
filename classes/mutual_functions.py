@@ -16,8 +16,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER, USER_HOME_DIR, EXAM_DESKTOP_APPS, GEOGEBRA_PATH,\
-    WEB_ROOT
+    SHARE_DIRECTORY, USER, USER_HOME_DIR, EXAM_DESKTOP_APPS
 import stat
 import sys
 from classes.PlasmaRCTool import PlasmaRCTool
@@ -227,8 +226,9 @@ def prepareDirectories():
 
 
 # not used anymore
+"""
 def checkGeogebraStarter_isinPlace():
-    """ checks if GGB is in /~/.local/share/applications/ """
+    checks if GGB is in /~/.local/share/applications/ 
     rootDir = Path(__file__).parent.parent
     path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
 
@@ -258,7 +258,7 @@ def checkGeogebraStarter_isinPlace():
         for line in lines:
             file.write("%s\n" % line)
         file.close()
-
+"""
 
 def fixFilePermissions(folder):
     """ FIXME ?? both scripts are running as root

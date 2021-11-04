@@ -11,10 +11,9 @@ import sip  #noqa
 
 from config.config import PRINTERCONFIG_DIRECTORY,\
     SERVERZIP_DIRECTORY, SHARE_DIRECTORY, USER, EXAMCONFIG_DIRECTORY,\
-    SCRIPTS_DIRECTORY, DEBUG_PIN, GEOGEBRA_PATH, WEB_ROOT,\
+    SCRIPTS_DIRECTORY, DEBUG_PIN, \
     DELIVERY_DIRECTORY, USER_HOME_DIR, MAX_SILENT_TIME_OFf_CLIENT
 from config.enums import DataType
-from server.resources.Applist import findApps
 from classes.system_commander import dialog_popup, show_ip, start_hotspot,\
     get_primary_ip
 from version import __version__
@@ -38,6 +37,7 @@ from classes.HTMLTextExtractor import html_to_text
 from classes.mutual_functions import get_file_list, checkIP
 from classes.PlasmaRCTool import PlasmaRCTool
 from classes.Hasher import Hasher
+from server.resources.ApplicationTools import ApplicationTools
 
 
 class MsgType(Enum):
@@ -165,8 +165,9 @@ class ServerUI(QtWidgets.QDialog):
 
         # debug turn it off here
         # self.splashscreen.finish(self)
+        appTools = ApplicationTools()
 
-        findApps(self.ui.applist, self.ui.appview, self.application)
+        appTools.findApps(self.ui.applist, self.ui.appview, self.application)
         self.splashscreen.step()
 
         # Waiting Thread
@@ -212,7 +213,7 @@ class ServerUI(QtWidgets.QDialog):
         self.configUI.setConfig(self.ui)
 
         # search for GGB Web Apps
-        self.testGGB()
+        # self.testGGB()
 
         # TEST
         if len(DEBUG_PIN) > 0:
@@ -233,6 +234,8 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.setWindowTitle("%s - EXAM MODE" % self.defaultTitel)
         self.ui.setStyleSheet("QDialog{ background: %s; }" % self.examBackgroundColor)
         self.update()
+        
+        self.prepareDesktopStarter()
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -1034,11 +1037,13 @@ class ServerUI(QtWidgets.QDialog):
         """resets the TextLabel Color in Info Area to black"""
         self.ui.info_label.setStyleSheet("QLabel { color : black; }")
 
+    # not used anymore
+    """
     def testGGB(self):
-        """
+        
         search fpr Geogebra WebApp in /var/www/html/geogebra
         fire a reminder if not existent
-        """
+        
         if os.path.join(WEB_ROOT, GEOGEBRA_PATH) is False:
             self._setInfoColor("#ff0000")
 
@@ -1046,6 +1051,7 @@ class ServerUI(QtWidgets.QDialog):
             self.ui.working.show()
 
             QTimer.singleShot(5000, self._hideGGBError)
+    """
 
     def _hideGGBError(self):
         """ hide GGB missing msg """
@@ -1055,8 +1061,22 @@ class ServerUI(QtWidgets.QDialog):
     def prepareDesktopStarter(self):
         """
         prepare Desktop Starter for Exam Mode
-        Server prepares the plasma-org.kde.plasma.desktop-appletsrc
-        examclient_plugin copys the Desktop Starter
+        Server prepares the ~/.config/plasma-org.kde.plasma.desktop-appletsrc
+
+        It works as follows lets say 
+        [Containments][22]
+        ItemGeometriesHorizontal=Applet-71:1024,432,80,80,0;
+        plugin=org.kde.desktopcontainment
+        wallpaperplugin=org.kde.image
+
+        is the Desktop Container. You see a list of Applets on it with Geometry stuff
+
+        also you have
+        [Containments][22][Applets][71][Configuration]
+        localPath=/home/student/.local/share/plasma_icons/hugin.desktop
+        url=file:///usr/share/applications/hugin.desktop
+
+        so we add our own Starter to the EXAM Desktop
         """
         plasmaTool = PlasmaRCTool()
         plasmaTool.addStarter()
