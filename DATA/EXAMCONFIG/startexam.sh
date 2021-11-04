@@ -89,16 +89,17 @@ function backupCurrentConfig(){
 
 function loadExamConfig(){
     # do your job
-    cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc    #load minimal plasma config for exam 
-    cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
-    cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
-    cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
-    cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
-    cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list   #dateitypen zuordnung zu programmen
-    cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
-    cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
-    cp -a ${LOCKDOWNDIR}powermanagementprofilesrc ${HOME}.config/powermanagementprofilesrc
+    #load minimal plasma config for exam 
+    sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc    
+    sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
+    sudo cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
+    sudo cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
+    sudo cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
+    sudo cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list   #dateitypen zuordnung zu programmen
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
+    sudo cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
+    sudo cp -a ${LOCKDOWNDIR}powermanagementprofilesrc ${HOME}.config/powermanagementprofilesrc
     
     
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
