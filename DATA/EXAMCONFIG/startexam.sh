@@ -91,7 +91,8 @@ function loadExamConfig(){
     # do your job
     touch ${LOCKDOWNDIR}startExam.log
     #load minimal plasma config for exam 
-    sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc > ${LOCKDOWNDIR}startExam.log
+    echo "sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc" > ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc 2>&1 >> ${LOCKDOWNDIR}startExam.log
     sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc >> ${LOCKDOWNDIR}startExam.log  #special windowmanager settings
     sudo cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel >> ${LOCKDOWNDIR}startExam.log
     sudo cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc >> ${LOCKDOWNDIR}startExam.log
