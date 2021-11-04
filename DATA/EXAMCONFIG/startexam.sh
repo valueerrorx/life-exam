@@ -89,20 +89,21 @@ function backupCurrentConfig(){
 
 function loadExamConfig(){
     # do your job
+    touch ${LOCKDOWNDIR}startExam.log
     #load minimal plasma config for exam 
-    sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc    
-    sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
-    sudo cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
-    sudo cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
-    sudo cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
-    sudo cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list   #dateitypen zuordnung zu programmen
-    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
-    sudo cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
-    sudo cp -a ${LOCKDOWNDIR}powermanagementprofilesrc ${HOME}.config/powermanagementprofilesrc
+    sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc > ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc >> ${LOCKDOWNDIR}startExam.log  #special windowmanager settings
+    sudo cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel >> ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc >> ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/ >> ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/ >> ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list >> ${LOCKDOWNDIR}startExam.log   #dateitypen zuordnung zu programmen
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list >> ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences >> ${LOCKDOWNDIR}startExam.log
+    sudo cp -a ${LOCKDOWNDIR}powermanagementprofilesrc ${HOME}.config/powermanagementprofilesrc >> ${LOCKDOWNDIR}startExam.log
     
     
-    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM /usr/share/applications/mimeapps.list >> ${LOCKDOWNDIR}startExam.log
 
     sudo chown -R ${USER}:${USER} ${HOME}.config/ &    # twistd runs as root - fix ownership
     sudo chown -R ${USER}:${USER} ${HOME}.local/ &
