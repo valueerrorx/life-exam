@@ -299,9 +299,10 @@ backupCurrentConfig
 #---------------------------------#
 sudo -u ${USER} -E qdbus $progress Set "" value 4
 sudo -u ${USER} -E qdbus $progress setLabelText "Lade Exam Desktop...."
-sleep 0.1
+sleep 1
 
 loadExamConfig
+sleep 1
 
 
 #---------------------------------#
