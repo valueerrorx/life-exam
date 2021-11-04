@@ -54,7 +54,7 @@ DialogWidth = 720
 
 [Containments][2][Applets][5][Configuration][General]
 groupingStrategy = 0
-launchers = applications:GeoGebra Classic.desktop,applications:org.kde.calligrawords.desktop,applications:Exam Student.desktop
+launchers = applications:GeoGebra.desktop,applications:org.kde.calligrawords.desktop,applications:org.kde.kcalc.desktop
 maxStripes = 1
 showOnlyCurrentDesktop = false
 wheelEnabled = false

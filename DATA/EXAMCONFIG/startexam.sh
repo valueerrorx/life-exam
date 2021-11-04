@@ -91,16 +91,17 @@ function loadExamConfig(){
     # do your job
     #load minimal plasma config for exam 
     sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc
-    
+    # prevent from overwritting
     sudo chmod 444 ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc
     
-    
-    sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc  #special windowmanager settings
+    #special windowmanager settings
+    sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc
     sudo cp -a ${LOCKDOWNDIR}user-places.xbel-EXAM ${HOME}.local/share/user-places.xbel
     sudo cp -a ${LOCKDOWNDIR}dolphinrc-EXAM ${HOME}.config/dolphinrc
     sudo cp -a ${LOCKDOWNDIR}calligra* ${HOME}.config/
     sudo cp -a ${LOCKDOWNDIR}user-dirs.dirs ${HOME}.config/
-    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list  #dateitypen zuordnung zu programmen
+    #dateitypen zuordnung zu programmen
+    sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.config/mimeapps.list
     sudo cp -a ${LOCKDOWNDIR}mimeapps.list-EXAM ${HOME}.local/share/applications/mimeapps.list
     sudo cp -a ${LOCKDOWNDIR}Preferences ${HOME}.config/google-chrome/Default/Preferences
     sudo cp -a ${LOCKDOWNDIR}powermanagementprofilesrc ${HOME}.config/powermanagementprofilesrc
