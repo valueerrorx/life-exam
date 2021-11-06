@@ -16,7 +16,7 @@ from config.config import SCRIPTS_DIRECTORY, EXAMCONFIG_DIRECTORY,\
     WORK_DIRECTORY, CLIENTFILES_DIRECTORY, SERVERFILES_DIRECTORY,\
     CLIENTSCREENSHOT_DIRECTORY, CLIENTUNZIP_DIRECTORY, CLIENTZIP_DIRECTORY,\
     SERVERSCREENSHOT_DIRECTORY, SERVERUNZIP_DIRECTORY, SERVERZIP_DIRECTORY,\
-    SHARE_DIRECTORY, USER, USER_HOME_DIR, EXAM_DESKTOP_APPS
+    SHARE_DIRECTORY, USER, USER_HOME_DIR
 import stat
 import sys
 from classes.PlasmaRCTool import PlasmaRCTool
@@ -26,6 +26,7 @@ import shutil
 from random import randint
 
 import time
+import fnmatch
 
 logger = logging.getLogger(__name__)
 
@@ -150,22 +151,37 @@ def deleteFolderContent(folder):
             logger.error(e)
 
 
+def search_files(directory='.', pattern='.*'):
+    """
+    search for pattern in directory recursive
+    :param directory: path where to search. relative or absolute
+    :param pattern: a list e.g. ['*.jpg', '__.*']
+    """
+    data = []
+    for dirpath, dirnames, files in os.walk(directory):  # noqa
+        for p in pattern:
+            for f in fnmatch.filter(files, p):
+                data.append(os.path.join(dirpath, f))
+    return data
+
+
 def copyDesktopStarter():
     """copy the EXAM Desktop Starter to correct place"""
     rootDir = Path(__file__).parent.parent
     sharePlasma = "%s/.local/share/plasma_icons/" % USER_HOME_DIR
-
+    appPlasma = "%s/.local/share/applications/" % USER_HOME_DIR
     logger.info("Updated ~/.local/share/plasma_icons/")
+    logger.info("Updated ~/.local/share/applications/")
 
-    # starter to copy
-    for _starter in EXAM_DESKTOP_APPS:
-        # first delete existing Starter
-        testfile = os.path.join(sharePlasma, _starter)
-        if os.path.isfile(testfile):
-            os.remove(testfile)
+    # load all files from life-exam/DATA/starter/
+    starterDir = os.path.join(rootDir, "DATA/starter/")
+    files = search_files(starterDir)
+    for _starter in files:
         # escape all spaces
         _starter = _starter.replace(" ", "\ ")
-        copycommand = "cp -a %s/DATA/starter/%s %s" % (rootDir, _starter, sharePlasma)
+        copycommand = "cp -a %s %s" % (_starter, sharePlasma)
+        os.system(copycommand)
+        copycommand = "cp -a %s %s" % (_starter, appPlasma)
         os.system(copycommand)
 
 
@@ -228,7 +244,7 @@ def prepareDirectories():
 # not used anymore
 """
 def checkGeogebraStarter_isinPlace():
-    checks if GGB is in /~/.local/share/applications/ 
+    checks if GGB is in /~/.local/share/applications/
     rootDir = Path(__file__).parent.parent
     path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
 
@@ -259,6 +275,7 @@ def checkGeogebraStarter_isinPlace():
             file.write("%s\n" % line)
         file.close()
 """
+
 
 def fixFilePermissions(folder):
     """ FIXME ?? both scripts are running as root

@@ -54,7 +54,7 @@ DialogWidth = 720
 
 [Containments][2][Applets][5][Configuration][General]
 groupingStrategy = 0
-launchers = applications:GeoGebra.desktop,applications:org.kde.calligrawords.desktop,applications:org.kde.kcalc.desktop
+launchers = applications:GeoGebra.desktop,applications:io.github.wxmaxima_developers.wxMaxima.desktop,applications:libreoffice-calc.desktop,applications:libreoffice-writer.desktop,applications:firefox.desktop,applications:org.kde.calligrawords.desktop,applications:org.kde.kcalc.desktop,applications:org.kde.falkon.desktop
 maxStripes = 1
 showOnlyCurrentDesktop = false
 wheelEnabled = false
@@ -99,23 +99,23 @@ plugin = org.kde.desktopcontainment
 wallpaperplugin = org.kde.image
 
 [Containments][24][Applets][25]
-activityId=
-formfactor=0
-immutability=1
-lastScreen=0
-location=0
-plugin=org.kde.plasma.folder
-wallpaperplugin=
+activityId = ""
+formfactor = 0
+immutability = 1
+lastScreen = 0
+location = 0
+plugin = org.kde.plasma.folder
+wallpaperplugin = ""
 
 [Containments][24][Applets][25][Configuration]
-PreloadWeight=0
-activityId=
-formfactor=0
-immutability=1
-lastScreen=0
-location=0
-plugin=org.kde.plasma.folder
-wallpaperplugin=
+PreloadWeight = 0
+activityId = ""
+formfactor = 0
+immutability = 1
+lastScreen = 0
+location = 0
+plugin = org.kde.plasma.folder
+wallpaperplugin = ""
 
 [Containments][24][Applets][25][Configuration][ConfigDialog]
 DialogHeight = 540

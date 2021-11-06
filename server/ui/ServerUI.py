@@ -21,7 +21,7 @@ from enum import Enum
 
 from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import QRegExp
-from PyQt5.Qt import QRegExpValidator, QFileDialog, QTimer
+from PyQt5.Qt import QRegExpValidator, QFileDialog
 from PyQt5.QtGui import QIcon, QColor, QPalette, QPixmap, QCursor
 
 from server.resources.MyCustomWidget import MyCustomWidget
@@ -78,7 +78,7 @@ class ServerUI(QtWidgets.QDialog):
         self.splashscreen = splash
 
         # loadUI, findApps, timeout
-        self.splashscreen.setProgressMax(3)
+        self.splashscreen.setProgressMax(4)
         self.splashscreen.setMessage("Loading UI")
 
         self.factory = factory     # MyServerFactory
@@ -160,6 +160,12 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.port3.setValidator(num_validator)
         self.ui.port4.setValidator(num_validator)
 
+        # copy Desktop Starter --------------------------------------------
+        self.splashscreen.setMessage("Copy Desktop Starter")
+
+        mutual_functions.copyDesktopStarter()
+        self.splashscreen.step()
+
         # Applications ------------------------------------------------------
         self.splashscreen.setMessage("Generating Application List")
 
@@ -234,8 +240,9 @@ class ServerUI(QtWidgets.QDialog):
         self.ui.setWindowTitle("%s - EXAM MODE" % self.defaultTitel)
         self.ui.setStyleSheet("QDialog{ background: %s; }" % self.examBackgroundColor)
         self.update()
-        
-        self.prepareDesktopStarter()
+
+        # self.prepareDesktopStarter()
+        self.addExtraIcons2Taskbar()
 
     def createClientsLabel(self):
         """ Erzeugt den Text für Clients: <Anzahl> """
@@ -529,6 +536,11 @@ class ServerUI(QtWidgets.QDialog):
         invoke startexam.sh file on clients
         """
         self._show_workingIndicator(500, "Starte die Prüfung")
+
+        # copy plasma file to Working Directory
+        cmd = "cp ~/.life/applications/life-exam/DATA/EXAMCONFIG/lockdown/plasma-EXAM ~/.life/EXAM/EXAMCONFIG/lockdown/"
+        os.system(cmd)
+
         server_to_client = self.factory.server_to_client
 
         # check if server is already in rawmode (ongoing filetransfer)
@@ -545,7 +557,8 @@ class ServerUI(QtWidgets.QDialog):
         self._show_workingIndicator(4000)
         self.log('<b>Initializing Exam Mode On All Clients </b>')
 
-        self.prepareDesktopStarter()
+        # self.prepareDesktopStarter()
+        self.addExtraIcons2Taskbar()
 
         # Checkbox
         _cleanup_abgabe = self.ui.cleanabgabe.checkState()
@@ -1040,10 +1053,10 @@ class ServerUI(QtWidgets.QDialog):
     # not used anymore
     """
     def testGGB(self):
-        
+
         search fpr Geogebra WebApp in /var/www/html/geogebra
         fire a reminder if not existent
-        
+
         if os.path.join(WEB_ROOT, GEOGEBRA_PATH) is False:
             self._setInfoColor("#ff0000")
 
@@ -1060,10 +1073,13 @@ class ServerUI(QtWidgets.QDialog):
 
     def prepareDesktopStarter(self):
         """
+        BUG!!: we cant it use anymore, at KDE Restart our plasma-org.kde.plasma.desktop-appletsrc will be
+        overwritten. MAYBE we can use it later again
+
         prepare Desktop Starter for Exam Mode
         Server prepares the ~/.config/plasma-org.kde.plasma.desktop-appletsrc
 
-        It works as follows lets say 
+        It works as follows lets say
         [Containments][22]
         ItemGeometriesHorizontal=Applet-71:1024,432,80,80,0;
         plugin=org.kde.desktopcontainment
@@ -1080,3 +1096,8 @@ class ServerUI(QtWidgets.QDialog):
         """
         plasmaTool = PlasmaRCTool()
         plasmaTool.addStarter()
+
+    def addExtraIcons2Taskbar(self):
+        """ edit plasma-org.kde.plasma.desktop-appletsrc and add some Taskbar Starters """
+        plasmaTool = PlasmaRCTool()
+        plasmaTool.addExtraIcons2Taskbar()

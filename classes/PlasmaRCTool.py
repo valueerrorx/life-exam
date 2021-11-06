@@ -40,6 +40,7 @@ class PlasmaRCTool():
                 break
             except KeyError:
                 continue
+
     # NOT USED
     def search_Desktop_Container(self):
         """
@@ -239,7 +240,11 @@ class PlasmaRCTool():
             }
 
     def addStarter(self):
-        """ edit plasma-org.kde.plasma.desktop-appletsrc and add Desktop Starter """
+        """
+        edit plasma-org.kde.plasma.desktop-appletsrc and add Desktop Starter
+        BUG!!: we cant it use anymore, at KDE Restart our plasma-org.kde.plasma.desktop-appletsrc will be
+        overwritten. MAYBE we can use it later again
+        """
         # search for e.g.
         # [Containments][37][Applets][28]
         # plugin=org.kde.plasma.icon
@@ -305,4 +310,30 @@ class PlasmaRCTool():
             self.addApplet(config, containerNr, maxAppletNr + item[0], item[1])
             i += 1
 
+        config.write()
+
+    def addExtraIcons2Taskbar(self):
+        """ edit plasma-org.kde.plasma.desktop-appletsrc and add some Taskbar Starters """
+        if Path(PLASMACONFIG).is_file():
+            config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+
+            # Taskbar Launchers search for launchers= entry
+            taskbarsection = []
+            for section in config:
+                try:
+                    # try this entry
+                    test = config[section]["launchers"]  # noqa             
+                    taskbarsection.append(section)
+                except Exception:
+                    continue
+
+        targetsection = taskbarsection[0]
+        # actual appstring
+        appstring = config[targetsection]["launchers"]
+        # Add special Starters
+        appstring = "applications:STOP.desktop," + appstring
+
+        config[targetsection]["launchers"] = appstring
+        # write new plasmaconfig
+        config.filename = str(PLASMACONFIG)
         config.write()

@@ -62,7 +62,7 @@ class ApplicationTools():
         desktop_files_list = self.addApplications(desktop_files_list)
         desktop_files_list = self.clearDoubles(desktop_files_list)
 
-        # _printArray(desktop_files_list)
+        # self._printArray(desktop_files_list)
         # ok
 
         app.processEvents()
@@ -129,7 +129,7 @@ class ApplicationTools():
             for blackapp in BLACKLIST_APPS:
                 if blackapp.lower() in item[0].lower():
                     if DEBUG_PIN != "":
-                        print("BLOCKed App: %s" % item)
+                        print("BLOCKed App (not listed in Preferences): %s" % item)
                     blocked = True
                     break
 
@@ -331,17 +331,15 @@ class ApplicationTools():
     def saveProfile(self, applistwidget, appview):
         """
         reads the contents of the listwidget, searches for checked items
-        reads the current plasmaconfig file
-        changes the plasmaconfig
-        writes the plasmaconfig file
+        reads the current plasmaconfig file in life-exam/DATA/EXAMCONFIG/lockdown/plasma-EXAM
+        changes the plasma-EXAM
+        at Exam Start this file will be send to the clients
         """
-        # original RC File in ./config/plasma-org.kde.plasma.desktop-appletsrc
-        # RC File for Exam to be transfered
-        # PLASMACONFIG=Path("plasma-org.kde.plasma.desktop-appletsrc")
-        # this should be the config file that is then transferred to the clients and used for the exam desktop
+        rootDir = Path(__file__).parent.parent.parent
+        plasma_exam_file = os.path.join(rootDir, "DATA/EXAMCONFIG/lockdown/plasma-EXAM")
 
-        if Path(PLASMACONFIG).is_file():
-            config = ConfigObj(str(PLASMACONFIG), list_values=False, encoding='utf8')
+        if Path(plasma_exam_file).is_file():
+            config = ConfigObj(str(plasma_exam_file), list_values=False, encoding='utf8')
 
             # Taskbar Launchers search for launchers= entry
             taskbarsection = []
@@ -407,7 +405,7 @@ class ApplicationTools():
                 config[targetsection]["launchers"] = "applications:geogebra.desktop"
 
         # write new plasmaconfig
-        config.filename = str(PLASMACONFIG)
+        config.filename = str(plasma_exam_file)
         config.write()
 
     def get_activated_apps(self):
@@ -457,10 +455,10 @@ class ApplicationTools():
     # not used anymore
     """
     def createGGBStarter(self, desktop_files_list):
-        
+
         checks if Geogebra Starter is set correct
         and copys the starter to  /home/student/.local/share/applications/
-        
+
         rootDir = Path(__file__).parent.parent
         path_to_file = rootDir.joinpath('DATA/starter/GeoGebra.desktop')
         applications_path = os.path.join(USER_HOME_DIR, ".local/share/applications/")
