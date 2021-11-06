@@ -91,8 +91,6 @@ function loadExamConfig(){
     # do your job
     #load minimal plasma config for exam 
     sudo cp -a ${LOCKDOWNDIR}plasma-EXAM ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc
-    # prevent from overwritting
-    sudo chmod 444 ${HOME}.config/plasma-org.kde.plasma.desktop-appletsrc
     
     #special windowmanager settings
     sudo cp -a ${LOCKDOWNDIR}kwinrc-EXAM ${HOME}.config/kwinrc
