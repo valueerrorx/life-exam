@@ -22,6 +22,8 @@ Tools needed in order to provide 100% functionality are:
 
 ## Configuration
 
+#### General
+
 is made in _config/config.py_.  
 Important things are shown here
 
@@ -46,7 +48,7 @@ MAX_HEARTBEAT_DELTA_TIME = 120
 MAX_SILENT_TIME_OFf_CLIENT = 2 * MAX_HEARTBEAT_DELTA_TIME
 ```
 
-### Which Applications will be shown first when we create an Exam.
+#### Which Applications will be shown first when we create an Exam.
 
 What are your favorites?  
 See _config/appranking.yml_
@@ -67,7 +69,7 @@ apps:
     - audacity
 ```
 
-### Be aware
+#### Be aware
 
 Some important Starter Files are located at `./DATA/starter`.  
 These Files will be overwrite local installed Starter Files with same Name!
