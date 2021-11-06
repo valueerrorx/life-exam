@@ -19,13 +19,6 @@ Tools needed in order to provide 100% functionality are:
 ## Install
 
 - Run `sudo pip3 install .` in exam-life path, in order to global install missing modules
-- check if you have Geogebra Web Apps inside `localhost/geogebra/`.  
-  Be sure wich path points to your webserver root, see Configuration.  
-  The entry html file is either `index.html` or `Geogebra.html`.
-
-  ```
-
-  ```
 
 ## Configuration
 
@@ -40,22 +33,21 @@ DEBUG_PIN = "1234"
 # would you like to see Network Debugging Stuff?
 DEBUG_SHOW_NETWORKTRAFFIC = True
 
-# Web Server Root Directory
-WEB_ROOT="/var/www/html/"
-# Subdirectory to Geogebra
-GEOGEBRA_PATH = "geogebra"
-
 # Heartbeat Section
+# be sure to enable in /DATA/scripts/exam-firewall.sh
 HEARTBEAT_PORT = 43278
 # Clients send Heartbeats in x sec
-HEARTBEAT_INTERVALL = 5
-# Server cleans up silent Clients after x sec
-HEARTBEAT_CLEANUP = 30
+HEARTBEAT_INTERVALL = 4
+# Server checks offline/online clients x sec
+HEARTBEAT_CLEANUP = 2
 # how long may a client be silent, after that it is marked as zombie x sec
 MAX_HEARTBEAT_DELTA_TIME = 120
+# how long may a client be silent until removed from Server
+MAX_SILENT_TIME_OFf_CLIENT = 2 * MAX_HEARTBEAT_DELTA_TIME
 ```
 
-Which Applications will be shown first when we create an Exam.  
+### Which Applications will be shown first when we create an Exam.
+
 What are your favorites?  
 See _config/appranking.yml_
 
@@ -74,6 +66,11 @@ apps:
     - musescore
     - audacity
 ```
+
+### Be aware
+
+Some important Starter Files are located at `./DATA/starter`.  
+These Files will be overwrite local installed Starter Files with same Name!
 
 ## Running the Server and Client
 
