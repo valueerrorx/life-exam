@@ -256,7 +256,6 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 # for item in plgs:
                 #    print(item)
                 # print(sys.path)
-
                 processUtil = PsUtil()
                 pids = []
                 # Start Heartbeat Client ------------------------------------
@@ -289,9 +288,12 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                     pids.append(p[0])
                 if DEBUG_PIN != "":
                     self.logger.debug("** ConnectionStatusDispatcher Pid: %s" % pid)
-
                 # remember active PID's from extra programs started by the client
                 self.writeExtraPIDFile(pids)
+
+                # Kill ConnectionStatusDispatcher, we don't need it during exam
+                # we dont remove it from stored PID's twice ist better ;)
+                processUtil.killProcess(p[0])
         else:
             self._changePalette(self.ui.serverip, "warn")
 

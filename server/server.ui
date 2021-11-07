@@ -34,6 +34,9 @@
    <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QWidget" name="widget_7" native="true">
      <property name="sizePolicy">
@@ -42,9 +45,18 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #eff0f1;</string>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QWidget" name="widget" native="true">
+       <widget class="QWidget" name="topMenu" native="true">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -849,7 +861,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>756</width>
+               <width>851</width>
                <height>936</height>
               </rect>
              </property>
@@ -2399,9 +2411,12 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">margin:0px;padding:0px;</string>
+      <string notr="true">margin:0px;padding:0px;background-color: #eff0f1;</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -2513,7 +2528,7 @@
             <enum>Qt::LeftToRight</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">margin:0px;margin-bottom:4px;padding:8px;</string>
+            <string notr="true">margin:0px;margin-bottom:4px;padding:8px;margin-top:6px;</string>
            </property>
            <property name="text">
             <string>Programm Beenden</string>
