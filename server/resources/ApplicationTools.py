@@ -13,7 +13,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
-from config.config import USER_HOME_DIR, PLASMACONFIG, DEBUG_PIN, BLACKLIST_APPS
+from config.config import USER_HOME_DIR, DEBUG_PIN, BLACKLIST_APPS
 from classes.CmdRunner import CmdRunner
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
@@ -339,7 +339,7 @@ class ApplicationTools():
         plasma_exam_file = os.path.join(rootDir, "DATA/EXAMCONFIG/lockdown/plasma-EXAM")
 
         if Path(plasma_exam_file).is_file():
-            config = ConfigObj(str(plasma_exam_file), list_values=False, encoding='utf8')
+            config = ConfigObj(str(plasma_exam_file), list_values=False, encoding='utf8', raise_errors=True)
 
             # Taskbar Launchers search for launchers= entry
             taskbarsection = []
@@ -411,9 +411,11 @@ class ApplicationTools():
     def get_activated_apps(self):
         """Reads plasmaconfig file and searches for pinned apps in the taskmanager"""
         activated_apps = []
+        rootDir = Path(__file__).parent.parent.parent
+        plasma_exam_file = os.path.join(rootDir, "DATA/EXAMCONFIG/lockdown/plasma-EXAM")
 
-        if Path(PLASMACONFIG).is_file():
-            config = ConfigObj(str(PLASMACONFIG), list_values=False)
+        if Path(plasma_exam_file).is_file():
+            config = ConfigObj(str(plasma_exam_file), list_values=False)
 
             # Taskbar Launchers search for launchers= entry
             taskbarsection = []
