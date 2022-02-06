@@ -54,7 +54,7 @@ DialogWidth = 720
 
 [Containments][2][Applets][5][Configuration][General]
 groupingStrategy = 0
-launchers = applications:GeoGebra.desktop,applications:io.github.wxmaxima_developers.wxMaxima.desktop,applications:libreoffice-calc.desktop,applications:libreoffice-writer.desktop,applications:org.kde.kcalc.desktop,applications:org.kde.kate.desktop,applications:codium.desktop,applications:org.kde.falkon.desktop
+launchers = applications:GeoGebra.desktop,applications:io.github.wxmaxima_developers.wxMaxima.desktop,applications:libreoffice-calc.desktop,applications:libreoffice-writer.desktop,applications:firefox.desktop,applications:org.kde.calligrawords.desktop,applications:org.kde.kcalc.desktop,applications:org.kde.falkon.desktop
 maxStripes = 1
 showOnlyCurrentDesktop = false
 wheelEnabled = false
