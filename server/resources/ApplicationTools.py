@@ -13,7 +13,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QSize
 
-from config.config import USER_HOME_DIR, DEBUG_PIN, BLACKLIST_APPS
+from config.config import USER_HOME_DIR, DEBUG_PIN, BLACKLIST_APPS 
 from classes.CmdRunner import CmdRunner
 
 path_to_yml = "%s/%s" % (Path(__file__).parent.parent.parent.as_posix(), 'config/appranking.yaml')
