@@ -20,6 +20,7 @@ from classes.mutual_functions import checkIP, prepareDirectories,\
     changePermission
 from classes.psUtil import PsUtil
 from PyQt5.Qt import QTimer
+from classes.PlasmaRCTool import PlasmaRCTool
 
 
 class ClientDialog(QtWidgets.QDialog, Observers):
@@ -195,6 +196,11 @@ class ClientDialog(QtWidgets.QDialog, Observers):
                 self.ui.pincode.setText(PIN)
                 # print("Update: %s %s" % (ID, PIN))
 
+    def addExtraIcons2Taskbar(self):
+        """ edit plasma-org.kde.plasma.desktop-appletsrc and add some Taskbar Starters """
+        plasmaTool = PlasmaRCTool()
+        plasmaTool.addExtraIcons2Taskbar()
+
     def _on_offline_exam(self):
         self.msg = QtWidgets.QMessageBox()  # noqa
         self.msg.setIcon(QtWidgets.QMessageBox.Information)
@@ -205,6 +211,15 @@ class ClientDialog(QtWidgets.QDialog, Observers):
         retval = self.msg.exec_()   # 16384 = yes, 65536 = no
 
         if str(retval) == "16384":
+            # we copy the actual copy of EXAM Config to EXAMCONFIG
+            # copy plasma file to Working Directory
+            offlineExamCfg = os.path.join(self.rootDir, 'client/offline/plasma-EXAM')
+            cmd = "cp %s ~/.life/EXAM/EXAMCONFIG/lockdown/" % offlineExamCfg
+            os.system(cmd)
+
+            # add extra starter to tasbar
+            self.addExtraIcons2Taskbar()
+
             command = "chmod +x %s/startexam.sh &" % EXAMCONFIG_DIRECTORY  # make exam script executable
             os.system(command)
             time.sleep(2)
